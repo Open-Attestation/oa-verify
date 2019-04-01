@@ -29,7 +29,7 @@ describe("verify(integration)", () => {
 
   it("returns true if certificate is valid", async () => {
     const results = await verify(certificateValid);
-    
+
     expect(results).to.be.eql({
       hash: { valid: true },
       identity: {

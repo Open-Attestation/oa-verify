@@ -28,7 +28,9 @@ describe("documentStoreApi(integration)", () => {
         "foobar",
         "0000000000000000000000000000000000000000000000000000000000000000"
       )
-    ).to.eventually.be.rejectedWith("contract.functions[contractMethod] is not a function");
+    ).to.eventually.be.rejectedWith(
+      "contract.functions[contractMethod] is not a function"
+    );
   }).timeout(10000);
 
   it("should works for isIssued", async () => {

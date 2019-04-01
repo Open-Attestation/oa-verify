@@ -27,8 +27,8 @@ const getIdentity = async (identifier = "") => {
     data: { issuers }
   } = await fetchData();
   const lowercaseAddress = mapKeys(issuers, (_val, key) => key.toLowerCase());
-  const getIdentity = lowercaseAddress[identifier.toLowerCase()];
-  return getIdentity;
+  const identity = lowercaseAddress[identifier.toLowerCase()];
+  return identity;
 };
 
 module.exports = {

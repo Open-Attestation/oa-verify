@@ -1,6 +1,6 @@
+const { getData } = require("@govtechsg/open-attestation");
 const { get, every, values } = require("lodash");
 const { getIdentity } = require("../common/identityRegistry");
-const { getData } = require("@govtechsg/open-attestation");
 
 /**
  * Resolves multiple addresses, returning their identities if found
@@ -10,8 +10,10 @@ const { getData } = require("@govtechsg/open-attestation");
  */
 const getIdentities = async (addresses = []) => {
   const identities = {};
-  for (const address of addresses) {
+  for (let i = 0; i < addresses.length; i += 1) {
+    const address = addresses[i];
     // Resolving identity in series because of caching in getIdentity
+    // eslint-disable-next-line no-await-in-loop
     const id = await getIdentity(address);
     identities[address] = id;
   }
