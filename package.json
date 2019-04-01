@@ -1,6 +1,6 @@
 {
   "name": "@govtechsg/oa-verify",
-  "version": "1.0.2",
+  "version": "1.0.1",
   "description": "",
   "main": "src/index.js",
   "scripts": {
@@ -34,5 +34,8 @@
     "proxyquire": "^2.1.0",
     "rollup": "^1.7.4",
     "sinon": "^7.3.1"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
