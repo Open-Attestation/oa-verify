@@ -10,7 +10,7 @@
     "lint:fix": "eslint . --ext .js --fix"
   },
   "author": "",
-  "license": "ISC",
+  "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/open-attestation": "^1.1.30",
     "axios": "^0.18.0",
