@@ -14,4 +14,4 @@ jobs:
 stages:
   - test
   - name: publish
-    if: branch = master AND commit_message !~ /(Publish)/
+    if: branch = master AND type != pull_request AND commit_message !~ /(Publish)/
