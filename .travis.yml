@@ -10,8 +10,9 @@ jobs:
         - npm run test
     - stage: publish
       script:
-        - ./build/publish.sh
+        - if [ "${TRAVIS_BRANCH}" = "master" ] && ! [ `printf -- "${TRAVIS_COMMIT_MESSAGE}" | grep "Publish"` ]; then bash 
+            ./build/publish.sh
+          fi;
 stages:
   - test
-  - name: publish
-    if: branch = master AND commit_message !~ /(Publish)/
+  - publish
