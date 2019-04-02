@@ -1,6 +1,6 @@
 {
   "name": "@govtechsg/oa-verify",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "",
   "main": "dist/oa-verify.js",
   "module": "dist/oa-verify.esm.js",
