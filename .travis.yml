@@ -8,11 +8,8 @@ jobs:
       script: 
         - npm run lint
         - npm run test
-    - stage: publish
-      script:
         - if [ "${TRAVIS_BRANCH}" = "master" ] && ! [ `printf -- "${TRAVIS_COMMIT_MESSAGE}" | grep "Publish"` ]; then bash 
             ./build/publish.sh
           fi;
 stages:
   - test
-  - publish
