@@ -9,9 +9,9 @@ jobs:
         - npm run lint
         - npm run test
     - stage: publish
-      if: branch = master AND commit_message !~ /(Publish)/
       script:
         - ./build/publish.sh
 stages:
   - test
-  - publish
+  - name: publish
+    if: branch = master AND commit_message !~ /(Publish)/
