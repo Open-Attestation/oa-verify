@@ -10,6 +10,7 @@ npm config set '//registry.npmjs.org/:_authToken' "${NPM_PUBLISH_TOKEN}";
 git checkout ${TRAVIS_BRANCH};
 git reset --hard ${TRAVIS_COMMIT};
 git remote set-url origin ${GITHUB_URL_W_AUTH};
+git status
 npm config set '//registry.npmjs.org/:_authToken' "${NPM_PUBLISH_TOKEN}";
 npm run build;
 if [ "${TRAVIS_PULL_REQUEST}" = "false" ]; then

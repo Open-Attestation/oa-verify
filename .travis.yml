@@ -10,7 +10,7 @@ jobs:
         - npm run test
     - stage: publish
       script:
-        - ./build/publish.sh
+        - ./scripts/publish.sh
 stages:
   - test
   - name: publish
