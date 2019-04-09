@@ -54,47 +54,112 @@ describe("verify/revoked", () => {
   describe("getRevoked", () => {
     it("returns true when the document is revoked", async () => {
       documentStore.resolves(true);
-      const revoked = await getRevoked("Store1", "ab12");
+      const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).to.eql(true);
-      expect(documentStore.args[0]).to.eql(["Store1", "isRevoked", "0xab12"]);
+      expect(documentStore.args[0][0]).to.eql({
+        storeAddress: "Store1",
+        method: "isRevoked",
+        args: ["0xab12"],
+        network: "network"
+      });
     });
 
     it("returns false when the document is not revoked", async () => {
       documentStore.resolves(false);
-      const revoked = await getRevoked("Store1", "ab12");
+      const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).to.eql(false);
-      expect(documentStore.args[0]).to.eql(["Store1", "isRevoked", "0xab12"]);
+      expect(documentStore.args[0][0]).to.eql({
+        storeAddress: "Store1",
+        method: "isRevoked",
+        args: ["0xab12"],
+        network: "network"
+      });
     });
 
     it("returns true when api throws", async () => {
       documentStore.rejects(new Error());
-      const revoked = await getRevoked("Store1", "ab12");
+      const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).to.eql(true);
-      expect(documentStore.args[0]).to.eql(["Store1", "isRevoked", "0xab12"]);
+      expect(documentStore.args[0][0]).to.eql({
+        storeAddress: "Store1",
+        method: "isRevoked",
+        args: ["0xab12"],
+        network: "network"
+      });
     });
   });
 
   describe("getRevokedByStore", () => {
     it("returns false if all the hashes are not revoked on the store", async () => {
       documentStore.resolves(false);
-      const revoked = await getRevokedByStore("s1", ["h1", "h2", "h3"]);
+      const revoked = await getRevokedByStore(
+        "s1",
+        ["h1", "h2", "h3"],
+        "network"
+      );
       expect(revoked).to.eql(false);
       expect(documentStore.args).to.eql([
-        ["s1", "isRevoked", "0xh1"],
-        ["s1", "isRevoked", "0xh2"],
-        ["s1", "isRevoked", "0xh3"]
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh1"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh2"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh3"],
+            network: "network"
+          }
+        ]
       ]);
     });
     it("returns true if any of the hash is revoked on the store", async () => {
       documentStore.resolves(false);
       documentStore.onCall(1).resolves(true);
 
-      const revoked = await getRevokedByStore("s1", ["h1", "h2", "h3"]);
+      const revoked = await getRevokedByStore(
+        "s1",
+        ["h1", "h2", "h3"],
+        "network"
+      );
       expect(revoked).to.eql(true);
       expect(documentStore.args).to.eql([
-        ["s1", "isRevoked", "0xh1"],
-        ["s1", "isRevoked", "0xh2"],
-        ["s1", "isRevoked", "0xh3"]
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh1"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh2"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh3"],
+            network: "network"
+          }
+        ]
       ]);
     });
   });
@@ -106,16 +171,59 @@ describe("verify/revoked", () => {
 
       const revoked = await getRevokedOnAllStore(
         ["s1", "s2"],
-        ["h1", "h2", "h3"]
+        ["h1", "h2", "h3"],
+        "network"
       );
 
       expect(documentStore.args).to.eql([
-        ["s1", "isRevoked", "0xh1"],
-        ["s1", "isRevoked", "0xh2"],
-        ["s1", "isRevoked", "0xh3"],
-        ["s2", "isRevoked", "0xh1"],
-        ["s2", "isRevoked", "0xh2"],
-        ["s2", "isRevoked", "0xh3"]
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh1"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh2"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: ["0xh3"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: ["0xh1"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: ["0xh2"],
+            network: "network"
+          }
+        ],
+        [
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: ["0xh3"],
+            network: "network"
+          }
+        ]
       ]);
       expect(revoked).to.eql({ s1: false, s2: true });
     });
@@ -162,41 +270,71 @@ describe("verify/revoked", () => {
           ]
         }
       };
-      const summary = await verifyRevoked(document);
+      const summary = await verifyRevoked(document, "network");
       expect(summary).to.eql({
         valid: true,
         revoked: { s1: false, s2: false }
       });
       expect(documentStore.args).to.eql([
         [
-          "s1",
-          "isRevoked",
-          "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s1",
-          "isRevoked",
-          "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s1",
-          "isRevoked",
-          "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+            ],
+            network: "network"
+          }
         ]
       ]);
     });
@@ -218,41 +356,71 @@ describe("verify/revoked", () => {
           ]
         }
       };
-      const summary = await verifyRevoked(document);
+      const summary = await verifyRevoked(document, "network");
       expect(summary).to.eql({
         valid: false,
         revoked: { s1: false, s2: true }
       });
       expect(documentStore.args).to.eql([
         [
-          "s1",
-          "isRevoked",
-          "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s1",
-          "isRevoked",
-          "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s1",
-          "isRevoked",
-          "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+          {
+            storeAddress: "s1",
+            method: "isRevoked",
+            args: [
+              "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
+            ],
+            network: "network"
+          }
         ],
         [
-          "s2",
-          "isRevoked",
-          "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+          {
+            storeAddress: "s2",
+            method: "isRevoked",
+            args: [
+              "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
+            ],
+            network: "network"
+          }
         ]
       ]);
     });

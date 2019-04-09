@@ -24,11 +24,17 @@ const getIntermediateHashes = (targetHash, proofs = []) => {
  *
  * @param  {string} storeAddress Store address to check against, starts with 0x
  * @param  {string} hash Hash to check, does not start with 0x
+ * @param  {string} network Network to check on
  * @returns {boolean} True if the hash is revoked
  */
-const getRevoked = async (storeAddress, hash) => {
+const getRevoked = async (storeAddress, hash, network) => {
   try {
-    const revoked = await documentStore(storeAddress, "isRevoked", `0x${hash}`);
+    const revoked = await documentStore({
+      network,
+      storeAddress,
+      method: "isRevoked",
+      args: [`0x${hash}`]
+    });
     return revoked;
   } catch (e) {
     // If contract is not deployed, the function will throw.
@@ -43,11 +49,16 @@ const getRevoked = async (storeAddress, hash) => {
  *
  * @param  {string} storeAddress Contract addresss of store to check against. Starts with 0x.
  * @param  {string[]} intermediateHashes Array of intermediate hashes to check. Does not have 0x.
+ * @param  {string} network Network to check on
  * @returns {boolean} True if any of the hashes is revoked on the single store.
  */
-const getRevokedByStore = async (storeAddress, intermediateHashes = []) => {
+const getRevokedByStore = async (
+  storeAddress,
+  intermediateHashes = [],
+  network
+) => {
   const revokeStatusesDeferred = intermediateHashes.map(hash =>
-    getRevoked(storeAddress, hash)
+    getRevoked(storeAddress, hash, network)
   );
   const revokeStatues = await Promise.all(revokeStatusesDeferred);
   return some(revokeStatues, isTrue => isTrue);
@@ -58,14 +69,16 @@ const getRevokedByStore = async (storeAddress, intermediateHashes = []) => {
  *
  * @param  {string[]} storeAddresses Array of all store addresses to check against
  * @param  {string[]} intermediateHashes Array of all hashes to check
+ * @param  {string} network Network to check on
  * @returns {object} Revoke status mapped to each store address
  */
 const getRevokedOnAllStore = async (
   storeAddresses = [],
-  intermediateHashes = []
+  intermediateHashes = [],
+  network
 ) => {
   const revokeStatusesByStoreDefered = storeAddresses.map(storeAddress =>
-    getRevokedByStore(storeAddress, intermediateHashes)
+    getRevokedByStore(storeAddress, intermediateHashes, network)
   );
   const revokeStatusesByStore = await Promise.all(revokeStatusesByStoreDefered);
   return zipObject(storeAddresses, revokeStatusesByStore);
@@ -76,16 +89,19 @@ const getRevokedOnAllStore = async (
  *
  * @param  {string[]} storeAddresses Array of all store addresses to check against
  * @param  {string[]} intermediateHashes Array of all hashes to check
+ * @param  {string} network Network to check on
  * @returns {object} Object with a valid status flag and the individual stores' responses
  */
 const getIssuedSummary = async (
   storeAddresses = [],
-  intermediateHashes = []
+  intermediateHashes = [],
+  network
 ) => {
   // Needs to calculate all hash
   const revoked = await getRevokedOnAllStore(
     storeAddresses,
-    intermediateHashes
+    intermediateHashes,
+    network
   );
   const revokedValues = values(revoked);
   const valid =
@@ -96,7 +112,8 @@ const getIssuedSummary = async (
     revoked
   };
 };
-const verifyRevoked = async document => {
+
+const verifyRevoked = async (document, network) => {
   const documentData = getData(document);
   const storeAddresses = get(documentData, "issuers", []).map(
     // Returns the documentStore or certificateStore(openCerts's legacy) address
@@ -105,7 +122,7 @@ const verifyRevoked = async document => {
   const targetHash = get(document, "signature.targetHash");
   const proofs = get(document, "signature.proof");
   const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-  return getIssuedSummary(storeAddresses, intermediateHashes);
+  return getIssuedSummary(storeAddresses, intermediateHashes, network);
 };
 
 module.exports = {
