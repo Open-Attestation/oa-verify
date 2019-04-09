@@ -3,11 +3,10 @@ const { verifyIdentity } = require("./identity/identity");
 const { verifyIssued } = require("./issued/issued");
 const { verifyRevoked } = require("./unrevoked/unrevoked");
 
-
 /**
  * @param  {object} document Entire document object to be validated
  * @param  {string} network Network to check against, defaults to "homestead". Other valid choices: "ropsten", "kovan", etc
- * @returns 
+ * @returns
  */
 const verify = async (document, network = "homestead") => {
   const verificationsDeferred = [

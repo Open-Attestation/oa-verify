@@ -4,7 +4,6 @@ const certificateMainnetValid = require("../test/fixtures/certificateMainnetVali
 const certificateTampered = require("../test/fixtures/tampered-certificate.json");
 const certificateRopstenValid = require("../test/fixtures/certificateRopstenValid.json");
 
-
 describe("verify(integration)", () => {
   it("returns false if certificate is invalid", async () => {
     const results = await verify(certificateTampered);
