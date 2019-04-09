@@ -138,14 +138,12 @@
 
   var abi$1 = getCjsExportFromNamespace(abi);
 
-  const NETWORK = "homestead";
   const INFURA_API_KEY = "92c9a51428b946c1b8c1ac5a237616e4";
 
-  const provider = new ethers.providers.InfuraProvider(NETWORK, INFURA_API_KEY);
-
-  const documentStore = async (storeAddress, contractMethod, ...args) => {
+  const documentStore = async ({ network, storeAddress, method, args }) => {
+    const provider = new ethers.providers.InfuraProvider(network, INFURA_API_KEY);
     const contract = new ethers.Contract(storeAddress, abi$1, provider);
-    const result = await contract.functions[contractMethod](...args);
+    const result = await contract.functions[method](...args);
     return result;
   };
 
@@ -161,10 +159,16 @@
    *
    * @param  {} storeAddress Address of document store to check issue status on
    * @param  {} hash Hash of the merkle root of the document, not the target hash
+   * @param  {} network Ethereum network to check against
    */
-  const getIssued = async (storeAddress, hash) => {
+  const getIssued = async (storeAddress, hash, network) => {
     try {
-      const issued = await documentStore_1(storeAddress, "isIssued", `0x${hash}`);
+      const issued = await documentStore_1({
+        network,
+        storeAddress,
+        method: "isIssued",
+        args: [`0x${hash}`]
+      });
       return issued;
     } catch (e) {
       // If contract is not deployed, the function will throw.
@@ -178,11 +182,12 @@
    *
    * @param  {string[]} storeAddresses Array of all store addresses
    * @param  {string} hash Hash of the merkle root of the document, not the target hash
+   * @param  {string} network Ethereum network to check against
    * @return {object} Issue status of the document on each of the store, with store address as the key
    */
-  const getIssuedOnAll = async (storeAddresses = [], hash) => {
+  const getIssuedOnAll = async (storeAddresses = [], hash, network) => {
     const issueStatusesDefered = storeAddresses.map(storeAddress =>
-      getIssued(storeAddress, hash)
+      getIssued(storeAddress, hash, network)
     );
     const issueStatuses = await Promise.all(issueStatusesDefered);
     return zipObject(storeAddresses, issueStatuses);
@@ -193,10 +198,11 @@
    *
    * @param  {string[]} storeAddresses Array of all store addresses
    * @param  {string} hash Hash of the merkle root of the document, not the target hash
+   * @param  {string} network Ethereum network to check against
    * @return {object} Object containing valid status and the issued status on all store
    */
-  const getIssuedSummary = async (storeAddresses = [], hash) => {
-    const issued = await getIssuedOnAll(storeAddresses, hash);
+  const getIssuedSummary = async (storeAddresses = [], hash, network) => {
+    const issued = await getIssuedOnAll(storeAddresses, hash, network);
     const issuedValues = values$1(issued);
     const valid =
       every$1(issuedValues, isTrue => isTrue === true) && issuedValues.length > 0;
@@ -210,16 +216,17 @@
    * Provide a summary of issued status, given a document
    *
    * @param  {object} document Raw document data
+   * @param  {string} network Ethereum network to check against
    * @return {object} Summary of validity status, see getIssuedSummary()
    */
-  const verifyIssued = document => {
+  const verifyIssued = (document, network) => {
     const documentData = getData$1(document);
     const documentStoreAddresses = get$1(documentData, "issuers", []).map(
       // Returns the documentStore or certificateStore(openCerts's legacy) address
       i => i.documentStore || i.certificateStore
     );
     const merkleRoot = get$1(document, "signature.merkleRoot");
-    return getIssuedSummary(documentStoreAddresses, merkleRoot);
+    return getIssuedSummary(documentStoreAddresses, merkleRoot, network);
   };
 
   var issued = {
@@ -255,11 +262,17 @@
    *
    * @param  {string} storeAddress Store address to check against, starts with 0x
    * @param  {string} hash Hash to check, does not start with 0x
+   * @param  {string} network Network to check on
    * @returns {boolean} True if the hash is revoked
    */
-  const getRevoked = async (storeAddress, hash) => {
+  const getRevoked = async (storeAddress, hash, network) => {
     try {
-      const revoked = await documentStore_1(storeAddress, "isRevoked", `0x${hash}`);
+      const revoked = await documentStore_1({
+        network,
+        storeAddress,
+        method: "isRevoked",
+        args: [`0x${hash}`]
+      });
       return revoked;
     } catch (e) {
       // If contract is not deployed, the function will throw.
@@ -274,11 +287,16 @@
    *
    * @param  {string} storeAddress Contract addresss of store to check against. Starts with 0x.
    * @param  {string[]} intermediateHashes Array of intermediate hashes to check. Does not have 0x.
+   * @param  {string} network Network to check on
    * @returns {boolean} True if any of the hashes is revoked on the single store.
    */
-  const getRevokedByStore = async (storeAddress, intermediateHashes = []) => {
+  const getRevokedByStore = async (
+    storeAddress,
+    intermediateHashes = [],
+    network
+  ) => {
     const revokeStatusesDeferred = intermediateHashes.map(hash =>
-      getRevoked(storeAddress, hash)
+      getRevoked(storeAddress, hash, network)
     );
     const revokeStatues = await Promise.all(revokeStatusesDeferred);
     return some(revokeStatues, isTrue => isTrue);
@@ -289,14 +307,16 @@
    *
    * @param  {string[]} storeAddresses Array of all store addresses to check against
    * @param  {string[]} intermediateHashes Array of all hashes to check
+   * @param  {string} network Network to check on
    * @returns {object} Revoke status mapped to each store address
    */
   const getRevokedOnAllStore = async (
     storeAddresses = [],
-    intermediateHashes = []
+    intermediateHashes = [],
+    network
   ) => {
     const revokeStatusesByStoreDefered = storeAddresses.map(storeAddress =>
-      getRevokedByStore(storeAddress, intermediateHashes)
+      getRevokedByStore(storeAddress, intermediateHashes, network)
     );
     const revokeStatusesByStore = await Promise.all(revokeStatusesByStoreDefered);
     return zipObject$1(storeAddresses, revokeStatusesByStore);
@@ -307,16 +327,19 @@
    *
    * @param  {string[]} storeAddresses Array of all store addresses to check against
    * @param  {string[]} intermediateHashes Array of all hashes to check
+   * @param  {string} network Network to check on
    * @returns {object} Object with a valid status flag and the individual stores' responses
    */
   const getIssuedSummary$1 = async (
     storeAddresses = [],
-    intermediateHashes = []
+    intermediateHashes = [],
+    network
   ) => {
     // Needs to calculate all hash
     const revoked = await getRevokedOnAllStore(
       storeAddresses,
-      intermediateHashes
+      intermediateHashes,
+      network
     );
     const revokedValues = values$2(revoked);
     const valid =
@@ -327,7 +350,8 @@
       revoked
     };
   };
-  const verifyRevoked = async document => {
+
+  const verifyRevoked = async (document, network) => {
     const documentData = getData$2(document);
     const storeAddresses = get$2(documentData, "issuers", []).map(
       // Returns the documentStore or certificateStore(openCerts's legacy) address
@@ -336,7 +360,7 @@
     const targetHash = get$2(document, "signature.targetHash");
     const proofs = get$2(document, "signature.proof");
     const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-    return getIssuedSummary$1(storeAddresses, intermediateHashes);
+    return getIssuedSummary$1(storeAddresses, intermediateHashes, network);
   };
 
   var unrevoked = {
@@ -353,12 +377,17 @@
   const { verifyIssued: verifyIssued$1 } = issued;
   const { verifyRevoked: verifyRevoked$1 } = unrevoked;
 
-  const verify = async document => {
+  /**
+   * @param  {object} document Entire document object to be validated
+   * @param  {string} network Network to check against, defaults to "homestead". Other valid choices: "ropsten", "kovan", etc
+   * @returns
+   */
+  const verify = async (document, network = "homestead") => {
     const verificationsDeferred = [
       verifyHash$1(document),
       verifyIdentity$1(document),
-      verifyIssued$1(document),
-      verifyRevoked$1(document)
+      verifyIssued$1(document, network),
+      verifyRevoked$1(document, network)
     ];
 
     const [hash, identity, issued, revoked] = await Promise.all(
