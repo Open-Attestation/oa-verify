@@ -8,10 +8,16 @@ const documentStore = require("../common/documentStore");
  *
  * @param  {} storeAddress Address of document store to check issue status on
  * @param  {} hash Hash of the merkle root of the document, not the target hash
+ * @param  {} network Ethereum network to check against
  */
-const getIssued = async (storeAddress, hash) => {
+const getIssued = async (storeAddress, hash, network) => {
   try {
-    const issued = await documentStore(storeAddress, "isIssued", `0x${hash}`);
+    const issued = await documentStore({
+      network,
+      storeAddress,
+      method: "isIssued",
+      args: [`0x${hash}`]
+    });
     return issued;
   } catch (e) {
     // If contract is not deployed, the function will throw.
@@ -25,11 +31,12 @@ const getIssued = async (storeAddress, hash) => {
  *
  * @param  {string[]} storeAddresses Array of all store addresses
  * @param  {string} hash Hash of the merkle root of the document, not the target hash
+ * @param  {string} network Ethereum network to check against
  * @return {object} Issue status of the document on each of the store, with store address as the key
  */
-const getIssuedOnAll = async (storeAddresses = [], hash) => {
+const getIssuedOnAll = async (storeAddresses = [], hash, network) => {
   const issueStatusesDefered = storeAddresses.map(storeAddress =>
-    getIssued(storeAddress, hash)
+    getIssued(storeAddress, hash, network)
   );
   const issueStatuses = await Promise.all(issueStatusesDefered);
   return zipObject(storeAddresses, issueStatuses);
@@ -40,10 +47,11 @@ const getIssuedOnAll = async (storeAddresses = [], hash) => {
  *
  * @param  {string[]} storeAddresses Array of all store addresses
  * @param  {string} hash Hash of the merkle root of the document, not the target hash
+ * @param  {string} network Ethereum network to check against
  * @return {object} Object containing valid status and the issued status on all store
  */
-const getIssuedSummary = async (storeAddresses = [], hash) => {
-  const issued = await getIssuedOnAll(storeAddresses, hash);
+const getIssuedSummary = async (storeAddresses = [], hash, network) => {
+  const issued = await getIssuedOnAll(storeAddresses, hash, network);
   const issuedValues = values(issued);
   const valid =
     every(issuedValues, isTrue => isTrue === true) && issuedValues.length > 0;
@@ -57,16 +65,17 @@ const getIssuedSummary = async (storeAddresses = [], hash) => {
  * Provide a summary of issued status, given a document
  *
  * @param  {object} document Raw document data
+ * @param  {string} network Ethereum network to check against
  * @return {object} Summary of validity status, see getIssuedSummary()
  */
-const verifyIssued = document => {
+const verifyIssued = (document, network) => {
   const documentData = getData(document);
   const documentStoreAddresses = get(documentData, "issuers", []).map(
     // Returns the documentStore or certificateStore(openCerts's legacy) address
     i => i.documentStore || i.certificateStore
   );
   const merkleRoot = get(document, "signature.merkleRoot");
-  return getIssuedSummary(documentStoreAddresses, merkleRoot);
+  return getIssuedSummary(documentStoreAddresses, merkleRoot, network);
 };
 
 module.exports = {

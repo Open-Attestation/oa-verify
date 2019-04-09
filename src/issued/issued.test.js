@@ -21,34 +21,56 @@ describe("verify/issued", () => {
   describe("getIssued", () => {
     it("returns true if certificate is issued", async () => {
       documentStore.resolves(true);
-      const isIssued = await getIssued("DocumentStoreAdd", "MerkleRoot");
-      expect(documentStore.args[0]).to.eql([
+      const isIssued = await getIssued(
         "DocumentStoreAdd",
-        "isIssued",
-        "0xMerkleRoot"
+        "MerkleRoot",
+        "network"
+      );
+      expect(documentStore.args[0]).to.eql([
+        {
+          args: ["0xMerkleRoot"],
+          method: "isIssued",
+          network: "network",
+          storeAddress: "DocumentStoreAdd"
+        }
       ]);
       expect(isIssued).to.eql(true);
     });
 
     it("returns false if certificate is not issued", async () => {
       documentStore.resolves(false);
-      const isIssued = await getIssued("DocumentStoreAdd", "MerkleRoot");
-      expect(documentStore.args[0]).to.eql([
+      const isIssued = await getIssued(
         "DocumentStoreAdd",
-        "isIssued",
-        "0xMerkleRoot"
+        "MerkleRoot",
+        "network"
+      );
+      expect(documentStore.args[0]).to.eql([
+        {
+          args: ["0xMerkleRoot"],
+          method: "isIssued",
+          network: "network",
+          storeAddress: "DocumentStoreAdd"
+        }
       ]);
       expect(isIssued).to.eql(false);
     });
 
     it("returns false if documentStore throws", async () => {
       documentStore.rejects(new Error("An Error"));
-      const isIssued = await getIssued("DocumentStoreAdd", "MerkleRoot");
-      expect(documentStore.args[0]).to.eql([
+      const isIssued = await getIssued(
         "DocumentStoreAdd",
-        "isIssued",
-        "0xMerkleRoot"
+        "MerkleRoot",
+        "network"
+      );
+      expect(documentStore.args[0]).to.eql([
+        {
+          args: ["0xMerkleRoot"],
+          method: "isIssued",
+          network: "network",
+          storeAddress: "DocumentStoreAdd"
+        }
       ]);
+
       expect(isIssued).to.eql(false);
     });
   });
@@ -58,10 +80,28 @@ describe("verify/issued", () => {
       documentStore.onCall(0).resolves(true);
       documentStore.onCall(1).resolves(false);
 
-      const isIssued = await getIssuedOnAll(["Store1", "Store2"], "MerkleRoot");
+      const isIssued = await getIssuedOnAll(
+        ["Store1", "Store2"],
+        "MerkleRoot",
+        "network"
+      );
       expect(documentStore.args).to.eql([
-        ["Store1", "isIssued", "0xMerkleRoot"],
-        ["Store2", "isIssued", "0xMerkleRoot"]
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store1"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store2"
+          }
+        ]
       ]);
       expect(isIssued).to.eql({
         Store1: true,
@@ -75,11 +115,26 @@ describe("verify/issued", () => {
       documentStore.resolves(true);
       const isIssued = await getIssuedSummary(
         ["Store1", "Store2"],
-        "MerkleRoot"
+        "MerkleRoot",
+        "network"
       );
       expect(documentStore.args).to.eql([
-        ["Store1", "isIssued", "0xMerkleRoot"],
-        ["Store2", "isIssued", "0xMerkleRoot"]
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store1"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store2"
+          }
+        ]
       ]);
       expect(isIssued).to.eql({
         valid: true,
@@ -95,11 +150,26 @@ describe("verify/issued", () => {
       documentStore.onCall(1).resolves(true);
       const isIssued = await getIssuedSummary(
         ["Store1", "Store2"],
-        "MerkleRoot"
+        "MerkleRoot",
+        "network"
       );
       expect(documentStore.args).to.eql([
-        ["Store1", "isIssued", "0xMerkleRoot"],
-        ["Store2", "isIssued", "0xMerkleRoot"]
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store1"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "Store2"
+          }
+        ]
       ]);
       expect(isIssued).to.eql({
         valid: false,
@@ -129,12 +199,40 @@ describe("verify/issued", () => {
         }
       };
 
-      const verifySummary = await verifyIssued(documentRaw);
+      const verifySummary = await verifyIssued(documentRaw, "network");
       expect(documentStore.args).to.eql([
-        ["CertStore1", "isIssued", "0xMerkleRoot"],
-        ["CertStore2", "isIssued", "0xMerkleRoot"],
-        ["DocStore1", "isIssued", "0xMerkleRoot"],
-        ["DocStore2", "isIssued", "0xMerkleRoot"]
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "CertStore1"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "CertStore2"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "DocStore1"
+          }
+        ],
+        [
+          {
+            args: ["0xMerkleRoot"],
+            method: "isIssued",
+            network: "network",
+            storeAddress: "DocStore2"
+          }
+        ]
       ]);
       expect(verifySummary).to.eql({
         valid: true,

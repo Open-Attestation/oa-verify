@@ -1,7 +1,8 @@
 const verify = require("./index");
 
-const certificateValid = require("../test/fixtures/certificateMainnetValid.json");
+const certificateMainnetValid = require("../test/fixtures/certificateMainnetValid.json");
 const certificateTampered = require("../test/fixtures/tampered-certificate.json");
+const certificateRopstenValid = require("../test/fixtures/certificateRopstenValid.json");
 
 describe("verify(integration)", () => {
   it("returns false if certificate is invalid", async () => {
@@ -27,8 +28,8 @@ describe("verify(integration)", () => {
     });
   }).timeout(5000);
 
-  it("returns true if certificate is valid", async () => {
-    const results = await verify(certificateValid);
+  it("returns true if Mainnet certificate is valid", async () => {
+    const results = await verify(certificateMainnetValid);
 
     expect(results).to.be.eql({
       hash: { valid: true },
@@ -46,6 +47,30 @@ describe("verify(integration)", () => {
       revoked: {
         valid: true,
         revoked: { "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": false }
+      },
+      valid: true
+    });
+  }).timeout(5000);
+
+  it("returns true if Ropsten certificate is valid", async () => {
+    const results = await verify(certificateRopstenValid, "ropsten");
+
+    expect(results).to.be.eql({
+      hash: { valid: true },
+      identity: {
+        valid: true,
+        identities: {
+          "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495":
+            "ROPSTEN: Ngee Ann Polytechnic"
+        }
+      },
+      issued: {
+        valid: true,
+        issued: { "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495": true }
+      },
+      revoked: {
+        valid: true,
+        revoked: { "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495": false }
       },
       valid: true
     });
