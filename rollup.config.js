@@ -1,5 +1,6 @@
 import commonjs from "rollup-plugin-commonjs"; // for resolving require()
 import autoExternal from "rollup-plugin-auto-external"; // automatically including node_modules stuff as external
+import json from "rollup-plugin-json"; // for loading json files
 import pkg from "./package.json";
 
 export default {
@@ -15,5 +16,5 @@ export default {
       format: "es"
     }
   ],
-  plugins: [commonjs(), autoExternal()]
+  plugins: [commonjs(), autoExternal(), json()]
 };
