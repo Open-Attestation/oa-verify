@@ -8,7 +8,7 @@ describe("verify(integration)", () => {
   it("returns false if certificate is invalid", async () => {
     const results = await verify(certificateTampered);
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: false },
       identity: {
         valid: false,
@@ -31,7 +31,7 @@ describe("verify(integration)", () => {
   it("returns true if Mainnet certificate is valid", async () => {
     const results = await verify(certificateMainnetValid);
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: true },
       identity: {
         valid: true,
@@ -55,7 +55,7 @@ describe("verify(integration)", () => {
   it("returns true if Ropsten certificate is valid", async () => {
     const results = await verify(certificateRopstenValid, "ropsten");
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: true },
       identity: {
         valid: true,

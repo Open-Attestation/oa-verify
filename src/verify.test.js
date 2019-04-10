@@ -1,4 +1,3 @@
-const proxyquire = require("proxyquire");
 const sinon = require("sinon");
 
 const verifyHash = sinon.stub();
@@ -6,12 +5,23 @@ const verifyIdentity = sinon.stub();
 const verifyIssued = sinon.stub();
 const verifyRevoked = sinon.stub();
 
-const verify = proxyquire("./index", {
-  "./hash/hash": { verifyHash },
-  "./identity/identity": { verifyIdentity },
-  "./issued/issued": { verifyIssued },
-  "./unrevoked/unrevoked": { verifyRevoked }
-});
+jest.mock("./hash/hash", () => ({
+  verifyHash
+}));
+
+jest.mock("./identity/identity", () => ({
+  verifyIdentity
+}));
+
+jest.mock("./issued/issued", () => ({
+  verifyIssued
+}));
+
+jest.mock("./unrevoked/unrevoked", () => ({
+  verifyRevoked
+}));
+
+const verify = require("./index");
 
 const whenAllTestPasses = () => {
   const valid = true;
@@ -40,7 +50,7 @@ describe("verify", () => {
   it("returns valid as true when all test passes", async () => {
     whenAllTestPasses();
     const summary = await verify("DOCUMENT");
-    expect(summary).to.eql({
+    expect(summary).toEqual({
       hash: { valid: true },
       identity: { valid: true },
       issued: { valid: true },
@@ -52,7 +62,7 @@ describe("verify", () => {
   it("returns valid as false when any test passes", async () => {
     whenIdentityTestFail();
     const summary = await verify("DOCUMENT");
-    expect(summary).to.eql({
+    expect(summary).toEqual({
       hash: { valid: true },
       identity: { valid: false },
       issued: { valid: true },

@@ -1,32 +1,34 @@
 const sinon = require("sinon");
-const proxyquire = require("proxyquire");
 
-const documentStore = sinon.stub();
-const getData = sinon.stub();
+const mockDocumentStore = jest.fn();
+const mockGetData = jest.fn();
+
+jest.mock("../common/documentStore", () => mockDocumentStore);
+jest.mock("@govtechsg/open-attestation", () => ({
+  getData: mockGetData
+}));
+
 const {
   getIssued,
   getIssuedOnAll,
   getIssuedSummary,
   verifyIssued
-} = proxyquire("./issued", {
-  "../common/documentStore": documentStore,
-  "@govtechsg/open-attestation": { getData }
-});
+} = require("./issued");
 
 describe("verify/issued", () => {
   beforeEach(() => {
-    documentStore.reset();
-    getData.reset();
+    mockDocumentStore.mockReset();
+    mockGetData.mockReset();
   });
   describe("getIssued", () => {
     it("returns true if certificate is issued", async () => {
-      documentStore.resolves(true);
+      mockDocumentStore.mockResolvedValueOnce(true);
       const isIssued = await getIssued(
         "DocumentStoreAdd",
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args[0]).to.eql([
+      expect(mockDocumentStore.mock.calls[0]).toEqual([
         {
           args: ["0xMerkleRoot"],
           method: "isIssued",
@@ -34,17 +36,17 @@ describe("verify/issued", () => {
           storeAddress: "DocumentStoreAdd"
         }
       ]);
-      expect(isIssued).to.eql(true);
+      expect(isIssued).toBe(true);
     });
 
     it("returns false if certificate is not issued", async () => {
-      documentStore.resolves(false);
+      mockDocumentStore.mockResolvedValueOnce(false);
       const isIssued = await getIssued(
         "DocumentStoreAdd",
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args[0]).to.eql([
+      expect(mockDocumentStore.mock.calls[0]).toEqual([
         {
           args: ["0xMerkleRoot"],
           method: "isIssued",
@@ -52,17 +54,17 @@ describe("verify/issued", () => {
           storeAddress: "DocumentStoreAdd"
         }
       ]);
-      expect(isIssued).to.eql(false);
+      expect(isIssued).toBe(false);
     });
 
-    it("returns false if documentStore throws", async () => {
-      documentStore.rejects(new Error("An Error"));
+    it("returns false if mockDocumentStore throws", async () => {
+      mockDocumentStore.mockRejectedValue(new Error("An Error"));
       const isIssued = await getIssued(
         "DocumentStoreAdd",
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args[0]).to.eql([
+      expect(mockDocumentStore.mock.calls[0]).toEqual([
         {
           args: ["0xMerkleRoot"],
           method: "isIssued",
@@ -71,21 +73,22 @@ describe("verify/issued", () => {
         }
       ]);
 
-      expect(isIssued).to.eql(false);
+      expect(isIssued).toBe(false);
     });
   });
 
   describe("getIssuedOnAll", () => {
     it("returns issued status for all store", async () => {
-      documentStore.onCall(0).resolves(true);
-      documentStore.onCall(1).resolves(false);
+      mockDocumentStore
+        .mockResolvedValueOnce(true)
+        .mockResolvedValueOnce(false);
 
       const isIssued = await getIssuedOnAll(
         ["Store1", "Store2"],
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             args: ["0xMerkleRoot"],
@@ -103,7 +106,7 @@ describe("verify/issued", () => {
           }
         ]
       ]);
-      expect(isIssued).to.eql({
+      expect(isIssued).toEqual({
         Store1: true,
         Store2: false
       });
@@ -112,13 +115,13 @@ describe("verify/issued", () => {
 
   describe("getIssuedSummary", () => {
     it("returns true for certificates issued on all stores", async () => {
-      documentStore.resolves(true);
+      mockDocumentStore.mockResolvedValue(true);
       const isIssued = await getIssuedSummary(
         ["Store1", "Store2"],
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             args: ["0xMerkleRoot"],
@@ -136,7 +139,7 @@ describe("verify/issued", () => {
           }
         ]
       ]);
-      expect(isIssued).to.eql({
+      expect(isIssued).toEqual({
         valid: true,
         issued: {
           Store1: true,
@@ -146,14 +149,15 @@ describe("verify/issued", () => {
     });
 
     it("returns false when certificates is not issued on any stores", async () => {
-      documentStore.onCall(0).resolves(false);
-      documentStore.onCall(1).resolves(true);
+      mockDocumentStore
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true);
       const isIssued = await getIssuedSummary(
         ["Store1", "Store2"],
         "MerkleRoot",
         "network"
       );
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             args: ["0xMerkleRoot"],
@@ -171,7 +175,7 @@ describe("verify/issued", () => {
           }
         ]
       ]);
-      expect(isIssued).to.eql({
+      expect(isIssued).toEqual({
         valid: false,
         issued: {
           Store1: false,
@@ -183,8 +187,8 @@ describe("verify/issued", () => {
 
   describe("verifyIssued", () => {
     it("returns the summary of the issued check, given a certificate", async () => {
-      // Mocks OA getData
-      getData.returns({
+      // Mocks OA mockGetData
+      mockGetData.mockReturnValue({
         issuers: [
           { certificateStore: "CertStore1" },
           { certificateStore: "CertStore2" },
@@ -192,7 +196,7 @@ describe("verify/issued", () => {
           { documentStore: "DocStore2" }
         ]
       });
-      documentStore.resolves(true);
+      mockDocumentStore.mockResolvedValue(true);
       const documentRaw = {
         signature: {
           merkleRoot: "MerkleRoot"
@@ -200,7 +204,7 @@ describe("verify/issued", () => {
       };
 
       const verifySummary = await verifyIssued(documentRaw, "network");
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             args: ["0xMerkleRoot"],
@@ -234,7 +238,7 @@ describe("verify/issued", () => {
           }
         ]
       ]);
-      expect(verifySummary).to.eql({
+      expect(verifySummary).toEqual({
         valid: true,
         issued: {
           CertStore1: true,

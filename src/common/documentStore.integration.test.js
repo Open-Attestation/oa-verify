@@ -45,7 +45,7 @@ describe("documentStoreApi(integration)", () => {
         "0x1a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6"
       ]
     });
-    expect(issuedStatus).to.be.eql(true);
+    expect(issuedStatus).toBe(true);
 
     const notIssuedStatus = await documentStore({
       storeAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
@@ -54,7 +54,7 @@ describe("documentStoreApi(integration)", () => {
         "0x0000000000000000000000000000000000000000000000000000000000000000"
       ]
     });
-    expect(notIssuedStatus).to.be.eql(false);
+    expect(notIssuedStatus).toBe(false);
   }).timeout(20000);
 
   it("should works for isRevoked", async () => {
@@ -65,7 +65,7 @@ describe("documentStoreApi(integration)", () => {
         "0x0000000000000000000000000000000000000000000000000000000000000001"
       ]
     });
-    expect(revokedStatus).to.be.eql(true);
+    expect(revokedStatus).toBe(true);
 
     const notRevokedStatus = await documentStore({
       storeAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
@@ -74,6 +74,6 @@ describe("documentStoreApi(integration)", () => {
         "0x0000000000000000000000000000000000000000000000000000000000000000"
       ]
     });
-    expect(notRevokedStatus).to.be.eql(false);
+    expect(notRevokedStatus).toBe(false);
   }).timeout(20000);
 });
