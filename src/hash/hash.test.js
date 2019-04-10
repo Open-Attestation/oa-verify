@@ -5,10 +5,10 @@ const certificateTampered = require("../../test/fixtures/tampered-certificate.js
 describe("verify/hash", () => {
   describe("verifyHash", () => {
     it("should return true for untampered certificate", () => {
-      expect(verifyHash(certificate)).to.eql({ valid: true });
+      expect(verifyHash(certificate)).toEqual({ valid: true });
     });
     it("should return false for tampered certificate", () => {
-      expect(verifyHash(certificateTampered)).to.eql({ valid: false });
+      expect(verifyHash(certificateTampered)).toEqual({ valid: false });
     });
   });
 });

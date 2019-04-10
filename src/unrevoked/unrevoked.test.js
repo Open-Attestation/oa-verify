@@ -1,9 +1,11 @@
-const proxyquire = require("proxyquire");
-const sinon = require("sinon");
-const { utils } = require("@govtechsg/open-attestation");
+const openAttestation = require("@govtechsg/open-attestation");
 
-const getData = sinon.stub();
-const documentStore = sinon.stub();
+const mockGetData = jest.fn();
+const mockDocumentStore = jest.fn();
+
+jest.mock("../common/documentStore", () => mockDocumentStore);
+
+openAttestation.getData = mockGetData;
 
 const {
   getRevoked,
@@ -12,15 +14,12 @@ const {
   verifyRevoked,
   getIntermediateHashes,
   getIssuedSummary
-} = proxyquire("./unrevoked", {
-  "../common/documentStore": documentStore,
-  "@govtechsg/open-attestation": { utils, getData }
-});
+} = require("./unrevoked");
 
 describe("verify/revoked", () => {
   beforeEach(() => {
-    getData.reset();
-    documentStore.reset();
+    mockGetData.mockReset();
+    mockDocumentStore.mockReset();
   });
   describe("getIntermediateHashes", () => {
     it("returns array with single hash if no proof is present", () => {
@@ -30,8 +29,8 @@ describe("verify/revoked", () => {
         "f7432b3219b2aa4122e289f44901830fa32f224ee9dfce28565677f1d279b2c7"
       ];
 
-      expect(getIntermediateHashes(targetHash)).to.eql(expected);
-      expect(getIntermediateHashes(targetHash, [])).to.eql(expected);
+      expect(getIntermediateHashes(targetHash)).toEqual(expected);
+      expect(getIntermediateHashes(targetHash, [])).toEqual(expected);
     });
 
     it("returns array of target hash, intermediate hashes up to merkle root when given target hash and proofs", () => {
@@ -47,16 +46,16 @@ describe("verify/revoked", () => {
         "fcfce0e79adc002c1fd78a2a02c768c0fdc00e5b96f1da8ef80bed02876e18d1"
       ];
 
-      expect(getIntermediateHashes(targetHash, proofs)).to.eql(expected);
+      expect(getIntermediateHashes(targetHash, proofs)).toEqual(expected);
     });
   });
 
   describe("getRevoked", () => {
     it("returns true when the document is revoked", async () => {
-      documentStore.resolves(true);
+      mockDocumentStore.mockResolvedValue(true);
       const revoked = await getRevoked("Store1", "ab12", "network");
-      expect(revoked).to.eql(true);
-      expect(documentStore.args[0][0]).to.eql({
+      expect(revoked).toBe(true);
+      expect(mockDocumentStore.mock.calls[0][0]).toEqual({
         storeAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
@@ -65,10 +64,10 @@ describe("verify/revoked", () => {
     });
 
     it("returns false when the document is not revoked", async () => {
-      documentStore.resolves(false);
+      mockDocumentStore.mockResolvedValue(false);
       const revoked = await getRevoked("Store1", "ab12", "network");
-      expect(revoked).to.eql(false);
-      expect(documentStore.args[0][0]).to.eql({
+      expect(revoked).toBe(false);
+      expect(mockDocumentStore.mock.calls[0][0]).toEqual({
         storeAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
@@ -77,10 +76,10 @@ describe("verify/revoked", () => {
     });
 
     it("returns true when api throws", async () => {
-      documentStore.rejects(new Error());
+      mockDocumentStore.mockRejectedValue(new Error());
       const revoked = await getRevoked("Store1", "ab12", "network");
-      expect(revoked).to.eql(true);
-      expect(documentStore.args[0][0]).to.eql({
+      expect(revoked).toBe(true);
+      expect(mockDocumentStore.mock.calls[0][0]).toEqual({
         storeAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
@@ -91,14 +90,14 @@ describe("verify/revoked", () => {
 
   describe("getRevokedByStore", () => {
     it("returns false if all the hashes are not revoked on the store", async () => {
-      documentStore.resolves(false);
+      mockDocumentStore.mockResolvedValue(false);
       const revoked = await getRevokedByStore(
         "s1",
         ["h1", "h2", "h3"],
         "network"
       );
-      expect(revoked).to.eql(false);
-      expect(documentStore.args).to.eql([
+      expect(revoked).toBe(false);
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             storeAddress: "s1",
@@ -126,16 +125,17 @@ describe("verify/revoked", () => {
       ]);
     });
     it("returns true if any of the hash is revoked on the store", async () => {
-      documentStore.resolves(false);
-      documentStore.onCall(1).resolves(true);
+      mockDocumentStore
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true);
 
       const revoked = await getRevokedByStore(
         "s1",
         ["h1", "h2", "h3"],
         "network"
       );
-      expect(revoked).to.eql(true);
-      expect(documentStore.args).to.eql([
+      expect(revoked).toBe(true);
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             storeAddress: "s1",
@@ -166,8 +166,11 @@ describe("verify/revoked", () => {
 
   describe("getRevokedOnAllStore", () => {
     it("returns object of the revoke status, mapped to individual store addresses", async () => {
-      documentStore.resolves(false);
-      documentStore.onCall(3).resolves(true);
+      mockDocumentStore
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true);
 
       const revoked = await getRevokedOnAllStore(
         ["s1", "s2"],
@@ -175,7 +178,7 @@ describe("verify/revoked", () => {
         "network"
       );
 
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             storeAddress: "s1",
@@ -225,29 +228,32 @@ describe("verify/revoked", () => {
           }
         ]
       ]);
-      expect(revoked).to.eql({ s1: false, s2: true });
+      expect(revoked).toEqual({ s1: false, s2: true });
     });
   });
 
   describe("getIssuedSummary", () => {
     it("returns true for summary if hashes are not revoked in any store", async () => {
-      documentStore.resolves(false);
+      mockDocumentStore.mockResolvedValue(false);
 
       const summary = await getIssuedSummary(["s1", "s2"], ["h1", "h2", "h3"]);
 
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: true,
         revoked: { s1: false, s2: false }
       });
     });
 
     it("returns false for summary if hashes are revoked on any store", async () => {
-      documentStore.resolves(false);
-      documentStore.onCall(3).resolves(true);
+      mockDocumentStore
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true);
 
       const summary = await getIssuedSummary(["s1", "s2"], ["h1", "h2", "h3"]);
 
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: false,
         revoked: { s1: false, s2: true }
       });
@@ -256,10 +262,10 @@ describe("verify/revoked", () => {
 
   describe("verifyRevoked", () => {
     it("returns correct summary for document not revoked", async () => {
-      getData.returns({
+      mockGetData.mockReturnValue({
         issuers: [{ certificateStore: "s1" }, { documentStore: "s2" }]
       });
-      documentStore.resolves(false);
+      mockDocumentStore.mockResolvedValue(false);
       const document = {
         signature: {
           targetHash:
@@ -271,11 +277,11 @@ describe("verify/revoked", () => {
         }
       };
       const summary = await verifyRevoked(document, "network");
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: true,
         revoked: { s1: false, s2: false }
       });
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             storeAddress: "s1",
@@ -340,11 +346,14 @@ describe("verify/revoked", () => {
     });
 
     it("returns correct summary for document that is revoked", async () => {
-      getData.returns({
+      mockGetData.mockReturnValue({
         issuers: [{ certificateStore: "s1" }, { documentStore: "s2" }]
       });
-      documentStore.resolves(false);
-      documentStore.onCall(3).resolves(true);
+      mockDocumentStore
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(false)
+        .mockResolvedValueOnce(true);
 
       const document = {
         signature: {
@@ -357,11 +366,11 @@ describe("verify/revoked", () => {
         }
       };
       const summary = await verifyRevoked(document, "network");
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: false,
         revoked: { s1: false, s2: true }
       });
-      expect(documentStore.args).to.eql([
+      expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
             storeAddress: "s1",

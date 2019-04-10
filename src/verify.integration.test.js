@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 const verify = require("./index");
 
 const certificateMainnetValid = require("../test/fixtures/certificateMainnetValid.json");
@@ -8,7 +12,7 @@ describe("verify(integration)", () => {
   it("returns false if certificate is invalid", async () => {
     const results = await verify(certificateTampered);
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: false },
       identity: {
         valid: false,
@@ -26,12 +30,12 @@ describe("verify(integration)", () => {
       },
       valid: false
     });
-  }).timeout(5000);
+  });
 
   it("returns true if Mainnet certificate is valid", async () => {
     const results = await verify(certificateMainnetValid);
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: true },
       identity: {
         valid: true,
@@ -50,12 +54,12 @@ describe("verify(integration)", () => {
       },
       valid: true
     });
-  }).timeout(5000);
+  });
 
   it("returns true if Ropsten certificate is valid", async () => {
     const results = await verify(certificateRopstenValid, "ropsten");
 
-    expect(results).to.be.eql({
+    expect(results).toEqual({
       hash: { valid: true },
       identity: {
         valid: true,
@@ -74,5 +78,5 @@ describe("verify(integration)", () => {
       },
       valid: true
     });
-  }).timeout(5000);
+  });
 });

@@ -1,30 +1,27 @@
-const proxyquire = require("proxyquire");
-const sinon = require("sinon");
+const mockGetIdentity = jest.fn();
+const mockGetData = jest.fn();
 
-const getIdentity = sinon.stub();
-const getData = sinon.stub();
+jest.mock("../common/identityRegistry", () => ({
+  getIdentity: mockGetIdentity
+}));
+jest.mock("@govtechsg/open-attestation", () => ({ getData: mockGetData }));
+
 const {
   getIdentities,
   isAllIdentityValid,
   getIdentitySummary,
   verifyIdentity
-} = proxyquire("./identity", {
-  "../common/identityRegistry": { getIdentity },
-  "@govtechsg/open-attestation": { getData }
-});
+} = require("./identity");
 
 describe("verify/identity", () => {
-  beforeEach(() => {
-    getIdentity.reset();
-  });
-
   describe("getIdentities", () => {
     it("returns object of identities where the identifier is the key", async () => {
-      getIdentity.onCall(0).resolves("Foo-ID");
-      getIdentity.onCall(1).resolves(undefined);
+      mockGetIdentity
+        .mockResolvedValueOnce("Foo-ID")
+        .mockResolvedValueOnce(undefined);
       const identities = await getIdentities(["Foo", "Bar"]);
-      expect(getIdentity.args).to.eql([["Foo"], ["Bar"]]);
-      expect(identities).to.eql({
+      expect(mockGetIdentity.mock.calls).toEqual([["Foo"], ["Bar"]]);
+      expect(identities).toEqual({
         Foo: "Foo-ID",
         Bar: undefined
       });
@@ -38,7 +35,7 @@ describe("verify/identity", () => {
         Bar: undefined
       };
       const valid = isAllIdentityValid(identities);
-      expect(valid).to.eql(false);
+      expect(valid).toBe(false);
     });
 
     it("returns true if all identifiers resolves", async () => {
@@ -47,26 +44,28 @@ describe("verify/identity", () => {
         Bar: "Bar-ID"
       };
       const valid = isAllIdentityValid(identities);
-      expect(valid).to.eql(true);
+      expect(valid).toBe(true);
     });
   });
 
   describe("getIdentitySummary", () => {
     it("returns summary with invalid status if any identifier does not resolve", async () => {
-      getIdentity.onCall(0).resolves("Foo-ID");
-      getIdentity.onCall(1).resolves(undefined);
+      mockGetIdentity
+        .mockResolvedValueOnce("Foo-ID")
+        .mockResolvedValueOnce(undefined);
       const summary = await getIdentitySummary(["Foo", "Bar"]);
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: false,
         identities: { Foo: "Foo-ID", Bar: undefined }
       });
     });
 
     it("returns summary with vallid status if all identifier resolves", async () => {
-      getIdentity.onCall(0).resolves("Foo-ID");
-      getIdentity.onCall(1).resolves("Bar-ID");
+      mockGetIdentity
+        .mockResolvedValueOnce("Foo-ID")
+        .mockResolvedValueOnce("Bar-ID");
       const summary = await getIdentitySummary(["Foo", "Bar"]);
-      expect(summary).to.eql({
+      expect(summary).toEqual({
         valid: true,
         identities: { Foo: "Foo-ID", Bar: "Bar-ID" }
       });
@@ -75,7 +74,7 @@ describe("verify/identity", () => {
 
   describe("verifyIdentity", () => {
     it("returns the identity summary of the document", async () => {
-      getData.returns({
+      mockGetData.mockReturnValue({
         issuers: [
           { certificateStore: "CertStore1" },
           { certificateStore: "CertStore2" },
@@ -83,15 +82,16 @@ describe("verify/identity", () => {
           { documentStore: "DocStore2" }
         ]
       });
-      getIdentity.onCall(0).resolves("Foo-ID");
-      getIdentity.onCall(1).resolves("Bar-ID");
-      getIdentity.onCall(2).resolves(undefined);
-      getIdentity.onCall(3).resolves("Moo-ID");
+      mockGetIdentity
+        .mockResolvedValueOnce("Foo-ID")
+        .mockResolvedValueOnce("Bar-ID")
+        .mockResolvedValueOnce(undefined)
+        .mockResolvedValueOnce("Moo-ID");
 
       const document = "DOCUMENT";
       const summary = await verifyIdentity(document);
-      expect(getData.args[0]).to.eql(["DOCUMENT"]);
-      expect(summary).to.eql({
+      expect(mockGetData.mock.calls[0]).toEqual(["DOCUMENT"]);
+      expect(summary).toEqual({
         valid: false,
         identities: {
           CertStore1: "Foo-ID",
