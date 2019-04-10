@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 const documentStore = require("./documentStore");
 
 describe("documentStoreApi(integration)", () => {
@@ -10,8 +13,8 @@ describe("documentStoreApi(integration)", () => {
           "0x0000000000000000000000000000000000000000000000000000000000000000"
         ]
       })
-    ).to.eventually.be.rejectedWith("contract not deployed");
-  }).timeout(10000);
+    ).rejects.toThrow("contract not deployed");
+  });
 
   it("should reject for args not conforming to ABI", async () => {
     await expect(
@@ -20,8 +23,8 @@ describe("documentStoreApi(integration)", () => {
         method: "isIssued",
         args: ["0000"]
       })
-    ).to.eventually.be.rejectedWith("invalid input argument");
-  }).timeout(10000);
+    ).rejects.toThrow("invalid input argument");
+  });
 
   it("should reject for undefined function", async () => {
     await expect(
@@ -32,10 +35,8 @@ describe("documentStoreApi(integration)", () => {
           "0x0000000000000000000000000000000000000000000000000000000000000000"
         ]
       })
-    ).to.eventually.be.rejectedWith(
-      "contract.functions[method] is not a function"
-    );
-  }).timeout(10000);
+    ).rejects.toThrow("contract.functions[method] is not a function");
+  });
 
   it("should works for isIssued", async () => {
     const issuedStatus = await documentStore({
@@ -55,7 +56,7 @@ describe("documentStoreApi(integration)", () => {
       ]
     });
     expect(notIssuedStatus).toBe(false);
-  }).timeout(20000);
+  });
 
   it("should works for isRevoked", async () => {
     const revokedStatus = await documentStore({
@@ -75,5 +76,5 @@ describe("documentStoreApi(integration)", () => {
       ]
     });
     expect(notRevokedStatus).toBe(false);
-  }).timeout(20000);
+  });
 });

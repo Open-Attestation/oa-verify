@@ -1,3 +1,7 @@
+/**
+ * @jest-environment node
+ */
+
 const verify = require("./index");
 
 const certificateMainnetValid = require("../test/fixtures/certificateMainnetValid.json");
@@ -26,7 +30,7 @@ describe("verify(integration)", () => {
       },
       valid: false
     });
-  }).timeout(5000);
+  });
 
   it("returns true if Mainnet certificate is valid", async () => {
     const results = await verify(certificateMainnetValid);
@@ -50,7 +54,7 @@ describe("verify(integration)", () => {
       },
       valid: true
     });
-  }).timeout(5000);
+  });
 
   it("returns true if Ropsten certificate is valid", async () => {
     const results = await verify(certificateRopstenValid, "ropsten");
@@ -74,5 +78,5 @@ describe("verify(integration)", () => {
       },
       valid: true
     });
-  }).timeout(5000);
+  });
 });

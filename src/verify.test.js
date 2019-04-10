@@ -1,50 +1,48 @@
-const sinon = require("sinon");
-
-const verifyHash = sinon.stub();
-const verifyIdentity = sinon.stub();
-const verifyIssued = sinon.stub();
-const verifyRevoked = sinon.stub();
+const mockVerifyHash = jest.fn();
+const mockVerifyIdentity = jest.fn();
+const mockVerifyIssued = jest.fn();
+const mockVerifyRevoked = jest.fn();
 
 jest.mock("./hash/hash", () => ({
-  verifyHash
+  verifyHash: mockVerifyHash
 }));
 
 jest.mock("./identity/identity", () => ({
-  verifyIdentity
+  verifyIdentity: mockVerifyIdentity
 }));
 
 jest.mock("./issued/issued", () => ({
-  verifyIssued
+  verifyIssued: mockVerifyIssued
 }));
 
 jest.mock("./unrevoked/unrevoked", () => ({
-  verifyRevoked
+  verifyRevoked: mockVerifyRevoked
 }));
 
 const verify = require("./index");
 
 const whenAllTestPasses = () => {
   const valid = true;
-  verifyHash.resolves({ valid });
-  verifyIdentity.resolves({ valid });
-  verifyIssued.resolves({ valid });
-  verifyRevoked.resolves({ valid });
+  mockVerifyHash.mockResolvedValue({ valid });
+  mockVerifyIdentity.mockResolvedValue({ valid });
+  mockVerifyIssued.mockResolvedValue({ valid });
+  mockVerifyRevoked.mockResolvedValue({ valid });
 };
 
 const whenIdentityTestFail = () => {
   const valid = true;
-  verifyHash.resolves({ valid });
-  verifyIdentity.resolves({ valid: false });
-  verifyIssued.resolves({ valid });
-  verifyRevoked.resolves({ valid });
+  mockVerifyHash.mockResolvedValue({ valid });
+  mockVerifyIdentity.mockResolvedValue({ valid: false });
+  mockVerifyIssued.mockResolvedValue({ valid });
+  mockVerifyRevoked.mockResolvedValue({ valid });
 };
 
 describe("verify", () => {
   beforeEach(() => {
-    verifyHash.reset();
-    verifyIdentity.reset();
-    verifyIssued.reset();
-    verifyRevoked.reset();
+    mockVerifyHash.mockReset();
+    mockVerifyIdentity.mockReset();
+    mockVerifyIssued.mockReset();
+    mockVerifyRevoked.mockReset();
   });
 
   it("returns valid as true when all test passes", async () => {

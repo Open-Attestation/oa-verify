@@ -1,9 +1,7 @@
-const sinon = require("sinon");
+const mockAxios = jest.fn();
 
-const axios = sinon.stub();
-
-jest.mock(axios, () => ({
-  get: axios
+jest.mock("axios", () => ({
+  get: mockAxios
 }));
 
 const { setCache, isValidData, fetchData, getIdentity } = require("./identityRegistry");
@@ -35,8 +33,8 @@ const whenHasCachedData = () => {
 describe("identityRegistry", () => {
   beforeEach(() => {
     setCache(undefined, undefined);
-    axios.reset();
-    axios.resolves(freshData);
+    mockAxios.mockReset();
+    mockAxios.mockResolvedValue(freshData);
   });
 
   describe("isValidData", () => {

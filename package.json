@@ -6,7 +6,7 @@
   "module": "dist/oa-verify.esm.js",
   "scripts": {
     "build": "rollup -c",
-    "test": "jest src/issued/issued.test.js",
+    "test": "jest",
     "test-watch": "mocha './src/**/*.test.js' --watch",
     "lint": "eslint . --ext .js --max-warnings 0",
     "lint:fix": "eslint . --ext .js --fix"

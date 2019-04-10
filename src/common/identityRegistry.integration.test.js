@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 const { getIdentity } = require("./identityRegistry");
 
 describe("identityRegistry(integration)", () => {
