@@ -1,5 +1,3 @@
-const sinon = require("sinon");
-
 const mockDocumentStore = jest.fn();
 const mockGetData = jest.fn();
 

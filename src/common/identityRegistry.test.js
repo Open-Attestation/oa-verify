@@ -4,7 +4,12 @@ jest.mock("axios", () => ({
   get: mockAxios
 }));
 
-const { setCache, isValidData, fetchData, getIdentity } = require("./identityRegistry");
+const {
+  setCache,
+  isValidData,
+  fetchData,
+  getIdentity
+} = require("./identityRegistry");
 
 const freshData = {
   data: {

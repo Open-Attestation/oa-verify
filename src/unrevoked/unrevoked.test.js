@@ -33,11 +33,11 @@ describe("verify/revoked", () => {
       expect(getIntermediateHashes(targetHash, [])).toEqual(expected);
     });
 
-    it.skip("returns array of target hash, intermediate hashes up to merkle root when given target hash and proofs", () => {
+    it("returns array of target hash, intermediate hashes up to merkle root when given target hash and proofs", () => {
       const targetHash =
         "f7432b3219b2aa4122e289f44901830fa32f224ee9dfce28565677f1d279b2c7";
       const proofs = [
-        "2bb9dd186994f38084ee68e06be848b9d43077c30q7684c300d81df343c7858cf",
+        "2bb9dd186994f38084ee68e06be848b9d43077c307684c300d81df343c7858cf",
         "ed8bdba60a24af04bcdcd88b939251f3843e03839164fdd2dd502aaeef3bfb99"
       ];
       const expected = [
@@ -45,7 +45,7 @@ describe("verify/revoked", () => {
         "fe0958c4b90e768cecb50cea207f3af034580703e9ed74ef460c1a31dd1b4d6c",
         "fcfce0e79adc002c1fd78a2a02c768c0fdc00e5b96f1da8ef80bed02876e18d1"
       ];
-      
+
       expect(getIntermediateHashes(targetHash, proofs)).toEqual(expected);
     });
   });
