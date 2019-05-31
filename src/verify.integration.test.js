@@ -4,22 +4,16 @@
 
 const verify = require("./index");
 
-const certificateMainnetValid = require("../test/fixtures/certificateMainnetValid.json");
-const certificateTampered = require("../test/fixtures/tampered-certificate.json");
-const certificateRopstenValid = require("../test/fixtures/certificateRopstenValid.json");
+const documentMainnetValid = require("../test/fixtures/documentMainnetValid.json");
+const documentTampered = require("../test/fixtures/tampered-document.json");
+const documentRopstenValid = require("../test/fixtures/documentRopstenValid.json");
 
 describe("verify(integration)", () => {
-  it("returns false if certificate is invalid", async () => {
-    const results = await verify(certificateTampered);
+  it("returns false if document is invalid", async () => {
+    const results = await verify(documentTampered);
 
     expect(results).toEqual({
       hash: { valid: false },
-      identity: {
-        valid: false,
-        identities: {
-          "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990": undefined
-        }
-      },
       issued: {
         valid: false,
         issued: { "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990": false }
@@ -32,18 +26,11 @@ describe("verify(integration)", () => {
     });
   });
 
-  it("returns true if Mainnet certificate is valid", async () => {
-    const results = await verify(certificateMainnetValid);
+  it("returns true if Mainnet document is valid", async () => {
+    const results = await verify(documentMainnetValid);
 
     expect(results).toEqual({
       hash: { valid: true },
-      identity: {
-        valid: true,
-        identities: {
-          "0x007d40224f6562461633ccfbaffd359ebb2fc9ba":
-            "Government Technology Agency of Singapore (GovTech)"
-        }
-      },
       issued: {
         valid: true,
         issued: { "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": true }
@@ -56,18 +43,11 @@ describe("verify(integration)", () => {
     });
   });
 
-  it("returns true if Ropsten certificate is valid", async () => {
-    const results = await verify(certificateRopstenValid, "ropsten");
+  it("returns true if Ropsten document is valid", async () => {
+    const results = await verify(documentRopstenValid, "ropsten");
 
     expect(results).toEqual({
       hash: { valid: true },
-      identity: {
-        valid: true,
-        identities: {
-          "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495":
-            "ROPSTEN: Ngee Ann Polytechnic"
-        }
-      },
       issued: {
         valid: true,
         issued: { "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495": true }

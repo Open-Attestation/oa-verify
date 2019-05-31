@@ -1,14 +1,9 @@
 const mockVerifyHash = jest.fn();
-const mockVerifyIdentity = jest.fn();
 const mockVerifyIssued = jest.fn();
 const mockVerifyRevoked = jest.fn();
 
 jest.mock("./hash/hash", () => ({
   verifyHash: mockVerifyHash
-}));
-
-jest.mock("./identity/identity", () => ({
-  verifyIdentity: mockVerifyIdentity
 }));
 
 jest.mock("./issued/issued", () => ({
@@ -24,23 +19,20 @@ const verify = require("./index");
 const whenAllTestPasses = () => {
   const valid = true;
   mockVerifyHash.mockResolvedValue({ valid });
-  mockVerifyIdentity.mockResolvedValue({ valid });
   mockVerifyIssued.mockResolvedValue({ valid });
   mockVerifyRevoked.mockResolvedValue({ valid });
 };
 
-const whenIdentityTestFail = () => {
+const whenIssueTestFail = () => {
   const valid = true;
   mockVerifyHash.mockResolvedValue({ valid });
-  mockVerifyIdentity.mockResolvedValue({ valid: false });
-  mockVerifyIssued.mockResolvedValue({ valid });
+  mockVerifyIssued.mockResolvedValue({ valid: false });
   mockVerifyRevoked.mockResolvedValue({ valid });
 };
 
 describe("verify", () => {
   beforeEach(() => {
     mockVerifyHash.mockReset();
-    mockVerifyIdentity.mockReset();
     mockVerifyIssued.mockReset();
     mockVerifyRevoked.mockReset();
   });
@@ -50,7 +42,6 @@ describe("verify", () => {
     const summary = await verify("DOCUMENT");
     expect(summary).toEqual({
       hash: { valid: true },
-      identity: { valid: true },
       issued: { valid: true },
       revoked: { valid: true },
       valid: true
@@ -58,12 +49,11 @@ describe("verify", () => {
   });
 
   it("returns valid as false when any test passes", async () => {
-    whenIdentityTestFail();
+    whenIssueTestFail();
     const summary = await verify("DOCUMENT");
     expect(summary).toEqual({
       hash: { valid: true },
-      identity: { valid: false },
-      issued: { valid: true },
+      issued: { valid: false },
       revoked: { valid: true },
       valid: false
     });
