@@ -1,5 +1,5 @@
 const { verifySignature } = require("@govtechsg/open-attestation");
 
-const verifyHash = certificate => ({ valid: verifySignature(certificate) });
+const verifyHash = document => ({ valid: verifySignature(document) });
 
 module.exports = { verifyHash };
