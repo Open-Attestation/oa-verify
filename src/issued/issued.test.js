@@ -19,7 +19,7 @@ describe("verify/issued", () => {
     mockGetData.mockReset();
   });
   describe("getIssued", () => {
-    it("returns true if certificate is issued", async () => {
+    it("returns true if document is issued", async () => {
       mockDocumentStore.mockResolvedValueOnce(true);
       const isIssued = await getIssued(
         "DocumentStoreAdd",
@@ -37,7 +37,7 @@ describe("verify/issued", () => {
       expect(isIssued).toBe(true);
     });
 
-    it("returns false if certificate is not issued", async () => {
+    it("returns false if document is not issued", async () => {
       mockDocumentStore.mockResolvedValueOnce(false);
       const isIssued = await getIssued(
         "DocumentStoreAdd",
@@ -112,7 +112,7 @@ describe("verify/issued", () => {
   });
 
   describe("getIssuedSummary", () => {
-    it("returns true for certificates issued on all stores", async () => {
+    it("returns true for documents issued on all stores", async () => {
       mockDocumentStore.mockResolvedValue(true);
       const isIssued = await getIssuedSummary(
         ["Store1", "Store2"],
@@ -146,7 +146,7 @@ describe("verify/issued", () => {
       });
     });
 
-    it("returns false when certificates is not issued on any stores", async () => {
+    it("returns false when documents is not issued on any stores", async () => {
       mockDocumentStore
         .mockResolvedValueOnce(false)
         .mockResolvedValueOnce(true);
@@ -184,12 +184,12 @@ describe("verify/issued", () => {
   });
 
   describe("verifyIssued", () => {
-    it("returns the summary of the issued check, given a certificate", async () => {
+    it("returns the summary of the issued check, given a document", async () => {
       // Mocks OA mockGetData
       mockGetData.mockReturnValue({
         issuers: [
-          { certificateStore: "CertStore1" },
-          { certificateStore: "CertStore2" },
+          { documentStore: "CertStore1" },
+          { documentStore: "CertStore2" },
           { documentStore: "DocStore1" },
           { documentStore: "DocStore2" }
         ]
