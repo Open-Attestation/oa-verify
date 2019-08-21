@@ -16,7 +16,7 @@
   "dependencies": {
     "@govtechsg/open-attestation": "^1.1.30",
     "ethers": "^4.0.27",
-    "lodash": "^4.17.11"
+    "lodash": "^4.17.15"
   },
   "devDependencies": {
     "eslint": "^5.16.0",
