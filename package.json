@@ -1,6 +1,6 @@
 {
   "name": "@govtechsg/oa-verify",
-  "version": "1.0.15",
+  "version": "0.0.0-development",
   "description": "",
   "main": "dist/oa-verify.js",
   "module": "dist/oa-verify.esm.js",
@@ -12,7 +12,7 @@
     "lint:fix": "eslint . --ext .js --fix"
   },
   "author": "",
-  "license": "Apache-2.0",
+  "license": "GPL-3.0",
   "dependencies": {
     "@govtechsg/open-attestation": "^1.1.30",
     "ethers": "^4.0.27",
@@ -26,14 +26,18 @@
     "eslint-plugin-jest": "^22.4.1",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.7.1",
-    "lerna": "^3.13.1",
     "prettier": "^1.16.4",
     "rollup": "^1.7.4",
     "rollup-plugin-auto-external": "^2.0.0",
     "rollup-plugin-commonjs": "^9.2.2",
-    "rollup-plugin-json": "^4.0.0"
+    "rollup-plugin-json": "^4.0.0",
+    "semantic-release": "^15.13.24"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Open-Attestation/oa-verify.git"
   }
 }
