@@ -1,6 +1,6 @@
 # @govtechsg/oa-verify
 
-![Travis build status](https://travis-ci.org/OpenCerts/oa-verify.svg?branch=master)
+[![CircleCI](https://circleci.com/gh/Open-Attestation/oa-verify.svg?style=svg)](https://circleci.com/gh/Open-Attestation/oa-verify)
 
 Library to verify any [OpenAttestation](https://github.com/OpenCerts/open-attestation) document.
 
@@ -48,4 +48,4 @@ verify(document).then(console.log);
 
 ## License
 
-[Apache v2.0](https://www.apache.org/licenses/LICENSE-2.0)
+[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
