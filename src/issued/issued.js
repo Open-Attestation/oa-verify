@@ -1,7 +1,7 @@
 const { get, every, values, zipObject } = require("lodash");
 const { getData } = require("@govtechsg/open-attestation");
 
-const documentStore = require("../common/documentStore");
+const { execute } = require("../common/documentStore");
 
 /**
  * Checks issue status on a single document store
@@ -12,7 +12,7 @@ const documentStore = require("../common/documentStore");
  */
 const getIssued = async (contractAddress, hash, network) => {
   try {
-    const issued = await documentStore({
+    const issued = await execute({
       network,
       contractAddress,
       method: "isIssued",

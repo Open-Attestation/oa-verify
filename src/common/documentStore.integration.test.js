@@ -1,12 +1,12 @@
 /**
  * @jest-environment node
  */
-const documentStore = require("./documentStore");
+const { execute } = require("./documentStore");
 
 describe("documentStoreApi(integration)", () => {
   it("should reject if the contract is not deployed", async () => {
     await expect(
-      documentStore({
+      execute({
         contractAddress: "0x0000000000000000000000000000000000000000",
         method: "isIssued",
         args: [
@@ -18,7 +18,7 @@ describe("documentStoreApi(integration)", () => {
 
   it("should reject for args not conforming to ABI", async () => {
     await expect(
-      documentStore({
+      execute({
         contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
         method: "isIssued",
         args: ["0000"]
@@ -28,7 +28,7 @@ describe("documentStoreApi(integration)", () => {
 
   it("should reject for undefined function", async () => {
     await expect(
-      documentStore({
+      execute({
         contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
         method: "foobar",
         args: [
@@ -39,7 +39,7 @@ describe("documentStoreApi(integration)", () => {
   });
 
   it("should works for isIssued", async () => {
-    const issuedStatus = await documentStore({
+    const issuedStatus = await execute({
       contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
       method: "isIssued",
       args: [
@@ -48,7 +48,7 @@ describe("documentStoreApi(integration)", () => {
     });
     expect(issuedStatus).toBe(true);
 
-    const notIssuedStatus = await documentStore({
+    const notIssuedStatus = await execute({
       contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
       method: "isIssued",
       args: [
@@ -59,7 +59,7 @@ describe("documentStoreApi(integration)", () => {
   });
 
   it("should works for isRevoked", async () => {
-    const revokedStatus = await documentStore({
+    const revokedStatus = await execute({
       contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
       method: "isRevoked",
       args: [
@@ -68,7 +68,7 @@ describe("documentStoreApi(integration)", () => {
     });
     expect(revokedStatus).toBe(true);
 
-    const notRevokedStatus = await documentStore({
+    const notRevokedStatus = await execute({
       contractAddress: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
       method: "isRevoked",
       args: [

@@ -3,7 +3,7 @@ const openAttestation = require("@govtechsg/open-attestation");
 const mockGetData = jest.fn();
 const mockDocumentStore = jest.fn();
 
-jest.mock("../common/documentStore", () => mockDocumentStore);
+jest.mock("../common/documentStore", () => ({ execute: mockDocumentStore }));
 
 openAttestation.getData = mockGetData;
 

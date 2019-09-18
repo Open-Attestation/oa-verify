@@ -1,7 +1,9 @@
 const mockDocumentStore = jest.fn();
 const mockGetData = jest.fn();
 
-jest.mock("../common/documentStore", () => mockDocumentStore);
+jest.mock("../common/documentStore", () => ({
+  execute: mockDocumentStore
+}));
 jest.mock("@govtechsg/open-attestation", () => ({
   getData: mockGetData
 }));

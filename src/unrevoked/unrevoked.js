@@ -1,7 +1,7 @@
 const { get, every, values, some, zipObject } = require("lodash");
 const { utils, getData } = require("@govtechsg/open-attestation");
 
-const documentStore = require("../common/documentStore");
+const { execute } = require("../common/documentStore");
 
 /**
  * Returns array of the target hash, intermediate hashes and merkle root of the document
@@ -29,7 +29,7 @@ const getIntermediateHashes = (targetHash, proofs = []) => {
  */
 const getRevoked = async (contractAddress, hash, network) => {
   try {
-    const revoked = await documentStore({
+    const revoked = await execute({
       network,
       contractAddress,
       method: "isRevoked",
