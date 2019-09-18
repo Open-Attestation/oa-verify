@@ -56,7 +56,7 @@ describe("verify/revoked", () => {
       const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).toBe(true);
       expect(mockDocumentStore.mock.calls[0][0]).toEqual({
-        storeAddress: "Store1",
+        contractAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
         network: "network"
@@ -68,7 +68,7 @@ describe("verify/revoked", () => {
       const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).toBe(false);
       expect(mockDocumentStore.mock.calls[0][0]).toEqual({
-        storeAddress: "Store1",
+        contractAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
         network: "network"
@@ -80,7 +80,7 @@ describe("verify/revoked", () => {
       const revoked = await getRevoked("Store1", "ab12", "network");
       expect(revoked).toBe(true);
       expect(mockDocumentStore.mock.calls[0][0]).toEqual({
-        storeAddress: "Store1",
+        contractAddress: "Store1",
         method: "isRevoked",
         args: ["0xab12"],
         network: "network"
@@ -100,7 +100,7 @@ describe("verify/revoked", () => {
       expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh1"],
             network: "network"
@@ -108,7 +108,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh2"],
             network: "network"
@@ -116,7 +116,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh3"],
             network: "network"
@@ -138,7 +138,7 @@ describe("verify/revoked", () => {
       expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh1"],
             network: "network"
@@ -146,7 +146,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh2"],
             network: "network"
@@ -154,7 +154,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh3"],
             network: "network"
@@ -181,7 +181,7 @@ describe("verify/revoked", () => {
       expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh1"],
             network: "network"
@@ -189,7 +189,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh2"],
             network: "network"
@@ -197,7 +197,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: ["0xh3"],
             network: "network"
@@ -205,7 +205,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: ["0xh1"],
             network: "network"
@@ -213,7 +213,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: ["0xh2"],
             network: "network"
@@ -221,7 +221,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: ["0xh3"],
             network: "network"
@@ -284,7 +284,7 @@ describe("verify/revoked", () => {
       expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
@@ -294,7 +294,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
@@ -304,7 +304,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
@@ -314,7 +314,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
@@ -324,7 +324,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
@@ -334,7 +334,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
@@ -373,7 +373,7 @@ describe("verify/revoked", () => {
       expect(mockDocumentStore.mock.calls).toEqual([
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
@@ -383,7 +383,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
@@ -393,7 +393,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s1",
+            contractAddress: "s1",
             method: "isRevoked",
             args: [
               "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"
@@ -403,7 +403,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0xddbfa940b715be88edd3f793483db4e717342ee78c9267f069a76aa51b882389"
@@ -413,7 +413,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0x136dde231d4d77702786692a72869a1d81c3384787437a1eeccf2de8d5e4965f"
@@ -423,7 +423,7 @@ describe("verify/revoked", () => {
         ],
         [
           {
-            storeAddress: "s2",
+            contractAddress: "s2",
             method: "isRevoked",
             args: [
               "0x779455a65491cc678fd5001b0aefd21726eb45c1dfaa1b7e69668e98e1ec791e"

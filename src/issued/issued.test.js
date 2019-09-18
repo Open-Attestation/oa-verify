@@ -31,7 +31,7 @@ describe("verify/issued", () => {
           args: ["0xMerkleRoot"],
           method: "isIssued",
           network: "network",
-          storeAddress: "DocumentStoreAdd"
+          contractAddress: "DocumentStoreAdd"
         }
       ]);
       expect(isIssued).toBe(true);
@@ -49,7 +49,7 @@ describe("verify/issued", () => {
           args: ["0xMerkleRoot"],
           method: "isIssued",
           network: "network",
-          storeAddress: "DocumentStoreAdd"
+          contractAddress: "DocumentStoreAdd"
         }
       ]);
       expect(isIssued).toBe(false);
@@ -67,7 +67,7 @@ describe("verify/issued", () => {
           args: ["0xMerkleRoot"],
           method: "isIssued",
           network: "network",
-          storeAddress: "DocumentStoreAdd"
+          contractAddress: "DocumentStoreAdd"
         }
       ]);
 
@@ -92,7 +92,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store1"
+            contractAddress: "Store1"
           }
         ],
         [
@@ -100,7 +100,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store2"
+            contractAddress: "Store2"
           }
         ]
       ]);
@@ -125,7 +125,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store1"
+            contractAddress: "Store1"
           }
         ],
         [
@@ -133,7 +133,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store2"
+            contractAddress: "Store2"
           }
         ]
       ]);
@@ -161,7 +161,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store1"
+            contractAddress: "Store1"
           }
         ],
         [
@@ -169,7 +169,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "Store2"
+            contractAddress: "Store2"
           }
         ]
       ]);
@@ -208,7 +208,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "CertStore1"
+            contractAddress: "CertStore1"
           }
         ],
         [
@@ -216,7 +216,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "CertStore2"
+            contractAddress: "CertStore2"
           }
         ],
         [
@@ -224,7 +224,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "DocStore1"
+            contractAddress: "DocStore1"
           }
         ],
         [
@@ -232,7 +232,7 @@ describe("verify/issued", () => {
             args: ["0xMerkleRoot"],
             method: "isIssued",
             network: "network",
-            storeAddress: "DocStore2"
+            contractAddress: "DocStore2"
           }
         ]
       ]);
