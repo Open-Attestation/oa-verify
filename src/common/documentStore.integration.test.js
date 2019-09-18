@@ -56,7 +56,7 @@ describe("documentStoreApi(integration)", () => {
       ]
     });
     expect(notIssuedStatus).toBe(false);
-  });
+  }, 10000);
 
   it("should works for isRevoked", async () => {
     const revokedStatus = await execute({
@@ -76,5 +76,5 @@ describe("documentStoreApi(integration)", () => {
       ]
     });
     expect(notRevokedStatus).toBe(false);
-  });
+  }, 10000);
 });
