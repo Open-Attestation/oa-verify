@@ -1,6 +1,8 @@
 const { verifyHash } = require("./hash/hash");
 const { verifyIssued } = require("./issued/issued");
 const { verifyRevoked } = require("./unrevoked/unrevoked");
+const { getData } = require("@govtechsg/open-attestation");
+const mapIssuersToSmartContracts = require("./common/mapIssuersToSmartContracts");
 
 /**
  * @param  {object} document Entire document object to be validated
@@ -8,6 +10,9 @@ const { verifyRevoked } = require("./unrevoked/unrevoked");
  * @returns
  */
 const verify = async (document, network = "homestead") => {
+  // const data = getData(document);
+  // const smartContracts = mapIssuersToSmartContracts(data.issuers);
+  
   const verificationsDeferred = [
     verifyHash(document),
     verifyIssued(document, network),

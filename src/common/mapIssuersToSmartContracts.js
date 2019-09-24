@@ -1,13 +1,14 @@
 const contractInstance = require("./contractInstance");
 const documentStoreAbi = require("./abi/documentStore.json");
 const tokenRegistryAbi = require("./abi/tokenRegistry.json");
+const { DOCUMENT_STORE, TOKEN_REGISTRY } = require("./contractTypes");
 
 // Given a list of issuers, convert to smart contract
 const mapIssuersToSmartContracts = (issuers, network) =>
   issuers.map(issuer => {
     if (issuer.tokenRegistry) {
       return {
-        type: "TOKEN_REGISTRY",
+        type: TOKEN_REGISTRY,
         address: issuer.tokenRegistry,
         instance: contractInstance({
           contractAddress: issuer.tokenRegistry,
@@ -17,7 +18,7 @@ const mapIssuersToSmartContracts = (issuers, network) =>
       };
     } else if (issuer.certificateStore) {
       return {
-        type: "DOCUMENT_STORE",
+        type: DOCUMENT_STORE,
         address: issuer.certificateStore,
         instance: contractInstance({
           contractAddress: issuer.certificateStore,
@@ -27,7 +28,7 @@ const mapIssuersToSmartContracts = (issuers, network) =>
       };
     } else if (issuer.documentStore) {
       return {
-        type: "DOCUMENT_STORE",
+        type: DOCUMENT_STORE,
         address: issuer.documentStore,
         instance: contractInstance({
           contractAddress: issuer.documentStore,

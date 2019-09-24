@@ -1,0 +1,4 @@
+module.exports = {
+  TOKEN_REGISTRY: "TOKEN_REGISTRY",
+  DOCUMENT_STORE: "DOCUMENT_STORE"
+};
