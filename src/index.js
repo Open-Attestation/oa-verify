@@ -1,6 +1,7 @@
 const { verifyHash } = require("./hash/hash");
-const { verifyIssued } = require("./issued/issued");
-const { verifyRevoked } = require("./unrevoked/unrevoked");
+const { verifyIssued } = require("./issued/verify");
+const { verifyRevoked } = require("./revoked/verify");
+const documentToSmartContracts = require("./common/smartContract/documentToSmartContracts");
 
 /**
  * @param  {object} document Entire document object to be validated
@@ -8,10 +9,11 @@ const { verifyRevoked } = require("./unrevoked/unrevoked");
  * @returns
  */
 const verify = async (document, network = "homestead") => {
+  const smartContracts = documentToSmartContracts(document, network);
   const verificationsDeferred = [
     verifyHash(document),
-    verifyIssued(document, network),
-    verifyRevoked(document, network)
+    verifyIssued(document, smartContracts),
+    verifyRevoked(document, smartContracts)
   ];
 
   const [hash, issued, revoked] = await Promise.all(verificationsDeferred);
@@ -20,7 +22,7 @@ const verify = async (document, network = "homestead") => {
     hash,
     issued,
     revoked,
-    valid: hash.valid && issued.valid && revoked.valid
+    valid: hash.checksumMatch && issued.issuedOnAll && !revoked.revokedOnAny
   };
 };
 

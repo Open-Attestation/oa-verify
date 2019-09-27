@@ -21,28 +21,28 @@ verify(document).then(console.log);
 
 ```json
 {
-  "hash": {
-    "valid": true
-  },
-  "identity": {
-    "valid": true,
-    "identities": {
-      "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": "Government Technology Agency of Singapore (GovTech)"
-    }
+  "hash": { 
+    "checksumMatch": true 
   },
   "issued": {
-    "valid": false,
-    "issued": {
-      "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": false
-    }
+    "issuedOnAll": true,
+    "details": [
+      {
+        "address": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+        "issued": true
+      }
+    ]
   },
   "revoked": {
-    "valid": false,
-    "revoked": {
-      "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": true
-    }
+    "revokedOnAny": false,
+    "details": [
+      {
+        "address": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+        "revoked": false
+      }
+    ]
   },
-  "valid": false
+  "valid": true
 }
 ```
 

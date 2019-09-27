@@ -7,20 +7,32 @@ const verify = require("./index");
 const documentMainnetValid = require("../test/fixtures/documentMainnetValid.json");
 const documentTampered = require("../test/fixtures/tampered-document.json");
 const documentRopstenValid = require("../test/fixtures/documentRopstenValid.json");
+const tokenRopstenValid = require("../test/fixtures/tokenRopstenValid.json");
+const tokenRopstenInvalid = require("../test/fixtures/tokenRopstenInvalid.json");
 
 describe("verify(integration)", () => {
   it("returns false if document is invalid", async () => {
-    const results = await verify(documentTampered);
+    const results = await verify(documentTampered, "ropsten");
 
     expect(results).toEqual({
-      hash: { valid: false },
+      hash: { checksumMatch: false },
       issued: {
-        valid: false,
-        issued: { "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990": false }
+        issuedOnAll: false,
+        details: [
+          {
+            address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
+            issued: false
+          }
+        ]
       },
       revoked: {
-        valid: false,
-        revoked: { "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990": true }
+        revokedOnAny: false,
+        details: [
+          {
+            address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
+            revoked: false
+          }
+        ]
       },
       valid: false
     });
@@ -30,14 +42,24 @@ describe("verify(integration)", () => {
     const results = await verify(documentMainnetValid);
 
     expect(results).toEqual({
-      hash: { valid: true },
+      hash: { checksumMatch: true },
       issued: {
-        valid: true,
-        issued: { "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": true }
+        issuedOnAll: true,
+        details: [
+          {
+            address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+            issued: true
+          }
+        ]
       },
       revoked: {
-        valid: true,
-        revoked: { "0x007d40224f6562461633ccfbaffd359ebb2fc9ba": false }
+        revokedOnAny: false,
+        details: [
+          {
+            address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+            revoked: false
+          }
+        ]
       },
       valid: true
     });
@@ -47,16 +69,80 @@ describe("verify(integration)", () => {
     const results = await verify(documentRopstenValid, "ropsten");
 
     expect(results).toEqual({
-      hash: { valid: true },
+      hash: { checksumMatch: true },
       issued: {
-        valid: true,
-        issued: { "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495": true }
+        issuedOnAll: true,
+        details: [
+          {
+            address: "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495",
+            issued: true
+          }
+        ]
       },
       revoked: {
-        valid: true,
-        revoked: { "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495": false }
+        revokedOnAny: false,
+        details: [
+          {
+            address: "0xc36484efa1544c32ffed2e80a1ea9f0dfc517495",
+            revoked: false
+          }
+        ]
       },
       valid: true
+    });
+  });
+
+  it("returns true if Ropsten token is valid", async () => {
+    const results = await verify(tokenRopstenValid, "ropsten");
+
+    expect(results).toEqual({
+      hash: { checksumMatch: true },
+      issued: {
+        issuedOnAll: true,
+        details: [
+          {
+            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            issued: true
+          }
+        ]
+      },
+      revoked: {
+        revokedOnAny: false,
+        details: [
+          {
+            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            revoked: false
+          }
+        ]
+      },
+      valid: true
+    });
+  });
+
+  it("returns false if Ropsten token is invalid", async () => {
+    const results = await verify(tokenRopstenInvalid, "ropsten");
+
+    expect(results).toEqual({
+      hash: { checksumMatch: true },
+      issued: {
+        issuedOnAll: false,
+        details: [
+          {
+            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            issued: false
+          }
+        ]
+      },
+      revoked: {
+        revokedOnAny: true,
+        details: [
+          {
+            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            revoked: true
+          }
+        ]
+      },
+      valid: false
     });
   });
 });
