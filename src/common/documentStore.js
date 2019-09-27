@@ -1,7 +1,6 @@
 const ethers = require("ethers");
-const abi = require("../common/abi.json");
-
-const INFURA_API_KEY = "92c9a51428b946c1b8c1ac5a237616e4";
+const abi = require("../common/smartContract/abi/documentStore.json");
+const { INFURA_API_KEY } = require("../config");
 
 const documentStore = async ({ network, storeAddress, method, args }) => {
   const provider = new ethers.providers.InfuraProvider(network, INFURA_API_KEY);

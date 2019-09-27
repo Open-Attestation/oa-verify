@@ -5,10 +5,10 @@ const documentTampered = require("../../test/fixtures/tampered-document.json");
 describe("verify/hash", () => {
   describe("verifyHash", () => {
     it("should return true for untampered document", () => {
-      expect(verifyHash(document)).toEqual({ valid: true });
+      expect(verifyHash(document)).toEqual({ checksumMatch: true });
     });
     it("should return false for tampered document", () => {
-      expect(verifyHash(documentTampered)).toEqual({ valid: false });
+      expect(verifyHash(documentTampered)).toEqual({ checksumMatch: false });
     });
   });
 });
