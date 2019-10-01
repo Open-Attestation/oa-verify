@@ -18,14 +18,13 @@ describe("isIssuedOnTokenRegistry", () => {
     expect(issued).toBe(true);
   });
 
-  it("returns false if token is nonexistent on tokenRegistry", async () => {
+  it("allows error to bubble if token is nonexistent on tokenRegistry", async () => {
     const smartContract = issuerToSmartContract(
       { tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3" },
       "ropsten"
     );
     const hash = constants.HashZero;
-    const issued = await isIssuedOnTokenRegistry(smartContract, hash);
-    expect(issued).toBe(false);
+    expect(isIssuedOnTokenRegistry(smartContract, hash)).rejects.toThrow();
   });
 });
 
@@ -49,6 +48,15 @@ describe("isIssuedOnDocumentStore", () => {
     );
     const issued = await isIssuedOnDocumentStore(smartContract, hash);
     expect(issued).toBe(false);
+  });
+
+  it("allows error to bubble if documentStore is not deployed", async () => {
+    const smartContract = issuerToSmartContract(
+      { documentStore: constants.AddressZero },
+      "ropsten"
+    );
+    const hash = constants.HashZero;
+    expect(isIssuedOnDocumentStore(smartContract, hash)).rejects.toThrow();
   });
 });
 
@@ -77,6 +85,8 @@ describe("isIssued", () => {
 
   it("throws for unsupported smart contract types", () => {
     const smartContract = { type: "UNSUPPORTED_TYPE" };
-    expect(() => isIssued(smartContract, constants.HashZero)).toThrow();
+    expect(() => isIssued(smartContract, constants.HashZero)).toThrow(
+      "Smart contract type not supported"
+    );
   });
 });

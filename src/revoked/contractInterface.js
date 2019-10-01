@@ -2,21 +2,13 @@ const { constants } = require("ethers");
 const { TYPES } = require("../common/smartContract/constants");
 
 const isRevokedOnTokenRegistry = async (smartContract, hash) => {
-  try {
-    const owner = await smartContract.instance.functions.ownerOf(hash);
-    return owner === constants.AddressZero || owner === smartContract.address;
-  } catch (e) {
-    return true;
-  }
+  const owner = await smartContract.instance.functions.ownerOf(hash);
+  return owner === constants.AddressZero || owner === smartContract.address;
 };
 
 const isRevokedOnDocumentStore = async (smartContract, hash) => {
-  try {
-    const revoked = await smartContract.instance.functions.isRevoked(hash);
-    return revoked;
-  } catch (e) {
-    return true;
-  }
+  const revoked = await smartContract.instance.functions.isRevoked(hash);
+  return revoked;
 };
 
 const isRevoked = (smartContract, hash) => {

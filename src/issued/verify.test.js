@@ -28,14 +28,16 @@ describe("issuedStatusOnContracts", () => {
 
   it("throws if any smart contract call failed", async () => {
     isIssued.mockResolvedValueOnce(true);
-    isIssued.mockRejectedValueOnce("Some failure");
+    isIssued.mockRejectedValueOnce(new Error("Some failure"));
     const smartContracts = [
       { address: "0x0A", foo: "bar" },
       { address: "0x0B", foo: "bar" }
     ];
-    expect(issuedStatusOnContracts(smartContracts, "HASH")).rejects.toMatch(
-      "Some failure"
-    );
+    const issuedStatus = await issuedStatusOnContracts(smartContracts, "HASH");
+    expect(issuedStatus).toEqual([
+      { address: "0x0A", issued: true },
+      { address: "0x0B", issued: false, error: "Some failure" }
+    ]);
   });
 });
 

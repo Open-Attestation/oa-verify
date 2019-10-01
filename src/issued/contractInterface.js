@@ -3,21 +3,13 @@ const { TYPES } = require("../common/smartContract/constants");
 
 // Return issued status given a smart contract instance (documentStore/tokenRegistry)
 const isIssuedOnTokenRegistry = async (smartContract, hash) => {
-  try {
-    const owner = await smartContract.instance.functions.ownerOf(hash);
-    return !(owner === constants.AddressZero);
-  } catch (e) {
-    return false;
-  }
+  const owner = await smartContract.instance.functions.ownerOf(hash);
+  return !(owner === constants.AddressZero);
 };
 
 const isIssuedOnDocumentStore = async (smartContract, hash) => {
-  try {
-    const issued = await smartContract.instance.functions.isIssued(hash);
-    return issued;
-  } catch (e) {
-    return false;
-  }
+  const issued = await smartContract.instance.functions.isIssued(hash);
+  return issued;
 };
 
 const isIssued = (smartContract, hash) => {

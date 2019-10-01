@@ -38,16 +38,14 @@ describe("isRevokedOnTokenRegistry", () => {
     expect(issued).toBe(true);
   });
 
-  it("returns true if token is not minted", async () => {
+  it("allow errors to bubble if token is not minted", async () => {
     const smartContract = issuerToSmartContract(
       { tokenRegistry: TOKEN_REGISTRY },
       "ropsten"
     );
-    const issued = await isRevokedOnTokenRegistry(
-      smartContract,
-      TOKEN_UNMINTED
-    );
-    expect(issued).toBe(true);
+    expect(
+      isRevokedOnTokenRegistry(smartContract, TOKEN_UNMINTED)
+    ).rejects.toThrow();
   });
 });
 
@@ -80,6 +78,16 @@ describe("isRevokedOnDocumentStore", () => {
       DOCUMENT_UNREVOKED
     );
     expect(issued).toBe(false);
+  });
+
+  it("allows error to bubble up if documentStore is not deployed", async () => {
+    const smartContract = issuerToSmartContract(
+      { documentStore: constants.AddressZero },
+      "ropsten"
+    );
+    expect(
+      isRevokedOnDocumentStore(smartContract, DOCUMENT_UNREVOKED)
+    ).rejects.toThrow();
   });
 });
 
