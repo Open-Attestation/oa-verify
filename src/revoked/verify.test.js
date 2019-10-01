@@ -121,6 +121,20 @@ describe("revokedStatusOnContracts", () => {
     );
     expect(revokedStatus).toEqual([]);
   });
+
+  it("results includes error if contract call fails", async () => {
+    isRevoked.mockResolvedValue(false);
+    isRevoked.mockRejectedValueOnce(new Error("Some error"));
+    const smartContracts = [TOKEN_REGISTRY_CONTRACT, DOCUMENT_STORE_CONTRACT];
+    const revokedStatus = await revokedStatusOnContracts(
+      smartContracts,
+      INTERMEDIATE_HASHES
+    );
+    expect(revokedStatus).toEqual([
+      { address: "0x0A", revoked: true, error: "Some error" },
+      { address: "0x0B", revoked: false }
+    ]);
+  });
 });
 
 describe("isRevokedOnAny", () => {

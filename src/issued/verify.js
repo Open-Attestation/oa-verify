@@ -1,18 +1,20 @@
-const { get, zipWith } = require("lodash");
+const { get } = require("lodash");
 const { isIssued } = require("./contractInterface");
 
 const issuedStatusOnContracts = async (smartContracts = [], hash) => {
   const issueStatusesDefered = smartContracts.map(smartContract =>
     isIssued(smartContract, hash)
+      .then(issued => ({
+        address: smartContract.address,
+        issued
+      }))
+      .catch(e => ({
+        address: smartContract.address,
+        issued: false,
+        error: e.message || e
+      }))
   );
-  const issueStatuses = await Promise.all(issueStatusesDefered);
-  const smartContractAddresses = smartContracts.map(
-    smartContract => smartContract.address
-  );
-  return zipWith(smartContractAddresses, issueStatuses, (address, issued) => ({
-    address,
-    issued
-  }));
+  return Promise.all(issueStatusesDefered);
 };
 
 const isIssuedOnAll = status => {
