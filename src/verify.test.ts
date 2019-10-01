@@ -1,20 +1,22 @@
+/* eslint-disable import/first */
 const mockVerifyHash = jest.fn();
 const mockVerifyIssued = jest.fn();
 const mockVerifyRevoked = jest.fn();
 
-jest.mock("./hash/hash", () => ({
+jest.doMock("./hash/hash", () => ({
   verifyHash: mockVerifyHash
 }));
 
-jest.mock("./issued/verify", () => ({
+jest.doMock("./issued/verify", () => ({
   verifyIssued: mockVerifyIssued
 }));
 
-jest.mock("./revoked/verify", () => ({
+jest.doMock("./revoked/verify", () => ({
   verifyRevoked: mockVerifyRevoked
 }));
 
-const verify = require("./index");
+import verify from "./index";
+import { document } from "../test/fixtures/document";
 
 const whenAllTestPasses = () => {
   const valid = true;
@@ -39,7 +41,7 @@ describe("verify", () => {
 
   it("returns valid as true when all test passes", async () => {
     whenAllTestPasses();
-    const summary = await verify("DOCUMENT");
+    const summary = await verify(document);
     expect(summary).toEqual({
       hash: { checksumMatch: true },
       issued: { issuedOnAll: true },
@@ -50,7 +52,7 @@ describe("verify", () => {
 
   it("returns valid as false when any test passes", async () => {
     whenIssueTestFail();
-    const summary = await verify("DOCUMENT");
+    const summary = await verify(document);
     expect(summary).toEqual({
       hash: { checksumMatch: true },
       issued: { issuedOnAll: false },

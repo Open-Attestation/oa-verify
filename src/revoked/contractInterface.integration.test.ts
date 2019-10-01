@@ -1,10 +1,12 @@
-const { constants } = require("ethers");
-const {
-  isRevokedOnTokenRegistry,
+import { constants } from "ethers";
+
+import {
+  isRevoked,
   isRevokedOnDocumentStore,
-  isRevoked
-} = require("./contractInterface");
-const issuerToSmartContract = require("../common/smartContract/issuerToSmartContract");
+  isRevokedOnTokenRegistry
+} from "./contractInterface";
+
+import { issuerToSmartContract } from "../common/smartContract/issuerToSmartContract";
 
 const TOKEN_REGISTRY = "0x48399Fb88bcD031C556F53e93F690EEC07963Af3";
 const TOKEN_WITH_OWNER =
@@ -43,7 +45,7 @@ describe("isRevokedOnTokenRegistry", () => {
       { tokenRegistry: TOKEN_REGISTRY },
       "ropsten"
     );
-    expect(
+    await expect(
       isRevokedOnTokenRegistry(smartContract, TOKEN_UNMINTED)
     ).rejects.toThrow();
   });
@@ -85,7 +87,7 @@ describe("isRevokedOnDocumentStore", () => {
       { documentStore: constants.AddressZero },
       "ropsten"
     );
-    expect(
+    await expect(
       isRevokedOnDocumentStore(smartContract, DOCUMENT_UNREVOKED)
     ).rejects.toThrow();
   });

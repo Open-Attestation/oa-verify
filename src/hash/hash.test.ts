@@ -1,6 +1,6 @@
-const { verifyHash } = require("./hash");
-const document = require("../../test/fixtures/document.json");
-const documentTampered = require("../../test/fixtures/tampered-document.json");
+import { verifyHash } from "./hash";
+import { document } from "../../test/fixtures/document";
+import { documentTampered } from "../../test/fixtures/tampered-document";
 
 describe("verify/hash", () => {
   describe("verifyHash", () => {

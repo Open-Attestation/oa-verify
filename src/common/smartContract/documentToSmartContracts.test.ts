@@ -1,6 +1,6 @@
-const documentToSmartContracts = require("./documentToSmartContracts");
-const issuerToSmartContract = require("./issuerToSmartContract");
-const sampleDocument = require("../../../test/fixtures/document.json");
+import { documentToSmartContracts } from "./documentToSmartContracts";
+import { issuerToSmartContract } from "./issuerToSmartContract";
+import { document } from "../../../test/fixtures/document";
 
 jest.mock("./issuerToSmartContract");
 
@@ -13,8 +13,10 @@ it("returns an array of smart contract resolved from the issuers of the document
       instance: "DOCUMENT_STORE_INSTANCE"
     }
   ];
+  // @ts-ignore
   issuerToSmartContract.mockReturnValue(expectedValue[0]);
-  const results = documentToSmartContracts(sampleDocument, network);
+  const results = documentToSmartContracts(document, network);
+  // @ts-ignore
   expect(issuerToSmartContract.mock.calls[0]).toEqual([
     {
       name: "Singapore Examination and Assessment Board",

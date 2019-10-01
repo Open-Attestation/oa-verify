@@ -1,34 +1,40 @@
-const { isRevoked } = require("./contractInterface");
-const {
-  isAnyHashRevokedOnStore,
-  revokedStatusOnContracts,
-  isRevokedOnAny,
+import { Contract } from "ethers";
+import { isRevoked } from "./contractInterface";
+import {
   getIntermediateHashes,
+  isAnyHashRevokedOnStore,
+  isRevokedOnAny,
+  revokedStatusOnContracts,
   verifyRevoked
-} = require("./verify");
+} from "./verify";
 
 jest.mock("./contractInterface");
 
 beforeEach(() => {
+  // @ts-ignore
   isRevoked.mockClear();
 });
 
+// @ts-ignore force contract creation
+const contract: Contract = "CONTRACT_INSTANCE";
+
 const TOKEN_REGISTRY_CONTRACT = {
   address: "0x0A",
-  instance: "CONTRACT_INSTANCE",
-  type: "TOKEN_REGISTRY"
+  type: "TOKEN_REGISTRY",
+  instance: contract
 };
 
 const DOCUMENT_STORE_CONTRACT = {
   address: "0x0B",
-  instance: "CONTRACT_INSTANCE",
-  type: "DOCUMENT_STORE"
+  type: "DOCUMENT_STORE",
+  instance: contract
 };
 
 const INTERMEDIATE_HASHES = ["0x0a", "0x0b", "0x0c"];
 
 describe("isAnyHashRevokedOnStore", () => {
   it("returns false if none of the hash are revoked", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValue(false);
     const revoked = await isAnyHashRevokedOnStore(
       TOKEN_REGISTRY_CONTRACT,
@@ -38,8 +44,11 @@ describe("isAnyHashRevokedOnStore", () => {
   });
 
   it("returns true if any of the hashes is revoked", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValueOnce(false);
+    // @ts-ignore
     isRevoked.mockResolvedValueOnce(true);
+    // @ts-ignore
     isRevoked.mockResolvedValueOnce(false);
     const revoked = await isAnyHashRevokedOnStore(
       TOKEN_REGISTRY_CONTRACT,
@@ -51,6 +60,7 @@ describe("isAnyHashRevokedOnStore", () => {
 
 describe("revokedStatusOnContracts", () => {
   it("returns a mapping of smart contract to revoke status", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValue(false);
     const smartContracts = [TOKEN_REGISTRY_CONTRACT, DOCUMENT_STORE_CONTRACT];
     const revokedStatus = await revokedStatusOnContracts(
@@ -61,6 +71,7 @@ describe("revokedStatusOnContracts", () => {
       { address: "0x0A", revoked: false },
       { address: "0x0B", revoked: false }
     ]);
+    // @ts-ignore
     expect(isRevoked.mock.calls).toEqual([
       [
         {
@@ -114,16 +125,17 @@ describe("revokedStatusOnContracts", () => {
   });
 
   it("should return empty array if no smart contract is provided", async () => {
-    const smartContracts = [];
     const revokedStatus = await revokedStatusOnContracts(
-      smartContracts,
+      [],
       INTERMEDIATE_HASHES
     );
     expect(revokedStatus).toEqual([]);
   });
 
   it("results includes error if contract call fails", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValue(false);
+    // @ts-ignore
     isRevoked.mockRejectedValueOnce(new Error("Some error"));
     const smartContracts = [TOKEN_REGISTRY_CONTRACT, DOCUMENT_STORE_CONTRACT];
     const revokedStatus = await revokedStatusOnContracts(
@@ -186,13 +198,23 @@ describe("getIntermediateHashes", () => {
 
 describe("verifyRevoked", () => {
   it("returns valid summary of the status if document is not revoked on any smart contracts", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValue(false);
     const smartContracts = [
-      { address: "0x0A", foo: "bar" },
-      { address: "0x0B", foo: "bar" }
+      { address: "0x0A", type: "type", instance: contract, foo: "bar" },
+      { address: "0x0B", type: "type", instance: contract, foo: "bar" }
     ];
     const summary = await verifyRevoked(
-      { signature: { targetHash: "0d", proof: ["0a"] } },
+      {
+        schema: "schema",
+        data: "data",
+        signature: {
+          merkleRoot: "MERKLE_ROOT",
+          type: "SHA3MerkleProof",
+          targetHash: "0d",
+          proof: ["0a"]
+        }
+      },
       smartContracts
     );
     expect(summary).toEqual({
@@ -202,29 +224,47 @@ describe("verifyRevoked", () => {
         { address: "0x0B", revoked: false }
       ]
     });
+    // @ts-ignore
     expect(isRevoked.mock.calls).toEqual([
-      [{ address: "0x0A", foo: "bar" }, "0x0d"],
       [
-        { address: "0x0A", foo: "bar" },
+        { address: "0x0A", type: "type", instance: contract, foo: "bar" },
+        "0x0d"
+      ],
+      [
+        { address: "0x0A", type: "type", instance: contract, foo: "bar" },
         "0x96851128a70d034965e58c4ef4681d4ffcf60ba27322aa9015cf340f2b242e3d"
       ],
-      [{ address: "0x0B", foo: "bar" }, "0x0d"],
       [
-        { address: "0x0B", foo: "bar" },
+        { address: "0x0B", type: "type", instance: contract, foo: "bar" },
+        "0x0d"
+      ],
+      [
+        { address: "0x0B", type: "type", instance: contract, foo: "bar" },
         "0x96851128a70d034965e58c4ef4681d4ffcf60ba27322aa9015cf340f2b242e3d"
       ]
     ]);
   });
 
   it("returns invalid summary of the status if document is revoked on any smart contracts", async () => {
+    // @ts-ignore
     isRevoked.mockResolvedValueOnce(false);
+    // @ts-ignore
     isRevoked.mockResolvedValueOnce(true);
     const smartContracts = [
-      { address: "0x0A", foo: "bar" },
-      { address: "0x0B", foo: "bar" }
+      { address: "0x0A", type: "type", instance: contract, foo: "bar" },
+      { address: "0x0B", type: "type", instance: contract, foo: "bar" }
     ];
     const summary = await verifyRevoked(
-      { signature: { targetHash: "0d" } },
+      {
+        schema: "schema",
+        data: "data",
+        signature: {
+          merkleRoot: "MERKLE_ROOT",
+          type: "SHA3MerkleProof",
+          targetHash: "0d",
+          proof: []
+        }
+      },
       smartContracts
     );
     expect(summary).toEqual({
@@ -234,9 +274,16 @@ describe("verifyRevoked", () => {
         { address: "0x0B", revoked: true }
       ]
     });
+    // @ts-ignore
     expect(isRevoked.mock.calls).toEqual([
-      [{ address: "0x0A", foo: "bar" }, "0x0d"],
-      [{ address: "0x0B", foo: "bar" }, "0x0d"]
+      [
+        { address: "0x0A", type: "type", instance: contract, foo: "bar" },
+        "0x0d"
+      ],
+      [
+        { address: "0x0B", type: "type", instance: contract, foo: "bar" },
+        "0x0d"
+      ]
     ]);
   });
 });
