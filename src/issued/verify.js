@@ -17,9 +17,9 @@ const issuedStatusOnContracts = async (smartContracts = [], hash) => {
   return Promise.all(issueStatusesDefered);
 };
 
-const isIssuedOnAll = status => {
-  if (!status || status.length === 0) return false;
-  return status.reduce((prev, curr) => prev && curr.issued, true);
+const isIssuedOnAll = statuses => {
+  if (!statuses || statuses.length === 0) return false;
+  return statuses.every(status => status.issued);
 };
 
 const verifyIssued = async (document, smartContracts = []) => {
