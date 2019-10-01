@@ -2,13 +2,12 @@
  * @jest-environment node
  */
 
-const verify = require("./index");
-
-const documentMainnetValid = require("../test/fixtures/documentMainnetValid.json");
-const documentTampered = require("../test/fixtures/tampered-document.json");
-const documentRopstenValid = require("../test/fixtures/documentRopstenValid.json");
-const tokenRopstenValid = require("../test/fixtures/tokenRopstenValid.json");
-const tokenRopstenInvalid = require("../test/fixtures/tokenRopstenInvalid.json");
+import verify from "./index";
+import { documentMainnetValid } from "../test/fixtures/documentMainnetValid";
+import { documentTampered } from "../test/fixtures/tampered-document";
+import { documentRopstenValid } from "../test/fixtures/documentRopstenValid";
+import { tokenRopstenValid } from "../test/fixtures/tokenRopstenValid";
+import { tokenRopstenInvalid } from "../test/fixtures/tokenRopstenInvalid";
 
 describe("verify(integration)", () => {
   it("returns false if document is invalid", async () => {

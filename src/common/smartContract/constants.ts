@@ -1,6 +1,4 @@
-const TYPES = {
+export const TYPES = {
   TOKEN_REGISTRY: "TOKEN_REGISTRY",
   DOCUMENT_STORE: "DOCUMENT_STORE"
 };
-
-module.exports = { TYPES };

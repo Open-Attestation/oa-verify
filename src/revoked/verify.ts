@@ -1,20 +1,22 @@
-const { get } = require("lodash");
-const { utils } = require("@govtechsg/open-attestation");
-const { isRevoked } = require("./contractInterface");
+import { SignedDocument, utils } from "@govtechsg/open-attestation";
+import { Hash, OpenAttestationContract } from "../types";
+import { isRevoked } from "./contractInterface";
 
 // Given a list of hashes, check against one smart contract if any of the hash has been revoked
-const isAnyHashRevokedOnStore = async (smartContract, intermediateHashes) => {
+export const isAnyHashRevokedOnStore = async (
+  smartContract: OpenAttestationContract,
+  intermediateHashes: Hash[]
+) => {
   const revokedStatusDeferred = intermediateHashes.map(hash =>
     isRevoked(smartContract, hash)
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  const revoked = revokedStatuses.reduce((prev, curr) => prev || curr, false);
-  return revoked;
+  return revokedStatuses.some(status => status);
 };
 
-const revokedStatusOnContracts = async (
-  smartContracts = [],
-  intermediateHashes = []
+export const revokedStatusOnContracts = async (
+  smartContracts: OpenAttestationContract[] = [],
+  intermediateHashes: Hash[] = []
 ) => {
   const revokeStatusesDefered = smartContracts.map(smartContract =>
     isAnyHashRevokedOnStore(smartContract, intermediateHashes)
@@ -31,12 +33,17 @@ const revokedStatusOnContracts = async (
   return Promise.all(revokeStatusesDefered);
 };
 
-const isRevokedOnAny = status => {
-  if (!status || status.length === 0) return false;
-  return status.reduce((prev, curr) => prev || curr.revoked, false);
+export const isRevokedOnAny = (
+  statuses: { address: Hash; revoked: boolean }[]
+) => {
+  if (!statuses || statuses.length === 0) return false;
+  return statuses.some(status => status.revoked);
 };
 
-const getIntermediateHashes = (targetHash, proofs = []) => {
+export const getIntermediateHashes = (
+  targetHash: Hash,
+  proofs: Hash[] = []
+) => {
   const hashes = [`0x${targetHash}`];
   proofs.reduce((prev, curr) => {
     const next = utils.combineHashString(prev, curr);
@@ -46,9 +53,12 @@ const getIntermediateHashes = (targetHash, proofs = []) => {
   return hashes;
 };
 
-const verifyRevoked = async (document, smartContracts = []) => {
-  const targetHash = get(document, "signature.targetHash");
-  const proofs = get(document, "signature.proof", []);
+export const verifyRevoked = async (
+  document: SignedDocument,
+  smartContracts: OpenAttestationContract[] = []
+) => {
+  const { targetHash } = document.signature;
+  const proofs = document.signature.proof || [];
   const intermediateHashes = getIntermediateHashes(targetHash, proofs);
   const details = await revokedStatusOnContracts(
     smartContracts,
@@ -60,12 +70,4 @@ const verifyRevoked = async (document, smartContracts = []) => {
     revokedOnAny,
     details
   };
-};
-
-module.exports = {
-  isAnyHashRevokedOnStore,
-  revokedStatusOnContracts,
-  isRevokedOnAny,
-  getIntermediateHashes,
-  verifyRevoked
 };
