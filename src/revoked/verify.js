@@ -1,4 +1,4 @@
-const { get, zipWith } = require("lodash");
+const { get } = require("lodash");
 const { utils } = require("@govtechsg/open-attestation");
 const { isRevoked } = require("./contractInterface");
 
@@ -18,19 +18,17 @@ const revokedStatusOnContracts = async (
 ) => {
   const revokeStatusesDefered = smartContracts.map(smartContract =>
     isAnyHashRevokedOnStore(smartContract, intermediateHashes)
+      .then(revoked => ({
+        address: smartContract.address,
+        revoked
+      }))
+      .catch(e => ({
+        address: smartContract.address,
+        revoked: true,
+        error: e.message || e
+      }))
   );
-  const revokeStatuses = await Promise.all(revokeStatusesDefered);
-  const smartContractAddresses = smartContracts.map(
-    smartContract => smartContract.address
-  );
-  return zipWith(
-    smartContractAddresses,
-    revokeStatuses,
-    (address, revoked) => ({
-      address,
-      revoked
-    })
-  );
+  return Promise.all(revokeStatusesDefered);
 };
 
 const isRevokedOnAny = status => {
