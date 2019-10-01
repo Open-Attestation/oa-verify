@@ -14,30 +14,31 @@ describe("verify(integration)", () => {
   it("returns false if document is invalid", async () => {
     const results = await verify(documentTampered, "ropsten");
 
-    expect(results).toEqual({
-      hash: { checksumMatch: false },
-      issued: {
-        issuedOnAll: false,
-        details: [
-          {
-            address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
-            error:
-              'call exception (address="0x20bc9C354A18C8178A713B9BcCFFaC2152b53990", method="isIssued(bytes32)", args=["0x85df2b4e905a82cf10c317df8f4b659b5cf38cc12bd5fbaffba5fc901ef0011b"], version=4.0.37)',
-            issued: false
-          }
-        ]
-      },
-      revoked: {
-        revokedOnAny: false,
-        details: [
-          {
-            address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
-            revoked: false
-          }
-        ]
-      },
-      valid: false
-    });
+    expect(results).toEqual(
+      expect.objectContaining({
+        hash: { checksumMatch: false },
+        issued: {
+          issuedOnAll: false,
+          details: [
+            {
+              address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
+              error: expect.stringMatching("exception"),
+              issued: false
+            }
+          ]
+        },
+        revoked: {
+          revokedOnAny: false,
+          details: [
+            {
+              address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
+              revoked: false
+            }
+          ]
+        },
+        valid: false
+      })
+    );
   });
 
   it("returns true if Mainnet document is valid", async () => {
@@ -124,31 +125,31 @@ describe("verify(integration)", () => {
   it("returns false if Ropsten token is invalid", async () => {
     const results = await verify(tokenRopstenInvalid, "ropsten");
 
-    expect(results).toEqual({
-      hash: { checksumMatch: true },
-      issued: {
-        issuedOnAll: false,
-        details: [
-          {
-            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
-            error:
-              'call revert exception (address="0x48399Fb88bcD031C556F53e93F690EEC07963Af3", args=["0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"], method="ownerOf(uint256)", errorSignature="Error(string)", errorArgs=[["ERC721: owner query for nonexistent token"]], reason=["ERC721: owner query for nonexistent token"], transaction={"to":{},"data":"0x6352211e1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"}, version=4.0.37)',
-            issued: false
-          }
-        ]
-      },
-      revoked: {
-        revokedOnAny: true,
-        details: [
-          {
-            address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
-            error:
-              'call revert exception (address="0x48399Fb88bcD031C556F53e93F690EEC07963Af3", args=["0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"], method="ownerOf(uint256)", errorSignature="Error(string)", errorArgs=[["ERC721: owner query for nonexistent token"]], reason=["ERC721: owner query for nonexistent token"], transaction={"to":{},"data":"0x6352211e1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"}, version=4.0.37)',
-            revoked: true
-          }
-        ]
-      },
-      valid: false
-    });
+    expect(results).toEqual(
+      expect.objectContaining({
+        hash: { checksumMatch: true },
+        issued: {
+          issuedOnAll: false,
+          details: [
+            {
+              address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+              error: expect.stringMatching("revert"),
+              issued: false
+            }
+          ]
+        },
+        revoked: {
+          revokedOnAny: true,
+          details: [
+            {
+              address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+              error: expect.stringMatching("revert"),
+              revoked: true
+            }
+          ]
+        },
+        valid: false
+      })
+    );
   });
 });
