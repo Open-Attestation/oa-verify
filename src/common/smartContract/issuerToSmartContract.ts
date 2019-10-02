@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
 import { contractInstance } from "./contractInstance";
 import { TYPES } from "./constants";
-import * as tokenRegistryAbi from "./abi/tokenRegistry.json";
-import * as documentStoreAbi from "./abi/documentStore.json";
+import tokenRegistryAbi from "./abi/tokenRegistry.json";
+import documentStoreAbi from "./abi/documentStore.json";
 import { Issuer, OpenAttestationContract } from "../../types";
 
 export const issuerToSmartContract = (
