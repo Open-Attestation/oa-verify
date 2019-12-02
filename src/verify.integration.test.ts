@@ -10,7 +10,7 @@ import { tokenRopstenValid } from "../test/fixtures/tokenRopstenValid";
 import { tokenRopstenInvalid } from "../test/fixtures/tokenRopstenInvalid";
 
 describe("verify(integration)", () => {
-  it("returns false if document is invalid", async () => {
+  it("returns false if document's hash is invalid and was not issued", async () => {
     const results = await verify(documentTampered, "ropsten");
 
     expect(results).toEqual(
@@ -121,7 +121,7 @@ describe("verify(integration)", () => {
     });
   });
 
-  it("returns false if Ropsten token is invalid", async () => {
+  it("returns false if Ropsten token was not issued and was revoked", async () => {
     const results = await verify(tokenRopstenInvalid, "ropsten");
 
     expect(results).toEqual(
@@ -154,7 +154,7 @@ describe("verify(integration)", () => {
 });
 
 describe("verifyWithIndividualChecks(integration)", () => {
-  it("returns false if document is invalid", async () => {
+  it("returns false if document's hash is invalid and was not issued", async () => {
     const checkPromises = verifyWithIndividualChecks(
       documentTampered,
       "ropsten"
@@ -286,7 +286,7 @@ describe("verifyWithIndividualChecks(integration)", () => {
     });
   });
 
-  it("returns false if Ropsten token is invalid", async () => {
+  it("returns false if Ropsten token was not issued and was revoked", async () => {
     const checkPromises = verifyWithIndividualChecks(
       tokenRopstenInvalid,
       "ropsten"
