@@ -5,6 +5,12 @@ import { verifyRevoked } from "./revoked/verify";
 import { documentToSmartContracts } from "./common/smartContract/documentToSmartContracts";
 import { OpenAttestationContract } from "./types";
 
+/**
+ * Unwraps the resolve type of promises
+ * e.g.
+ *   type foo = () => Promise<boolean>;
+ *   type bar = ResolveType<foo>; // bar is a boolean
+ */
 type ResolveType<T> = T extends (...args: any[]) => Promise<infer U> ? U : T;
 
 type VerificationChecks = [
