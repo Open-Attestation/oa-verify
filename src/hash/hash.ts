@@ -3,6 +3,6 @@ import {
   SchematisedDocument
 } from "@govtechsg/open-attestation";
 
-export const verifyHash = (document: SchematisedDocument) => ({
-  checksumMatch: verifySignature(document)
+export const verifyHash = async (document: SchematisedDocument) => ({
+  checksumMatch: await verifySignature(document)
 });
