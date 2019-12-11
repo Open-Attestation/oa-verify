@@ -1,4 +1,4 @@
-import { SignedDocument, utils } from "@govtechsg/open-attestation";
+import { WrappedDocument, utils } from "@govtechsg/open-attestation";
 import { Hash, OpenAttestationContract } from "../types";
 import { isRevoked } from "./contractInterface";
 
@@ -54,7 +54,7 @@ export const getIntermediateHashes = (
 };
 
 export const verifyRevoked = async (
-  document: SignedDocument,
+  document: WrappedDocument,
   smartContracts: OpenAttestationContract[] = []
 ) => {
   const { targetHash } = document.signature;

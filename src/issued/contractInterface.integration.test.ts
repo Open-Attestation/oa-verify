@@ -9,7 +9,10 @@ import { issuerToSmartContract } from "../common/smartContract/issuerToSmartCont
 describe("isIssuedOnTokenRegistry", () => {
   it("returns true if token is created on tokenRegistry", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3" },
+      {
+        tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+        name: "some"
+      },
       "ropsten"
     );
     const issued = await isIssuedOnTokenRegistry(
@@ -21,7 +24,10 @@ describe("isIssuedOnTokenRegistry", () => {
 
   it("allows error to bubble if token is nonexistent on tokenRegistry", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3" },
+      {
+        tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+        name: "some"
+      },
       "ropsten"
     );
     await expect(
@@ -33,7 +39,10 @@ describe("isIssuedOnTokenRegistry", () => {
 describe("isIssuedOnDocumentStore", () => {
   it("returns true if document is issued on documentStore", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6" },
+      {
+        documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6",
+        name: "some"
+      },
       "ropsten"
     );
     const issued = await isIssuedOnDocumentStore(
@@ -46,7 +55,10 @@ describe("isIssuedOnDocumentStore", () => {
   it("returns false if document is not issued on documentStore", async () => {
     const hash = constants.HashZero;
     const smartContract = issuerToSmartContract(
-      { documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6" },
+      {
+        documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6",
+        name: "some"
+      },
       "ropsten"
     );
     const issued = await isIssuedOnDocumentStore(smartContract, hash);
@@ -55,7 +67,7 @@ describe("isIssuedOnDocumentStore", () => {
 
   it("allows error to bubble if documentStore is not deployed", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: constants.AddressZero },
+      { documentStore: constants.AddressZero, name: "some" },
       "ropsten"
     );
     await expect(
@@ -67,7 +79,10 @@ describe("isIssuedOnDocumentStore", () => {
 describe("isIssued", () => {
   it("works for tokenRegistry", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3" },
+      {
+        tokenRegistry: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+        name: "some"
+      },
       "ropsten"
     );
     const hash =
@@ -80,7 +95,10 @@ describe("isIssued", () => {
     const hash =
       "0x85df2b4e905a82cf10c317df8f4b659b5cf38cc12bd5fbaffba5fc901ef0011b";
     const smartContract = issuerToSmartContract(
-      { documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6" },
+      {
+        documentStore: "0x008486e2b14Cb1B5231DbA10B2170271af3196d6",
+        name: "some"
+      },
       "ropsten"
     );
     const issued = await isIssued(smartContract, hash);

@@ -30,8 +30,8 @@
     "@commitlint/prompt": "8.2.0",
     "@ls-age/commitlint-circle": "1.0.0",
     "@types/jest": "^24.0.18",
-    "@typescript-eslint/eslint-plugin": "1.6.0",
-    "@typescript-eslint/parser": "1.6.0",
+    "@typescript-eslint/eslint-plugin": "1.13.0",
+    "@typescript-eslint/parser": "1.13.0",
     "commitizen": "4.0.3",
     "eslint": "^5.16.0",
     "eslint-config-airbnb-base": "^13.1.0",
@@ -41,10 +41,10 @@
     "eslint-plugin-prettier": "^3.0.1",
     "git-cz": "3.2.1",
     "jest": "^24.7.1",
-    "prettier": "^1.16.4",
+    "prettier": "^1.19.1",
     "semantic-release": "^15.13.24",
     "ts-jest": "^24.1.0",
-    "typescript": "^3.6.3"
+    "typescript": "^3.7.3"
   },
   "publishConfig": {
     "access": "public"

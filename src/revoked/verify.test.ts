@@ -206,8 +206,9 @@ describe("verifyRevoked", () => {
     ];
     const summary = await verifyRevoked(
       {
+        version: "1.0",
         schema: "schema",
-        data: "data",
+        data: { any: "data" },
         signature: {
           merkleRoot: "MERKLE_ROOT",
           type: "SHA3MerkleProof",
@@ -256,8 +257,9 @@ describe("verifyRevoked", () => {
     ];
     const summary = await verifyRevoked(
       {
+        version: "1.0",
         schema: "schema",
-        data: "data",
+        data: { any: "data" },
         signature: {
           merkleRoot: "MERKLE_ROOT",
           type: "SHA3MerkleProof",

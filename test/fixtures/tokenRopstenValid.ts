@@ -1,7 +1,20 @@
-import { SignedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
-export const tokenRopstenValid: SignedDocument = {
-  schema: "tradetrust/v1.0",
+interface CustomDocument {
+  recipient: {
+    address: {
+      street: string;
+      country: string;
+    };
+  };
+  consignment: any; // sorry I'm lazy;
+  declaration: any; // sorry I'm lazy;
+}
+
+export const tokenRopstenValid: WrappedDocument<v2.OpenAttestationDocument &
+  CustomDocument> = {
+  version: "open-attestation/2.0",
+  schema: "tradetrust/1.0",
   data: {
     id: "41847724-c4b2-489e-8505-2bbb652b205c:string:SGCNM21566325",
     $template: {

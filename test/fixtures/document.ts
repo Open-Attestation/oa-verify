@@ -1,7 +1,8 @@
-import { SignedDocument } from "@govtechsg/open-attestation";
+import { WrappedDocument } from "@govtechsg/open-attestation";
 
-export const document: SignedDocument = {
-  schema: "opencerts/v1.4",
+export const document: WrappedDocument = {
+  version: "open-attestation/2.0",
+  schema: "opencerts/1.4",
   data: {
     id: "046bebd9-1c59-4d82-b70b-b6c8aa5c502d:string:2018091259",
     name:

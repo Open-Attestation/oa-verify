@@ -1,7 +1,8 @@
-import { SignedDocument } from "@govtechsg/open-attestation";
+import { WrappedDocument } from "@govtechsg/open-attestation";
 
-export const documentRopstenValid: SignedDocument = {
-  schema: "opencerts/v1.4",
+export const documentRopstenValid: WrappedDocument = {
+  version: "open-attestation/2.0",
+  schema: "opencerts/1.4",
   data: {
     id:
       "e23c59b6-da39-4460-821b-903038d46f96:string:2005:12345678A_PHARM_PHARM_2018",

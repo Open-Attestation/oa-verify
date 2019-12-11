@@ -81,8 +81,9 @@ describe("verifyIssued", () => {
     ];
     const summary = await verifyIssued(
       {
+        version: "1.0",
         schema: "schema",
-        data: "data",
+        data: { any: "data" },
         signature: {
           merkleRoot: "MERKLE_ROOT",
           type: "SHA3MerkleProof",
@@ -123,8 +124,9 @@ describe("verifyIssued", () => {
     ];
     const summary = await verifyIssued(
       {
+        version: "1.0",
         schema: "schema",
-        data: "data",
+        data: { any: "data" },
         signature: {
           merkleRoot: "MERKLE_ROOT",
           type: "SHA3MerkleProof",

@@ -18,7 +18,10 @@ const TOKEN_UNMINTED = constants.AddressZero;
 describe("isRevokedOnTokenRegistry", () => {
   it("returns false if token has valid owner", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: TOKEN_REGISTRY },
+      {
+        name: "name",
+        tokenRegistry: TOKEN_REGISTRY
+      },
       "ropsten"
     );
     const issued = await isRevokedOnTokenRegistry(
@@ -30,7 +33,10 @@ describe("isRevokedOnTokenRegistry", () => {
 
   it("returns true if owner of token is the smart contract itself", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: TOKEN_REGISTRY },
+      {
+        name: "name",
+        tokenRegistry: TOKEN_REGISTRY
+      },
       "ropsten"
     );
     const issued = await isRevokedOnTokenRegistry(
@@ -42,7 +48,10 @@ describe("isRevokedOnTokenRegistry", () => {
 
   it("allow errors to bubble if token is not minted", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: TOKEN_REGISTRY },
+      {
+        name: "name",
+        tokenRegistry: TOKEN_REGISTRY
+      },
       "ropsten"
     );
     await expect(
@@ -60,7 +69,10 @@ const DOCUMENT_UNREVOKED =
 describe("isRevokedOnDocumentStore", () => {
   it("returns true if document is revoked on documentStore", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: DOCUMENT_STORE },
+      {
+        name: "name",
+        documentStore: DOCUMENT_STORE
+      },
       "ropsten"
     );
     const revoked = await isRevokedOnDocumentStore(
@@ -72,7 +84,10 @@ describe("isRevokedOnDocumentStore", () => {
 
   it("returns false if document is not issued on documentStore", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: DOCUMENT_STORE },
+      {
+        name: "name",
+        documentStore: DOCUMENT_STORE
+      },
       "ropsten"
     );
     const issued = await isRevokedOnDocumentStore(
@@ -84,7 +99,10 @@ describe("isRevokedOnDocumentStore", () => {
 
   it("allows error to bubble up if documentStore is not deployed", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: constants.AddressZero },
+      {
+        name: "name",
+        documentStore: constants.AddressZero
+      },
       "ropsten"
     );
     await expect(
@@ -96,7 +114,10 @@ describe("isRevokedOnDocumentStore", () => {
 describe("isRevoked", () => {
   it("works for tokenRegistry", async () => {
     const smartContract = issuerToSmartContract(
-      { tokenRegistry: TOKEN_REGISTRY },
+      {
+        name: "name",
+        tokenRegistry: TOKEN_REGISTRY
+      },
       "ropsten"
     );
     const issued = await isRevoked(smartContract, TOKEN_WITH_OWNER);
@@ -105,7 +126,10 @@ describe("isRevoked", () => {
 
   it("works for documentStore", async () => {
     const smartContract = issuerToSmartContract(
-      { documentStore: DOCUMENT_STORE },
+      {
+        name: "name",
+        documentStore: DOCUMENT_STORE
+      },
       "ropsten"
     );
     const revoked = await isRevoked(smartContract, DOCUMENT_REVOKED);

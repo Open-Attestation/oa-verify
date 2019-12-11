@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-non-null-assertion */
+import { v2 } from "@govtechsg/open-attestation";
 import { contractInstance } from "./contractInstance";
 import { TYPES } from "./constants";
 import tokenRegistryAbi from "./abi/tokenRegistry.json";
 import documentStoreAbi from "./abi/documentStore.json";
-import { Issuer, OpenAttestationContract } from "../../types";
+import { OpenAttestationContract } from "../../types";
 
 export const issuerToSmartContract = (
-  issuer: Issuer,
+  issuer: v2.Issuer,
   network: string
 ): OpenAttestationContract => {
   switch (true) {

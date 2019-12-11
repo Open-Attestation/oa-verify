@@ -1,4 +1,4 @@
-import { SignedDocument } from "@govtechsg/open-attestation";
+import { WrappedDocument } from "@govtechsg/open-attestation";
 import { isIssued } from "./contractInterface";
 import { Hash, OpenAttestationContract } from "../types";
 
@@ -29,7 +29,7 @@ export const isIssuedOnAll = (
 };
 
 export const verifyIssued = async (
-  document: SignedDocument,
+  document: WrappedDocument,
   smartContracts: OpenAttestationContract[] = []
 ) => {
   const hash = `0x${document.signature.merkleRoot}`;

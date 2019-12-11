@@ -1,7 +1,8 @@
-import { SignedDocument } from "@govtechsg/open-attestation";
+import { WrappedDocument } from "@govtechsg/open-attestation";
 
-export const documentMainnetValid: SignedDocument = {
-  schema: "opencerts/v1.4",
+export const documentMainnetValid: WrappedDocument = {
+  version: "open-attestation/2.0",
+  schema: "opencerts/1.4",
   data: {
     id: "ab89a9ae-954f-4d28-8b48-2a534d3a3d60:string:2018-SAF-01",
     $template:
