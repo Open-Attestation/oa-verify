@@ -12,10 +12,7 @@ it("creates a ethers.Contract instance with the right provider", () => {
   });
 
   // @ts-ignore
-  expect(ethers.providers.InfuraProvider.mock.calls[0]).toEqual([
-    "NETWORK",
-    "INFURA_API_KEY"
-  ]);
+  expect(ethers.providers.InfuraProvider.mock.calls[0]).toEqual(["NETWORK", "INFURA_API_KEY"]);
 
   // @ts-ignore
   expect(ethers.Contract.mock.calls[0][0]).toEqual("0x0A");
