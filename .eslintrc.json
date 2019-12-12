@@ -22,7 +22,9 @@
     "prettier/prettier": "error",
     "import/no-unresolved": "off",
     "import/prefer-default-export": "off",
-    "@typescript-eslint/explicit-function-return-type":"off",
-    "@typescript-eslint/no-explicit-any":"off"
+    "import/extensions": "off",
+    "@typescript-eslint/explicit-function-return-type": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "no-unused-expressions": "off"
   }
 }
