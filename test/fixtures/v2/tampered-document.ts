@@ -1,6 +1,17 @@
-import { WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
-export const documentTampered: WrappedDocument = {
+interface CustomDocument extends v2.OpenAttestationDocument {
+  name: string;
+  issuedOn: string;
+  transcript: any;
+  issuers: { url: string; name: string; certificateStore: string }[];
+  recipient: {
+    name: string;
+    email: string;
+    phone: string;
+  };
+}
+export const documentTampered: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "tradetrust/1.0",
   data: {

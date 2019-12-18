@@ -18,7 +18,7 @@ jest.doMock("./revoked/verify", () => ({
 }));
 
 import { verifyWithIndividualChecks } from "./index";
-import { document } from "../test/fixtures/document";
+import { document } from "../test/fixtures/v2/document";
 
 describe("verifyWithIndividualChecks", () => {
   beforeEach(() => {

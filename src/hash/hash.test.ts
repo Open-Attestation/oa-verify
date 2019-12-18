@@ -1,6 +1,6 @@
 import { verifyHash } from "./hash";
-import { document } from "../../test/fixtures/document";
-import { documentTampered } from "../../test/fixtures/tampered-document";
+import { document } from "../../test/fixtures/v2/document";
+import { documentTampered } from "../../test/fixtures/v2/tampered-document";
 
 describe("verify/hash", () => {
   describe("verifyHash", () => {

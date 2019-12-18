@@ -1,4 +1,4 @@
-import { WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { verifyHash } from "./hash/hash";
 import { verifyIssued } from "./issued/verify";
 import { verifyRevoked } from "./revoked/verify";
@@ -47,7 +47,9 @@ const isDocumentValid = (
  * @returns
  */
 export const verify = async (
-  document: WrappedDocument,
+  document:
+    | WrappedDocument<v2.OpenAttestationDocument>
+    | WrappedDocument<v3.OpenAttestationDocument>,
   network = "homestead"
 ) => {
   const smartContracts = documentToSmartContracts(document, network);
@@ -69,7 +71,9 @@ export const verify = async (
  *                   The last promise resolves to the overall validity based on all the checks.
  */
 export const verifyWithIndividualChecks = (
-  document: WrappedDocument,
+  document:
+    | WrappedDocument<v2.OpenAttestationDocument>
+    | WrappedDocument<v3.OpenAttestationDocument>,
   network = "homestead"
 ): VerificationChecksWithValidity => {
   const smartContracts = documentToSmartContracts(document, network);

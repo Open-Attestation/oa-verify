@@ -1,6 +1,17 @@
-import { WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
-export const documentMainnetValid: WrappedDocument = {
+// type is invalid but it requires to reissue the document to fix it
+// @ts-ignore
+interface CustomDocument extends v2.OpenAttestationDocument {
+  name: string;
+  issuedOn: string;
+  $template: string;
+  recipient: {
+    name: string;
+  };
+}
+
+export const documentMainnetValid: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "opencerts/1.4",
   data: {

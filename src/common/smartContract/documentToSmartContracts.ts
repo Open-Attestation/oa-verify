@@ -8,10 +8,10 @@ import { OpenAttestationContract } from "../../types";
 const mapIssuersToSmartContracts = (issuers: v2.Issuer[], network: string) =>
   issuers.map(issuer => issuerToSmartContract(issuer, network));
 
-const isV1Document = (
+const isV2Document = (
   document: any
 ): document is v2.OpenAttestationDocument => {
-  return !document.issuer;
+  return !document.issuer; // issuer is a mandatory field for v3 open-attestation document
 };
 
 // Given a raw document, return list of all smart contracts
@@ -23,7 +23,7 @@ export const documentToSmartContracts = (
 ): OpenAttestationContract[] => {
   const data = getData(document);
 
-  if (isV1Document(data)) {
+  if (isV2Document(data)) {
     const issuers = data.issuers || [];
     return mapIssuersToSmartContracts(issuers, network);
   }

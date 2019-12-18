@@ -3,11 +3,11 @@
  */
 
 import verify, { verifyWithIndividualChecks } from "./index";
-import { documentMainnetValid } from "../test/fixtures/documentMainnetValid";
-import { documentTampered } from "../test/fixtures/tampered-document";
-import { documentRopstenValid } from "../test/fixtures/documentRopstenValid";
-import { tokenRopstenValid } from "../test/fixtures/tokenRopstenValid";
-import { tokenRopstenInvalid } from "../test/fixtures/tokenRopstenInvalid";
+import { documentMainnetValid } from "../test/fixtures/v2/documentMainnetValid";
+import { documentTampered } from "../test/fixtures/v2/tampered-document";
+import { documentRopstenValid } from "../test/fixtures/v2/documentRopstenValid";
+import { tokenRopstenValid } from "../test/fixtures/v2/tokenRopstenValid";
+import { tokenRopstenInvalid } from "../test/fixtures/v2/tokenRopstenInvalid";
 
 describe("verify(integration)", () => {
   it("returns false if document's hash is invalid and was not issued", async () => {
@@ -41,6 +41,8 @@ describe("verify(integration)", () => {
   });
 
   it("returns true if Mainnet document is valid", async () => {
+    // type is invalid but it requires to reissue the document to fix it
+    // @ts-ignore
     const results = await verify(documentMainnetValid);
 
     expect(results).toEqual({
@@ -68,6 +70,8 @@ describe("verify(integration)", () => {
   });
 
   it("returns true if Ropsten document is valid", async () => {
+    // type is invalid but it requires to reissue the document to fix it
+    // @ts-ignore
     const results = await verify(documentRopstenValid, "ropsten");
 
     expect(results).toEqual({
@@ -191,6 +195,8 @@ describe("verifyWithIndividualChecks(integration)", () => {
   });
 
   it("returns true if Mainnet document is valid", async () => {
+    // type is invalid but it requires to reissue the document to fix it
+    // @ts-ignore
     const checkPromises = verifyWithIndividualChecks(documentMainnetValid);
     const [hash, issued, revoked, valid] = await Promise.all(checkPromises);
 
@@ -222,6 +228,8 @@ describe("verifyWithIndividualChecks(integration)", () => {
 
   it("returns true if Ropsten document is valid", async () => {
     const checkPromises = verifyWithIndividualChecks(
+      // type is invalid but it requires to reissue the document to fix it
+      // @ts-ignore
       documentRopstenValid,
       "ropsten"
     );

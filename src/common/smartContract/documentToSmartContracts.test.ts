@@ -1,6 +1,6 @@
 import { documentToSmartContracts } from "./documentToSmartContracts";
 import { issuerToSmartContract } from "./issuerToSmartContract";
-import { document } from "../../../test/fixtures/document";
+import { document } from "../../../test/fixtures/v2/document";
 
 jest.mock("./issuerToSmartContract");
 
