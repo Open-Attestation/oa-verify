@@ -1,8 +1,9 @@
-import { getData, WrappedDocument, v3, v2 } from "@govtechsg/open-attestation";
+import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { issuerToSmartContract } from "./issuerToSmartContract";
 import { contractInstance } from "./contractInstance";
-import documentStoreAbi from "./abi/documentStore.json";
 import { OpenAttestationContract } from "../../types";
+import documentStoreAbi from "./abi/documentStore.json";
+import tokenRegistryAbi from "./abi/tokenRegistry.json";
 
 // Given a list of issuers, convert to smart contract
 const mapIssuersToSmartContracts = (issuers: v2.Issuer[], network: string) =>
@@ -33,7 +34,10 @@ export const documentToSmartContracts = (
       address: data.proof.value,
       instance: contractInstance({
         contractAddress: data.proof.value,
-        abi: documentStoreAbi,
+        abi:
+          data.proof.method === v3.Method.DocumentStore
+            ? documentStoreAbi
+            : tokenRegistryAbi,
         network
       })
     }

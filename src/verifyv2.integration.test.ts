@@ -9,7 +9,7 @@ import { documentRopstenValid } from "../test/fixtures/v2/documentRopstenValid";
 import { tokenRopstenValid } from "../test/fixtures/v2/tokenRopstenValid";
 import { tokenRopstenInvalid } from "../test/fixtures/v2/tokenRopstenInvalid";
 
-describe("verify(integration)", () => {
+describe("verify v2 (integration)", () => {
   it("returns false if document's hash is invalid and was not issued", async () => {
     const results = await verify(documentTampered, "ropsten");
 
@@ -157,7 +157,7 @@ describe("verify(integration)", () => {
   });
 });
 
-describe("verifyWithIndividualChecks(integration)", () => {
+describe("verifyWithIndividualChecks v2 (integration)", () => {
   it("returns false if document's hash is invalid and was not issued", async () => {
     const checkPromises = verifyWithIndividualChecks(
       documentTampered,
