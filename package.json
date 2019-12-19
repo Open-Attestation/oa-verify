@@ -21,7 +21,7 @@
   "author": "",
   "license": "GPL-3.0",
   "dependencies": {
-    "@govtechsg/open-attestation": "^1.1.41",
+    "@govtechsg/open-attestation": "^3.0.3",
     "ethers": "^4.0.27"
   },
   "devDependencies": {
