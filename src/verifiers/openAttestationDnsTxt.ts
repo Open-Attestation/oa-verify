@@ -3,18 +3,15 @@ import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { getNetwork } from "ethers/utils";
 import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../types/core";
 
-const getSmartContractAddress = (issuer: v2.Issuer) => issuer.documentStore || issuer.tokenRegistry;
-
 type Identity =
   | {
-      identified: true;
+      status: "VALID";
       dns: string;
-      smartContract: string;
+      value: string;
     }
   | {
-      identified: false;
-      smartContract: string;
-      error?: string | Error;
+      status: "INVALID";
+      value: string;
     };
 // Resolve identity of an issuer, currently supporting only DNS-TXT
 const resolveIssuerIdentity = async (
@@ -36,13 +33,13 @@ const resolveIssuerIdentity = async (
   );
   return matchingRecord
     ? {
-        identified: true,
+        status: "VALID",
         dns: location,
-        smartContract: smartContractAddress
+        value: smartContractAddress
       }
     : {
-        identified: false,
-        smartContract: smartContractAddress
+        status: "INVALID",
+        value: smartContractAddress
       };
 };
 
@@ -62,7 +59,12 @@ export const openAttestationDnsTxt: Verifier<
   test: document => {
     if (isWrappedV2Document(document)) {
       const documentData = getData(document);
-      return documentData.issuers.some(getSmartContractAddress);
+      // at least one issuer uses DNS-TXT
+      return documentData.issuers.some(issuer => {
+        return (
+          (issuer.documentStore || issuer.tokenRegistry) && issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+        );
+      });
     }
     const documentData = getData(document);
     return documentData.issuer.identityProof.type === v3.IdentityProofType.DNSTxt;
@@ -73,24 +75,28 @@ export const openAttestationDnsTxt: Verifier<
       if (isWrappedV2Document(document)) {
         const documentData = getData(document);
         const identities = await Promise.all(
-          // we expect the test function to prevent this issue => smart contract address MUST be populated
-          // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          documentData.issuers.map(issuer => resolveIssuerIdentity(issuer, getSmartContractAddress(issuer)!, options))
+          documentData.issuers.map(issuer => {
+            if (issuer.identityProof?.type === v2.IdentityProofType.DNSTxt) {
+              // we expect the test function to prevent this issue => smart contract address MUST be populated
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+              return resolveIssuerIdentity(issuer, (issuer.documentStore || issuer.tokenRegistry)!, options);
+            }
+            return {
+              status: "SKIPPED"
+            };
+          })
         );
 
-        const invalidIdentity = identities.findIndex(identity => !identity.identified);
+        const invalidIdentity = identities.findIndex(identity => identity.status === "INVALID");
         if (invalidIdentity !== -1) {
+          const value =
+            documentData.issuers[invalidIdentity].documentStore || documentData.issuers[invalidIdentity].tokenRegistry;
+
           return {
             name,
             type,
-            data: {
-              type: documentData.issuers[invalidIdentity].identityProof?.type,
-              location: documentData.issuers[invalidIdentity].identityProof?.location,
-              value:
-                documentData.issuers[invalidIdentity].documentStore ||
-                documentData.issuers[invalidIdentity].tokenRegistry
-            },
-            message: "Certificate issuer identity is invalid",
+            data: identities,
+            message: `Certificate issuer identity for ${value} is invalid`,
             status: "INVALID"
           };
         }
@@ -103,7 +109,7 @@ export const openAttestationDnsTxt: Verifier<
       }
       const documentData = getData(document);
       const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
-      if (!identity.identified) {
+      if (identity.status === "INVALID") {
         return {
           name,
           type,

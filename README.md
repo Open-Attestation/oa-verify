@@ -2,7 +2,7 @@
 
 [![CircleCI](https://circleci.com/gh/Open-Attestation/oa-verify.svg?style=svg)](https://circleci.com/gh/Open-Attestation/oa-verify)
 
-Library to verify any [OpenAttestation](https://github.com/OpenCerts/open-attestation) document. This library implements [the verifier ADR](https://github.com/Open-Attestation/adr/blob/master/verifier.md).
+Library to verify any [OpenAttestation](https://github.com/Open-Attestation/open-attestation) document. This library implements [the verifier ADR](https://github.com/Open-Attestation/adr/blob/master/verifier.md).
 
 ## Installation
 
