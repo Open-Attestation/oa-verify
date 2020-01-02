@@ -89,14 +89,14 @@ export const openAttestationDnsTxt: Verifier<
 
         const invalidIdentity = identities.findIndex(identity => identity.status === "INVALID");
         if (invalidIdentity !== -1) {
-          const value =
+          const smartContractAddress =
             documentData.issuers[invalidIdentity].documentStore || documentData.issuers[invalidIdentity].tokenRegistry;
 
           return {
             name,
             type,
             data: identities,
-            message: `Certificate issuer identity for ${value} is invalid`,
+            message: `Certificate issuer identity for ${smartContractAddress} is invalid`,
             status: "INVALID"
           };
         }
@@ -107,7 +107,7 @@ export const openAttestationDnsTxt: Verifier<
           status: "VALID"
         };
       } else {
-        // v3 document
+        // we have a v3 document
         const documentData = getData(document);
         const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
         if (identity.status === "INVALID") {
