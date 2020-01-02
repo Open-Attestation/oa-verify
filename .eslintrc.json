@@ -25,6 +25,7 @@
     "import/extensions": "off",
     "@typescript-eslint/explicit-function-return-type": "off",
     "@typescript-eslint/no-explicit-any": "off",
-    "no-unused-expressions": "off"
+    "no-unused-expressions": "off",
+    "no-else-return": "off"
   }
 }

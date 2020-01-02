@@ -106,29 +106,31 @@ export const openAttestationDnsTxt: Verifier<
           data: identities,
           status: "VALID"
         };
-      }
-      const documentData = getData(document);
-      const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
-      if (identity.status === "INVALID") {
+      } else {
+        // v3 document
+        const documentData = getData(document);
+        const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
+        if (identity.status === "INVALID") {
+          return {
+            name,
+            type,
+            data: {
+              type: documentData.issuer.identityProof.type,
+              location: documentData.issuer.identityProof.location,
+              value: documentData.proof.value
+            },
+            message: "Certificate issuer identity is invalid",
+            status: "INVALID"
+          };
+        }
+
         return {
           name,
           type,
-          data: {
-            type: documentData.issuer.identityProof.type,
-            location: documentData.issuer.identityProof.location,
-            value: documentData.proof.value
-          },
-          message: "Certificate issuer identity is invalid",
-          status: "INVALID"
+          data: identity,
+          status: "VALID"
         };
       }
-
-      return {
-        name,
-        type,
-        data: identity,
-        status: "VALID"
-      };
     } catch (e) {
       return {
         name,
