@@ -14,6 +14,7 @@ type Identity =
       value: string;
     };
 // Resolve identity of an issuer, currently supporting only DNS-TXT
+// DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
 const resolveIssuerIdentity = async (
   issuer: v2.Issuer | v3.Issuer,
   smartContractAddress: string,
