@@ -22,7 +22,7 @@
   "license": "GPL-3.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.0.5",
-    "@govtechsg/open-attestation": "3.0.4",
+    "@govtechsg/open-attestation": "3.1.0",
     "ethers": "^4.0.40"
   },
   "devDependencies": {
