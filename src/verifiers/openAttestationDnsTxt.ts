@@ -1,6 +1,6 @@
 import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
-import { getNetwork } from "ethers/utils";
+import { utils } from "ethers";
 import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../types/core";
 
 type Identity =
@@ -28,7 +28,7 @@ const resolveIssuerIdentity = async (
   const matchingRecord = records.find(
     record =>
       record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
-      record.netId === getNetwork(options.network).chainId.toString(10) &&
+      record.netId === utils.getNetwork(options.network).chainId.toString(10) &&
       record.type === "openatts" &&
       record.net === "ethereum"
   );
