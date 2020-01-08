@@ -20,4 +20,5 @@ const openAttestationVerifiers: Verifier<
 
 const verify = verificationBuilder(openAttestationVerifiers);
 
+export * from "./types/core";
 export { verificationBuilder, openAttestationVerifiers, isValid, verify, Verifier };

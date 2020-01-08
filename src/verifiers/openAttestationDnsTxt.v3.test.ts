@@ -26,8 +26,8 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       name: "OpenAttestationDnsTxt",
       data: {
         dns: "example.openattestation.com",
-        identified: true,
-        smartContract: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        status: "VALID",
+        value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
       },
       status: "VALID"
     });

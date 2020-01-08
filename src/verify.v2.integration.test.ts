@@ -231,8 +231,8 @@ describe("verify(integration)", () => {
         data: [
           {
             dns: "example.tradetrust.io",
-            identified: true,
-            smartContract: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
+            status: "VALID",
+            value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
           }
         ],
         status: "VALID",
@@ -290,8 +290,8 @@ describe("verify(integration)", () => {
         data: [
           {
             dns: "tradetrust.io",
-            identified: true,
-            smartContract: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3"
+            status: "VALID",
+            value: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3"
           }
         ],
         status: "VALID",
