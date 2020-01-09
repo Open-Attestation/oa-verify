@@ -3,16 +3,11 @@ import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { utils } from "ethers";
 import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../types/core";
 
-type Identity =
-  | {
-      status: "VALID";
-      dns: string;
-      value: string;
-    }
-  | {
-      status: "INVALID";
-      value: string;
-    };
+interface Identity {
+  status: "VALID" | "INVALID" | "SKIPPED";
+  location?: string;
+  value?: string;
+}
 // Resolve identity of an issuer, currently supporting only DNS-TXT
 // DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
 const resolveIssuerIdentity = async (
@@ -35,11 +30,12 @@ const resolveIssuerIdentity = async (
   return matchingRecord
     ? {
         status: "VALID",
-        dns: location,
+        location,
         value: smartContractAddress
       }
     : {
         status: "INVALID",
+        location,
         value: smartContractAddress
       };
 };
@@ -47,7 +43,9 @@ const resolveIssuerIdentity = async (
 const name = "OpenAttestationDnsTxt";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 export const openAttestationDnsTxt: Verifier<
-  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
+  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
+  VerificationManagerOptions,
+  Identity | Identity[]
 > = {
   skip: () => {
     return Promise.resolve({
@@ -82,9 +80,10 @@ export const openAttestationDnsTxt: Verifier<
               // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               return resolveIssuerIdentity(issuer, (issuer.documentStore || issuer.tokenRegistry)!, options);
             }
-            return {
+            const skippedResponse: Identity = {
               status: "SKIPPED"
             };
+            return skippedResponse; // eslint is happy, so am I (https://github.com/bradzacher/eslint-plugin-typescript/blob/master/docs/rules/no-object-literal-type-assertion.md)
           })
         );
 
@@ -115,11 +114,7 @@ export const openAttestationDnsTxt: Verifier<
           return {
             name,
             type,
-            data: {
-              type: documentData.issuer.identityProof.type,
-              location: documentData.issuer.identityProof.location,
-              value: documentData.proof.value
-            },
+            data: identity,
             message: "Certificate issuer identity is invalid",
             status: "INVALID"
           };

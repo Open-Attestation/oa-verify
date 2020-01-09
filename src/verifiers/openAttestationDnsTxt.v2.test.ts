@@ -15,7 +15,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           name: "OpenAttestationDnsTxt",
           data: [
             {
-              dns: "example.tradetrust.io",
+              location: "example.tradetrust.io",
               status: "VALID",
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             }
@@ -51,7 +51,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           name: "OpenAttestationDnsTxt",
           data: [
             {
-              dns: "example.tradetrust.io",
+              location: "example.tradetrust.io",
               status: "VALID",
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             }
@@ -80,7 +80,13 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         {
           type: "ISSUER_IDENTITY",
           name: "OpenAttestationDnsTxt",
-          data: [{ status: "INVALID", value: "0xabcd" }],
+          data: [
+            {
+              location: "example.tradetrust.io",
+              status: "INVALID",
+              value: "0xabcd"
+            }
+          ],
           message: "Certificate issuer identity for 0xabcd is invalid",
           status: "INVALID"
         }
@@ -270,7 +276,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
               status: "SKIPPED"
             },
             {
-              dns: "example.tradetrust.io",
+              location: "example.tradetrust.io",
               status: "VALID",
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             }
@@ -314,11 +320,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           name: "OpenAttestationDnsTxt",
           data: [
             {
+              location: "example.tradetrust.io",
               status: "INVALID",
               value: "0xabcd"
             },
             {
-              dns: "example.tradetrust.io",
+              location: "example.tradetrust.io",
               status: "VALID",
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             }
@@ -352,7 +359,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           name: "OpenAttestationDnsTxt",
           data: [
             {
-              dns: "example.tradetrust.io",
+              location: "example.tradetrust.io",
               status: "VALID",
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             },

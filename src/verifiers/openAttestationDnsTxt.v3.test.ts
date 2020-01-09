@@ -25,7 +25,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       type: "ISSUER_IDENTITY",
       name: "OpenAttestationDnsTxt",
       data: {
-        dns: "example.openattestation.com",
+        location: "example.openattestation.com",
         status: "VALID",
         value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
       },
@@ -39,7 +39,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     expect(fragment).toStrictEqual({
       type: "ISSUER_IDENTITY",
       name: "OpenAttestationDnsTxt",
-      data: { location: "some.io", value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3", type: "DNS-TXT" },
+      data: { location: "some.io", value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3", status: "INVALID" },
       message: "Certificate issuer identity is invalid",
       status: "INVALID"
     });
