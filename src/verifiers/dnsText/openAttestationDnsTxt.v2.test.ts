@@ -60,6 +60,43 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         }
       ]);
     });
+    it("should return a valid fragment when document has valid identity and uses certificate store", async () => {
+      const document = {
+        ...documentRopstenValidWithToken,
+        data: {
+          ...documentRopstenValidWithToken.data,
+          issuers: [
+            {
+              name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
+              certificateStore:
+                "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              identityProof: {
+                type: "1350e9f5-920b-496d-b95c-2a2793f5bff6:string:DNS-TXT",
+                location: "291a5524-f1c6-45f8-aebc-d691cf020fdd:string:example.tradetrust.io"
+              }
+            }
+          ]
+        }
+      };
+
+      const fragment = await verify(document, {
+        network: "ropsten"
+      });
+      expect(fragment).toStrictEqual([
+        {
+          type: "ISSUER_IDENTITY",
+          name: "OpenAttestationDnsTxt",
+          data: [
+            {
+              location: "example.tradetrust.io",
+              status: "VALID",
+              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
+            }
+          ],
+          status: "VALID"
+        }
+      ]);
+    });
     it("should return an invalid fragment when document identity does not match", async () => {
       const document = {
         ...documentRopstenValidWithToken,

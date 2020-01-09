@@ -66,7 +66,8 @@ export const openAttestationDnsTxt: Verifier<
       // at least one issuer uses DNS-TXT
       return documentData.issuers.some(issuer => {
         return (
-          (issuer.documentStore || issuer.tokenRegistry) && issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+          (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
+          issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
         );
       });
     }
@@ -81,9 +82,13 @@ export const openAttestationDnsTxt: Verifier<
         const identities = await Promise.all(
           documentData.issuers.map(issuer => {
             if (issuer.identityProof?.type === v2.IdentityProofType.DNSTxt) {
-              // we expect the test function to prevent this issue => smart contract address MUST be populated
-              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-              return resolveIssuerIdentity(issuer, (issuer.documentStore || issuer.tokenRegistry)!, options);
+              return resolveIssuerIdentity(
+                issuer,
+                // we expect the test function to prevent this issue => smart contract address MUST be populated
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+                (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore)!,
+                options
+              );
             }
             const skippedResponse: Identity = {
               status: "SKIPPED"
@@ -95,7 +100,9 @@ export const openAttestationDnsTxt: Verifier<
         const invalidIdentity = identities.findIndex(identity => identity.status === "INVALID");
         if (invalidIdentity !== -1) {
           const smartContractAddress =
-            documentData.issuers[invalidIdentity].documentStore || documentData.issuers[invalidIdentity].tokenRegistry;
+            documentData.issuers[invalidIdentity].documentStore ||
+            documentData.issuers[invalidIdentity].tokenRegistry ||
+            documentData.issuers[invalidIdentity].certificateStore;
 
           return {
             name,
