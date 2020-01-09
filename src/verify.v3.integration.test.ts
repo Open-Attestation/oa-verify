@@ -56,7 +56,7 @@ describe("verify v3(integration)", () => {
       {
         data: {
           location: "some.io",
-          type: "DNS-TXT",
+          status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
         message: "Certificate issuer identity is invalid",
@@ -116,7 +116,7 @@ describe("verify v3(integration)", () => {
       {
         data: {
           location: "some.io",
-          type: "DNS-TXT",
+          status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
         message: "Certificate issuer identity is invalid",
@@ -177,7 +177,7 @@ describe("verify v3(integration)", () => {
       {
         data: {
           location: "some.io",
-          type: "DNS-TXT",
+          status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
         message: "Certificate issuer identity is invalid",
@@ -237,7 +237,7 @@ describe("verify v3(integration)", () => {
       {
         data: {
           location: "some.io",
-          type: "DNS-TXT",
+          status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
         message: "Certificate issuer identity is invalid",
@@ -292,7 +292,7 @@ describe("verify v3(integration)", () => {
       {
         data: {
           location: "some.io",
-          type: "DNS-TXT",
+          status: "INVALID",
           value: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20"
         },
         message: "Certificate issuer identity is invalid",

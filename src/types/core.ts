@@ -50,11 +50,12 @@ interface SkippedVerificationFragment extends VerificationFragment {
 }
 export interface Verifier<
   Document = WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>,
-  Options = VerificationManagerOptions
+  Options = VerificationManagerOptions,
+  Data = any
 > {
   skip: (document: Document, options: Options) => Promise<SkippedVerificationFragment>;
   test: (document: Document, options: Options) => boolean;
-  verify: (document: Document, options: Options) => Promise<VerificationFragment>;
+  verify: (document: Document, options: Options) => Promise<VerificationFragment<Data>>;
 }
 export type Hash = string;
 

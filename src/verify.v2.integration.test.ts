@@ -230,7 +230,7 @@ describe("verify(integration)", () => {
       {
         data: [
           {
-            dns: "example.tradetrust.io",
+            location: "example.tradetrust.io",
             status: "VALID",
             value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
           }
@@ -289,7 +289,7 @@ describe("verify(integration)", () => {
       {
         data: [
           {
-            dns: "tradetrust.io",
+            location: "tradetrust.io",
             status: "VALID",
             value: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3"
           }
