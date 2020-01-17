@@ -35,14 +35,14 @@ const DOCUMENT_STORE_CONTRACT = {
 const INTERMEDIATE_HASHES = ["0x0a", "0x0b", "0x0c"];
 
 describe("isAnyHashRevokedOnStore", () => {
-  it("returns false if none of the hash are revoked", async () => {
+  it("returns undefined if none of the hash are revoked", async () => {
     // @ts-ignore
     isRevoked.mockResolvedValue(false);
     const revoked = await isAnyHashRevokedOnStore(TOKEN_REGISTRY_CONTRACT, INTERMEDIATE_HASHES);
-    expect(revoked).toBe(false);
+    expect(revoked).toBe(undefined);
   });
 
-  it("returns true if any of the hashes is revoked", async () => {
+  it("returns hash if any of the hashes is revoked", async () => {
     // @ts-ignore
     isRevoked.mockResolvedValueOnce(false);
     // @ts-ignore
@@ -50,7 +50,7 @@ describe("isAnyHashRevokedOnStore", () => {
     // @ts-ignore
     isRevoked.mockResolvedValueOnce(false);
     const revoked = await isAnyHashRevokedOnStore(TOKEN_REGISTRY_CONTRACT, INTERMEDIATE_HASHES);
-    expect(revoked).toBe(true);
+    expect(revoked).toBe("0x0b");
   });
 });
 
@@ -130,7 +130,15 @@ describe("revokedStatusOnContracts", () => {
     const smartContracts = [TOKEN_REGISTRY_CONTRACT, DOCUMENT_STORE_CONTRACT];
     const revokedStatus = await revokedStatusOnContracts(smartContracts, INTERMEDIATE_HASHES);
     expect(revokedStatus).toEqual([
-      { address: "0x0A", revoked: true, error: "Some error" },
+      {
+        address: "0x0A",
+        revoked: true,
+        reason: {
+          code: 3,
+          codeString: "ETHERS_UNHANDLED_ERROR",
+          message: "Erreur with smart contract 0x0A: undefined"
+        }
+      },
       { address: "0x0B", revoked: false }
     ]);
   });
@@ -252,7 +260,15 @@ describe("verifyRevoked", () => {
       revokedOnAny: true,
       details: [
         { address: "0x0A", revoked: false },
-        { address: "0x0B", revoked: true }
+        {
+          address: "0x0B",
+          revoked: true,
+          reason: {
+            code: 1,
+            codeString: "DOCUMENT_REVOKED",
+            message: "Certificate 0x0d has been revoked under contract 0x0B"
+          }
+        }
       ]
     });
     // @ts-ignore

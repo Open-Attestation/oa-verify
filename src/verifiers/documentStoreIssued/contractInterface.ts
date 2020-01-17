@@ -1,16 +1,7 @@
-import { constants } from "ethers";
 import { v3 } from "@govtechsg/open-attestation";
 import { Hash, OpenAttestationContract } from "../../types/core";
-
-// Return issued status given a smart contract instance (documentStore/tokenRegistry)
-export const isIssuedOnTokenRegistry = async (smartContract: OpenAttestationContract, hash: Hash): Promise<boolean> => {
-  const owner = await smartContract.instance.functions.ownerOf(hash);
-  return !(owner === constants.AddressZero);
-};
-
-export const isIssuedOnDocumentStore = async (smartContract: OpenAttestationContract, hash: Hash): Promise<boolean> => {
-  return smartContract.instance.functions.isIssued(hash);
-};
+import { isIssuedOnDocumentStore } from "./documentStoreContractInterface";
+import { isIssuedOnTokenRegistry } from "./tokenRegistryContractInterface";
 
 export const isIssued = (smartContract: OpenAttestationContract, hash: Hash) => {
   switch (smartContract.type) {

@@ -1,12 +1,73 @@
 import { WrappedDocument, utils, v2, v3 } from "@govtechsg/open-attestation";
-import { Hash, OpenAttestationContract } from "../../types/core";
+import { errors } from "ethers";
+import {
+  OpenAttestationEthereumDocumentStoreRevokedCode,
+  Hash,
+  OpenAttestationContract,
+  Reason
+} from "../../types/core";
 import { isRevoked } from "./contractInterface";
+
+const contractNotFound = (address: string): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreRevokedCode.CONTRACT_NOT_FOUND,
+    codeString:
+      OpenAttestationEthereumDocumentStoreRevokedCode[
+        OpenAttestationEthereumDocumentStoreRevokedCode.CONTRACT_NOT_FOUND
+      ],
+    message: `Contract ${address} was not found`
+  };
+};
+const contractAddressInvalid = (address: string): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreRevokedCode.CONTRACT_ADDRESS_INVALID,
+    codeString:
+      OpenAttestationEthereumDocumentStoreRevokedCode[
+        OpenAttestationEthereumDocumentStoreRevokedCode.CONTRACT_ADDRESS_INVALID
+      ],
+    message: `Contract address ${address} is invalid`
+  };
+};
+const contractRevoked = (merkleRoot: string, address: string): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED,
+    codeString:
+      OpenAttestationEthereumDocumentStoreRevokedCode[OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED],
+    message: `Certificate ${merkleRoot} has been revoked under contract ${address}`
+  };
+};
+
+interface EthersError extends Error {
+  reason?: string | string[];
+  code?: string;
+}
+const getErrorReason = (error: EthersError, address: string): Reason => {
+  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  if (reason.toLowerCase() === "contract not deployed".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) {
+    return contractNotFound(address);
+  } else if (
+    reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
+    error.code === errors.UNSUPPORTED_OPERATION
+  ) {
+    return contractAddressInvalid(address);
+  }
+  return {
+    message: `Erreur with smart contract ${address}: ${error.reason}`,
+    code: OpenAttestationEthereumDocumentStoreRevokedCode.ETHERS_UNHANDLED_ERROR,
+    codeString:
+      OpenAttestationEthereumDocumentStoreRevokedCode[
+        OpenAttestationEthereumDocumentStoreRevokedCode.ETHERS_UNHANDLED_ERROR
+      ]
+  };
+};
 
 // Given a list of hashes, check against one smart contract if any of the hash has been revoked
 export const isAnyHashRevokedOnStore = async (smartContract: OpenAttestationContract, intermediateHashes: Hash[]) => {
-  const revokedStatusDeferred = intermediateHashes.map(hash => isRevoked(smartContract, hash));
+  const revokedStatusDeferred = intermediateHashes.map(hash =>
+    isRevoked(smartContract, hash).then(status => (status ? hash : undefined))
+  );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  return revokedStatuses.some(status => status);
+  return revokedStatuses.find(hash => hash);
 };
 
 export const revokedStatusOnContracts = async (
@@ -15,14 +76,18 @@ export const revokedStatusOnContracts = async (
 ) => {
   const revokeStatusesDefered = smartContracts.map(smartContract =>
     isAnyHashRevokedOnStore(smartContract, intermediateHashes)
-      .then(revoked => ({
-        address: smartContract.address,
-        revoked
-      }))
+      .then(hash => {
+        const reason = hash ? { reason: contractRevoked(hash, smartContract.address) } : {};
+        return {
+          address: smartContract.address,
+          revoked: !!hash,
+          ...reason
+        };
+      })
       .catch(e => ({
         address: smartContract.address,
         revoked: true,
-        error: e.message || e
+        reason: getErrorReason(e, smartContract.address)
       }))
   );
   return Promise.all(revokeStatusesDefered);

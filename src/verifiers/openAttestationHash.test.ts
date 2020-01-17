@@ -9,7 +9,11 @@ describe("OpenAttestationHash", () => {
       name: "OpenAttestationHash",
       type: "DOCUMENT_INTEGRITY",
       data: false,
-      message: "Certificate has been tampered with",
+      reason: {
+        code: 0,
+        codeString: "DOCUMENT_TAMPERED",
+        message: "Certificate has been tampered with"
+      },
       status: "INVALID"
     });
   });

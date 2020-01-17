@@ -1,20 +1,9 @@
-import { WrappedDocument, v2, v3 } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { isIssued } from "./contractInterface";
 import { Hash, OpenAttestationContract } from "../../types/core";
 
 export const issuedStatusOnContracts = async (smartContracts: OpenAttestationContract[] = [], hash: Hash) => {
-  const issueStatusesDeferred = smartContracts.map(smartContract =>
-    isIssued(smartContract, hash)
-      .then(issued => ({
-        address: smartContract.address,
-        issued
-      }))
-      .catch(e => ({
-        address: smartContract.address,
-        issued: false,
-        error: e.message || e
-      }))
-  );
+  const issueStatusesDeferred = smartContracts.map(smartContract => isIssued(smartContract, hash));
   return Promise.all(issueStatusesDeferred);
 };
 

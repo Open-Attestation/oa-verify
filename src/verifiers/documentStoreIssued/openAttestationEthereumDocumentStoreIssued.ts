@@ -1,5 +1,10 @@
 import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import {
+  OpenAttestationEthereumDocumentStoreIssuedCode,
+  isWrappedV3Document,
+  VerificationFragmentType,
+  Verifier
+} from "../../types/core";
 import { getDocumentStoreSmartContract } from "../../common/smartContract/documentToSmartContracts";
 import { verifyIssued } from "./verify";
 
@@ -13,7 +18,12 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
       status: "SKIPPED",
       type,
       name,
-      message: `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`
+      reason: {
+        code: OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED,
+        codeString:
+          OpenAttestationEthereumDocumentStoreIssuedCode[OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED],
+        message: `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`
+      }
     });
   },
   test: document => {
@@ -29,18 +39,22 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
       const smartContracts = getDocumentStoreSmartContract(document, options);
       const status = await verifyIssued(document, smartContracts);
       if (!status.issuedOnAll) {
+        // @ts-ignore disable to not force token registry to return undefined reason. dunno how to fix this
+        const reason = status.details.find(s => s.reason)?.reason;
         return {
           name,
           type,
-          data: status,
-          message: "Certificate has not been issued",
+          data: isWrappedV3Document(document)
+            ? { issuedOnAll: status.issuedOnAll, details: status.details[0] }
+            : status,
+          reason,
           status: "INVALID"
         };
       }
       return {
         name,
         type,
-        data: status,
+        data: isWrappedV3Document(document) ? { issuedOnAll: status.issuedOnAll, details: status.details[0] } : status,
         status: "VALID"
       };
     } catch (e) {
@@ -48,7 +62,14 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
         name,
         type,
         data: e,
-        message: e.message,
+        reason: {
+          message: e.message,
+          code: OpenAttestationEthereumDocumentStoreIssuedCode.UNEXPECTED_ERROR,
+          codeString:
+            OpenAttestationEthereumDocumentStoreIssuedCode[
+              OpenAttestationEthereumDocumentStoreIssuedCode.UNEXPECTED_ERROR
+            ]
+        },
         status: "ERROR"
       };
     }

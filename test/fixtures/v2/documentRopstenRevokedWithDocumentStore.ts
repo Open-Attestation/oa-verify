@@ -1,6 +1,18 @@
-import { WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
-export const documentRopstenRevokedWithDocumentStore: WrappedDocument = {
+interface CustomDocument extends v2.OpenAttestationDocument {
+  recipient: {
+    name: string;
+    address: {
+      street: string;
+      country: string;
+    };
+  };
+  consignment: any;
+  declaration: any;
+}
+
+export const documentRopstenRevokedWithDocumentStore: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "tradetrust/1.0",
   data: {

@@ -11,6 +11,7 @@ import { documentRopstenNotIssued } from "../../../test/fixtures/v3/documentRops
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 
 describe("openAttestationEthereumDocumentStoreIssued", () => {
+  // TODO create a verifier and call it to test this => check dns verifier test
   describe("test", () => {
     it("should return true when v2 document has at least one certificate store", () => {
       const test = openAttestationEthereumDocumentStoreIssued.test(documentRopstenNotIssuedWithCertificateStore, {
@@ -44,6 +45,94 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
     });
   });
   describe("v2", () => {
+    it("should return an invalid fragment when document has certificate store that does not exist", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
+        {
+          ...documentRopstenNotIssuedWithCertificateStore,
+          data: {
+            ...documentRopstenNotIssuedWithCertificateStore.data,
+            issuers: [
+              {
+                ...documentRopstenNotIssuedWithCertificateStore.data.issuers[0],
+                certificateStore:
+                  "60a8bb36-ab89-4dec-be0e-575b5c59141c:string:0x0000000000000000000000000000000000000000"
+              }
+            ]
+          }
+        },
+        {
+          network: "ropsten"
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          details: [
+            {
+              address: "0x0000000000000000000000000000000000000000",
+              issued: false,
+              reason: {
+                code: 404,
+                codeString: "CONTRACT_NOT_FOUND",
+                message: "Contract 0x0000000000000000000000000000000000000000 was not found"
+              }
+            }
+          ],
+          issuedOnAll: false
+        },
+        reason: {
+          code: 404,
+          codeString: "CONTRACT_NOT_FOUND",
+          message: "Contract 0x0000000000000000000000000000000000000000 was not found"
+        },
+        status: "INVALID"
+      });
+    });
+    it("should return an invalid fragment when document has invalid certificate store", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
+        {
+          ...documentRopstenNotIssuedWithCertificateStore,
+          data: {
+            ...documentRopstenNotIssuedWithCertificateStore.data,
+            issuers: [
+              {
+                ...documentRopstenNotIssuedWithCertificateStore.data.issuers[0],
+                certificateStore: "60a8bb36-ab89-4dec-be0e-575b5c59141c:string:0xabcd"
+              }
+            ]
+          }
+        },
+        {
+          network: "ropsten"
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          details: [
+            {
+              address: "0xabcd",
+              issued: false,
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address 0xabcd is invalid"
+              }
+            }
+          ],
+          issuedOnAll: false
+        },
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address 0xabcd is invalid"
+        },
+        status: "INVALID"
+      });
+    });
+
     it("should return an invalid fragment when document with certificate store has not been issued", async () => {
       const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
         documentRopstenNotIssuedWithCertificateStore,
@@ -58,12 +147,23 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
           details: [
             {
               address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: false
+              issued: false,
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_NOT_ISSUED",
+                message:
+                  "Certificate 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+              }
             }
           ],
           issuedOnAll: false
         },
-        message: "Certificate has not been issued",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_ISSUED",
+          message:
+            "Certificate 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
         status: "INVALID"
       });
     });
@@ -81,12 +181,23 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
           details: [
             {
               address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: false
+              issued: false,
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_NOT_ISSUED",
+                message:
+                  "Certificate 0xda7a25d51e62bc50e1c7cfa17f7be0e5df3428b96f584e5d021f0cd8da97306d has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+              }
             }
           ],
           issuedOnAll: false
         },
-        message: "Certificate has not been issued",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_ISSUED",
+          message:
+            "Certificate 0xda7a25d51e62bc50e1c7cfa17f7be0e5df3428b96f584e5d021f0cd8da97306d has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
         status: "INVALID"
       });
     });
@@ -157,12 +268,55 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS",
         data: new Error(`No document store for issuer "Other Issuer"`),
-        message: `No document store for issuer "Other Issuer"`,
+        reason: {
+          code: 0,
+          codeString: "UNEXPECTED_ERROR",
+          message: 'No document store for issuer "Other Issuer"'
+        },
         status: "ERROR"
       });
     });
   });
   describe("v3", () => {
+    it("should return an invalid fragment when document has document store that does not exist", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
+        {
+          ...documentRopstenNotIssued,
+          data: {
+            ...documentRopstenNotIssued.data,
+            proof: {
+              ...documentRopstenNotIssued.data.proof,
+              value: "0b9bbe75-8421-4e70-a176-cba76843216d:string:0x0000000000000000000000000000000000000000"
+            }
+          }
+        },
+        {
+          network: "ropsten"
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          details: {
+            address: "0x0000000000000000000000000000000000000000",
+            issued: false,
+            reason: {
+              code: 404,
+              codeString: "CONTRACT_NOT_FOUND",
+              message: "Contract 0x0000000000000000000000000000000000000000 was not found"
+            }
+          },
+          issuedOnAll: false
+        },
+        reason: {
+          code: 404,
+          codeString: "CONTRACT_NOT_FOUND",
+          message: "Contract 0x0000000000000000000000000000000000000000 was not found"
+        },
+        status: "INVALID"
+      });
+    });
     it("should return an invalid fragment when document with document store has not been issued", async () => {
       const fragment = await openAttestationEthereumDocumentStoreIssued.verify(documentRopstenNotIssued, {
         network: "ropsten"
@@ -171,15 +325,24 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS",
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: false
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: false,
+            reason: {
+              code: 1,
+              codeString: "DOCUMENT_NOT_ISSUED",
+              message:
+                "Certificate 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
             }
-          ],
+          },
           issuedOnAll: false
         },
-        message: "Certificate has not been issued",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_ISSUED",
+          message:
+            "Certificate 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
         status: "INVALID"
       });
     });
@@ -191,12 +354,10 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS",
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: true
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: true
+          },
           issuedOnAll: true
         },
         status: "VALID"

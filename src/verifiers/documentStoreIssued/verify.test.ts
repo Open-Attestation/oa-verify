@@ -1,6 +1,6 @@
 import { Contract } from "ethers";
 import { v3 } from "@govtechsg/open-attestation";
-import { isIssuedOnAll, issuedStatusOnContracts, verifyIssued } from "./verify";
+import { isIssuedOnAll, verifyIssued } from "./verify";
 import { isIssued } from "./contractInterface";
 import { OpenAttestationContract } from "../../types/core";
 
@@ -13,41 +13,6 @@ beforeEach(() => {
 
 // @ts-ignore force contract creation
 const contract: Contract = {};
-
-describe("issuedStatusOnContracts", () => {
-  it("returns issued status on all smart contracts provided", async () => {
-    // @ts-ignore
-    isIssued.mockResolvedValueOnce(true);
-    // @ts-ignore
-    isIssued.mockResolvedValueOnce(false);
-    const smartContracts: OpenAttestationContract[] = [
-      { address: "0x0A", type: v3.Method.DocumentStore, instance: contract },
-      { address: "0x0B", type: v3.Method.DocumentStore, instance: contract }
-    ];
-    const issuedStatus = await issuedStatusOnContracts(smartContracts, "HASH");
-    expect(issuedStatus).toEqual([
-      { address: "0x0A", issued: true },
-      { address: "0x0B", issued: false }
-    ]);
-  });
-
-  it("throws if any smart contract call failed", async () => {
-    // @ts-ignore
-    isIssued.mockResolvedValueOnce(true);
-    // @ts-ignore
-    isIssued.mockRejectedValueOnce(new Error("Some failure"));
-    const smartContracts: OpenAttestationContract[] = [
-      { address: "0x0A", type: v3.Method.DocumentStore, instance: contract },
-      { address: "0x0B", type: v3.Method.DocumentStore, instance: contract }
-    ];
-
-    const issuedStatus = await issuedStatusOnContracts(smartContracts, "HASH");
-    expect(issuedStatus).toEqual([
-      { address: "0x0A", issued: true },
-      { address: "0x0B", issued: false, error: "Some failure" }
-    ]);
-  });
-});
 
 describe("isIssuedOnAll", () => {
   it("returns true if all the smart contract's issued status is true", () => {
@@ -74,9 +39,9 @@ describe("isIssuedOnAll", () => {
 describe("verifyIssued", () => {
   it("returns valid summary of the status if document is issued on all smart contracts", async () => {
     // @ts-ignore
-    isIssued.mockResolvedValueOnce(true);
+    isIssued.mockResolvedValueOnce({ address: "0x0A", issued: true });
     // @ts-ignore
-    isIssued.mockResolvedValueOnce(true);
+    isIssued.mockResolvedValueOnce({ address: "0x0B", issued: true });
     const smartContracts: OpenAttestationContract[] = [
       { address: "0x0A", type: v3.Method.DocumentStore, instance: contract },
       { address: "0x0B", type: v3.Method.DocumentStore, instance: contract }
@@ -113,9 +78,9 @@ describe("verifyIssued", () => {
 
   it("returns invalid summary of the status if document is not issued on all smart contracts", async () => {
     // @ts-ignore
-    isIssued.mockResolvedValueOnce(true);
+    isIssued.mockResolvedValueOnce({ address: "0x0A", issued: true });
     // @ts-ignore
-    isIssued.mockResolvedValueOnce(false);
+    isIssued.mockResolvedValueOnce({ address: "0x0B", issued: false });
     const smartContracts: OpenAttestationContract[] = [
       { address: "0x0A", type: v3.Method.DocumentStore, instance: contract },
       { address: "0x0B", type: v3.Method.DocumentStore, instance: contract }

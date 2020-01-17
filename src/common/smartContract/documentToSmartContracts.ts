@@ -47,7 +47,7 @@ export const getTokenRegistrySmartContract = (
 export const getDocumentStoreSmartContract = (
   document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
   options: { network: string }
-) => {
+): OpenAttestationContract[] => {
   if (isWrappedV2Document(document)) {
     const documentData = getData(document);
     return (documentData.issuers || []).map(issuer => {
