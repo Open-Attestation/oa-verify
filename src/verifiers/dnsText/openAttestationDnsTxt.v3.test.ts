@@ -1,5 +1,5 @@
 import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
-import { documentRopstenValidWithDocumentStore } from "../../test/fixtures/v3/documentRopstenValid";
+import { documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v3/documentRopstenValid";
 
 describe("OpenAttestationDnsTxt v3 document", () => {
   it("should return a valid fragment when document has valid identity", async () => {

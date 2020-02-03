@@ -1,6 +1,6 @@
 import { openAttestationHash } from "./openAttestationHash";
-import { tamperedDocumentWithCertificateStore } from "../../test/fixtures/v2/tamperedDocument";
-import { document } from "../../test/fixtures/v2/document";
+import { tamperedDocumentWithCertificateStore } from "../../../test/fixtures/v2/tamperedDocument";
+import { document } from "../../../test/fixtures/v2/document";
 
 describe("OpenAttestationHash", () => {
   it("should return an invalid fragment when document has been tampered", async () => {

@@ -1,13 +1,13 @@
 import { openAttestationEthereumTokenRegistryMinted } from "./openAttestationEthereumTokenRegistryMinted";
-import { documentRopstenNotIssuedWithTokenRegistry } from "../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
-import { documentRopstenValidWithToken } from "../../test/fixtures/v2/documentRopstenValidWithToken";
+import { documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
+import { documentRopstenValidWithToken } from "../../../test/fixtures/v2/documentRopstenValidWithToken";
 import {
   documentRopstenValidWithDocumentStore as v3documentRopstenValidWithDocumentStore,
   documentRopstenValidWithTokenRegistry as v3documentRopstenValidWithTokenRegistry
-} from "../../test/fixtures/v3/documentRopstenValid";
-import { documentRopstenNotIssuedWithTokenRegistry as v3documentRopstenNotIssuedWithTokenRegistry } from "../../test/fixtures/v3/documentRopstenNotIssuedWithTokenRegistry";
-import { documentRopstenNotIssuedWithCertificateStore } from "../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
-import { documentRopstenNotIssuedWithDocumentStore } from "../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
+} from "../../../test/fixtures/v3/documentRopstenValid";
+import { documentRopstenNotIssuedWithTokenRegistry as v3documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v3/documentRopstenNotIssuedWithTokenRegistry";
+import { documentRopstenNotIssuedWithCertificateStore } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
+import { documentRopstenNotIssuedWithDocumentStore } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
 
 describe("openAttestationEthereumTokenRegistryMinted", () => {
   // TODO create a verifier and call it to test this => check dns verifier test

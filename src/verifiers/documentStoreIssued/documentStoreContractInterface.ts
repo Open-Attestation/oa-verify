@@ -1,11 +1,6 @@
 import { errors } from "ethers";
-import {
-  OpenAttestationEthereumDocumentStoreIssuedCode,
-  EthersError,
-  OpenAttestationContract,
-  Reason,
-  Hash
-} from "../../types/core";
+import { OpenAttestationContract, Hash } from "../../types/core";
+import { OpenAttestationEthereumDocumentStoreIssuedCode, EthersError, Reason } from "../../types/error";
 
 const contractNotFound = (address: Hash): Reason => {
   return {
@@ -47,7 +42,7 @@ const getErrorReason = (error: EthersError, address: string): Reason => {
     return contractAddressInvalid(address);
   }
   return {
-    message: `Erreur with smart contract ${address}: ${error.reason}`,
+    message: `Error with smart contract ${address}: ${error.reason}`,
     code: OpenAttestationEthereumDocumentStoreIssuedCode.ETHERS_UNHANDLED_ERROR,
     codeString:
       OpenAttestationEthereumDocumentStoreIssuedCode[

@@ -1,11 +1,7 @@
 import { WrappedDocument, utils, v2, v3 } from "@govtechsg/open-attestation";
 import { errors } from "ethers";
-import {
-  OpenAttestationEthereumDocumentStoreRevokedCode,
-  Hash,
-  OpenAttestationContract,
-  Reason
-} from "../../types/core";
+import { Hash, OpenAttestationContract } from "../../types/core";
+import { OpenAttestationEthereumDocumentStoreRevokedCode, Reason } from "../../types/error";
 import { isRevoked } from "./contractInterface";
 
 const contractNotFound = (address: string): Reason => {
@@ -52,7 +48,7 @@ const getErrorReason = (error: EthersError, address: string): Reason => {
     return contractAddressInvalid(address);
   }
   return {
-    message: `Erreur with smart contract ${address}: ${error.reason}`,
+    message: `Error with smart contract ${address}: ${error.reason}`,
     code: OpenAttestationEthereumDocumentStoreRevokedCode.ETHERS_UNHANDLED_ERROR,
     codeString:
       OpenAttestationEthereumDocumentStoreRevokedCode[

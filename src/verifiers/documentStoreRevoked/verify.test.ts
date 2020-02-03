@@ -136,7 +136,7 @@ describe("revokedStatusOnContracts", () => {
         reason: {
           code: 3,
           codeString: "ETHERS_UNHANDLED_ERROR",
-          message: "Erreur with smart contract 0x0A: undefined"
+          message: "Error with smart contract 0x0A: undefined"
         }
       },
       { address: "0x0B", revoked: false }

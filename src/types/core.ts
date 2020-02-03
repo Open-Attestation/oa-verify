@@ -1,5 +1,6 @@
 import { Contract } from "ethers";
 import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { Reason } from "./error";
 
 /**
  * - network on which to run the verification (if needed to connect to ethereum), For instance "ropste" or "homestead"
@@ -71,54 +72,3 @@ export const isWrappedV3Document = (document: any): document is WrappedDocument<
 export const isWrappedV2Document = (document: any): document is WrappedDocument<v2.OpenAttestationDocument> => {
   return !isWrappedV3Document(document);
 };
-
-// NEVER EVER REPLACE OR CHANGE A VALUE :)
-// code for errors and invalid fragment
-export enum OpenAttestationEthereumDocumentStoreIssuedCode {
-  UNEXPECTED_ERROR = 0,
-  DOCUMENT_NOT_ISSUED = 1,
-  CONTRACT_ADDRESS_INVALID = 2,
-  ETHERS_UNHANDLED_ERROR = 3,
-  SKIPPED = 4,
-  CONTRACT_NOT_FOUND = 404
-}
-export enum OpenAttestationEthereumDocumentStoreRevokedCode {
-  UNEXPECTED_ERROR = 0,
-  DOCUMENT_REVOKED = 1,
-  CONTRACT_ADDRESS_INVALID = 2,
-  ETHERS_UNHANDLED_ERROR = 3,
-  SKIPPED = 4,
-  CONTRACT_NOT_FOUND = 404
-}
-export enum OpenAttestationEthereumTokenRegistryMintedCode {
-  UNEXPECTED_ERROR = 0,
-  DOCUMENT_NOT_MINTED = 1,
-  CONTRACT_ADDRESS_INVALID = 2,
-  ETHERS_UNHANDLED_ERROR = 3,
-  SKIPPED = 4,
-  CONTRACT_NOT_FOUND = 404
-}
-export enum OpenAttestationDnsTxtCode {
-  UNEXPECTED_ERROR = 0,
-  INVALID_IDENTITY = 1,
-  SKIPPED = 2
-}
-export enum OpenAttestationHashCode {
-  DOCUMENT_TAMPERED = 0
-}
-
-export interface EthersError extends Error {
-  reason?: string | string[];
-  code?: string;
-}
-
-export interface Reason {
-  code:
-    | OpenAttestationEthereumDocumentStoreIssuedCode
-    | OpenAttestationEthereumDocumentStoreRevokedCode
-    | OpenAttestationEthereumTokenRegistryMintedCode
-    | OpenAttestationDnsTxtCode
-    | OpenAttestationHashCode;
-  codeString: string;
-  message: string;
-}

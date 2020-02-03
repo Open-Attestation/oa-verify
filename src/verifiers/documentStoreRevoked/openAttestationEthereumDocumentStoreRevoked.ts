@@ -1,10 +1,6 @@
 import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import {
-  OpenAttestationEthereumDocumentStoreRevokedCode,
-  isWrappedV3Document,
-  VerificationFragmentType,
-  Verifier
-} from "../../types/core";
+import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import { OpenAttestationEthereumDocumentStoreRevokedCode } from "../../types/error";
 import { getDocumentStoreSmartContract } from "../../common/smartContract/documentToSmartContracts";
 import { verifyRevoked } from "./verify";
 

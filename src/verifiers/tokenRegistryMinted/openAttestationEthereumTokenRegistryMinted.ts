@@ -1,13 +1,8 @@
 import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import {
-  isWrappedV3Document,
-  OpenAttestationContract,
-  OpenAttestationEthereumTokenRegistryMintedCode,
-  VerificationFragmentType,
-  Verifier
-} from "../types/core";
-import { getTokenRegistrySmartContract } from "../common/smartContract/documentToSmartContracts";
-import { verifyIssued } from "./documentStoreIssued/verify";
+import { isWrappedV3Document, OpenAttestationContract, VerificationFragmentType, Verifier } from "../../types/core";
+import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
+import { getTokenRegistrySmartContract } from "../../common/smartContract/documentToSmartContracts";
+import { verifyIssued } from "../documentStoreIssued/verify";
 
 const verifyMinted = async (
   document: WrappedDocument<v2.OpenAttestationDocument | v3.OpenAttestationDocument>,

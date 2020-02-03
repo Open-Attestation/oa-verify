@@ -38,7 +38,7 @@ describe("verify(integration)", () => {
               reason: {
                 code: 3,
                 codeString: "ETHERS_UNHANDLED_ERROR",
-                message: "Erreur with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
+                message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
               },
               issued: false
             }
@@ -48,7 +48,7 @@ describe("verify(integration)", () => {
         reason: {
           code: 3,
           codeString: "ETHERS_UNHANDLED_ERROR",
-          message: "Erreur with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
+          message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
         },
         status: "INVALID",
         name: "OpenAttestationEthereumDocumentStoreIssued",

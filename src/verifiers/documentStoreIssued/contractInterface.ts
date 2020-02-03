@@ -1,7 +1,7 @@
 import { v3 } from "@govtechsg/open-attestation";
 import { Hash, OpenAttestationContract } from "../../types/core";
 import { isIssuedOnDocumentStore } from "./documentStoreContractInterface";
-import { isIssuedOnTokenRegistry } from "./tokenRegistryContractInterface";
+import { isIssuedOnTokenRegistry } from "../tokenRegistryMinted/tokenRegistryContractInterface";
 
 export const isIssued = (smartContract: OpenAttestationContract, hash: Hash) => {
   switch (smartContract.type) {
