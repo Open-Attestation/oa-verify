@@ -20,7 +20,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
     message: `Contract address ${address} is invalid`
   };
 };
-const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
+export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
   return {
     code: OpenAttestationEthereumTokenRegistryMintedCode.DOCUMENT_NOT_MINTED,
     codeString:
@@ -31,13 +31,14 @@ const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
   };
 };
 
-const getErrorReason = (error: EthersError, address: string, hash: Hash): Reason => {
+export const getErrorReason = (error: EthersError, address: string, hash: Hash): Reason => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   if (reason.toLowerCase() === "contract not deployed".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) {
     return contractNotFound(address);
   } else if (
-    reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-    error.code === errors.UNSUPPORTED_OPERATION
+    (reason.toLowerCase() === "ENS name not configured".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) ||
+    (reason.toLowerCase() === "bad address checksum".toLowerCase() && error.code === errors.INVALID_ARGUMENT) ||
+    (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
   } else if (
@@ -54,21 +55,4 @@ const getErrorReason = (error: EthersError, address: string, hash: Hash): Reason
         OpenAttestationEthereumTokenRegistryMintedCode.ETHERS_UNHANDLED_ERROR
       ]
   };
-};
-
-export const isIssuedOnTokenRegistry = async (smartContract: OpenAttestationContract, hash: Hash) => {
-  return smartContract.instance.functions
-    .ownerOf(hash)
-    .then(owner => !(owner === constants.AddressZero))
-    .then((issued: boolean) => {
-      return {
-        address: smartContract.address,
-        issued
-      };
-    })
-    .catch(e => ({
-      address: smartContract.address,
-      issued: false,
-      reason: getErrorReason(e, smartContract.address, hash)
-    }));
 };

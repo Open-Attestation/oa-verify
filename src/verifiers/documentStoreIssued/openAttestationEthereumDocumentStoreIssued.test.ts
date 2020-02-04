@@ -132,7 +132,93 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         status: "INVALID"
       });
     });
-
+    it("should return an invalid fragment when document has invalid ens name certificate store", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
+        {
+          ...documentRopstenNotIssuedWithCertificateStore,
+          data: {
+            ...documentRopstenNotIssuedWithCertificateStore.data,
+            issuers: [
+              {
+                ...documentRopstenNotIssuedWithCertificateStore.data.issuers[0],
+                certificateStore: "60a8bb36-ab89-4dec-be0e-575b5c59141c:string:0xomgthisisnotgood"
+              }
+            ]
+          }
+        },
+        {
+          network: "ropsten"
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          details: [
+            {
+              address: "0xomgthisisnotgood",
+              issued: false,
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address 0xomgthisisnotgood is invalid"
+              }
+            }
+          ],
+          issuedOnAll: false
+        },
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address 0xomgthisisnotgood is invalid"
+        },
+        status: "INVALID"
+      });
+    });
+    it.only("should return an invalid fragment when document has invalid certificate store with bad checksum", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
+        {
+          ...documentRopstenNotIssuedWithCertificateStore,
+          data: {
+            ...documentRopstenNotIssuedWithCertificateStore.data,
+            issuers: [
+              {
+                ...documentRopstenNotIssuedWithCertificateStore.data.issuers[0],
+                certificateStore:
+                  "60a8bb36-ab89-4dec-be0e-575b5c59141c:string:0x8Fc57204c35fb9317D91285eF52D6b892EC08cd3" // replaced last D by d
+              }
+            ]
+          }
+        },
+        {
+          network: "ropsten"
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          details: [
+            {
+              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cd3",
+              issued: false,
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address 0x8Fc57204c35fb9317D91285eF52D6b892EC08cd3 is invalid"
+              }
+            }
+          ],
+          issuedOnAll: false
+        },
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address 0x8Fc57204c35fb9317D91285eF52D6b892EC08cd3 is invalid"
+        },
+        status: "INVALID"
+      });
+    });
     it("should return an invalid fragment when document with certificate store has not been issued", async () => {
       const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
         documentRopstenNotIssuedWithCertificateStore,
@@ -245,7 +331,7 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         status: "VALID"
       });
     });
-    it("should return an error fragment when document mixes document store and other verifier method", async () => {
+    it("should return an invalid fragment when document mixes document store and other verifier method", async () => {
       const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
         {
           ...v2documentRopstenValidWithDocumentStore,
@@ -267,13 +353,26 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
       expect(fragment).toStrictEqual({
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS",
-        data: new Error(`No document store for issuer "Other Issuer"`),
-        reason: {
-          code: 0,
-          codeString: "UNEXPECTED_ERROR",
-          message: 'No document store for issuer "Other Issuer"'
+        data: {
+          details: [
+            {
+              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+              issued: true
+            },
+            {
+              address: "",
+              issued: false,
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address  is invalid"
+              }
+            }
+          ],
+          issuedOnAll: false
         },
-        status: "ERROR"
+        reason: { code: 2, codeString: "CONTRACT_ADDRESS_INVALID", message: "Contract address  is invalid" },
+        status: "INVALID"
       });
     });
   });

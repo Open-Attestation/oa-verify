@@ -132,7 +132,6 @@ describe("openAttestationEthereumDocumentStoreRevoked", () => {
         status: "INVALID"
       });
     });
-
     it("should return an invalid fragment when document with document store has been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreRevoked.verify(
         documentRopstenRevokedWithDocumentStore,
@@ -267,13 +266,31 @@ describe("openAttestationEthereumDocumentStoreRevoked", () => {
       expect(fragment).toStrictEqual({
         name: "OpenAttestationEthereumDocumentStoreRevoked",
         type: "DOCUMENT_STATUS",
-        data: new Error(`No document store for issuer "Foo Issuer"`),
-        reason: {
-          code: 0,
-          codeString: "UNEXPECTED_ERROR",
-          message: `No document store for issuer "Foo Issuer"`
+        data: {
+          details: [
+            {
+              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+              revoked: false
+            },
+            {
+              address: "",
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address  is invalid"
+              },
+              revoked: true
+            }
+          ],
+          revokedOnAny: true
         },
-        status: "ERROR"
+
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address  is invalid"
+        },
+        status: "INVALID"
       });
     });
   });

@@ -1,25 +1,18 @@
 import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { isWrappedV3Document, OpenAttestationContract, VerificationFragmentType, Verifier } from "../../types/core";
+import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
-import { getTokenRegistrySmartContract } from "../../common/smartContract/documentToSmartContracts";
-import { verifyIssued } from "../documentStoreIssued/verify";
+import {
+  createTokenRegistryContract,
+  getIssuersTokenRegistry,
+  isMintedOnTokenRegistry
+} from "../../common/smartContract/tokenRegistryContractInterface";
+import { contractNotMinted, getErrorReason } from "./errors";
 
-const verifyMinted = async (
-  document: WrappedDocument<v2.OpenAttestationDocument | v3.OpenAttestationDocument>,
-  smartContracts: OpenAttestationContract[] = []
-) => {
-  const { details, issuedOnAll } = await verifyIssued(document, smartContracts);
-  return {
-    details: details.map(({ issued, ...rest }) => {
-      return {
-        ...rest,
-        minted: issued
-      };
-    }),
-    mintedOnAll: issuedOnAll
-  };
-};
-
+interface Status {
+  minted: boolean;
+  address: string;
+  reason?: any;
+}
 const name = "OpenAttestationEthereumTokenRegistryMinted";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
 export const openAttestationEthereumTokenRegistryMinted: Verifier<
@@ -48,25 +41,43 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
   },
   verify: async (document, options) => {
     try {
-      const smartContracts = getTokenRegistrySmartContract(document, options);
-      const status = await verifyMinted(document, smartContracts);
-      if (!status.mintedOnAll) {
-        // @ts-ignore disable to not force token registry to return undefined reason. dunno how to fix this
-        const reason = status.details.find(s => s.reason)?.reason;
+      const tokenRegistries = getIssuersTokenRegistry(document);
+      if (tokenRegistries.length > 1) {
+        throw new Error(`Only one token registry is allowed. Found ${tokenRegistries.length}`);
+      }
+      const merkleRoot = `0x${document.signature.merkleRoot}`;
+      const statuses: Status[] = await Promise.all(
+        tokenRegistries.map(async tokenRegistry => {
+          try {
+            const contract = createTokenRegistryContract(tokenRegistry, options);
+            const minted = await isMintedOnTokenRegistry(contract, merkleRoot);
+            const status: Status = {
+              minted,
+              address: tokenRegistry
+            };
+            if (!minted) {
+              status.reason = contractNotMinted(merkleRoot, tokenRegistry);
+            }
+            return status;
+          } catch (e) {
+            return { minted: false, address: tokenRegistry, reason: getErrorReason(e, tokenRegistry, merkleRoot) };
+          }
+        })
+      );
+      const notMinted = statuses.find(status => !status.minted);
+      if (notMinted) {
         return {
           name,
           type,
-          data: isWrappedV3Document(document)
-            ? { mintedOnAll: status.mintedOnAll, details: status.details[0] }
-            : status,
-          reason,
+          data: { mintedOnAll: false, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+          reason: notMinted.reason,
           status: "INVALID"
         };
       }
       return {
         name,
         type,
-        data: isWrappedV3Document(document) ? { mintedOnAll: status.mintedOnAll, details: status.details[0] } : status,
+        data: { mintedOnAll: true, details: isWrappedV3Document(document) ? statuses[0] : statuses },
         status: "VALID"
       };
     } catch (e) {

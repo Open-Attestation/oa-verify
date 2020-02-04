@@ -230,11 +230,11 @@ describe("openAttestationEthereumTokenRegistryMinted", () => {
       expect(fragment).toStrictEqual({
         name: "OpenAttestationEthereumTokenRegistryMinted",
         type: "DOCUMENT_STATUS",
-        data: new Error(`No token registry for issuer "Second Issuer"`),
+        data: new Error(`Only one token registry is allowed. Found 2`),
         reason: {
           code: 0,
           codeString: "UNEXPECTED_ERROR",
-          message: 'No token registry for issuer "Second Issuer"'
+          message: "Only one token registry is allowed. Found 2"
         },
         status: "ERROR"
       });

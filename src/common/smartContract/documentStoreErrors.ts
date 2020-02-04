@@ -1,6 +1,11 @@
 import { errors } from "ethers";
-import { OpenAttestationContract, Hash } from "../../types/core";
-import { OpenAttestationEthereumDocumentStoreIssuedCode, EthersError, Reason } from "../../types/error";
+import {
+  EthersError,
+  Hash,
+  OpenAttestationEthereumDocumentStoreIssuedCode,
+  OpenAttestationEthereumDocumentStoreRevokedCode,
+  Reason
+} from "../..";
 
 const contractNotFound = (address: Hash): Reason => {
   return {
@@ -20,7 +25,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
     message: `Contract address ${address} is invalid`
   };
 };
-const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
+export const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreIssuedCode.DOCUMENT_NOT_ISSUED,
     codeString:
@@ -31,13 +36,23 @@ const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
   };
 };
 
-const getErrorReason = (error: EthersError, address: string): Reason => {
+export const contractRevoked = (merkleRoot: string, address: string): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED,
+    codeString:
+      OpenAttestationEthereumDocumentStoreRevokedCode[OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED],
+    message: `Certificate ${merkleRoot} has been revoked under contract ${address}`
+  };
+};
+
+export const getErrorReason = (error: EthersError, address: string): Reason | null => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   if (reason.toLowerCase() === "contract not deployed".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) {
     return contractNotFound(address);
   } else if (
-    reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-    error.code === errors.UNSUPPORTED_OPERATION
+    (reason.toLowerCase() === "ENS name not configured".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) ||
+    (reason.toLowerCase() === "bad address checksum".toLowerCase() && error.code === errors.INVALID_ARGUMENT) ||
+    (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
   }
@@ -49,22 +64,4 @@ const getErrorReason = (error: EthersError, address: string): Reason => {
         OpenAttestationEthereumDocumentStoreIssuedCode.ETHERS_UNHANDLED_ERROR
       ]
   };
-};
-
-export const isIssuedOnDocumentStore = async (smartContract: OpenAttestationContract, hash: Hash) => {
-  return smartContract.instance.functions
-    .isIssued(hash)
-    .then((issued: boolean) => {
-      const reason = !issued ? { reason: contractNotIssued(hash, smartContract.address) } : {};
-      return {
-        address: smartContract.address,
-        issued,
-        ...reason
-      };
-    })
-    .catch(e => ({
-      address: smartContract.address,
-      issued: false,
-      reason: getErrorReason(e, smartContract.address)
-    }));
 };
