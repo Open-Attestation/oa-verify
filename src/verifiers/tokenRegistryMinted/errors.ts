@@ -1,6 +1,6 @@
-import { constants, errors } from "ethers";
-import { OpenAttestationContract, Hash } from "../../types/core";
-import { EthersError, Reason, OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
+import { errors } from "ethers";
+import { Hash } from "../../types/core";
+import { EthersError, OpenAttestationEthereumTokenRegistryMintedCode, Reason } from "../../types/error";
 
 const contractNotFound = (address: Hash): Reason => {
   return {

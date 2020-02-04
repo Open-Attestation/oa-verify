@@ -175,7 +175,7 @@ describe("openAttestationEthereumDocumentStoreIssued", () => {
         status: "INVALID"
       });
     });
-    it.only("should return an invalid fragment when document has invalid certificate store with bad checksum", async () => {
+    it("should return an invalid fragment when document has invalid certificate store with bad checksum", async () => {
       const fragment = await openAttestationEthereumDocumentStoreIssued.verify(
         {
           ...documentRopstenNotIssuedWithCertificateStore,
