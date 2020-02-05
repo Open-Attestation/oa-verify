@@ -39,12 +39,7 @@ export interface EthersError extends Error {
 }
 
 export interface Reason {
-  code:
-    | OpenAttestationEthereumDocumentStoreIssuedCode
-    | OpenAttestationEthereumDocumentStoreRevokedCode
-    | OpenAttestationEthereumTokenRegistryMintedCode
-    | OpenAttestationDnsTxtCode
-    | OpenAttestationHashCode;
+  code: number;
   codeString: string;
   message: string;
 }
