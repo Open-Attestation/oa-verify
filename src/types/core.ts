@@ -1,5 +1,6 @@
 import { Contract } from "ethers";
 import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { Reason } from "./error";
 
 /**
  * - network on which to run the verification (if needed to connect to ethereum), For instance "ropste" or "homestead"
@@ -25,15 +26,15 @@ export interface VerificationManagerOptions {
  * - return the name who can help to determine the verifier that created the result
  *
  * Additional fields might be populated
- * - A message to provide further information about the error
- * - Data to provide further information about the error
+ * - A reason to provide further information about the error/invalid/skipped state
+ * - Data to provide further information
  */
 export interface VerificationFragment<T = any> {
   name: string;
   type: VerificationFragmentType;
-  message?: string;
   data?: T;
   status: VerificationFragmentStatus;
+  reason?: Reason;
 }
 export type VerificationFragmentType = "DOCUMENT_INTEGRITY" | "DOCUMENT_STATUS" | "ISSUER_IDENTITY";
 export type VerificationFragmentStatus = "ERROR" | "VALID" | "INVALID" | "SKIPPED";
@@ -46,7 +47,7 @@ export type VerificationFragmentStatus = "ERROR" | "VALID" | "INVALID" | "SKIPPE
  */
 interface SkippedVerificationFragment extends VerificationFragment {
   status: "SKIPPED";
-  message: string;
+  reason: Reason;
 }
 export interface Verifier<
   Document = WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>,

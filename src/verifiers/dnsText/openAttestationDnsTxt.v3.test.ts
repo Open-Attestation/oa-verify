@@ -1,5 +1,5 @@
 import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
-import { documentRopstenValidWithDocumentStore } from "../../test/fixtures/v3/documentRopstenValid";
+import { documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v3/documentRopstenValid";
 
 describe("OpenAttestationDnsTxt v3 document", () => {
   it("should return a valid fragment when document has valid identity", async () => {
@@ -40,7 +40,12 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       type: "ISSUER_IDENTITY",
       name: "OpenAttestationDnsTxt",
       data: { location: "some.io", value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3", status: "INVALID" },
-      message: "Certificate issuer identity is invalid",
+
+      reason: {
+        code: 1,
+        codeString: "INVALID_IDENTITY",
+        message: "Certificate issuer identity is invalid"
+      },
       status: "INVALID"
     });
   });
@@ -66,7 +71,11 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       type: "ISSUER_IDENTITY",
       name: "OpenAttestationDnsTxt",
       data: new Error("Identity type not supported"),
-      message: "Identity type not supported",
+      reason: {
+        code: 0,
+        codeString: "UNEXPECTED_ERROR",
+        message: "Identity type not supported"
+      },
       status: "ERROR"
     });
   });
@@ -92,7 +101,11 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       type: "ISSUER_IDENTITY",
       name: "OpenAttestationDnsTxt",
       data: new Error("Location is missing"),
-      message: "Location is missing",
+      reason: {
+        code: 0,
+        codeString: "UNEXPECTED_ERROR",
+        message: "Location is missing"
+      },
       status: "ERROR"
     });
   });

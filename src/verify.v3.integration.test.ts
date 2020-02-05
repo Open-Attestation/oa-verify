@@ -14,19 +14,21 @@ describe("verify v3(integration)", () => {
     expect(results).toStrictEqual([
       {
         data: false,
-        message: "Certificate has been tampered with",
+        reason: {
+          code: 0,
+          codeString: "DOCUMENT_TAMPERED",
+          message: "Certificate has been tampered with"
+        },
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY"
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: true
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: true
+          },
           issuedOnAll: true
         },
         status: "VALID",
@@ -34,19 +36,21 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              revoked: false
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            revoked: false
+          },
           revokedOnAny: false
         },
         status: "VALID",
@@ -59,7 +63,11 @@ describe("verify v3(integration)", () => {
           status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
-        message: "Certificate issuer identity is invalid",
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity is invalid"
+        },
         name: "OpenAttestationDnsTxt",
         status: "INVALID",
         type: "ISSUER_IDENTITY"
@@ -80,33 +88,44 @@ describe("verify v3(integration)", () => {
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: false
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: false,
+            reason: {
+              code: 1,
+              codeString: "DOCUMENT_NOT_ISSUED",
+              message:
+                "Certificate 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
             }
-          ],
+          },
           issuedOnAll: false
         },
-        message: "Certificate has not been issued",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_ISSUED",
+          message:
+            "Certificate 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
         status: "INVALID",
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              revoked: false
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            revoked: false
+          },
           revokedOnAny: false
         },
         status: "VALID",
@@ -119,7 +138,11 @@ describe("verify v3(integration)", () => {
           status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
-        message: "Certificate issuer identity is invalid",
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity is invalid"
+        },
         name: "OpenAttestationDnsTxt",
         status: "INVALID",
         type: "ISSUER_IDENTITY"
@@ -141,12 +164,10 @@ describe("verify v3(integration)", () => {
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: true
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: true
+          },
           issuedOnAll: true
         },
         status: "VALID",
@@ -154,22 +175,35 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              revoked: true
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            revoked: true,
+            reason: {
+              code: 1,
+              codeString: "DOCUMENT_REVOKED",
+              message:
+                "Certificate 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
             }
-          ],
+          },
           revokedOnAny: true
         },
-        message: "Certificate has been revoked",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_REVOKED",
+          message:
+            "Certificate 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
         status: "INVALID",
         name: "OpenAttestationEthereumDocumentStoreRevoked",
         type: "DOCUMENT_STATUS"
@@ -180,7 +214,11 @@ describe("verify v3(integration)", () => {
           status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
-        message: "Certificate issuer identity is invalid",
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity is invalid"
+        },
         name: "OpenAttestationDnsTxt",
         status: "INVALID",
         type: "ISSUER_IDENTITY"
@@ -202,12 +240,10 @@ describe("verify v3(integration)", () => {
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              issued: true
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            issued: true
+          },
           issuedOnAll: true
         },
         status: "VALID",
@@ -215,19 +251,21 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
       },
       {
         data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              revoked: false
-            }
-          ],
+          details: {
+            address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            revoked: false
+          },
           revokedOnAny: false
         },
         status: "VALID",
@@ -240,7 +278,11 @@ describe("verify v3(integration)", () => {
           status: "INVALID",
           value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
         },
-        message: "Certificate issuer identity is invalid",
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity is invalid"
+        },
         name: "OpenAttestationDnsTxt",
         status: "INVALID",
         type: "ISSUER_IDENTITY"
@@ -262,20 +304,22 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreIssued",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
       },
       {
         data: {
-          details: [
-            {
-              address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-              minted: true
-            }
-          ],
+          details: {
+            address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+            minted: true
+          },
           mintedOnAll: true
         },
         status: "VALID",
@@ -283,8 +327,12 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreRevoked",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -295,7 +343,11 @@ describe("verify v3(integration)", () => {
           status: "INVALID",
           value: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20"
         },
-        message: "Certificate issuer identity is invalid",
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity is invalid"
+        },
         name: "OpenAttestationDnsTxt",
         status: "INVALID",
         type: "ISSUER_IDENTITY"

@@ -4,13 +4,16 @@
 
 import { isValid, verify } from "./index";
 import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
-import { tamperedDocumentWithCertificateStore } from "../test/fixtures/v2/tamperedDocument";
+import {
+  tamperedDocumentWithCertificateStore,
+  tamperedDocumentWithInvalidCertificateStore
+} from "../test/fixtures/v2/tamperedDocument";
 import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/documentRopstenValidWithCertificateStore";
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 
 describe("verify(integration)", () => {
-  it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreIssued when document's hash is invalid and was not issued", async () => {
+  it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
     const results = await verify(tamperedDocumentWithCertificateStore, {
       network: "ropsten"
     });
@@ -18,7 +21,11 @@ describe("verify(integration)", () => {
     expect(results).toStrictEqual([
       {
         data: false,
-        message: "Certificate has been tampered with",
+        reason: {
+          code: 0,
+          codeString: "DOCUMENT_TAMPERED",
+          message: "Certificate has been tampered with"
+        },
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY"
@@ -28,20 +35,31 @@ describe("verify(integration)", () => {
           details: [
             {
               address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
-              error:
-                'call exception (address="0x20bc9C354A18C8178A713B9BcCFFaC2152b53990", method="isIssued(bytes32)", args=["0x85df2b4e905a82cf10c317df8f4b659b5cf38cc12bd5fbaffba5fc901ef0011b"], version=4.0.40)',
+              reason: {
+                code: 3,
+                codeString: "ETHERS_UNHANDLED_ERROR",
+                message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
+              },
               issued: false
             }
           ],
           issuedOnAll: false
         },
-        message: "Certificate has not been issued",
+        reason: {
+          code: 3,
+          codeString: "ETHERS_UNHANDLED_ERROR",
+          message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception"
+        },
         status: "INVALID",
         name: "OpenAttestationEthereumDocumentStoreIssued",
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -61,7 +79,101 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        },
+        status: "SKIPPED",
+        name: "OpenAttestationDnsTxt",
+        type: "ISSUER_IDENTITY"
+      }
+    ]);
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+  });
+
+  it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreIssued when document's hash is invalid and was not issued", async () => {
+    const results = await verify(tamperedDocumentWithInvalidCertificateStore, {
+      network: "ropsten"
+    });
+
+    expect(results).toStrictEqual([
+      {
+        data: false,
+        reason: {
+          code: 0,
+          codeString: "DOCUMENT_TAMPERED",
+          message: "Certificate has been tampered with"
+        },
+        status: "INVALID",
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY"
+      },
+      {
+        data: {
+          details: [
+            {
+              address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53991",
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid"
+              },
+              issued: false
+            }
+          ],
+          issuedOnAll: false
+        },
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid"
+        },
+        status: "INVALID",
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        data: {
+          details: [
+            {
+              address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53991",
+              reason: {
+                code: 2,
+                codeString: "CONTRACT_ADDRESS_INVALID",
+                message: "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid"
+              },
+              revoked: true
+            }
+          ],
+          revokedOnAny: true
+        },
+        reason: {
+          code: 2,
+          codeString: "CONTRACT_ADDRESS_INVALID",
+          message: "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid"
+        },
+        status: "INVALID",
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        },
         status: "SKIPPED",
         name: "OpenAttestationDnsTxt",
         type: "ISSUER_IDENTITY"
@@ -98,7 +210,11 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -118,7 +234,11 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        },
         status: "SKIPPED",
         name: "OpenAttestationDnsTxt",
         type: "ISSUER_IDENTITY"
@@ -156,7 +276,11 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        },
         name: "OpenAttestationEthereumTokenRegistryMinted",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -176,7 +300,11 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        },
         status: "SKIPPED",
         name: "OpenAttestationDnsTxt",
         type: "ISSUER_IDENTITY"
@@ -200,8 +328,12 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreIssued",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -221,8 +353,12 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreRevoked",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -256,8 +392,12 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreIssued",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"
@@ -267,21 +407,34 @@ describe("verify(integration)", () => {
           details: [
             {
               address: "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
-              error:
-                'call revert exception (address="0x48399Fb88bcD031C556F53e93F690EEC07963Af3", args=["0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"], method="ownerOf(uint256)", errorSignature="Error(string)", errorArgs=[["ERC721: owner query for nonexistent token"]], reason=["ERC721: owner query for nonexistent token"], transaction={"to":{},"data":"0x6352211e1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef"}, version=4.0.40)',
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_NOT_MINTED",
+                message:
+                  "Certificate 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3"
+              },
               minted: false
             }
           ],
           mintedOnAll: false
         },
-        message: "Certificate has not been minted",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_MINTED",
+          message:
+            "Certificate 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3"
+        },
         status: "INVALID",
         name: "OpenAttestationEthereumTokenRegistryMinted",
         type: "DOCUMENT_STATUS"
       },
       {
-        message:
-          'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message:
+            'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method'
+        },
         name: "OpenAttestationEthereumDocumentStoreRevoked",
         status: "SKIPPED",
         type: "DOCUMENT_STATUS"

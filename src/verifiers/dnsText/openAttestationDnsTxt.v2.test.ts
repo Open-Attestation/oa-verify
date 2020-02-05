@@ -1,6 +1,6 @@
 import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
-import { documentRopstenValidWithToken } from "../../test/fixtures/v2/documentRopstenValidWithToken";
-import { verificationBuilder } from "./verificationBuilder";
+import { documentRopstenValidWithToken } from "../../../test/fixtures/v2/documentRopstenValidWithToken";
+import { verificationBuilder } from "../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationDnsTxt]);
 describe("OpenAttestationDnsTxt v2 document", () => {
@@ -87,7 +87,11 @@ describe("OpenAttestationDnsTxt v2 document", () => {
               value: "0xabcd"
             }
           ],
-          message: "Certificate issuer identity for 0xabcd is invalid",
+          reason: {
+            code: 1,
+            codeString: "INVALID_IDENTITY",
+            message: "Certificate issuer identity for 0xabcd is invalid"
+          },
           status: "INVALID"
         }
       ]);
@@ -117,7 +121,11 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           type: "ISSUER_IDENTITY",
           name: "OpenAttestationDnsTxt",
           data: new Error("Location is missing"),
-          message: "Location is missing",
+          reason: {
+            code: 0,
+            codeString: "UNEXPECTED_ERROR",
+            message: "Location is missing"
+          },
           status: "ERROR"
         }
       ]);
@@ -142,8 +150,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         })
       ).toStrictEqual([
         {
-          message:
-            'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type'
+          },
           name: "OpenAttestationDnsTxt",
           status: "SKIPPED",
           type: "ISSUER_IDENTITY"
@@ -170,8 +182,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         })
       ).toStrictEqual([
         {
-          message:
-            'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type'
+          },
           name: "OpenAttestationDnsTxt",
           status: "SKIPPED",
           type: "ISSUER_IDENTITY"
@@ -201,8 +217,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         })
       ).toStrictEqual([
         {
-          message:
-            'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type'
+          },
           name: "OpenAttestationDnsTxt",
           status: "SKIPPED",
           type: "ISSUER_IDENTITY"
@@ -232,8 +252,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         })
       ).toStrictEqual([
         {
-          message:
-            'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type'
+          },
           name: "OpenAttestationDnsTxt",
           status: "SKIPPED",
           type: "ISSUER_IDENTITY"
@@ -330,7 +354,11 @@ describe("OpenAttestationDnsTxt v2 document", () => {
               value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
             }
           ],
-          message: "Certificate issuer identity for 0xabcd is invalid",
+          reason: {
+            code: 1,
+            codeString: "INVALID_IDENTITY",
+            message: "Certificate issuer identity for 0xabcd is invalid"
+          },
           status: "INVALID"
         }
       ]);
@@ -393,8 +421,12 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         })
       ).toStrictEqual([
         {
-          message:
-            'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type'
+          },
           name: "OpenAttestationDnsTxt",
           status: "SKIPPED",
           type: "ISSUER_IDENTITY"

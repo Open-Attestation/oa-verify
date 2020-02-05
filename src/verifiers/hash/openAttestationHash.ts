@@ -1,5 +1,6 @@
 import { verifySignature } from "@govtechsg/open-attestation";
-import { VerificationFragmentType, Verifier } from "../types/core";
+import { VerificationFragmentType, Verifier } from "../../types/core";
+import { OpenAttestationHashCode } from "../../types/error";
 
 const name = "OpenAttestationHash";
 const type: VerificationFragmentType = "DOCUMENT_INTEGRITY";
@@ -15,7 +16,11 @@ export const openAttestationHash: Verifier = {
         type,
         name,
         data: hash,
-        message: "Certificate has been tampered with",
+        reason: {
+          code: OpenAttestationHashCode.DOCUMENT_TAMPERED,
+          codeString: OpenAttestationHashCode[OpenAttestationHashCode.DOCUMENT_TAMPERED],
+          message: "Certificate has been tampered with"
+        },
         status: "INVALID"
       };
     }
