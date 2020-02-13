@@ -16,7 +16,7 @@ npm install @govtechsg/oa-verify
 import { documentRopstenValidWithToken } from "./test/fixtures/v2/documentRopstenValidWithToken";
 import { verify, isValid } from "@govtechsg/oa-verify";
 
-verify(documentRopstenValidWithToken).then(console.log); // see below
+verify(documentRopstenValidWithToken, { network: "ropsten" }).then(console.log); // see below
 console.log(isValid(results)); // display true
 ```
 
@@ -123,7 +123,7 @@ The function allow to specify as a second parameters the list of types on which 
 import { documentRopstenValidWithCertificateStore } from "./test/fixtures/v2/documentRopstenValidWithCertificateStore";
 import { verify, isValid } from "@govtechsg/oa-verify";
 
-const fragments = verify(documentRopstenValidWithCertificateStore);
+const fragments = verify(documentRopstenValidWithCertificateStore, { network: "ropsten" });
 isValid(fragments); // display false because ISSUER_IDENTITY is INVALID
 isValid(fragments, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"]); // display true because those types are VALID
 ```
