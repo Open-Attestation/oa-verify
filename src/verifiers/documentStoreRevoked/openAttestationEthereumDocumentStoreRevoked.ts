@@ -1,6 +1,6 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Contract } from "ethers";
-import { Hash, isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import { Hash, VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreRevokedCode } from "../../types/error";
 import {
   createDocumentStoreContract,
@@ -53,7 +53,7 @@ export const openAttestationEthereumDocumentStoreRevoked: Verifier<
     });
   },
   test: document => {
-    if (isWrappedV3Document(document)) {
+    if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.DocumentStore;
     }
@@ -91,7 +91,7 @@ export const openAttestationEthereumDocumentStoreRevoked: Verifier<
         return {
           name,
           type,
-          data: { revokedOnAny: true, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+          data: { revokedOnAny: true, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
           reason: revoked.reason,
           status: "INVALID"
         };
@@ -99,7 +99,7 @@ export const openAttestationEthereumDocumentStoreRevoked: Verifier<
       return {
         name,
         type,
-        data: { revokedOnAny: false, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+        data: { revokedOnAny: false, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
         status: "VALID"
       };
     } catch (e) {

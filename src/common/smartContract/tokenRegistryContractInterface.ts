@@ -1,13 +1,13 @@
 import { constants, Contract } from "ethers";
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { Hash, isWrappedV2Document } from "../../types/core";
+import { getData, v2, v3, WrappedDocument, utils } from "@govtechsg/open-attestation";
+import { Hash } from "../../types/core";
 import { contractInstance } from "./contractInstance";
 import tokenRegistryAbi from "./abi/tokenRegistry.json";
 
 export const getIssuersTokenRegistry = (
   document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 ): string[] => {
-  if (isWrappedV2Document(document)) {
+  if (utils.isWrappedV2Document(document)) {
     const data = getData(document);
     return data.issuers.map(issuer => issuer.tokenRegistry || "");
   }

@@ -1,7 +1,7 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v3, WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
 
 export const documentRopstenNotIssued: WrappedDocument<v3.OpenAttestationDocument> = {
-  version: "open-attestation/3.0",
+  version: SchemaId.v3,
   data: {
     reference: "23099a48-5d9f-463e-941f-28fffaabaec7:string:ABCXXXXX00",
     name: "f7da877a-ba98-4317-9434-67b072bd620a:string:Certificate of whatever",

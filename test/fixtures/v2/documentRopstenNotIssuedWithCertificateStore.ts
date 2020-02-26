@@ -1,4 +1,4 @@
-import { v2, WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
 
 interface CustomDocument extends v2.OpenAttestationDocument {
   name: string;
@@ -22,7 +22,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
   };
 }
 export const documentRopstenNotIssuedWithCertificateStore: WrappedDocument<CustomDocument> = {
-  version: "open-attestation/2.0",
+  version: SchemaId.v2,
   schema: "opencerts/1.4",
   data: {
     id: "b8d1a80e-ec6d-4fda-8fc9-ef43d08e8d08:string:2005:12345678A_PHARM_PHARM_2018",

@@ -1,4 +1,4 @@
-import { v2, WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
 
 interface CustomDocument extends v2.OpenAttestationDocument {
   recipient: {
@@ -13,7 +13,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
 }
 
 export const documentRopstenValidWithToken: WrappedDocument<CustomDocument> = {
-  version: "open-attestation/2.0",
+  version: SchemaId.v2,
   schema: "tradetrust/1.0",
   data: {
     id: "b8b9fca9-72f1-4791-864f-a5d3cfd1f404:string:SGCNM21566325",

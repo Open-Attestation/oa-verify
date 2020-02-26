@@ -1,5 +1,5 @@
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import { getData, v2, v3, WrappedDocument, utils } from "@govtechsg/open-attestation";
+import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
 import {
   createTokenRegistryContract,
@@ -32,7 +32,7 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
     });
   },
   test: document => {
-    if (isWrappedV3Document(document)) {
+    if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.TokenRegistry;
     }
@@ -69,7 +69,7 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
         return {
           name,
           type,
-          data: { mintedOnAll: false, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+          data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
           reason: notMinted.reason,
           status: "INVALID"
         };
@@ -77,7 +77,7 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
       return {
         name,
         type,
-        data: { mintedOnAll: true, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+        data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
         status: "VALID"
       };
     } catch (e) {

@@ -1,13 +1,13 @@
 import { Contract } from "ethers";
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { Hash, isWrappedV2Document } from "../../types/core";
+import { getData, v2, v3, WrappedDocument, utils } from "@govtechsg/open-attestation";
+import { Hash } from "../../types/core";
 import { contractInstance } from "./contractInstance";
 import documentStoreAbi from "./abi/documentStore.json";
 
 export const getIssuersDocumentStore = (
   document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 ): string[] => {
-  if (isWrappedV2Document(document)) {
+  if (utils.isWrappedV2Document(document)) {
     const data = getData(document);
     return data.issuers.map(issuer => issuer.documentStore || issuer.certificateStore || "");
   }

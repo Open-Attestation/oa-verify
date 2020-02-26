@@ -1,7 +1,7 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v3, WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
 
 export const documentRopstenValidWithDocumentStore: WrappedDocument<v3.OpenAttestationDocument> = {
-  version: "open-attestation/3.0",
+  version: SchemaId.v3,
   data: {
     reference: "8354acc7-74ab-4cab-be1c-1bf1e10a6920:string:ABCXXXXX00",
     name: "1c1df86c-168e-4519-805b-f38698e5b00e:string:Certificate of whatever",
@@ -36,7 +36,7 @@ export const documentRopstenValidWithDocumentStore: WrappedDocument<v3.OpenAttes
   }
 };
 export const documentRopstenValidWithTokenRegistry: WrappedDocument<v3.OpenAttestationDocument> = {
-  version: "open-attestation/3.0",
+  version: SchemaId.v3,
   data: {
     reference: "2ad9c2f2-33f8-4ae3-a4e7-0a495e8d20de:string:ABCXXXXX00",
     name: "898b2961-3d87-4f7e-95cb-92debbe1a17c:string:Certificate of whatever",

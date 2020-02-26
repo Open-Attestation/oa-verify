@@ -1,7 +1,7 @@
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { getData, v2, v3, WrappedDocument, utils } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
-import { utils } from "ethers";
-import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
+import { utils as ethersUtils } from "ethers";
+import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
 import { OpenAttestationDnsTxtCode } from "../../types/error";
 
 interface Identity {
@@ -24,7 +24,7 @@ const resolveIssuerIdentity = async (
   const matchingRecord = records.find(
     record =>
       record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
-      record.netId === utils.getNetwork(options.network).chainId.toString(10) &&
+      record.netId === ethersUtils.getNetwork(options.network).chainId.toString(10) &&
       record.type === "openatts" &&
       record.net === "ethereum"
   );
@@ -61,7 +61,7 @@ export const openAttestationDnsTxt: Verifier<
     });
   },
   test: document => {
-    if (isWrappedV2Document(document)) {
+    if (utils.isWrappedV2Document(document)) {
       const documentData = getData(document);
       // at least one issuer uses DNS-TXT
       return documentData.issuers.some(issuer => {
@@ -77,7 +77,7 @@ export const openAttestationDnsTxt: Verifier<
   verify: async (document, options) => {
     try {
       // TODO that's shit
-      if (isWrappedV2Document(document)) {
+      if (utils.isWrappedV2Document(document)) {
         const documentData = getData(document);
         const identities = await Promise.all(
           documentData.issuers.map(issuer => {

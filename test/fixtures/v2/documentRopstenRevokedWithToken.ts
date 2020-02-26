@@ -1,7 +1,7 @@
-import { WrappedDocument } from "@govtechsg/open-attestation";
+import { WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
 
 export const documentRopstenRevokedWithToken: WrappedDocument = {
-  version: "open-attestation/2.0",
+  version: SchemaId.v2,
   schema: "tradetrust/1.0",
   data: {
     id: "834a20bd-4d5c-4f3a-a080-f3f834420384:string:SGCNM21566325",
