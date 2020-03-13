@@ -22,4 +22,15 @@ const verify = verificationBuilder(openAttestationVerifiers);
 
 export * from "./types/core";
 export * from "./types/error";
-export { verificationBuilder, openAttestationVerifiers, isValid, verify, Verifier };
+export {
+  verificationBuilder,
+  openAttestationVerifiers,
+  isValid,
+  verify,
+  Verifier,
+  openAttestationHash,
+  openAttestationEthereumDocumentStoreRevoked,
+  openAttestationEthereumDocumentStoreIssued,
+  openAttestationDnsTxt,
+  openAttestationEthereumTokenRegistryMinted
+};
