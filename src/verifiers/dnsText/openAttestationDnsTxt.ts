@@ -4,7 +4,7 @@ import { utils } from "ethers";
 import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
 import { OpenAttestationDnsTxtCode } from "../../types/error";
 
-interface Identity {
+export interface Identity {
   status: "VALID" | "INVALID" | "SKIPPED";
   location?: string;
   value?: string;
