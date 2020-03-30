@@ -2,7 +2,7 @@ import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { verificationBuilder } from "./verifiers/verificationBuilder";
 import { Verifier } from "./types/core";
 import { openAttestationHash } from "./verifiers/hash/openAttestationHash";
-import { openAttestationDnsTxt } from "./verifiers/dnsText/openAttestationDnsTxt";
+import { openAttestationDnsTxt, Identity } from "./verifiers/dnsText/openAttestationDnsTxt";
 import { openAttestationEthereumDocumentStoreIssued } from "./verifiers/documentStoreIssued/openAttestationEthereumDocumentStoreIssued";
 import { openAttestationEthereumDocumentStoreRevoked } from "./verifiers/documentStoreRevoked/openAttestationEthereumDocumentStoreRevoked";
 import { isValid } from "./validator";
@@ -28,6 +28,7 @@ export {
   isValid,
   verify,
   Verifier,
+  Identity,
   openAttestationHash,
   openAttestationEthereumDocumentStoreRevoked,
   openAttestationEthereumDocumentStoreIssued,
