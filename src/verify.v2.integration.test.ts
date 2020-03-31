@@ -11,6 +11,7 @@ import {
 import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/documentRopstenValidWithCertificateStore";
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
+import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
 
 describe("verify(integration)", () => {
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
@@ -381,6 +382,7 @@ describe("verify(integration)", () => {
 
   it("should fail for OpenAttestationEthereumTokenRegistryMinted when document with token registry was not issued ", async () => {
     const results = await verify(documentRopstenRevokedWithToken, {
+      // TODO: Revoked should be checked by .. asserting that it was previously minted (has transfer event), but currently not issued (owned by 0x0)
       network: "ropsten"
     });
 
@@ -454,5 +456,89 @@ describe("verify(integration)", () => {
     ]);
     expect(isValid(results)).toStrictEqual(false);
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
+  });
+
+  it("should fail for OpenAttestationEthereumDocumentStoreRevoked when document was issued then subsequently revoked", async () => {
+    const results = await verify(documentRopstenRevokedWithDocumentStore, {
+      network: "ropsten"
+    });
+
+    expect(results).toStrictEqual([
+      {
+        type: "DOCUMENT_INTEGRITY",
+        name: "OpenAttestationHash",
+        data: true,
+        status: "VALID"
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: true,
+          details: [
+            {
+              issued: true,
+              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+            }
+          ]
+        },
+        status: "VALID"
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+        }
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS",
+        data: {
+          revokedOnAny: true,
+          details: [
+            {
+              revoked: true,
+              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_REVOKED",
+                message:
+                  "Certificate 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+              }
+            }
+          ]
+        },
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_REVOKED",
+          message:
+            "Certificate 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        },
+        status: "INVALID"
+      },
+      {
+        name: "OpenAttestationDnsTxt",
+        type: "ISSUER_IDENTITY",
+        data: [
+          {
+            status: "INVALID",
+            location: "tradetrust.io",
+            value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+          }
+        ],
+        reason: {
+          code: 1,
+          codeString: "INVALID_IDENTITY",
+          message: "Certificate issuer identity for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3 is invalid"
+        },
+        status: "INVALID"
+      }
+    ]);
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 });
