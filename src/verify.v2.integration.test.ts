@@ -12,6 +12,8 @@ import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/do
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
+import { documentRopstenValidWithDIDSignedProofBlock } from "../test/fixtures/v2/documentRopstenValidWithDIDSignedProofBlockProperHash";
+import { documentRopstenInvalidWithDIDSignedProofBlock } from "../test/fixtures/v2/documentRopstenInvalidWithDIDSignedProofBlockProperHash";
 
 describe("verify(integration)", () => {
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
@@ -314,6 +316,142 @@ describe("verify(integration)", () => {
     // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
     expect(isValid(results)).toStrictEqual(false);
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+  });
+
+  it("should be valid for all checks when document has a valid signed proof block", async () => {
+    const results = await verify(documentRopstenValidWithDIDSignedProofBlock, {
+      network: "ropsten"
+    });
+
+    expect(results).toStrictEqual([
+      {
+        data: true,
+        status: "VALID",
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY"
+      },
+      {
+        data: {
+          "@context": "https://w3id.org/did/v1",
+          id: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A",
+          authentication: [
+            {
+              type: "Secp256k1SignatureAuthentication2018",
+              publicKey: ["did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner"]
+            }
+          ],
+          publicKey: [
+            {
+              id: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner",
+              type: "Secp256k1VerificationKey2018",
+              ethereumAddress: "0x44e682d207bcdddad0bb3a650ccb9de0911b9d3a",
+              owner: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A"
+            }
+          ]
+        },
+        status: "VALID",
+        name: "openAttestationW3CDIDProof",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`
+        }
+      },
+      {
+        data: {
+          details: [
+            {
+              address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+              revoked: false
+            }
+          ],
+          revokedOnAny: false
+        },
+        status: "VALID",
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        status: "SKIPPED",
+        type: "ISSUER_IDENTITY",
+        name: "OpenAttestationDnsTxt",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        }
+      }
+    ]);
+    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+  });
+
+  it("should fail when document has an invalid signed proof block", async () => {
+    const results = await verify(documentRopstenInvalidWithDIDSignedProofBlock, {
+      network: "ropsten"
+    });
+
+    expect(results).toStrictEqual([
+      {
+        data: true,
+        status: "VALID",
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY"
+      },
+      {
+        status: "INVALID",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_PROOF_INVALID",
+          message: "Certificate proof is invalid"
+        },
+        name: "openAttestationW3CDIDProof",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`
+        }
+      },
+      {
+        data: {
+          details: [
+            {
+              address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+              revoked: false
+            }
+          ],
+          revokedOnAny: false
+        },
+        status: "VALID",
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS"
+      },
+      {
+        status: "SKIPPED",
+        type: "ISSUER_IDENTITY",
+        name: "OpenAttestationDnsTxt",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
+        }
+      }
+    ]);
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 
   it("should be valid for all checks when document with token registry is valid on ropsten", async () => {

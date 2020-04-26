@@ -8,6 +8,12 @@ export enum OpenAttestationEthereumDocumentStoreIssuedCode {
   SKIPPED = 4,
   CONTRACT_NOT_FOUND = 404,
 }
+export enum OpenAttestationDocumentSignedCode {
+  UNEXPECTED_ERROR = 0,
+  DOCUMENT_PROOF_INVALID = 1,
+  DOCUMENT_PROOF_ERROR = 2,
+  SKIPPED = 4
+}
 export enum OpenAttestationEthereumDocumentStoreRevokedCode {
   UNEXPECTED_ERROR = 0,
   DOCUMENT_REVOKED = 1,

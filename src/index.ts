@@ -4,6 +4,7 @@ import { Verifier } from "./types/core";
 import { openAttestationHash } from "./verifiers/hash/openAttestationHash";
 import { openAttestationDnsTxt, Identity } from "./verifiers/dnsText/openAttestationDnsTxt";
 import { openAttestationEthereumDocumentStoreIssued } from "./verifiers/documentStoreIssued/openAttestationEthereumDocumentStoreIssued";
+import { openAttestationDocumentStoreIssued } from "./verifiers/documentStoreIssued/openAttestationDocumentStoreIssued";
 import { openAttestationEthereumDocumentStoreRevoked } from "./verifiers/documentStoreRevoked/openAttestationEthereumDocumentStoreRevoked";
 import { isValid } from "./validator";
 import { openAttestationEthereumTokenRegistryMinted } from "./verifiers/tokenRegistryMinted/openAttestationEthereumTokenRegistryMinted";
@@ -12,7 +13,7 @@ const openAttestationVerifiers: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 >[] = [
   openAttestationHash,
-  openAttestationEthereumDocumentStoreIssued,
+  openAttestationDocumentStoreIssued,
   openAttestationEthereumTokenRegistryMinted,
   openAttestationEthereumDocumentStoreRevoked,
   openAttestationDnsTxt,
@@ -31,6 +32,7 @@ export {
   Identity,
   openAttestationHash,
   openAttestationEthereumDocumentStoreRevoked,
+  openAttestationDocumentStoreIssued,
   openAttestationEthereumDocumentStoreIssued,
   openAttestationDnsTxt,
   openAttestationEthereumTokenRegistryMinted,
