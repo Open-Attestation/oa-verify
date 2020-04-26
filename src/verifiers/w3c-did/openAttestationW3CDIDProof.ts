@@ -2,7 +2,7 @@ import * as ethers from "ethers";
 import { v2, WrappedDocumentWithProof } from "@govtechsg/open-attestation";
 import { resolveDID } from "./resolveDID";
 import { Verifier } from "../../types/core";
-import { PublicKey, Authentication } from "../../types/w3c-did";
+import { Authentication } from "../../types/w3c-did";
 import { SUPPORTED_DID_AUTH, ETHR_DID_METHOD, SUPPORTED_PROOF_TYPES } from "../../config";
 import { OpenAttestationDocumentSignedCode } from "../../types/error";
 
