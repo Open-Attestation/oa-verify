@@ -9,11 +9,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
   };
 }
 
-/**
- * This document is invalid as the signature within the proof block has been tampered with.
- * The first 3 characters have been changed to 123. To be used for integration testing.
- */
-export const documentRopstenInvalidWithDIDSignedProofBlock: WrappedDocument<CustomDocument> = {
+export const documentMainnetValidWithDIDSignedProofBlockProperHash: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "opencerts/1.4",
   data: {
@@ -52,8 +48,8 @@ export const documentRopstenInvalidWithDIDSignedProofBlock: WrappedDocument<Cust
     type: "EcdsaSecp256k1Signature2019",
     created: "2020-04-26T21:41:34.663Z",
     proofPurpose: "assertionMethod",
-    verificationMethod: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner",
+    verificationMethod: "0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A",
     signature:
-      "0x12398c7ded0bef0e3fb96b3f69b097dda45a474c62142d72a0834d814c092cbe458a16f44efe136614e74ffd69b8273688af347826b9efaccd6a12f200185eef1c"
+      "0x49898c7ded0bef0e3fb96b3f69b097dda45a474c62142d72a0834d814c092cbe458a16f44efe136614e74ffd69b8273688af347826b9efaccd6a12f200185eef1c"
   }
 };

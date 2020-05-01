@@ -1,15 +1,14 @@
 import * as ethers from "ethers";
-import { v2, WrappedDocumentWithProof } from "@govtechsg/open-attestation";
-import { resolveDID } from "./resolveDID";
+import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Verifier } from "../../types/core";
-import { Authentication } from "../../types/w3c-did";
-import { SUPPORTED_DID_AUTH, ETHR_DID_METHOD, SUPPORTED_PROOF_TYPES } from "../../config";
 import { OpenAttestationDocumentSignedCode } from "../../types/error";
 
 const name = "openAttestationW3CDIDProof";
 const type = "DOCUMENT_STATUS";
 
-export const openAttestationW3CDIDProof: Verifier<WrappedDocumentWithProof<v2.OpenAttestationDocument>> = {
+export const openAttestationW3CDIDProof: Verifier<
+  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
+>  = {
   skip: () => {
     return Promise.resolve({
       status: "SKIPPED",
@@ -27,36 +26,22 @@ export const openAttestationW3CDIDProof: Verifier<WrappedDocumentWithProof<v2.Op
   },
   verify: async document => {
     try {
+      if (!document.proof) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
+      // Note that proof.verificationMethod currently only supports a publicKey, no URLs ie. DIDs 
       const { proof, signature } = document;
-      const didDoc = await resolveDID(proof.verificationMethod);
-
-      // Confirm this type of proof is currently supported
-      if (!SUPPORTED_PROOF_TYPES.includes(proof.type)) throw new Error(`Proof type: ${proof.type} is not supported.`);
-
-      // If the didDoc has an auth method we currently support
-      const supportedAuth = didDoc?.authentication?.filter((auth: Authentication) =>
-        SUPPORTED_DID_AUTH.includes(auth.type)
-      );
-      if (!supportedAuth?.length) throw new Error("Issuer DID cannot be authenticated, no supported auth in didDoc.");
-
-      // Get the correct pub key from the ver method
-      const pubKey: any = didDoc.publicKey.find(key => key.id === proof.verificationMethod);
-      // The exact verification may vary based on did-method (did:<method>:<namespace uuid>)
-      const didMethod = proof.verificationMethod.split(":")[1];
       let proofValid = false;
-      if (didMethod === ETHR_DID_METHOD) {
+
+      if (proof.type === "EcdsaSecp256k1Signature2019") {
         // Existing targetHash is being signed
         const msg = signature.targetHash;
-        const { ethereumAddress } = pubKey;
         const recoverAddress = ethers.utils.verifyMessage(msg, proof.signature);
-        proofValid = recoverAddress?.toLowerCase() === ethereumAddress?.toLowerCase();
+        proofValid = recoverAddress.toLowerCase() === proof.verificationMethod.toLowerCase();
       } else {
-        throw new Error(`${didMethod} is currently not supported...`);
+        throw new Error(`Proof type: ${proof.type} is not supported.`);
       }
       if (proofValid) {
-        const data = didDoc;
         const status = "VALID";
-        return { name, type, data, status };
+        return { name, type, status };
       } else {
         const status = "INVALID";
         const message = "Certificate proof is invalid";

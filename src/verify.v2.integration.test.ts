@@ -12,7 +12,7 @@ import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/do
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
-import { documentRopstenValidWithDIDSignedProofBlock } from "../test/fixtures/v2/documentRopstenValidWithDIDSignedProofBlockProperHash";
+import { documentMainnetValidWithDIDSignedProofBlockProperHash } from "../test/fixtures/v2/documentMainnetValidWithDIDSignedProofBlockProperHash";
 import { documentRopstenInvalidWithDIDSignedProofBlock } from "../test/fixtures/v2/documentRopstenInvalidWithDIDSignedProofBlockProperHash";
 
 describe("verify(integration)", () => {
@@ -32,6 +32,16 @@ describe("verify(integration)", () => {
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -112,6 +122,16 @@ describe("verify(integration)", () => {
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -199,6 +219,16 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
         data: {
           details: [
             {
@@ -265,6 +295,16 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
         data: {
           details: [
             {
@@ -319,71 +359,66 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks when document has a valid signed proof block", async () => {
-    const results = await verify(documentRopstenValidWithDIDSignedProofBlock, {
-      network: "ropsten"
+    const results = await verify(documentMainnetValidWithDIDSignedProofBlockProperHash, {
+      network: "homestead"
     });
-
-    expect(results).toStrictEqual([
+    expect(results).toStrictEqual(   [
       {
+        type: 'DOCUMENT_INTEGRITY',
+        name: 'OpenAttestationHash',
         data: true,
-        status: "VALID",
-        name: "OpenAttestationHash",
-        type: "DOCUMENT_INTEGRITY"
+        status: 'VALID'
       },
       {
+        name: 'openAttestationW3CDIDProof',
+        type: 'DOCUMENT_STATUS',
+        status: 'VALID'
+      },
+      {
+        name: 'OpenAttestationEthereumDocumentStoreIssued',
+        type: 'DOCUMENT_STATUS',
         data: {
-          "@context": "https://w3id.org/did/v1",
-          id: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A",
-          authentication: [
+          details: [
             {
-              type: "Secp256k1SignatureAuthentication2018",
-              publicKey: ["did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner"]
+              address: documentMainnetValidWithDIDSignedProofBlockProperHash.data.issuers[0].certificateStore?.split(":string:")[1],
+              issued: true
             }
           ],
-          publicKey: [
-            {
-              id: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner",
-              type: "Secp256k1VerificationKey2018",
-              ethereumAddress: "0x44e682d207bcdddad0bb3a650ccb9de0911b9d3a",
-              owner: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A"
-            }
-          ]
+          issuedOnAll: true
         },
-        status: "VALID",
-        name: "openAttestationW3CDIDProof",
-        type: "DOCUMENT_STATUS"
+        status: 'VALID'
       },
       {
-        status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
-        name: "OpenAttestationEthereumTokenRegistryMinted",
+        status: 'SKIPPED',
+        type: 'DOCUMENT_STATUS',
+        name: 'OpenAttestationEthereumTokenRegistryMinted',
         reason: {
           code: 4,
-          codeString: "SKIPPED",
+          codeString: 'SKIPPED',
           message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`
         }
       },
       {
+        name: 'OpenAttestationEthereumDocumentStoreRevoked',
+        type: 'DOCUMENT_STATUS',
         data: {
+          revokedOnAny: false,
           details: [
             {
-              address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+              address: documentMainnetValidWithDIDSignedProofBlockProperHash.data.issuers[0].certificateStore?.split(":string:")[1],
               revoked: false
             }
           ],
-          revokedOnAny: false
         },
-        status: "VALID",
-        name: "OpenAttestationEthereumDocumentStoreRevoked",
-        type: "DOCUMENT_STATUS"
+        status: 'VALID'
       },
       {
-        status: "SKIPPED",
-        type: "ISSUER_IDENTITY",
-        name: "OpenAttestationDnsTxt",
+        status: 'SKIPPED',
+        type: 'ISSUER_IDENTITY',
+        name: 'OpenAttestationDnsTxt',
         reason: {
           code: 2,
-          codeString: "SKIPPED",
+          codeString: 'SKIPPED',
           message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
         }
       }
@@ -397,7 +432,6 @@ describe("verify(integration)", () => {
     const results = await verify(documentRopstenInvalidWithDIDSignedProofBlock, {
       network: "ropsten"
     });
-
     expect(results).toStrictEqual([
       {
         data: true,
@@ -416,14 +450,36 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        status: "SKIPPED",
+        data: {
+          details: [{
+            address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+            issued: false,
+            reason: {
+              code: 3,
+              codeString: "ETHERS_UNHANDLED_ERROR",
+              message: "Error with smart contract 0x007d40224f6562461633ccfbaffd359ebb2fc9ba: call exception",
+            },
+          }],
+            issuedOnAll: false,
+        },
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        reason: {
+          code: 3,
+          codeString: "ETHERS_UNHANDLED_ERROR",
+          message: "Error with smart contract 0x007d40224f6562461633ccfbaffd359ebb2fc9ba: call exception",
+        },
+        status: "INVALID",
         type: "DOCUMENT_STATUS",
+      },
+      {
         name: "OpenAttestationEthereumTokenRegistryMinted",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`
-        }
+          message: "Document issuers doesn't have \"tokenRegistry\" property or TOKEN_REGISTRY method",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -465,6 +521,16 @@ describe("verify(integration)", () => {
         status: "VALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -530,6 +596,16 @@ describe("verify(integration)", () => {
         status: "VALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -607,6 +683,16 @@ describe("verify(integration)", () => {
         name: "OpenAttestationHash",
         data: true,
         status: "VALID",
+      },
+      {
+        name: "openAttestationW3CDIDProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         name: "OpenAttestationEthereumDocumentStoreIssued",

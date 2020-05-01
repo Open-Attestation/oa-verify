@@ -1,4 +1,4 @@
-import { v2, WrappedDocumentWithProof } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
 interface CustomDocument extends v2.OpenAttestationDocument {
   name: string;
@@ -9,7 +9,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
   };
 }
 
-export const documentRopstenValidWithDIDSignedProofBlock: WrappedDocumentWithProof<CustomDocument> = {
+export const documentRopstenValidWithDIDSignedProofBlock: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "opencerts/1.4",
   data: {
@@ -44,7 +44,7 @@ export const documentRopstenValidWithDIDSignedProofBlock: WrappedDocumentWithPro
     type: "EcdsaSecp256k1Signature2019",
     created: "2020-04-16T17:42:56.438Z",
     proofPurpose: "assertionMethod",
-    verificationMethod: "did:ethr:ropsten:0xd130e6b130D9E940a724f894b316E79F9e58C648#owner",
+    verificationMethod: "0xd130e6b130D9E940a724f894b316E79F9e58C648",
     signature:
       "0xf074f62545319df30ce9722ff8ee5f9ab66ae365a5ff99dd1ef620200425201c6ed87e95b20728b60f0dad54f0e87eafef6e257f29de4f055db0ac95b8143b1e1b"
   }

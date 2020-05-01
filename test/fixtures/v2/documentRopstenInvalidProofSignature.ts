@@ -1,4 +1,4 @@
-import { v2, WrappedDocumentWithProof } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument } from "@govtechsg/open-attestation";
 
 interface CustomDocument extends v2.OpenAttestationDocument {
   name: string;
@@ -9,7 +9,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
   };
 }
 
-export const documentRopstenValidWithDIDSignedProofBlock: WrappedDocumentWithProof<CustomDocument> = {
+export const documentRopstenInvalidProofSignature: WrappedDocument<CustomDocument> = {
   version: "open-attestation/2.0",
   schema: "opencerts/1.4",
   data: {
@@ -36,20 +36,16 @@ export const documentRopstenValidWithDIDSignedProofBlock: WrappedDocumentWithPro
   },
   signature: {
     type: "SHA3MerkleProof",
-    targetHash: "5b5ed60a40d445c58ffa21e73d11a98acc04be538ab9729da5066f75f0eaddb4",
-    proof: [
-      "86874cd45a74f39759c21028ddacb6b45c56cd1b36203a874d91d3ef276eab7b",
-      "cd6d9d9a5969a6c5f428b7b4d8e854a798143072371f477bf09145a66951a9d8",
-      "6e78b6b1bfc66f4f34fe70f97d3e91bcc318f17916394eab95cf15e2e20ac63e"
-    ],
-    merkleRoot: "1a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6"
+    targetHash: "6b7013e23767199d3470375b53d7f64ff6620e4c56a5279b1ff7bdde5b7a80b4",
+    proof: [],
+    merkleRoot: "559225d9661a47d2a1b75c12f0375c8d53a8141103b5de60a42255746e2b2d98"
   },
   proof: {
     type: "EcdsaSecp256k1Signature2019",
-    created: "2020-04-26T21:41:34.663Z",
+    created: "2020-04-16T17:42:56.438Z",
     proofPurpose: "assertionMethod",
-    verificationMethod: "did:ethr:ropsten:0x44E682d207bcDDDAD0Bb3a650cCb9de0911B9D3A#owner",
+    verificationMethod: "0xd130e6b130D9E940a724f894b316E79F9e58C648",
     signature:
-      "0x49898c7ded0bef0e3fb96b3f69b097dda45a474c62142d72a0834d814c092cbe458a16f44efe136614e74ffd69b8273688af347826b9efaccd6a12f200185eef1c"
+      "0x0004f62545319df30ce9722ff8ee5f9ab66ae365a5ff99dd1ef620200425201c6ed87e95b20728b60f0dad54f0e87eafef6e257f29de4f055db0ac95b8143b1e1b"
   }
 };
