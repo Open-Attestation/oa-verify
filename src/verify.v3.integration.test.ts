@@ -24,14 +24,14 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block",
+          message: "Document does not have a proof block"
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
+        type: "DOCUMENT_STATUS"
       },
       {
         data: {
@@ -97,14 +97,14 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block",
+          message: "Document does not have a proof block"
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
+        type: "DOCUMENT_STATUS"
       },
       {
         data: {
@@ -183,14 +183,14 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block",
+          message: "Document does not have a proof block"
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
+        type: "DOCUMENT_STATUS"
       },
       {
         data: {
@@ -269,14 +269,14 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block",
+          message: "Document does not have a proof block"
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
+        type: "DOCUMENT_STATUS"
       },
       {
         data: {
@@ -344,14 +344,14 @@ describe("verify v3(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block",
+          message: "Document does not have a proof block"
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS",
+        type: "DOCUMENT_STATUS"
       },
       {
         reason: {

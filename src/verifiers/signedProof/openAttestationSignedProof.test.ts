@@ -1,12 +1,12 @@
-import { openAttestationW3CDIDProof } from "./openAttestationW3CDIDProof";
+import { openAttestationSignedProof } from "./openAttestationSignedProof";
 import { documentRopstenValidWithDIDSignedProofBlock } from "../../../test/fixtures/v2/documentRopstenValidWithDIDSignedProofBlock";
 import { documentRopstenInvalidProofType } from "../../../test/fixtures/v2/documentRopstenInvalidProofType";
 import { documentRopstenInvalidProofSignature } from "../../../test/fixtures/v2/documentRopstenInvalidProofSignature";
 
-describe("openAttestationW3CDIDProof", () => {
+describe("OpenAttestationSignedProof", () => {
   describe("test", () => {
     it("should return true when v2 document has a proof block", () => {
-      const test = openAttestationW3CDIDProof.test(documentRopstenValidWithDIDSignedProofBlock, {
+      const test = openAttestationSignedProof.test(documentRopstenValidWithDIDSignedProofBlock, {
         network: "ropsten"
       });
       expect(test).toStrictEqual(true);
@@ -14,22 +14,21 @@ describe("openAttestationW3CDIDProof", () => {
   });
   describe("v2", () => {
     it("should return a valid fragment when document has valid signed proof", async () => {
-      const fragment = await openAttestationW3CDIDProof.verify(documentRopstenValidWithDIDSignedProofBlock, {
+      const fragment = await openAttestationSignedProof.verify(documentRopstenValidWithDIDSignedProofBlock, {
         network: "ropsten"
       });
       expect(fragment).toStrictEqual({
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         type: "DOCUMENT_STATUS",
         status: "VALID"
       });
     });
     it("should return an invalid fragment when document has an invalid proof signature", async () => {
-      const fragment = await openAttestationW3CDIDProof.verify(documentRopstenInvalidProofSignature, {
-          network: "ropsten"
-        }
-      );
+      const fragment = await openAttestationSignedProof.verify(documentRopstenInvalidProofSignature, {
+        network: "ropsten"
+      });
       expect(fragment).toStrictEqual({
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         type: "DOCUMENT_STATUS",
         reason: {
           code: 1,
@@ -40,13 +39,11 @@ describe("openAttestationW3CDIDProof", () => {
       });
     });
     it("should return an invalid fragment when document proof uses an unsupported proof type", async () => {
-      const fragment = await openAttestationW3CDIDProof.verify(documentRopstenInvalidProofType,
-        {
-          network: "ropsten"
-        }
-      );
+      const fragment = await openAttestationSignedProof.verify(documentRopstenInvalidProofType, {
+        network: "ropsten"
+      });
       expect(fragment).toStrictEqual({
-        name: "openAttestationW3CDIDProof",
+        name: "OpenAttestationSignedProof",
         type: "DOCUMENT_STATUS",
         data: new Error(`Proof type: notSupported is not supported.`),
         reason: {

@@ -3,12 +3,12 @@ import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Verifier } from "../../types/core";
 import { OpenAttestationDocumentSignedCode } from "../../types/error";
 
-const name = "openAttestationW3CDIDProof";
+const name = "OpenAttestationSignedProof";
 const type = "DOCUMENT_STATUS";
 
-export const openAttestationW3CDIDProof: Verifier<
+export const openAttestationSignedProof: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
->  = {
+> = {
   skip: () => {
     return Promise.resolve({
       status: "SKIPPED",
@@ -27,7 +27,7 @@ export const openAttestationW3CDIDProof: Verifier<
   verify: async document => {
     try {
       if (!document.proof) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
-      // Note that proof.verificationMethod currently only supports a publicKey, no URLs ie. DIDs 
+      // Note that proof.verificationMethod currently only supports a publicKey, no URLs ie. DIDs
       const { proof, signature } = document;
       let proofValid = false;
 
