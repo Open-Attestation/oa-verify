@@ -12,8 +12,8 @@ import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/do
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
-import { documentMainnetValidWithDIDSignedProofBlockProperHash } from "../test/fixtures/v2/documentMainnetValidWithDIDSignedProofBlockProperHash";
-import { documentRopstenInvalidWithDIDSignedProofBlock } from "../test/fixtures/v2/documentRopstenInvalidWithDIDSignedProofBlockProperHash";
+import { documentSignedProofValid } from "../test/fixtures/v2/documentSignedProofValid";
+import { documentSignedProofInvalidSignature } from "../test/fixtures/v2/documentSignedProofInvalidSignature";
 
 describe("verify(integration)", () => {
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
@@ -359,7 +359,7 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks when document has a valid signed proof block", async () => {
-    const results = await verify(documentMainnetValidWithDIDSignedProofBlockProperHash, {
+    const results = await verify(documentSignedProofValid, {
       network: "homestead"
     });
     expect(results).toStrictEqual([
@@ -375,20 +375,14 @@ describe("verify(integration)", () => {
         status: "VALID"
       },
       {
-        name: "OpenAttestationEthereumDocumentStoreIssued",
+        status: "SKIPPED",
         type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: documentMainnetValidWithDIDSignedProofBlockProperHash.data.issuers[0].certificateStore?.split(
-                ":string:"
-              )[1],
-              issued: true
-            }
-          ],
-          issuedOnAll: true
-        },
-        status: "VALID"
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
+        }
       },
       {
         status: "SKIPPED",
@@ -401,20 +395,14 @@ describe("verify(integration)", () => {
         }
       },
       {
-        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        status: "SKIPPED",
         type: "DOCUMENT_STATUS",
-        data: {
-          revokedOnAny: false,
-          details: [
-            {
-              address: documentMainnetValidWithDIDSignedProofBlockProperHash.data.issuers[0].certificateStore?.split(
-                ":string:"
-              )[1],
-              revoked: false
-            }
-          ]
-        },
-        status: "VALID"
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
+        }
       },
       {
         status: "SKIPPED",
@@ -433,7 +421,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail when document has an invalid signed proof block", async () => {
-    const results = await verify(documentRopstenInvalidWithDIDSignedProofBlock, {
+    const results = await verify(documentSignedProofInvalidSignature, {
       network: "ropsten"
     });
     expect(results).toStrictEqual([
@@ -454,28 +442,14 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        data: {
-          details: [
-            {
-              address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-              issued: false,
-              reason: {
-                code: 3,
-                codeString: "ETHERS_UNHANDLED_ERROR",
-                message: "Error with smart contract 0x007d40224f6562461633ccfbaffd359ebb2fc9ba: call exception"
-              }
-            }
-          ],
-          issuedOnAll: false
-        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
         name: "OpenAttestationEthereumDocumentStoreIssued",
         reason: {
-          code: 3,
-          codeString: "ETHERS_UNHANDLED_ERROR",
-          message: "Error with smart contract 0x007d40224f6562461633ccfbaffd359ebb2fc9ba: call exception"
-        },
-        status: "INVALID",
-        type: "DOCUMENT_STATUS"
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
+        }
       },
       {
         name: "OpenAttestationEthereumTokenRegistryMinted",
@@ -488,18 +462,14 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_STATUS"
       },
       {
-        data: {
-          details: [
-            {
-              address: "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-              revoked: false
-            }
-          ],
-          revokedOnAny: false
-        },
-        status: "VALID",
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
         name: "OpenAttestationEthereumDocumentStoreRevoked",
-        type: "DOCUMENT_STATUS"
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
+        }
       },
       {
         status: "SKIPPED",
