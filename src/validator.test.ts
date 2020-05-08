@@ -9,7 +9,7 @@ describe("isValid", () => {
     const verificationFragment: VerificationFragment = {
       status: "VALID",
       name: "any",
-      type: "DOCUMENT_STATUS"
+      type: "DOCUMENT_STATUS",
     };
     expect(() => isValid([verificationFragment], [])).toThrowError("Please provide at least one type to check");
   });
@@ -19,7 +19,7 @@ describe("isValid", () => {
       const verificationFragment: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       };
       expect(isValid([verificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -27,7 +27,7 @@ describe("isValid", () => {
       const verificationFragment: VerificationFragment = {
         status: "ERROR",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -35,7 +35,7 @@ describe("isValid", () => {
       const verificationFragment: VerificationFragment = {
         status: "ERROR",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -43,7 +43,7 @@ describe("isValid", () => {
       const verificationFragment: VerificationFragment = {
         status: "SKIPPED",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -51,12 +51,12 @@ describe("isValid", () => {
       const verificationFragment1: VerificationFragment = {
         status: "SKIPPED",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const verificationFragment2: VerificationFragment = {
         status: "SKIPPED",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment1, verificationFragment2], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -64,7 +64,7 @@ describe("isValid", () => {
       const verificationFragment: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     });
@@ -72,12 +72,12 @@ describe("isValid", () => {
       const verificationFragment1: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const verificationFragment2: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment1, verificationFragment2], ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     });
@@ -85,12 +85,12 @@ describe("isValid", () => {
       const validVerificationFragment: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const errorVerificationFragment: VerificationFragment = {
         status: "ERROR",
         name: "any",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       };
       expect(isValid([validVerificationFragment, errorVerificationFragment], ["DOCUMENT_INTEGRITY"])).toStrictEqual(
         true
@@ -100,12 +100,12 @@ describe("isValid", () => {
       const verificationFragment1: VerificationFragment = {
         status: "SKIPPED",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const verificationFragment2: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment1, verificationFragment2], ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     });
@@ -113,12 +113,12 @@ describe("isValid", () => {
       const verificationFragment1: VerificationFragment = {
         status: "ERROR",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const verificationFragment2: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment1, verificationFragment2], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -126,12 +126,12 @@ describe("isValid", () => {
       const verificationFragment1: VerificationFragment = {
         status: "INVALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       const verificationFragment2: VerificationFragment = {
         status: "VALID",
         name: "any",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       };
       expect(isValid([verificationFragment1, verificationFragment2], ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
     });
@@ -141,17 +141,17 @@ describe("isValid", () => {
     const documentStatusFragment: VerificationFragment = {
       status: "VALID",
       type: "DOCUMENT_STATUS",
-      name: "any"
+      name: "any",
     };
     const documentIntegrityFragment: VerificationFragment = {
       status: "VALID",
       type: "DOCUMENT_INTEGRITY",
-      name: "any"
+      name: "any",
     };
     const issuerIdentityFragment: VerificationFragment = {
       status: "VALID",
       type: "ISSUER_IDENTITY",
-      name: "any"
+      name: "any",
     };
     it("should return true if there is only one valid fragment for every types", () => {
       expect(isValid([documentIntegrityFragment, documentStatusFragment, issuerIdentityFragment])).toStrictEqual(true);
@@ -169,14 +169,14 @@ describe("isValid", () => {
       const errorDocumentStatusFragment: VerificationFragment = {
         status: "ERROR",
         type: "DOCUMENT_STATUS",
-        name: "any"
+        name: "any",
       };
       expect(
         isValid([
           documentStatusFragment,
           errorDocumentStatusFragment,
           documentIntegrityFragment,
-          issuerIdentityFragment
+          issuerIdentityFragment,
         ])
       ).toStrictEqual(false);
     });
@@ -184,14 +184,14 @@ describe("isValid", () => {
       const validDocumentStatusFragment: VerificationFragment = {
         status: "VALID",
         type: "DOCUMENT_STATUS",
-        name: "any"
+        name: "any",
       };
       expect(
         isValid([
           documentStatusFragment,
           validDocumentStatusFragment,
           documentIntegrityFragment,
-          issuerIdentityFragment
+          issuerIdentityFragment,
         ])
       ).toStrictEqual(true);
     });
@@ -199,14 +199,14 @@ describe("isValid", () => {
       const invalidDocumentIntegrityFragment: VerificationFragment = {
         status: "INVALID",
         type: "DOCUMENT_INTEGRITY",
-        name: "any"
+        name: "any",
       };
       expect(
         isValid([
           documentStatusFragment,
           invalidDocumentIntegrityFragment,
           documentIntegrityFragment,
-          issuerIdentityFragment
+          issuerIdentityFragment,
         ])
       ).toStrictEqual(false);
     });
@@ -214,7 +214,7 @@ describe("isValid", () => {
       const skippedDocumentIntegrityFragment: VerificationFragment = {
         status: "SKIPPED",
         type: "DOCUMENT_INTEGRITY",
-        name: "any"
+        name: "any",
       };
       expect(isValid([documentStatusFragment, skippedDocumentIntegrityFragment, issuerIdentityFragment])).toStrictEqual(
         false
@@ -225,7 +225,7 @@ describe("isValid", () => {
         isValid([
           { ...documentIntegrityFragment, status: "ERROR" },
           { ...documentStatusFragment, status: "ERROR" },
-          { ...issuerIdentityFragment, status: "ERROR" }
+          { ...issuerIdentityFragment, status: "ERROR" },
         ])
       ).toStrictEqual(false);
     });
@@ -234,7 +234,7 @@ describe("isValid", () => {
         isValid([
           { ...documentIntegrityFragment, status: "INVALID" },
           { ...documentStatusFragment, status: "INVALID" },
-          { ...issuerIdentityFragment, status: "INVALID" }
+          { ...issuerIdentityFragment, status: "INVALID" },
         ])
       ).toStrictEqual(false);
     });
@@ -243,7 +243,7 @@ describe("isValid", () => {
         isValid([
           { ...documentIntegrityFragment, status: "SKIPPED" },
           { ...documentStatusFragment, status: "SKIPPED" },
-          { ...issuerIdentityFragment, status: "SKIPPED" }
+          { ...issuerIdentityFragment, status: "SKIPPED" },
         ])
       ).toStrictEqual(false);
     });

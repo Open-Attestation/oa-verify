@@ -7,7 +7,7 @@ const contractNotFound = (address: Hash): Reason => {
     code: OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_NOT_FOUND,
     codeString:
       OpenAttestationEthereumTokenRegistryMintedCode[OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_NOT_FOUND],
-    message: `Contract ${address} was not found`
+    message: `Contract ${address} was not found`,
   };
 };
 const contractAddressInvalid = (address: Hash): Reason => {
@@ -17,7 +17,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
       OpenAttestationEthereumTokenRegistryMintedCode[
         OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_ADDRESS_INVALID
       ],
-    message: `Contract address ${address} is invalid`
+    message: `Contract address ${address} is invalid`,
   };
 };
 export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
@@ -27,7 +27,7 @@ export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => 
       OpenAttestationEthereumTokenRegistryMintedCode[
         OpenAttestationEthereumTokenRegistryMintedCode.DOCUMENT_NOT_MINTED
       ],
-    message: `Certificate ${merkleRoot} has not been issued under contract ${address}`
+    message: `Certificate ${merkleRoot} has not been issued under contract ${address}`,
   };
 };
 
@@ -53,6 +53,6 @@ export const getErrorReason = (error: EthersError, address: string, hash: Hash):
     codeString:
       OpenAttestationEthereumTokenRegistryMintedCode[
         OpenAttestationEthereumTokenRegistryMintedCode.ETHERS_UNHANDLED_ERROR
-      ]
+      ],
   };
 };

@@ -9,7 +9,7 @@ import { VerificationFragment, VerificationManagerOptions, Verifier } from "../t
 export const verificationBuilder = <Document = WrappedDocument<v3.OpenAttestationDocument>>(
   verifiers: Verifier<Document>[]
 ) => (document: Document, options: VerificationManagerOptions): Promise<VerificationFragment[]> => {
-  const promises: Promise<VerificationFragment>[] = verifiers.map(verifier => {
+  const promises: Promise<VerificationFragment>[] = verifiers.map((verifier) => {
     if (verifier.test(document, options)) {
       return verifier.verify(document, options);
     }

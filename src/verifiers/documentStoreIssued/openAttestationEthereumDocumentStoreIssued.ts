@@ -1,10 +1,10 @@
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreIssuedCode } from "../../types/error";
 import {
   createDocumentStoreContract,
   getIssuersDocumentStore,
-  isIssuedOnDocumentStore
+  isIssuedOnDocumentStore,
 } from "../../common/smartContract/documentStoreContractInterface";
 import { contractNotIssued, getErrorReason } from "../../common/smartContract/documentStoreErrors";
 
@@ -27,30 +27,30 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
         code: OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED,
         codeString:
           OpenAttestationEthereumDocumentStoreIssuedCode[OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED],
-        message: `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`
-      }
+        message: `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`,
+      },
     });
   },
-  test: document => {
-    if (isWrappedV3Document(document)) {
+  test: (document) => {
+    if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.DocumentStore;
     }
     const documentData = getData(document);
-    return documentData.issuers.some(issuer => "documentStore" in issuer || "certificateStore" in issuer);
+    return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
   },
   verify: async (document, options) => {
     try {
       const documentStores = getIssuersDocumentStore(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
       const statuses: Status[] = await Promise.all(
-        documentStores.map(async documentStore => {
+        documentStores.map(async (documentStore) => {
           try {
             const contract = createDocumentStoreContract(documentStore, options);
             const issued = await isIssuedOnDocumentStore(contract, merkleRoot);
             const status: Status = {
               issued,
-              address: documentStore
+              address: documentStore,
             };
             if (!issued) {
               status.reason = contractNotIssued(merkleRoot, documentStore);
@@ -61,21 +61,21 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
           }
         })
       );
-      const notIssued = statuses.find(status => !status.issued);
+      const notIssued = statuses.find((status) => !status.issued);
       if (notIssued) {
         return {
           name,
           type,
-          data: { issuedOnAll: false, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+          data: { issuedOnAll: false, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
           reason: notIssued.reason,
-          status: "INVALID"
+          status: "INVALID",
         };
       }
       return {
         name,
         type,
-        data: { issuedOnAll: true, details: isWrappedV3Document(document) ? statuses[0] : statuses },
-        status: "VALID"
+        data: { issuedOnAll: true, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
+        status: "VALID",
       };
     } catch (e) {
       return {
@@ -88,10 +88,10 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
           codeString:
             OpenAttestationEthereumDocumentStoreIssuedCode[
               OpenAttestationEthereumDocumentStoreIssuedCode.UNEXPECTED_ERROR
-            ]
+            ],
         },
-        status: "ERROR"
+        status: "ERROR",
       };
     }
-  }
+  },
 };

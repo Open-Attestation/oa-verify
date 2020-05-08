@@ -4,7 +4,7 @@ import {
   Hash,
   OpenAttestationEthereumDocumentStoreIssuedCode,
   OpenAttestationEthereumDocumentStoreRevokedCode,
-  Reason
+  Reason,
 } from "../..";
 
 const contractNotFound = (address: Hash): Reason => {
@@ -12,7 +12,7 @@ const contractNotFound = (address: Hash): Reason => {
     code: OpenAttestationEthereumDocumentStoreIssuedCode.CONTRACT_NOT_FOUND,
     codeString:
       OpenAttestationEthereumDocumentStoreIssuedCode[OpenAttestationEthereumDocumentStoreIssuedCode.CONTRACT_NOT_FOUND],
-    message: `Contract ${address} was not found`
+    message: `Contract ${address} was not found`,
   };
 };
 const contractAddressInvalid = (address: Hash): Reason => {
@@ -22,7 +22,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
       OpenAttestationEthereumDocumentStoreIssuedCode[
         OpenAttestationEthereumDocumentStoreIssuedCode.CONTRACT_ADDRESS_INVALID
       ],
-    message: `Contract address ${address} is invalid`
+    message: `Contract address ${address} is invalid`,
   };
 };
 export const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
@@ -32,7 +32,7 @@ export const contractNotIssued = (merkleRoot: Hash, address: string): Reason => 
       OpenAttestationEthereumDocumentStoreIssuedCode[
         OpenAttestationEthereumDocumentStoreIssuedCode.DOCUMENT_NOT_ISSUED
       ],
-    message: `Certificate ${merkleRoot} has not been issued under contract ${address}`
+    message: `Certificate ${merkleRoot} has not been issued under contract ${address}`,
   };
 };
 
@@ -41,7 +41,7 @@ export const contractRevoked = (merkleRoot: string, address: string): Reason => 
     code: OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED,
     codeString:
       OpenAttestationEthereumDocumentStoreRevokedCode[OpenAttestationEthereumDocumentStoreRevokedCode.DOCUMENT_REVOKED],
-    message: `Certificate ${merkleRoot} has been revoked under contract ${address}`
+    message: `Certificate ${merkleRoot} has been revoked under contract ${address}`,
   };
 };
 
@@ -62,6 +62,6 @@ export const getErrorReason = (error: EthersError, address: string): Reason | nu
     codeString:
       OpenAttestationEthereumDocumentStoreIssuedCode[
         OpenAttestationEthereumDocumentStoreIssuedCode.ETHERS_UNHANDLED_ERROR
-      ]
+      ],
   };
 };
