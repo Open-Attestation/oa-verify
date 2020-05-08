@@ -12,13 +12,13 @@ describe("OpenAttestationDnsTxt v3 document", () => {
             ...documentRopstenValidWithDocumentStore.data.issuer,
             identityProof: {
               ...documentRopstenValidWithDocumentStore.data.issuer.identityProof,
-              location: "1d337929-6770-4a05-ace0-1f07c25c7615:string:example.openattestation.com"
-            }
-          }
-        }
+              location: "1d337929-6770-4a05-ace0-1f07c25c7615:string:example.openattestation.com",
+            },
+          },
+        },
       },
       {
-        network: "ropsten"
+        network: "ropsten",
       }
     );
     expect(fragment).toStrictEqual({
@@ -27,14 +27,14 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       data: {
         location: "example.openattestation.com",
         status: "VALID",
-        value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3"
+        value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
       },
-      status: "VALID"
+      status: "VALID",
     });
   });
   it("should return an invalid fragment when document identity does not match", async () => {
     const fragment = await openAttestationDnsTxt.verify(documentRopstenValidWithDocumentStore, {
-      network: "ropsten"
+      network: "ropsten",
     });
     expect(fragment).toStrictEqual({
       type: "ISSUER_IDENTITY",
@@ -44,9 +44,9 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       reason: {
         code: 1,
         codeString: "INVALID_IDENTITY",
-        message: "Certificate issuer identity is invalid"
+        message: "Certificate issuer identity is invalid",
       },
-      status: "INVALID"
+      status: "INVALID",
     });
   });
   it("should return an error fragment when document has no identity type", async () => {
@@ -58,14 +58,15 @@ describe("OpenAttestationDnsTxt v3 document", () => {
           ...documentRopstenValidWithDocumentStore.data.issuer,
           identityProof: {
             ...documentRopstenValidWithDocumentStore.data.issuer.identityProof,
-            type: null
-          }
-        }
-      }
+            type: null,
+          },
+        },
+      },
     };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore valid error, need to ignore
     const fragment = await openAttestationDnsTxt.verify(document, {
-      network: "ropsten"
+      network: "ropsten",
     });
     expect(fragment).toStrictEqual({
       type: "ISSUER_IDENTITY",
@@ -74,9 +75,9 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       reason: {
         code: 0,
         codeString: "UNEXPECTED_ERROR",
-        message: "Identity type not supported"
+        message: "Identity type not supported",
       },
-      status: "ERROR"
+      status: "ERROR",
     });
   });
   it("should return an error fragment when document has no identity location", async () => {
@@ -88,14 +89,15 @@ describe("OpenAttestationDnsTxt v3 document", () => {
           ...documentRopstenValidWithDocumentStore.data.issuer,
           identityProof: {
             ...documentRopstenValidWithDocumentStore.data.issuer.identityProof,
-            location: null
-          }
-        }
-      }
+            location: null,
+          },
+        },
+      },
     };
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
     // @ts-ignore valid error, need to ignore
     const fragment = await openAttestationDnsTxt.verify(document, {
-      network: "ropsten"
+      network: "ropsten",
     });
     expect(fragment).toStrictEqual({
       type: "ISSUER_IDENTITY",
@@ -104,9 +106,9 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       reason: {
         code: 0,
         codeString: "UNEXPECTED_ERROR",
-        message: "Location is missing"
+        message: "Location is missing",
       },
-      status: "ERROR"
+      status: "ERROR",
     });
   });
 
@@ -114,7 +116,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     it("should return true if identityProof type is DNS-TXT", () => {
       expect(
         openAttestationDnsTxt.test(documentRopstenValidWithDocumentStore, {
-          network: "ropsten"
+          network: "ropsten",
         })
       ).toStrictEqual(true);
     });
@@ -127,14 +129,14 @@ describe("OpenAttestationDnsTxt v3 document", () => {
             ...documentRopstenValidWithDocumentStore.data.issuer,
             identityProof: {
               ...documentRopstenValidWithDocumentStore.data.issuer.identityProof,
-              type: "whatever"
-            }
-          }
-        }
+              type: "whatever",
+            },
+          },
+        },
       };
       expect(
         openAttestationDnsTxt.test(document, {
-          network: "ropsten"
+          network: "ropsten",
         })
       ).toStrictEqual(false);
     });

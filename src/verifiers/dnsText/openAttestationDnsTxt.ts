@@ -1,7 +1,7 @@
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { getData, v2, v3, WrappedDocument, utils as oaUtils } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { utils } from "ethers";
-import { isWrappedV2Document, VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
+import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
 import { OpenAttestationDnsTxtCode } from "../../types/error";
 
 export interface Identity {
@@ -22,7 +22,7 @@ const resolveIssuerIdentity = async (
   if (!location) throw new Error("Location is missing");
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
-    record =>
+    (record) =>
       record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
       record.netId === utils.getNetwork(options.network).chainId.toString(10) &&
       record.type === "openatts" &&
@@ -32,12 +32,12 @@ const resolveIssuerIdentity = async (
     ? {
         status: "VALID",
         location,
-        value: smartContractAddress
+        value: smartContractAddress,
       }
     : {
         status: "INVALID",
         location,
-        value: smartContractAddress
+        value: smartContractAddress,
       };
 };
 
@@ -56,15 +56,15 @@ export const openAttestationDnsTxt: Verifier<
       reason: {
         code: OpenAttestationDnsTxtCode.SKIPPED,
         codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.SKIPPED],
-        message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use ${v3.IdentityProofType.DNSTxt} type`
-      }
+        message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use ${v3.IdentityProofType.DNSTxt} type`,
+      },
     });
   },
-  test: document => {
-    if (isWrappedV2Document(document)) {
+  test: (document) => {
+    if (oaUtils.isWrappedV2Document(document)) {
       const documentData = getData(document);
       // at least one issuer uses DNS-TXT
-      return documentData.issuers.some(issuer => {
+      return documentData.issuers.some((issuer) => {
         return (
           (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
           issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
@@ -77,10 +77,10 @@ export const openAttestationDnsTxt: Verifier<
   verify: async (document, options) => {
     try {
       // TODO that's shit
-      if (isWrappedV2Document(document)) {
+      if (oaUtils.isWrappedV2Document(document)) {
         const documentData = getData(document);
         const identities = await Promise.all(
-          documentData.issuers.map(issuer => {
+          documentData.issuers.map((issuer) => {
             if (issuer.identityProof?.type === v2.IdentityProofType.DNSTxt) {
               return resolveIssuerIdentity(
                 issuer,
@@ -91,13 +91,13 @@ export const openAttestationDnsTxt: Verifier<
               );
             }
             const skippedResponse: Identity = {
-              status: "SKIPPED"
+              status: "SKIPPED",
             };
             return skippedResponse; // eslint is happy, so am I (https://github.com/bradzacher/eslint-plugin-typescript/blob/master/docs/rules/no-object-literal-type-assertion.md)
           })
         );
 
-        const invalidIdentity = identities.findIndex(identity => identity.status === "INVALID");
+        const invalidIdentity = identities.findIndex((identity) => identity.status === "INVALID");
         if (invalidIdentity !== -1) {
           const smartContractAddress =
             documentData.issuers[invalidIdentity].documentStore ||
@@ -111,16 +111,16 @@ export const openAttestationDnsTxt: Verifier<
             reason: {
               code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
               codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
-              message: `Certificate issuer identity for ${smartContractAddress} is invalid`
+              message: `Certificate issuer identity for ${smartContractAddress} is invalid`,
             },
-            status: "INVALID"
+            status: "INVALID",
           };
         }
         return {
           name,
           type,
           data: identities,
-          status: "VALID"
+          status: "VALID",
         };
       } else {
         // we have a v3 document
@@ -134,9 +134,9 @@ export const openAttestationDnsTxt: Verifier<
             reason: {
               code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
               codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
-              message: "Certificate issuer identity is invalid"
+              message: "Certificate issuer identity is invalid",
             },
-            status: "INVALID"
+            status: "INVALID",
           };
         }
 
@@ -144,7 +144,7 @@ export const openAttestationDnsTxt: Verifier<
           name,
           type,
           data: identity,
-          status: "VALID"
+          status: "VALID",
         };
       }
     } catch (e) {
@@ -155,10 +155,10 @@ export const openAttestationDnsTxt: Verifier<
         reason: {
           code: OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
           codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNEXPECTED_ERROR],
-          message: e.message
+          message: e.message,
         },
-        status: "ERROR"
+        status: "ERROR",
       };
     }
-  }
+  },
 };

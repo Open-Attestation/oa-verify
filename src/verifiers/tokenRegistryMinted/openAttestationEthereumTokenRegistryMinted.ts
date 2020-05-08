@@ -1,10 +1,10 @@
-import { getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { isWrappedV3Document, VerificationFragmentType, Verifier } from "../../types/core";
+import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
 import {
   createTokenRegistryContract,
   getIssuersTokenRegistry,
-  isMintedOnTokenRegistry
+  isMintedOnTokenRegistry,
 } from "../../common/smartContract/tokenRegistryContractInterface";
 import { contractNotMinted, getErrorReason } from "./errors";
 
@@ -27,17 +27,17 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
         code: OpenAttestationEthereumTokenRegistryMintedCode.SKIPPED,
         codeString:
           OpenAttestationEthereumTokenRegistryMintedCode[OpenAttestationEthereumTokenRegistryMintedCode.SKIPPED],
-        message: `Document issuers doesn't have "tokenRegistry" property or ${v3.Method.TokenRegistry} method`
-      }
+        message: `Document issuers doesn't have "tokenRegistry" property or ${v3.Method.TokenRegistry} method`,
+      },
     });
   },
-  test: document => {
-    if (isWrappedV3Document(document)) {
+  test: (document) => {
+    if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.TokenRegistry;
     }
     const documentData = getData(document);
-    return documentData.issuers.some(issuer => "tokenRegistry" in issuer);
+    return documentData.issuers.some((issuer) => "tokenRegistry" in issuer);
   },
   verify: async (document, options) => {
     try {
@@ -47,13 +47,13 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
       }
       const merkleRoot = `0x${document.signature.merkleRoot}`;
       const statuses: Status[] = await Promise.all(
-        tokenRegistries.map(async tokenRegistry => {
+        tokenRegistries.map(async (tokenRegistry) => {
           try {
             const contract = createTokenRegistryContract(tokenRegistry, options);
             const minted = await isMintedOnTokenRegistry(contract, merkleRoot);
             const status: Status = {
               minted,
-              address: tokenRegistry
+              address: tokenRegistry,
             };
             if (!minted) {
               status.reason = contractNotMinted(merkleRoot, tokenRegistry);
@@ -64,21 +64,21 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
           }
         })
       );
-      const notMinted = statuses.find(status => !status.minted);
+      const notMinted = statuses.find((status) => !status.minted);
       if (notMinted) {
         return {
           name,
           type,
-          data: { mintedOnAll: false, details: isWrappedV3Document(document) ? statuses[0] : statuses },
+          data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
           reason: notMinted.reason,
-          status: "INVALID"
+          status: "INVALID",
         };
       }
       return {
         name,
         type,
-        data: { mintedOnAll: true, details: isWrappedV3Document(document) ? statuses[0] : statuses },
-        status: "VALID"
+        data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? statuses[0] : statuses },
+        status: "VALID",
       };
     } catch (e) {
       return {
@@ -91,10 +91,10 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
           codeString:
             OpenAttestationEthereumTokenRegistryMintedCode[
               OpenAttestationEthereumTokenRegistryMintedCode.UNEXPECTED_ERROR
-            ]
+            ],
         },
-        status: "ERROR"
+        status: "ERROR",
       };
     }
-  }
+  },
 };

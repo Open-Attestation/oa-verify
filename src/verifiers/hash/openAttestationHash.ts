@@ -9,7 +9,7 @@ export const openAttestationHash: Verifier = {
     throw new Error("This verifier is never skipped");
   },
   test: () => true,
-  verify: async document => {
+  verify: async (document) => {
     const hash = await verifySignature(document);
     if (!hash) {
       return {
@@ -19,16 +19,16 @@ export const openAttestationHash: Verifier = {
         reason: {
           code: OpenAttestationHashCode.DOCUMENT_TAMPERED,
           codeString: OpenAttestationHashCode[OpenAttestationHashCode.DOCUMENT_TAMPERED],
-          message: "Certificate has been tampered with"
+          message: "Certificate has been tampered with",
         },
-        status: "INVALID"
+        status: "INVALID",
       };
     }
     return {
       type,
       name,
       data: hash,
-      status: "VALID"
+      status: "VALID",
     };
-  }
+  },
 };

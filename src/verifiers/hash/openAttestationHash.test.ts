@@ -12,9 +12,9 @@ describe("OpenAttestationHash", () => {
       reason: {
         code: 0,
         codeString: "DOCUMENT_TAMPERED",
-        message: "Certificate has been tampered with"
+        message: "Certificate has been tampered with",
       },
-      status: "INVALID"
+      status: "INVALID",
     });
   });
   it("should return a valid fragment when document has not been tampered", async () => {
@@ -23,7 +23,7 @@ describe("OpenAttestationHash", () => {
       name: "OpenAttestationHash",
       type: "DOCUMENT_INTEGRITY",
       data: true,
-      status: "VALID"
+      status: "VALID",
     });
   });
 });

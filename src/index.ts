@@ -15,7 +15,7 @@ const openAttestationVerifiers: Verifier<
   openAttestationEthereumDocumentStoreIssued,
   openAttestationEthereumTokenRegistryMinted,
   openAttestationEthereumDocumentStoreRevoked,
-  openAttestationDnsTxt
+  openAttestationDnsTxt,
 ];
 
 const verify = verificationBuilder(openAttestationVerifiers);
@@ -33,5 +33,5 @@ export {
   openAttestationEthereumDocumentStoreRevoked,
   openAttestationEthereumDocumentStoreIssued,
   openAttestationDnsTxt,
-  openAttestationEthereumTokenRegistryMinted
+  openAttestationEthereumTokenRegistryMinted,
 };
