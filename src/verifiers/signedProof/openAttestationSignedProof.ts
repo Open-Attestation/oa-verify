@@ -1,14 +1,11 @@
 import * as ethers from "ethers";
-import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { Verifier } from "../../types/core";
+import { DocumentsToVerify, isSignedWrappedDocument, Verifier } from "../../types/core";
 import { OpenAttestationDocumentSignedCode } from "../../types/error";
 
 const name = "OpenAttestationSignedProof";
 const type = "DOCUMENT_STATUS";
 
-export const openAttestationSignedProof: Verifier<
-  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
-> = {
+export const openAttestationSignedProof: Verifier<DocumentsToVerify> = {
   skip: () => {
     return Promise.resolve({
       status: "SKIPPED",
@@ -17,16 +14,16 @@ export const openAttestationSignedProof: Verifier<
       reason: {
         code: OpenAttestationDocumentSignedCode.SKIPPED,
         codeString: OpenAttestationDocumentSignedCode[OpenAttestationDocumentSignedCode.SKIPPED],
-        message: `Document does not have a proof block`
-      }
+        message: `Document does not have a proof block`,
+      },
     });
   },
-  test: document => {
-    return Object.keys(document).includes("proof");
+  test: (document) => {
+    return isSignedWrappedDocument(document);
   },
-  verify: async document => {
+  verify: async (document) => {
     try {
-      if (!document.proof) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
+      if (!isSignedWrappedDocument(document)) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
       // Note that proof.verificationMethod currently only supports a publicKey, no URLs ie. DIDs
       const { proof, signature } = document;
       let proofValid = false;
@@ -48,7 +45,7 @@ export const openAttestationSignedProof: Verifier<
         const reason = {
           code: OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_INVALID,
           codeString: OpenAttestationDocumentSignedCode[OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_INVALID],
-          message
+          message,
         };
         return { name, type, status, reason };
       }
@@ -59,9 +56,9 @@ export const openAttestationSignedProof: Verifier<
       const reason = {
         code: OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_ERROR,
         codeString: OpenAttestationDocumentSignedCode[OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_ERROR],
-        message
+        message,
       };
       return { name, type, data, reason, status };
     }
-  }
+  },
 };

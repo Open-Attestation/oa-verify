@@ -38,10 +38,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -128,10 +128,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -223,10 +223,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -299,10 +299,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -360,19 +360,19 @@ describe("verify(integration)", () => {
 
   it("should be valid for all checks when document has a valid signed proof block", async () => {
     const results = await verify(documentSignedProofValid, {
-      network: "homestead"
+      network: "homestead",
     });
     expect(results).toStrictEqual([
       {
         type: "DOCUMENT_INTEGRITY",
         name: "OpenAttestationHash",
         data: true,
-        status: "VALID"
+        status: "VALID",
       },
       {
         name: "OpenAttestationSignedProof",
         type: "DOCUMENT_STATUS",
-        status: "VALID"
+        status: "VALID",
       },
       {
         status: "SKIPPED",
@@ -381,8 +381,8 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
-        }
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
       },
       {
         status: "SKIPPED",
@@ -391,8 +391,8 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`
-        }
+          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`,
+        },
       },
       {
         status: "SKIPPED",
@@ -401,8 +401,8 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
-        }
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
       },
       {
         status: "SKIPPED",
@@ -411,9 +411,9 @@ describe("verify(integration)", () => {
         reason: {
           code: 2,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
-        }
-      }
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        },
+      },
     ]);
     // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
     expect(isValid(results)).toStrictEqual(false);
@@ -422,24 +422,24 @@ describe("verify(integration)", () => {
 
   it("should fail when document has an invalid signed proof block", async () => {
     const results = await verify(documentSignedProofInvalidSignature, {
-      network: "ropsten"
+      network: "ropsten",
     });
     expect(results).toStrictEqual([
       {
         data: true,
         status: "VALID",
         name: "OpenAttestationHash",
-        type: "DOCUMENT_INTEGRITY"
+        type: "DOCUMENT_INTEGRITY",
       },
       {
         status: "INVALID",
         reason: {
           code: 1,
           codeString: "DOCUMENT_PROOF_INVALID",
-          message: "Certificate proof is invalid"
+          message: "Certificate proof is invalid",
         },
         name: "OpenAttestationSignedProof",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         status: "SKIPPED",
@@ -448,18 +448,18 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
-        }
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
       },
       {
         name: "OpenAttestationEthereumTokenRegistryMinted",
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method'
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         status: "SKIPPED",
@@ -468,8 +468,8 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`
-        }
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
       },
       {
         status: "SKIPPED",
@@ -478,9 +478,9 @@ describe("verify(integration)", () => {
         reason: {
           code: 2,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`
-        }
-      }
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        },
+      },
     ]);
     expect(isValid(results)).toStrictEqual(false);
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -503,10 +503,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -578,10 +578,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -665,10 +665,10 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         name: "OpenAttestationEthereumDocumentStoreIssued",

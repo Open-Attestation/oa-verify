@@ -28,10 +28,10 @@ describe("verify v3(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -101,10 +101,10 @@ describe("verify v3(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -187,10 +187,10 @@ describe("verify v3(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -273,10 +273,10 @@ describe("verify v3(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -348,10 +348,10 @@ describe("verify v3(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: "Document does not have a proof block"
+          message: "Document does not have a proof block",
         },
         status: "SKIPPED",
-        type: "DOCUMENT_STATUS"
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {

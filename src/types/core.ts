@@ -1,5 +1,4 @@
-import { Contract } from "ethers";
-import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Reason } from "./error";
 
 /**
@@ -60,8 +59,16 @@ export interface Verifier<
 }
 export type Hash = string;
 
-export interface OpenAttestationContract {
-  address: Hash;
-  type: v3.Method;
-  instance: Contract;
-}
+export type DocumentsToVerify =
+  | WrappedDocument<v2.OpenAttestationDocument>
+  | WrappedDocument<v3.OpenAttestationDocument>
+  | SignedWrappedDocument<v2.OpenAttestationDocument>;
+
+// TODO move to open-attestation
+export const isSignedWrappedDocument = (
+  document: any
+): document is SignedWrappedDocument<v2.OpenAttestationDocument> => {
+  return Object.keys(document).includes("proof");
+};
+
+export type Verifiers = Verifier<DocumentsToVerify>;

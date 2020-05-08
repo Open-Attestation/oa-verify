@@ -10,8 +10,10 @@ const verify = verificationBuilder([openAttestationSignedProof]);
 describe("OpenAttestationSignedProof", () => {
   describe("SKIPPED", () => {
     it("should return a valid SKIPPED fragment when document does not have a proof a block", async () => {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore error is valid, inoring for test purpose
       const fragment = await verify(documentMainnetValidWithCertificateStore, {
-        network: "ropsten"
+        network: "ropsten",
       });
       expect(fragment).toStrictEqual([
         {
@@ -20,29 +22,29 @@ describe("OpenAttestationSignedProof", () => {
           reason: {
             code: 4,
             codeString: "SKIPPED",
-            message: "Document does not have a proof block"
+            message: "Document does not have a proof block",
           },
-          status: "SKIPPED"
-        }
+          status: "SKIPPED",
+        },
       ]);
     });
   });
   describe("v2", () => {
     it("should return a valid fragment when document has valid signed proof", async () => {
       const fragment = await verify(documentSignedProofValid, {
-        network: "ropsten"
+        network: "ropsten",
       });
       expect(fragment).toStrictEqual([
         {
           name: "OpenAttestationSignedProof",
           type: "DOCUMENT_STATUS",
-          status: "VALID"
-        }
+          status: "VALID",
+        },
       ]);
     });
     it("should return an invalid fragment when document has an invalid proof signature", async () => {
       const fragment = await verify(documentSignedProofInvalidSignature, {
-        network: "ropsten"
+        network: "ropsten",
       });
       expect(fragment).toStrictEqual([
         {
@@ -51,15 +53,15 @@ describe("OpenAttestationSignedProof", () => {
           reason: {
             code: 1,
             codeString: "DOCUMENT_PROOF_INVALID",
-            message: "Certificate proof is invalid"
+            message: "Certificate proof is invalid",
           },
-          status: "INVALID"
-        }
+          status: "INVALID",
+        },
       ]);
     });
     it("should return an invalid fragment when document proof uses an unsupported proof type", async () => {
       const fragment = await verify(documentSignedProofInvalidProofType, {
-        network: "ropsten"
+        network: "ropsten",
       });
       expect(fragment).toStrictEqual([
         {
@@ -69,10 +71,10 @@ describe("OpenAttestationSignedProof", () => {
           reason: {
             code: 2,
             codeString: "DOCUMENT_PROOF_ERROR",
-            message: `Proof type: notSupported is not supported.`
+            message: `Proof type: notSupported is not supported.`,
           },
-          status: "ERROR"
-        }
+          status: "ERROR",
+        },
       ]);
     });
   });

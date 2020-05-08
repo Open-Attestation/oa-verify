@@ -12,7 +12,7 @@ export enum OpenAttestationDocumentSignedCode {
   UNEXPECTED_ERROR = 0,
   DOCUMENT_PROOF_INVALID = 1,
   DOCUMENT_PROOF_ERROR = 2,
-  SKIPPED = 4
+  SKIPPED = 4,
 }
 export enum OpenAttestationEthereumDocumentStoreRevokedCode {
   UNEXPECTED_ERROR = 0,
