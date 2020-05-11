@@ -12,6 +12,8 @@ import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/do
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
+import { documentSignedProofValid } from "../test/fixtures/v2/documentSignedProofValid";
+import { documentSignedProofInvalidSignature } from "../test/fixtures/v2/documentSignedProofInvalidSignature";
 
 describe("verify(integration)", () => {
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
@@ -30,6 +32,16 @@ describe("verify(integration)", () => {
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -110,6 +122,16 @@ describe("verify(integration)", () => {
         status: "INVALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         data: {
@@ -197,6 +219,16 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
         data: {
           details: [
             {
@@ -263,6 +295,16 @@ describe("verify(integration)", () => {
         type: "DOCUMENT_INTEGRITY",
       },
       {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
         data: {
           details: [
             {
@@ -316,6 +358,134 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
   });
 
+  it("should be valid for all checks when document has a valid signed proof block", async () => {
+    const results = await verify(documentSignedProofValid, {
+      network: "homestead",
+    });
+    expect(results).toStrictEqual([
+      {
+        type: "DOCUMENT_INTEGRITY",
+        name: "OpenAttestationHash",
+        data: true,
+        status: "VALID",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        type: "DOCUMENT_STATUS",
+        status: "VALID",
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "tokenRegistry" property or TOKEN_REGISTRY method`,
+        },
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
+      },
+      {
+        status: "SKIPPED",
+        type: "ISSUER_IDENTITY",
+        name: "OpenAttestationDnsTxt",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        },
+      },
+    ]);
+    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+  });
+
+  it("should fail when document has an invalid signed proof block", async () => {
+    const results = await verify(documentSignedProofInvalidSignature, {
+      network: "ropsten",
+    });
+    expect(results).toStrictEqual([
+      {
+        data: true,
+        status: "VALID",
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        status: "INVALID",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_PROOF_INVALID",
+          message: "Certificate proof is invalid",
+        },
+        name: "OpenAttestationSignedProof",
+        type: "DOCUMENT_STATUS",
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
+      },
+      {
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+        },
+      },
+      {
+        status: "SKIPPED",
+        type: "ISSUER_IDENTITY",
+        name: "OpenAttestationDnsTxt",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use DNS-TXT type`,
+        },
+      },
+    ]);
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+  });
+
   it("should be valid for all checks when document with token registry is valid on ropsten", async () => {
     const results = await verify(documentRopstenValidWithToken, {
       network: "ropsten",
@@ -327,6 +497,16 @@ describe("verify(integration)", () => {
         status: "VALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -392,6 +572,16 @@ describe("verify(integration)", () => {
         status: "VALID",
         name: "OpenAttestationHash",
         type: "DOCUMENT_INTEGRITY",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         reason: {
@@ -469,6 +659,16 @@ describe("verify(integration)", () => {
         name: "OpenAttestationHash",
         data: true,
         status: "VALID",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
       },
       {
         name: "OpenAttestationEthereumDocumentStoreIssued",

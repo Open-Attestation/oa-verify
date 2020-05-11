@@ -1,4 +1,3 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { VerificationFragment, VerificationManagerOptions, Verifier } from "../types/core";
 
 /**
@@ -6,9 +5,10 @@ import { VerificationFragment, VerificationManagerOptions, Verifier } from "../t
  * Before running each verifier, the manager will make sure the verifier can handle the specific document by calling its exposed test function.
  * The manager will return the consolidated list of {@link VerificationFragment}
  */
-export const verificationBuilder = <Document = WrappedDocument<v3.OpenAttestationDocument>>(
-  verifiers: Verifier<Document>[]
-) => (document: Document, options: VerificationManagerOptions): Promise<VerificationFragment[]> => {
+export const verificationBuilder = <Document>(verifiers: Verifier<Document>[]) => (
+  document: Document,
+  options: VerificationManagerOptions
+): Promise<VerificationFragment[]> => {
   const promises: Promise<VerificationFragment>[] = verifiers.map((verifier) => {
     if (verifier.test(document, options)) {
       return verifier.verify(document, options);
