@@ -381,7 +381,7 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+          message: `Document uses signed proof`,
         },
       },
       {
@@ -448,7 +448,7 @@ describe("verify(integration)", () => {
         reason: {
           code: 4,
           codeString: "SKIPPED",
-          message: `Document issuers doesn't have "documentStore" or "certificateStore" property or DOCUMENT_STORE method`,
+          message: `Document uses signed proof`,
         },
       },
       {

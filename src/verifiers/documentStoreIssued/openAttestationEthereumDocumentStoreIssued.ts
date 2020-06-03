@@ -1,4 +1,4 @@
-import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { utils, getData, v2, v3, WrappedDocument, SignedWrappedDocument } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreIssuedCode } from "../../types/error";
 import {
@@ -16,9 +16,11 @@ interface Status {
 const name = "OpenAttestationEthereumDocumentStoreIssued";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
 export const openAttestationEthereumDocumentStoreIssued: Verifier<
-  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
+  | WrappedDocument<v2.OpenAttestationDocument>
+  | WrappedDocument<v3.OpenAttestationDocument>
+  | SignedWrappedDocument<v2.OpenAttestationDocument>
 > = {
-  skip: () => {
+  skip: (document) => {
     return Promise.resolve({
       status: "SKIPPED",
       type,
@@ -27,11 +29,16 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
         code: OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED,
         codeString:
           OpenAttestationEthereumDocumentStoreIssuedCode[OpenAttestationEthereumDocumentStoreIssuedCode.SKIPPED],
-        message: `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`,
+        message: utils.isSignedWrappedV2Document(document)
+          ? "Document uses signed proof"
+          : `Document issuers doesn't have "documentStore" or "certificateStore" property or ${v3.Method.DocumentStore} method`,
       },
     });
   },
   test: (document) => {
+    if (utils.isSignedWrappedV2Document(document)) {
+      return false;
+    }
     if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.DocumentStore;
