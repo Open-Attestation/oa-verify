@@ -16,8 +16,9 @@ npm install @govtechsg/oa-verify
 import { documentRopstenValidWithToken } from "./test/fixtures/v2/documentRopstenValidWithToken";
 import { verify, isValid } from "@govtechsg/oa-verify";
 
-verify(documentRopstenValidWithToken, { network: "ropsten" }).then(console.log); // see below
-console.log(isValid(results)); // display true
+const fragments = await verify(documentRopstenValidWithToken, { network: "ropsten" });
+console.log(fragments); // see below
+console.log(isValid(fragments)); // display true
 ```
 
 ```json
