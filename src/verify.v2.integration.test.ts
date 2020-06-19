@@ -14,6 +14,10 @@ import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRop
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
 import { documentSignedProofValid } from "../test/fixtures/v2/documentSignedProofValid";
 import { documentSignedProofInvalidSignature } from "../test/fixtures/v2/documentSignedProofInvalidSignature";
+import {
+  documentRinkebyRevokedWithDocumentStore,
+  documentRinkebyValidWithDocumentStore,
+} from "../test/fixtures/v2/documentRinkebyWithDocumentStore";
 
 describe("verify(integration)", () => {
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
@@ -740,5 +744,172 @@ describe("verify(integration)", () => {
     ]);
     expect(isValid(results)).toStrictEqual(false);
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+  });
+
+  it("should should work when document with document store has been issued to rinkeby network", async () => {
+    const results = await verify(documentRinkebyValidWithDocumentStore, {
+      network: "rinkeby",
+    });
+
+    expect(results).toStrictEqual([
+      {
+        type: "DOCUMENT_INTEGRITY",
+        name: "OpenAttestationHash",
+        data: true,
+        status: "VALID",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: true,
+          details: [
+            {
+              issued: true,
+              address: "0x718B518565B81097b185661EBba3966Ff32A0039",
+            },
+          ],
+        },
+        status: "VALID",
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        },
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS",
+        data: {
+          revokedOnAny: false,
+          details: [
+            {
+              revoked: false,
+              address: "0x718B518565B81097b185661EBba3966Ff32A0039",
+            },
+          ],
+        },
+        status: "VALID",
+      },
+      {
+        name: "OpenAttestationDnsTxt",
+        type: "ISSUER_IDENTITY",
+        data: [
+          {
+            status: "VALID",
+            location: "example.openattestation.com",
+            value: "0x718B518565B81097b185661EBba3966Ff32A0039",
+          },
+        ],
+        status: "VALID",
+      },
+    ]);
+    expect(isValid(results)).toStrictEqual(true);
+  });
+
+  it("should should work when document with document store has been issued and revoked to rinkeby network", async () => {
+    const results = await verify(documentRinkebyRevokedWithDocumentStore, {
+      network: "rinkeby",
+    });
+
+    expect(results).toStrictEqual([
+      {
+        type: "DOCUMENT_INTEGRITY",
+        name: "OpenAttestationHash",
+        data: true,
+        status: "VALID",
+      },
+      {
+        name: "OpenAttestationSignedProof",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: "Document does not have a proof block",
+        },
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreIssued",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: true,
+          details: [
+            {
+              issued: true,
+              address: "0x718B518565B81097b185661EBba3966Ff32A0039",
+            },
+          ],
+        },
+        status: "VALID",
+      },
+      {
+        status: "SKIPPED",
+        type: "DOCUMENT_STATUS",
+        name: "OpenAttestationEthereumTokenRegistryMinted",
+        reason: {
+          code: 4,
+          codeString: "SKIPPED",
+          message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+        },
+      },
+      {
+        name: "OpenAttestationEthereumDocumentStoreRevoked",
+        type: "DOCUMENT_STATUS",
+        data: {
+          revokedOnAny: true,
+          details: [
+            {
+              revoked: true,
+              address: "0x718B518565B81097b185661EBba3966Ff32A0039",
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_REVOKED",
+                message:
+                  "Certificate 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
+              },
+            },
+          ],
+        },
+        status: "INVALID",
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_REVOKED",
+          message:
+            "Certificate 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
+        },
+      },
+      {
+        name: "OpenAttestationDnsTxt",
+        type: "ISSUER_IDENTITY",
+        data: [
+          {
+            status: "VALID",
+            location: "example.openattestation.com",
+            value: "0x718B518565B81097b185661EBba3966Ff32A0039",
+          },
+        ],
+        status: "VALID",
+      },
+    ]);
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 });
