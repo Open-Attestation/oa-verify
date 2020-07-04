@@ -11,7 +11,7 @@ interface ContractInstance {
 }
 
 export const getProvider = (options: { network: string }): ethers.providers.Provider =>
-  new ethers.providers.InfuraProvider(options.network, INFURA_API_KEY);
+  new ethers.providers.InfuraProvider(options.network, process?.env?.INFURA_API_KEY || INFURA_API_KEY);
 
 export const contractInstance = (options: ContractInstance) => {
   const contract = new ethers.Contract(options.contractAddress, options.abi, getProvider(options));
