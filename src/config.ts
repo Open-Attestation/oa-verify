@@ -1,1 +1,2 @@
-export const INFURA_API_KEY = "92c9a51428b946c1b8c1ac5a237616e4";
+// export const INFURA_API_KEY = "92c9a51428b946c1b8c1ac5a237616e4";
+export const INFURA_API_KEY = "9f83339cff8c408093a75f98e0001b1a";
