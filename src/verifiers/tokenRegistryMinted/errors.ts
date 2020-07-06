@@ -33,7 +33,16 @@ export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => 
 
 export const getErrorReason = (error: EthersError, address: string, hash: Hash): Reason => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
-  if (reason.toLowerCase() === "contract not deployed".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) {
+  if (
+    reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
+    error.code === errors.CALL_EXCEPTION
+  ) {
+    return contractNotMinted(hash, address);
+  } else if (
+    !error.reason &&
+    error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
+    error.code === errors.CALL_EXCEPTION
+  ) {
     return contractNotFound(address);
   } else if (
     (reason.toLowerCase() === "ENS name not configured".toLowerCase() && error.code === errors.UNSUPPORTED_OPERATION) ||
@@ -41,11 +50,6 @@ export const getErrorReason = (error: EthersError, address: string, hash: Hash):
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
-  } else if (
-    reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
-    error.code === errors.CALL_EXCEPTION
-  ) {
-    return contractNotMinted(hash, address);
   }
   return {
     message: `Error with smart contract ${address}: ${error.reason}`,

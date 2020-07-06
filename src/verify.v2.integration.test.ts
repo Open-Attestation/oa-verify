@@ -20,6 +20,9 @@ import {
 } from "../test/fixtures/v2/documentRinkebyWithDocumentStore";
 
 describe("verify(integration)", () => {
+  afterEach(() => {
+    delete process.env.ETHEREUM_PROVIDER;
+  });
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
     const results = await verify(tamperedDocumentWithCertificateStore, {
       network: "ropsten",
@@ -53,9 +56,9 @@ describe("verify(integration)", () => {
             {
               address: "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
               reason: {
-                code: 3,
-                codeString: "ETHERS_UNHANDLED_ERROR",
-                message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception",
+                code: 404,
+                codeString: "CONTRACT_NOT_FOUND",
+                message: "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
               },
               issued: false,
             },
@@ -63,9 +66,9 @@ describe("verify(integration)", () => {
           issuedOnAll: false,
         },
         reason: {
-          code: 3,
-          codeString: "ETHERS_UNHANDLED_ERROR",
-          message: "Error with smart contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990: call exception",
+          code: 404,
+          codeString: "CONTRACT_NOT_FOUND",
+          message: "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
         },
         status: "INVALID",
         name: "OpenAttestationEthereumDocumentStoreIssued",
@@ -210,7 +213,8 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
   });
 
-  it("should be valid for all checks when document with certificate store is valid on mainnet", async () => {
+  it("should be valid for all checks when document with certificate store is valid on mainnet using cloudflare", async () => {
+    process.env.ETHEREUM_PROVIDER = "cloudflare";
     const results = await verify(documentMainnetValidWithCertificateStore, {
       network: "homestead",
     });

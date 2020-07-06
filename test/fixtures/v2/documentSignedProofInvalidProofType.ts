@@ -33,7 +33,7 @@ export const documentSignedProofInvalidProofType: SignedWrappedDocument<v2.OpenA
     merkleRoot: "e9917f70b00bca5ac54086ac9e6a7e3f9e269d7a46bfd1f77f2b8caf63872dbf",
   },
   proof: {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore error is valid, need to ignore for test purposes
     type: "notSupported",
     created: "2020-05-04T14:07:41.079Z",

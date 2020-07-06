@@ -8,7 +8,6 @@ import {
   documentRopstenValidWithTokenRegistry,
 } from "../../../test/fixtures/v3/documentRopstenValid";
 import { documentRopstenRevoked } from "../../../test/fixtures/v3/documentRopstenRevoked";
-import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 
 describe("openAttestationEthereumDocumentStoreRevoked", () => {
@@ -242,55 +241,6 @@ describe("openAttestationEthereumDocumentStoreRevoked", () => {
           revokedOnAny: false,
         },
         status: "VALID",
-      });
-    });
-    it("should return an error fragment when document mixes document store and other verifier method", async () => {
-      const fragment = await openAttestationEthereumDocumentStoreRevoked.verify(
-        {
-          ...v2documentRopstenValidWithDocumentStore,
-          data: {
-            ...v2documentRopstenValidWithDocumentStore.data,
-            issuers: [
-              v2documentRopstenValidWithDocumentStore.data.issuers[0],
-              {
-                identityProof: v2documentRopstenValidWithDocumentStore.data.issuers[0].identityProof,
-                name: "Foo Issuer",
-              },
-            ],
-          },
-        },
-        {
-          network: "ropsten",
-        }
-      );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumDocumentStoreRevoked",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              revoked: false,
-            },
-            {
-              address: "",
-              reason: {
-                code: 2,
-                codeString: "CONTRACT_ADDRESS_INVALID",
-                message: "Contract address  is invalid",
-              },
-              revoked: true,
-            },
-          ],
-          revokedOnAny: true,
-        },
-
-        reason: {
-          code: 2,
-          codeString: "CONTRACT_ADDRESS_INVALID",
-          message: "Contract address  is invalid",
-        },
-        status: "INVALID",
       });
     });
   });
