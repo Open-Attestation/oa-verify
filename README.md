@@ -72,6 +72,10 @@ console.log(isValid(fragments)); // display true
 
 ## Advanced usage
 
+### Environment Variables
+- `ETHEREUM_PROVIDER`: let you pick the provider you want to use. Available values: `cloudflare`. The provider will default to `infura` if the variable is not set.
+- `INFURA_API_KEY`: let you provide your own `INFURA` API key.
+
 ### Verify
 
 By default the provided `verify` method performs multiple checks on a document

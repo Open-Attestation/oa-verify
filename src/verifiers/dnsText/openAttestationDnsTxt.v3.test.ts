@@ -63,7 +63,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
         },
       },
     };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
     const fragment = await openAttestationDnsTxt.verify(document, {
       network: "ropsten",
@@ -94,7 +94,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
         },
       },
     };
-    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
     const fragment = await openAttestationDnsTxt.verify(document, {
       network: "ropsten",

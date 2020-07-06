@@ -1,6 +1,6 @@
 import { getData, v2, v3, WrappedDocument, utils as oaUtils } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
-import { utils } from "ethers";
+import { getDefaultProvider } from "ethers";
 import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
 import { OpenAttestationDnsTxtCode } from "../../types/error";
 
@@ -20,11 +20,12 @@ const resolveIssuerIdentity = async (
   const location = issuer?.identityProof?.location ?? "";
   if (type !== "DNS-TXT") throw new Error("Identity type not supported");
   if (!location) throw new Error("Location is missing");
+  const network = await getDefaultProvider(options.network).getNetwork();
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
     (record) =>
       record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
-      record.netId === utils.getNetwork(options.network).chainId.toString(10) &&
+      record.netId === network.chainId.toString(10) &&
       record.type === "openatts" &&
       record.net === "ethereum"
   );

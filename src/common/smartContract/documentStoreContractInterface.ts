@@ -23,9 +23,9 @@ export const createDocumentStoreContract = (address: string, { network }: { netw
 };
 
 export const isIssuedOnDocumentStore = async (smartContract: Contract, hash: Hash): Promise<boolean> => {
-  return smartContract.functions.isIssued(hash);
+  return (await smartContract.functions.isIssued(hash))[0];
 };
 
 export const isRevokedOnDocumentStore = async (smartContract: Contract, hash: Hash): Promise<boolean> => {
-  return smartContract.functions.isRevoked(hash);
+  return (await smartContract.functions.isRevoked(hash))[0];
 };

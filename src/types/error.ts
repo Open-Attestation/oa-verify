@@ -42,6 +42,7 @@ export enum OpenAttestationHashCode {
 export interface EthersError extends Error {
   reason?: string | string[];
   code?: string;
+  method?: string;
 }
 
 export interface Reason {

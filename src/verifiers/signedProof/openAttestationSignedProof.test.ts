@@ -10,7 +10,7 @@ const verify = verificationBuilder([openAttestationSignedProof]);
 describe("OpenAttestationSignedProof", () => {
   describe("SKIPPED", () => {
     it("should return a valid SKIPPED fragment when document does not have a proof a block", async () => {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore error is valid, inoring for test purpose
       const fragment = await verify(documentMainnetValidWithCertificateStore, {
         network: "ropsten",
