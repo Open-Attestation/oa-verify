@@ -8,6 +8,7 @@ import { Reason } from "./error";
 export interface VerificationManagerOptions {
   network: string;
   promisesCallback?: (promises: Promise<VerificationFragment>[]) => void;
+  googleApiKey?: string;
 }
 
 /**
