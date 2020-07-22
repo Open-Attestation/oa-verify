@@ -16,7 +16,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts --max-warnings 0",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "snyk-protect": "snyk protect",
+    "prepare": "npm run snyk-protect"
   },
   "author": "",
   "license": "GPL-3.0",
@@ -24,7 +26,8 @@
     "@govtechsg/dnsprove": "^2.0.6",
     "@govtechsg/open-attestation": "^3.9.0",
     "debug": "^4.1.1",
-    "ethers": "^5.0.4"
+    "ethers": "^5.0.4",
+    "snyk": "^1.364.2"
   },
   "devDependencies": {
     "@commitlint/cli": "^9.0.1",
@@ -63,5 +66,6 @@
   },
   "prettier": {
     "printWidth": 120
-  }
+  },
+  "snyk": true
 }
