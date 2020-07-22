@@ -22,6 +22,14 @@ export enum OpenAttestationEthereumDocumentStoreRevokedCode {
   SKIPPED = 4,
   CONTRACT_NOT_FOUND = 404,
 }
+export enum OpenAttestationRevocationCode {
+  UNEXPECTED_ERROR = 0,
+  DOCUMENT_REVOKED = 1,
+  CONTRACT_ADDRESS_INVALID = 2,
+  ETHERS_UNHANDLED_ERROR = 3,
+  SKIPPED = 4,
+  CONTRACT_NOT_FOUND = 404,
+}
 export enum OpenAttestationEthereumTokenRegistryMintedCode {
   UNEXPECTED_ERROR = 0,
   DOCUMENT_NOT_MINTED = 1,

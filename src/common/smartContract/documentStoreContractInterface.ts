@@ -9,7 +9,11 @@ export const getIssuersDocumentStore = (
 ): string[] => {
   if (utils.isWrappedV2Document(document)) {
     const data = getData(document);
-    return data.issuers.map((issuer) => issuer.documentStore || issuer.certificateStore || "");
+    return data.issuers.map(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+      // @ts-ignore
+      (issuer) => issuer.documentStore || issuer.certificateStore || issuer.revocationStore || ""
+    );
   }
   return [getData(document).proof.value];
 };
