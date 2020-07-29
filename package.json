@@ -26,7 +26,7 @@
     "@govtechsg/dnsprove": "^2.0.6",
     "@govtechsg/open-attestation": "^3.9.0",
     "debug": "^4.1.1",
-    "ethers": "^5.0.4",
+    "ethers": "^5.0.5",
     "snyk": "^1.364.2"
   },
   "devDependencies": {
