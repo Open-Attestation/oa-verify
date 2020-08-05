@@ -33,8 +33,8 @@ export const documentSignedProofValid: SignedWrappedDocument<v2.OpenAttestationD
     type: ProofType.EcdsaSecp256k1Signature2019,
     created: "2020-05-04T14:07:41.079Z",
     proofPurpose: ProofPurpose.AssertionMethod,
-    verificationMethod: "0xCacfD9D54Ba8846d7eE754B4566a347023F53794",
+    verificationMethod: "0x06BEf047f8A17875c6328912b503460a8AF5E26F",
     signature:
-      "0xbe0619768d669c58f4fd491eea10f20149467c3a996f06887cd27ee6915d39d069c66bcf719213c3d470c9a3dc94c11808248e9650ac80c578d1514a59d4409a1b",
+      "0x9206a9e9a81c00d8b5a1cac12db850c79ccb387f979edb8917e4d902d9020c9c76efa325fd1b7a8a2798576193d62c34f01ce2ece8517c2492b151ccab69233d1b",
   },
 };
