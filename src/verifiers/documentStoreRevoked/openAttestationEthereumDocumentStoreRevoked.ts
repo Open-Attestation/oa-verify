@@ -1,13 +1,11 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { Contract } from "ethers";
+import { DocumentStoreFactory } from "@govtechsg/document-store";
+// TODO need to export this guy :)
+import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
 import { Hash, VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreRevokedCode } from "../../types/error";
-import {
-  createDocumentStoreContract,
-  getIssuersDocumentStore,
-  isRevokedOnDocumentStore,
-} from "../../common/smartContract/documentStoreContractInterface";
 import { contractRevoked, getErrorReason } from "../../common/smartContract/documentStoreErrors";
+import { getIssuersDocumentStore, getProvider } from "../../common/utils";
 
 interface Status {
   revoked: boolean;
@@ -26,9 +24,9 @@ const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
 };
 
 // Given a list of hashes, check against one smart contract if any of the hash has been revoked
-export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
+export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediateHashes: Hash[]) => {
   const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    isRevokedOnDocumentStore(smartContract, hash).then((status) => (status ? hash : undefined))
+    smartContract.isRevoked(hash).then((status) => (status ? hash : undefined))
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
   return revokedStatuses.find((hash) => hash);
@@ -69,9 +67,9 @@ export const openAttestationEthereumDocumentStoreRevoked: Verifier<
       const statuses: Status[] = await Promise.all(
         documentStores.map(async (documentStore) => {
           try {
-            const contract = createDocumentStoreContract(documentStore, options);
+            const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider(options));
             const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-            const revokedHash = await isAnyHashRevoked(contract, intermediateHashes);
+            const revokedHash = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
 
             const status: Status = {
               revoked: !!revokedHash,

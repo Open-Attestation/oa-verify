@@ -1,12 +1,9 @@
 import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreIssuedCode } from "../../types/error";
-import {
-  createDocumentStoreContract,
-  getIssuersDocumentStore,
-  isIssuedOnDocumentStore,
-} from "../../common/smartContract/documentStoreContractInterface";
 import { contractNotIssued, getErrorReason } from "../../common/smartContract/documentStoreErrors";
+import { getIssuersDocumentStore, getProvider } from "../../common/utils";
 
 interface Status {
   issued: boolean;
@@ -46,8 +43,8 @@ export const openAttestationEthereumDocumentStoreIssued: Verifier<
       const statuses: Status[] = await Promise.all(
         documentStores.map(async (documentStore) => {
           try {
-            const contract = createDocumentStoreContract(documentStore, options);
-            const issued = await isIssuedOnDocumentStore(contract, merkleRoot);
+            const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider(options));
+            const issued = await documentStoreContract.isIssued(merkleRoot);
             const status: Status = {
               issued,
               address: documentStore,
