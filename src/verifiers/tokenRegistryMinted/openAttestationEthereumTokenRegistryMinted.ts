@@ -1,12 +1,10 @@
-import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
+import { constants } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../types/core";
 import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
-import {
-  createTokenRegistryContract,
-  getIssuersTokenRegistry,
-  isMintedOnTokenRegistry,
-} from "../../common/smartContract/tokenRegistryContractInterface";
 import { contractNotMinted, getErrorReason } from "./errors";
+import { getIssuersTokenRegistry, getProvider } from "../../common/utils";
 
 interface Status {
   minted: boolean;
@@ -49,8 +47,10 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
       const statuses: Status[] = await Promise.all(
         tokenRegistries.map(async (tokenRegistry) => {
           try {
-            const contract = createTokenRegistryContract(tokenRegistry, options);
-            const minted = await isMintedOnTokenRegistry(contract, merkleRoot);
+            const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, getProvider(options));
+            const minted = await tokenRegistryContract
+              .ownerOf(merkleRoot)
+              .then((owner) => !(owner === constants.AddressZero));
             const status: Status = {
               minted,
               address: tokenRegistry,
