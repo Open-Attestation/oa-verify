@@ -19,7 +19,7 @@ export const openAttestationHash: Verifier = {
         reason: {
           code: OpenAttestationHashCode.DOCUMENT_TAMPERED,
           codeString: OpenAttestationHashCode[OpenAttestationHashCode.DOCUMENT_TAMPERED],
-          message: "Certificate has been tampered with",
+          message: "Document has been tampered with",
         },
         status: "INVALID",
       };

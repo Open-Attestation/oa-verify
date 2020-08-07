@@ -127,7 +127,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           reason: {
             code: 1,
             codeString: "INVALID_IDENTITY",
-            message: "Certificate issuer identity for 0xabcd is invalid",
+            message: "Document issuer identity for 0xabcd is invalid",
           },
           status: "INVALID",
         },
@@ -395,7 +395,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           reason: {
             code: 1,
             codeString: "INVALID_IDENTITY",
-            message: "Certificate issuer identity for 0xabcd is invalid",
+            message: "Document issuer identity for 0xabcd is invalid",
           },
           status: "INVALID",
         },

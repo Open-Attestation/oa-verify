@@ -41,7 +41,7 @@ export const openAttestationSignedProof: Verifier<DocumentsToVerify> = {
         return { name, type, status };
       } else {
         const status = "INVALID";
-        const message = "Certificate proof is invalid";
+        const message = "Document proof is invalid";
         const reason = {
           code: OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_INVALID,
           codeString: OpenAttestationDocumentSignedCode[OpenAttestationDocumentSignedCode.DOCUMENT_PROOF_INVALID],

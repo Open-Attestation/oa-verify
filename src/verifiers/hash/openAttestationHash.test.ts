@@ -12,7 +12,7 @@ describe("OpenAttestationHash", () => {
       reason: {
         code: 0,
         codeString: "DOCUMENT_TAMPERED",
-        message: "Certificate has been tampered with",
+        message: "Document has been tampered with",
       },
       status: "INVALID",
     });
