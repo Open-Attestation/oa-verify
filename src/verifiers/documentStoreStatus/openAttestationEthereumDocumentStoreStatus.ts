@@ -139,33 +139,18 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
         })
       );
       const revoked = revocationStatuses.find((status) => status.revoked);
-      if (revoked) {
-        return {
-          name,
-          type,
-          data: {
-            issuedOnAll: true,
-            revokedOnAny: true,
-            details: utils.isWrappedV3Document(document)
-              ? { issuance: issuanceStatuses[0], revocation: revocationStatuses[0] }
-              : { issuance: issuanceStatuses, revocation: revocationStatuses },
-          },
-          reason: revoked.reason,
-          status: "INVALID",
-        };
-      }
-
       return {
         name,
         type,
         data: {
           issuedOnAll: true,
-          revokedOnAny: false,
+          revokedOnAny: !!revoked,
           details: utils.isWrappedV3Document(document)
             ? { issuance: issuanceStatuses[0], revocation: revocationStatuses[0] }
             : { issuance: issuanceStatuses, revocation: revocationStatuses },
         },
-        status: "VALID",
+        ...(revoked ? { reason: revoked.reason } : {}),
+        status: revoked ? "INVALID" : "VALID",
       };
     } catch (e) {
       return {
