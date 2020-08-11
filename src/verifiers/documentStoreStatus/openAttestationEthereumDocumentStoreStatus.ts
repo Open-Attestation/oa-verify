@@ -1,14 +1,10 @@
 import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { Contract } from "ethers";
+import { DocumentStoreFactory } from "@govtechsg/document-store";
+import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
 import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
-import {
-  createDocumentStoreContract,
-  getIssuersDocumentStore,
-  isIssuedOnDocumentStore,
-  isRevokedOnDocumentStore,
-} from "../../common/smartContract/documentStoreContractInterface";
 import { contractNotIssued, getErrorReason, contractRevoked } from "../../common/smartContract/documentStoreErrors";
+import { getIssuersDocumentStore, getProvider } from "../../common/utils";
 
 interface IssuanceStatus {
   issued: boolean;
@@ -45,9 +41,9 @@ const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
 };
 
 // Given a list of hashes, check against one smart contract if any of the hash has been revoked
-export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
+export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediateHashes: Hash[]) => {
   const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    isRevokedOnDocumentStore(smartContract, hash).then((status) => (status ? hash : undefined))
+    smartContract.isRevoked(hash).then((status) => (status ? hash : undefined))
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
   return revokedStatuses.find((hash) => hash);
@@ -87,8 +83,8 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
       const issuanceStatuses: IssuanceStatus[] = await Promise.all(
         documentStores.map(async (documentStore) => {
           try {
-            const contract = createDocumentStoreContract(documentStore, options);
-            const issued = await isIssuedOnDocumentStore(contract, merkleRoot);
+            const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider(options));
+            const issued = await documentStoreContract.isIssued(merkleRoot);
             const status: IssuanceStatus = {
               issued,
               address: documentStore,
@@ -121,9 +117,9 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
       const revocationStatuses: RevocationStatus[] = await Promise.all(
         documentStores.map(async (documentStore) => {
           try {
-            const contract = createDocumentStoreContract(documentStore, options);
+            const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider(options));
             const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-            const revokedHash = await isAnyHashRevoked(contract, intermediateHashes);
+            const revokedHash = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
 
             const status: RevocationStatus = {
               revoked: !!revokedHash,
