@@ -102,7 +102,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
   });
 
-  it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreIssued when document's hash is invalid and was not issued", async () => {
+  it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreStatus when document's hash is invalid and was not issued", async () => {
     const results = await verify(tamperedDocumentWithInvalidCertificateStore, {
       network: "ropsten",
     });
@@ -576,7 +576,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 
-  it("should fail for OpenAttestationEthereumDocumentStoreRevoked when document was issued then subsequently revoked", async () => {
+  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued then subsequently revoked", async () => {
     const results = await verify(documentRopstenRevokedWithDocumentStore, {
       network: "ropsten",
     });

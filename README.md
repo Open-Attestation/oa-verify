@@ -89,7 +89,7 @@ console.log(isValid(fragments)); // display true
 
 By default the provided `verify` method performs multiple checks on a document
 
-- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreIssued`, `OpenAttestationEthereumDocumentStoreRevoked` and `OpenAttestationEthereumTokenRegistryIssued` verifiers
+- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreIssued` and `OpenAttestationEthereumDocumentStoreStatus` verifiers
 - for the type `DOCUMENT_INTEGRITY`: it runs `OpenAttestationHash` verifier
 - for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt` verifier
 
