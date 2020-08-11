@@ -137,6 +137,42 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
         status: "INVALID",
       });
     });
+    it("should return an invalid fragment when document was not issued", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
+        documentRopstenNotIssuedWithCertificateStore,
+        {
+          network: "ropsten",
+        }
+      );
+      expect(fragment).toStrictEqual({
+        name: "OpenAttestationEthereumDocumentStoreStatus",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: false,
+          details: {
+            issuance: [
+              {
+                issued: false,
+                address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                reason: {
+                  code: 1,
+                  codeString: "DOCUMENT_NOT_ISSUED",
+                  message:
+                    "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                },
+              },
+            ],
+          },
+        },
+        reason: {
+          code: 1,
+          codeString: "DOCUMENT_NOT_ISSUED",
+          message:
+            "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+        },
+        status: "INVALID",
+      });
+    });
     it("should return an invalid fragment when document with document store that has been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         documentRopstenRevokedWithDocumentStore,
@@ -325,7 +361,6 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
         status: "INVALID",
       });
     });
-
     it("should return a valid fragment when document with document store that has not been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         v3documentRopstenValidWithDocumentStore,

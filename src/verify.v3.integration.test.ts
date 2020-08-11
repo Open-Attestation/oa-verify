@@ -159,7 +159,7 @@ describe("verify v3(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 
-  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was not issued and OpenAttestationDnsTxt when identity is invalid", async () => {
+  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued an revoked and OpenAttestationDnsTxt when identity is invalid", async () => {
     const results = await verify(documentRopstenRevoked, { network: "ropsten" });
 
     expect(results).toMatchInlineSnapshot(`
