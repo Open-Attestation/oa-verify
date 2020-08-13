@@ -53,7 +53,7 @@ describe("OpenAttestationSignedProof", () => {
           reason: {
             code: 1,
             codeString: "DOCUMENT_PROOF_INVALID",
-            message: "Certificate proof is invalid",
+            message: "Document proof is invalid",
           },
           status: "INVALID",
         },

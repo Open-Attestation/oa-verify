@@ -44,7 +44,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       reason: {
         code: 1,
         codeString: "INVALID_IDENTITY",
-        message: "Certificate issuer identity is invalid",
+        message: "Document issuer identity is invalid",
       },
       status: "INVALID",
     });

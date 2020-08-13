@@ -1,33 +1,33 @@
 import { errors } from "ethers";
 import { Hash } from "../../types/core";
-import { EthersError, OpenAttestationEthereumTokenRegistryMintedCode, Reason } from "../../types/error";
+import { EthersError, OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../types/error";
 
 const contractNotFound = (address: Hash): Reason => {
   return {
-    code: OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_NOT_FOUND,
+    code: OpenAttestationEthereumTokenRegistryStatusCode.CONTRACT_NOT_FOUND,
     codeString:
-      OpenAttestationEthereumTokenRegistryMintedCode[OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_NOT_FOUND],
+      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.CONTRACT_NOT_FOUND],
     message: `Contract ${address} was not found`,
   };
 };
 const contractAddressInvalid = (address: Hash): Reason => {
   return {
-    code: OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_ADDRESS_INVALID,
+    code: OpenAttestationEthereumTokenRegistryStatusCode.CONTRACT_ADDRESS_INVALID,
     codeString:
-      OpenAttestationEthereumTokenRegistryMintedCode[
-        OpenAttestationEthereumTokenRegistryMintedCode.CONTRACT_ADDRESS_INVALID
+      OpenAttestationEthereumTokenRegistryStatusCode[
+        OpenAttestationEthereumTokenRegistryStatusCode.CONTRACT_ADDRESS_INVALID
       ],
     message: `Contract address ${address} is invalid`,
   };
 };
 export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
   return {
-    code: OpenAttestationEthereumTokenRegistryMintedCode.DOCUMENT_NOT_MINTED,
+    code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
     codeString:
-      OpenAttestationEthereumTokenRegistryMintedCode[
-        OpenAttestationEthereumTokenRegistryMintedCode.DOCUMENT_NOT_MINTED
+      OpenAttestationEthereumTokenRegistryStatusCode[
+        OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
       ],
-    message: `Certificate ${merkleRoot} has not been issued under contract ${address}`,
+    message: `Document ${merkleRoot} has not been issued under contract ${address}`,
   };
 };
 
@@ -53,10 +53,10 @@ export const getErrorReason = (error: EthersError, address: string, hash: Hash):
   }
   return {
     message: `Error with smart contract ${address}: ${error.reason}`,
-    code: OpenAttestationEthereumTokenRegistryMintedCode.ETHERS_UNHANDLED_ERROR,
+    code: OpenAttestationEthereumTokenRegistryStatusCode.ETHERS_UNHANDLED_ERROR,
     codeString:
-      OpenAttestationEthereumTokenRegistryMintedCode[
-        OpenAttestationEthereumTokenRegistryMintedCode.ETHERS_UNHANDLED_ERROR
+      OpenAttestationEthereumTokenRegistryStatusCode[
+        OpenAttestationEthereumTokenRegistryStatusCode.ETHERS_UNHANDLED_ERROR
       ],
   };
 };

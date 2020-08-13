@@ -2,7 +2,7 @@ import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attesta
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
 import { constants } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../types/core";
-import { OpenAttestationEthereumTokenRegistryMintedCode } from "../../types/error";
+import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../types/error";
 import { contractNotMinted, getErrorReason } from "./errors";
 import { getIssuersTokenRegistry, getProvider } from "../../common/utils";
 
@@ -11,9 +11,9 @@ interface Status {
   address: string;
   reason?: any;
 }
-const name = "OpenAttestationEthereumTokenRegistryMinted";
+const name = "OpenAttestationEthereumTokenRegistryStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
-export const openAttestationEthereumTokenRegistryMinted: Verifier<
+export const openAttestationEthereumTokenRegistryStatus: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 > = {
   skip: () => {
@@ -22,9 +22,9 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
       type,
       name,
       reason: {
-        code: OpenAttestationEthereumTokenRegistryMintedCode.SKIPPED,
+        code: OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED,
         codeString:
-          OpenAttestationEthereumTokenRegistryMintedCode[OpenAttestationEthereumTokenRegistryMintedCode.SKIPPED],
+          OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED],
         message: `Document issuers doesn't have "tokenRegistry" property or ${v3.Method.TokenRegistry} method`,
       },
     });
@@ -87,10 +87,10 @@ export const openAttestationEthereumTokenRegistryMinted: Verifier<
         data: e,
         reason: {
           message: e.message,
-          code: OpenAttestationEthereumTokenRegistryMintedCode.UNEXPECTED_ERROR,
+          code: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
           codeString:
-            OpenAttestationEthereumTokenRegistryMintedCode[
-              OpenAttestationEthereumTokenRegistryMintedCode.UNEXPECTED_ERROR
+            OpenAttestationEthereumTokenRegistryStatusCode[
+              OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR
             ],
         },
         status: "ERROR",

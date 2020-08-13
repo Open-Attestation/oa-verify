@@ -24,48 +24,56 @@ console.log(isValid(fragments)); // display true
 ```json
 [
   {
-    "data": true,
-    "status": "VALID",
+    "type": "DOCUMENT_INTEGRITY",
     "name": "OpenAttestationHash",
-    "type": "DOCUMENT_INTEGRITY"
+    "data": true,
+    "status": "VALID"
   },
   {
-    "message": "Document issuers doesn't have \"documentStore\" or \"certificateStore\" property or DOCUMENT_STORE method",
-    "name": "OpenAttestationEthereumDocumentStoreIssued",
     "status": "SKIPPED",
-    "type": "DOCUMENT_STATUS"
+    "type": "DOCUMENT_STATUS",
+    "name": "OpenAttestationSignedProof",
+    "reason": {
+      "code": 4,
+      "codeString": "SKIPPED",
+      "message": "Document does not have a proof block"
+    }
   },
   {
+    "name": "OpenAttestationEthereumTokenRegistryStatus",
+    "type": "DOCUMENT_STATUS",
     "data": {
+      "mintedOnAll": true,
       "details": [
         {
-          "address": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-          "minted": true
+          "minted": true,
+          "address": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
         }
-      ],
-      "mintedOnAll": true
+      ]
     },
-    "status": "VALID",
-    "name": "OpenAttestationEthereumTokenRegistryMinted",
-    "type": "DOCUMENT_STATUS"
+    "status": "VALID"
   },
   {
-    "message": "Document issuers doesn't have \"documentStore\" or \"certificateStore\" property or DOCUMENT_STORE method",
-    "name": "OpenAttestationEthereumDocumentStoreRevoked",
     "status": "SKIPPED",
-    "type": "DOCUMENT_STATUS"
+    "type": "DOCUMENT_STATUS",
+    "name": "OpenAttestationEthereumDocumentStoreStatus",
+    "reason": {
+      "code": 4,
+      "codeString": "SKIPPED",
+      "message": "Document issuers doesn't have \"documentStore\" or \"certificateStore\" property or DOCUMENT_STORE method"
+    }
   },
   {
+    "name": "OpenAttestationDnsTxt",
+    "type": "ISSUER_IDENTITY",
     "data": [
       {
-        "dns": "example.tradetrust.io",
-        "identified": true,
-        "smartContract": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
+        "status": "VALID",
+        "location": "example.tradetrust.io",
+        "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
       }
     ],
-    "status": "VALID",
-    "name": "OpenAttestationDnsTxt",
-    "type": "ISSUER_IDENTITY"
+    "status": "VALID"
   }
 ]
 ```
@@ -73,6 +81,7 @@ console.log(isValid(fragments)); // display true
 ## Advanced usage
 
 ### Environment Variables
+
 - `ETHEREUM_PROVIDER`: let you pick the provider you want to use. Available values: `cloudflare`. The provider will default to `infura` if the variable is not set.
 - `INFURA_API_KEY`: let you provide your own `INFURA` API key.
 
@@ -80,7 +89,7 @@ console.log(isValid(fragments)); // display true
 
 By default the provided `verify` method performs multiple checks on a document
 
-- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreIssued`, `OpenAttestationEthereumDocumentStoreRevoked` and `OpenAttestationEthereumTokenRegistryIssued` verifiers
+- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreStatus` and `OpenAttestationEthereumTokenRegistryStatus` verifiers
 - for the type `DOCUMENT_INTEGRITY`: it runs `OpenAttestationHash` verifier
 - for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt` verifier
 
@@ -104,9 +113,9 @@ const customVerifier: Verifier = {
   test: () => {
     // return true or false
   },
-  verify: async document => {
+  verify: async (document) => {
     // perform checks and returns a fragment
-  }
+  },
 };
 
 // create your own verify function with all verifiers and your custom one

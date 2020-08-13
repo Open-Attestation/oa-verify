@@ -112,7 +112,7 @@ export const openAttestationDnsTxt: Verifier<
             reason: {
               code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
               codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
-              message: `Certificate issuer identity for ${smartContractAddress} is invalid`,
+              message: `Document issuer identity for ${smartContractAddress} is invalid`,
             },
             status: "INVALID",
           };
@@ -135,7 +135,7 @@ export const openAttestationDnsTxt: Verifier<
             reason: {
               code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
               codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
-              message: "Certificate issuer identity is invalid",
+              message: "Document issuer identity is invalid",
             },
             status: "INVALID",
           };
