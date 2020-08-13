@@ -64,11 +64,4 @@ export type DocumentsToVerify =
   | WrappedDocument<v3.OpenAttestationDocument>
   | SignedWrappedDocument<v2.OpenAttestationDocument>;
 
-// TODO move to open-attestation
-export const isSignedWrappedDocument = (
-  document: any
-): document is SignedWrappedDocument<v2.OpenAttestationDocument> => {
-  return Object.keys(document).includes("proof");
-};
-
 export type Verifiers = Verifier<DocumentsToVerify>;
