@@ -1,51 +1,52 @@
 import { openAttestationEthereumTokenRegistryStatus } from "./openAttestationEthereumTokenRegistryStatus";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenValidWithToken } from "../../../test/fixtures/v2/documentRopstenValidWithToken";
-import {
-  documentRopstenValidWithDocumentStore as v3documentRopstenValidWithDocumentStore,
-  documentRopstenValidWithTokenRegistry as v3documentRopstenValidWithTokenRegistry,
-} from "../../../test/fixtures/v3/documentRopstenValid";
+import { documentRopstenValidWithTokenRegistry as v3documentRopstenValidWithTokenRegistry } from "../../../test/fixtures/v3/documentRopstenValid";
 import { documentRopstenNotIssuedWithTokenRegistry as v3documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v3/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
 import { documentRopstenNotIssuedWithDocumentStore } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
+import { verificationBuilder } from "../verificationBuilder";
+
+const verify = verificationBuilder([openAttestationEthereumTokenRegistryStatus]);
 
 describe("openAttestationEthereumTokenRegistryStatus", () => {
-  // TODO create a verifier and call it to test this => check dns verifier test
-  describe("test", () => {
-    it("should return false when v2 document uses certificate store", () => {
-      const test = openAttestationEthereumTokenRegistryStatus.test(documentRopstenNotIssuedWithCertificateStore, {
-        network: "ropsten",
-      });
-      expect(test).toStrictEqual(false);
-    });
-    it("should return false when v2 document uses document store", () => {
-      const test = openAttestationEthereumTokenRegistryStatus.test(documentRopstenNotIssuedWithDocumentStore, {
-        network: "ropsten",
-      });
-      expect(test).toStrictEqual(false);
-    });
-    it("should return true when v2 document has at least one token registry", () => {
-      const test = openAttestationEthereumTokenRegistryStatus.test(documentRopstenNotIssuedWithTokenRegistry, {
-        network: "ropsten",
-      });
-      expect(test).toStrictEqual(true);
-    });
-    it("should return false when v3 document uses DOCUMENT_STORE method", () => {
-      const test = openAttestationEthereumTokenRegistryStatus.test(v3documentRopstenValidWithDocumentStore, {
-        network: "ropsten",
-      });
-      expect(test).toStrictEqual(false);
-    });
-    it("should return true when v3 document uses TOKEN_REGISTRY method", () => {
-      const test = openAttestationEthereumTokenRegistryStatus.test(v3documentRopstenNotIssuedWithTokenRegistry, {
-        network: "ropsten",
-      });
-      expect(test).toStrictEqual(true);
-    });
-  });
   describe("v2", () => {
+    it("should return a skipped fragment when document uses certificate store", async () => {
+      const fragment = await verify(documentRopstenNotIssuedWithCertificateStore, {
+        network: "ropsten",
+      });
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          reason: {
+            code: 4,
+            codeString: "SKIPPED",
+            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+          },
+          status: "SKIPPED",
+          type: "DOCUMENT_STATUS",
+        },
+      ]);
+    });
+    it("should return a skipped fragment when document uses document store", async () => {
+      const fragment = await verify(documentRopstenNotIssuedWithDocumentStore, {
+        network: "ropsten",
+      });
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          reason: {
+            code: 4,
+            codeString: "SKIPPED",
+            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+          },
+          status: "SKIPPED",
+          type: "DOCUMENT_STATUS",
+        },
+      ]);
+    });
     it("should return an invalid fragment when token registry is invalid", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+      const fragment = await verify(
         {
           ...documentRopstenNotIssuedWithTokenRegistry,
           data: {
@@ -62,33 +63,35 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: "0xabcd",
-              minted: false,
-              reason: {
-                code: 2,
-                codeString: "CONTRACT_ADDRESS_INVALID",
-                message: "Contract address 0xabcd is invalid",
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: [
+              {
+                address: "0xabcd",
+                minted: false,
+                reason: {
+                  code: 2,
+                  codeString: "CONTRACT_ADDRESS_INVALID",
+                  message: "Contract address 0xabcd is invalid",
+                },
               },
-            },
-          ],
-          mintedOnAll: false,
+            ],
+            mintedOnAll: false,
+          },
+          reason: {
+            code: 2,
+            codeString: "CONTRACT_ADDRESS_INVALID",
+            message: "Contract address 0xabcd is invalid",
+          },
+          status: "INVALID",
         },
-        reason: {
-          code: 2,
-          codeString: "CONTRACT_ADDRESS_INVALID",
-          message: "Contract address 0xabcd is invalid",
-        },
-        status: "INVALID",
-      });
+      ]);
     });
     it("should return an invalid fragment when token registry does not exist", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+      const fragment = await verify(
         {
           ...documentRopstenNotIssuedWithTokenRegistry,
           data: {
@@ -105,86 +108,89 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: "0x0000000000000000000000000000000000000000",
-              minted: false,
-              reason: {
-                code: 404,
-                codeString: "CONTRACT_NOT_FOUND",
-                message: "Contract 0x0000000000000000000000000000000000000000 was not found",
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: [
+              {
+                address: "0x0000000000000000000000000000000000000000",
+                minted: false,
+                reason: {
+                  code: 404,
+                  codeString: "CONTRACT_NOT_FOUND",
+                  message: "Contract 0x0000000000000000000000000000000000000000 was not found",
+                },
               },
-            },
-          ],
-          mintedOnAll: false,
+            ],
+            mintedOnAll: false,
+          },
+          reason: {
+            code: 404,
+            codeString: "CONTRACT_NOT_FOUND",
+            message: "Contract 0x0000000000000000000000000000000000000000 was not found",
+          },
+          status: "INVALID",
         },
-        reason: {
-          code: 404,
-          codeString: "CONTRACT_NOT_FOUND",
-          message: "Contract 0x0000000000000000000000000000000000000000 was not found",
-        },
-        status: "INVALID",
-      });
+      ]);
     });
     it("should return an invalid fragment when document with token registry has not been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
-        documentRopstenNotIssuedWithTokenRegistry,
-        {
-          network: "ropsten",
-        }
-      );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-              minted: false,
-              reason: {
-                code: 1,
-                codeString: "DOCUMENT_NOT_MINTED",
-                message:
-                  "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-              },
-            },
-          ],
-          mintedOnAll: false,
-        },
-        reason: {
-          code: 1,
-          codeString: "DOCUMENT_NOT_MINTED",
-          message:
-            "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-        },
-        status: "INVALID",
-      });
-    });
-    it("should return a valid fragment when document with token registry has been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentRopstenValidWithToken, {
+      const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: [
-            {
-              address: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-              minted: true,
-            },
-          ],
-          mintedOnAll: true,
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: [
+              {
+                address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                minted: false,
+                reason: {
+                  code: 1,
+                  codeString: "DOCUMENT_NOT_MINTED",
+                  message:
+                    "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                },
+              },
+            ],
+            mintedOnAll: false,
+          },
+          reason: {
+            code: 1,
+            codeString: "DOCUMENT_NOT_MINTED",
+            message:
+              "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+          },
+          status: "INVALID",
         },
-        status: "VALID",
+      ]);
+    });
+    it("should return a valid fragment when document with token registry has been minted", async () => {
+      const fragment = await verify(documentRopstenValidWithToken, {
+        network: "ropsten",
       });
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: [
+              {
+                address: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+                minted: true,
+              },
+            ],
+            mintedOnAll: true,
+          },
+          status: "VALID",
+        },
+      ]);
     });
     it("should return an error fragment when document has 2 issuers with token registry", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+      const fragment = await verify(
         {
           ...documentRopstenValidWithToken,
           data: {
@@ -196,20 +202,22 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: new Error("Only one token registry is allowed. Found 2"),
-        reason: {
-          code: 0,
-          codeString: "UNEXPECTED_ERROR",
-          message: "Only one token registry is allowed. Found 2",
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: new Error("Only one token registry is allowed. Found 2"),
+          reason: {
+            code: 0,
+            codeString: "UNEXPECTED_ERROR",
+            message: "Only one token registry is allowed. Found 2",
+          },
+          status: "ERROR",
         },
-        status: "ERROR",
-      });
+      ]);
     });
     it("should return an error fragment when document uses 2 different verification method", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+      const fragment = await verify(
         {
           ...documentRopstenValidWithToken,
           data: {
@@ -227,71 +235,71 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: new Error(`Only one token registry is allowed. Found 2`),
-        reason: {
-          code: 0,
-          codeString: "UNEXPECTED_ERROR",
-          message: "Only one token registry is allowed. Found 2",
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: new Error(`Only one token registry is allowed. Found 2`),
+          reason: {
+            code: 0,
+            codeString: "UNEXPECTED_ERROR",
+            message: "Only one token registry is allowed. Found 2",
+          },
+          status: "ERROR",
         },
-        status: "ERROR",
-      });
+      ]);
     });
   });
   describe("v3", () => {
     it("should return an invalid fragment when document with token registry has not been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
-        v3documentRopstenNotIssuedWithTokenRegistry,
-        {
-          network: "ropsten",
-        }
-      );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: {
-            address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-            minted: false,
-            reason: {
-              code: 1,
-              codeString: "DOCUMENT_NOT_MINTED",
-              message:
-                "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-            },
-          },
-          mintedOnAll: false,
-        },
-        reason: {
-          code: 1,
-          codeString: "DOCUMENT_NOT_MINTED",
-          message:
-            "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-        },
-        status: "INVALID",
+      const fragment = await verify(v3documentRopstenNotIssuedWithTokenRegistry, {
+        network: "ropsten",
       });
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: {
+              address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+              minted: false,
+              reason: {
+                code: 1,
+                codeString: "DOCUMENT_NOT_MINTED",
+                message:
+                  "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+              },
+            },
+            mintedOnAll: false,
+          },
+          reason: {
+            code: 1,
+            codeString: "DOCUMENT_NOT_MINTED",
+            message:
+              "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+          },
+          status: "INVALID",
+        },
+      ]);
     });
     it("should return a valid fragment when document with document store has been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
-        v3documentRopstenValidWithTokenRegistry,
-        {
-          network: "ropsten",
-        }
-      );
-      expect(fragment).toStrictEqual({
-        name: "OpenAttestationEthereumTokenRegistryStatus",
-        type: "DOCUMENT_STATUS",
-        data: {
-          details: {
-            address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-            minted: true,
-          },
-          mintedOnAll: true,
-        },
-        status: "VALID",
+      const fragment = await verify(v3documentRopstenValidWithTokenRegistry, {
+        network: "ropsten",
       });
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          type: "DOCUMENT_STATUS",
+          data: {
+            details: {
+              address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+              minted: true,
+            },
+            mintedOnAll: true,
+          },
+          status: "VALID",
+        },
+      ]);
     });
   });
 });
