@@ -1,5 +1,6 @@
 import * as ethers from "ethers";
-import { DocumentsToVerify, isSignedWrappedDocument, Verifier } from "../../types/core";
+import { utils } from "@govtechsg/open-attestation";
+import { DocumentsToVerify, Verifier } from "../../types/core";
 import { OpenAttestationDocumentSignedCode } from "../../types/error";
 
 const name = "OpenAttestationSignedProof";
@@ -19,11 +20,11 @@ export const openAttestationSignedProof: Verifier<DocumentsToVerify> = {
     });
   },
   test: (document) => {
-    return isSignedWrappedDocument(document);
+    return utils.isSignedWrappedV2Document(document);
   },
   verify: async (document) => {
     try {
-      if (!isSignedWrappedDocument(document)) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
+      if (!utils.isSignedWrappedV2Document(document)) throw new Error(`No proof was found in document.`); // Optional param, silence undefined type error
       // Note that proof.verificationMethod currently only supports a publicKey, no URLs ie. DIDs
       const { proof, signature } = document;
       let proofValid = false;
