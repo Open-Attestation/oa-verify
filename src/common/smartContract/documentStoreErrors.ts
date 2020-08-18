@@ -39,6 +39,20 @@ export const contractRevoked = (merkleRoot: string, address: string): Reason => 
   };
 };
 
+/**
+ * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare rate limits, Cloudflare's random 502)
+ * @param address the document store address
+ * TODO: Add the same for tokenStore
+ */
+export const badResponse = (): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
+    codeString:
+      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
+    message: `Unable to connect to Ethereum, please try again later`,
+  };
+};
+
 export const getErrorReason = (error: EthersError, address: string): Reason | null => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   if (
@@ -55,7 +69,10 @@ export const getErrorReason = (error: EthersError, address: string): Reason | nu
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
+  } else if (reason.toLowerCase() === "bad response".toLowerCase()) {
+    return badResponse();
   }
+
   return {
     message: `Error with smart contract ${address}: ${error.reason}`,
     code: OpenAttestationEthereumDocumentStoreStatusCode.ETHERS_UNHANDLED_ERROR,
