@@ -9,6 +9,7 @@ const contractNotFound = (address: Hash): Reason => {
     message: `Contract ${address} was not found`,
   };
 };
+
 const contractAddressInvalid = (address: Hash): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.CONTRACT_ADDRESS_INVALID,
@@ -19,6 +20,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
     message: `Contract address ${address} is invalid`,
   };
 };
+
 export const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
@@ -40,16 +42,15 @@ export const contractRevoked = (merkleRoot: string, address: string): Reason => 
 };
 
 /**
- * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare rate limits, Cloudflare's random 502)
+ * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare 429 rate limits, Cloudflare's random 502)
  * @param address the document store address
- * TODO: Add the same for tokenStore
  */
 export const badResponse = (): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
     codeString:
       OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-    message: `Unable to connect to Ethereum, please try again later`,
+    message: `Unable to connect to the Ethereum network, please try again later`,
   };
 };
 

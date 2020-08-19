@@ -10,6 +10,7 @@ const contractNotFound = (address: Hash): Reason => {
     message: `Contract ${address} was not found`,
   };
 };
+
 const contractAddressInvalid = (address: Hash): Reason => {
   return {
     code: OpenAttestationEthereumTokenRegistryStatusCode.CONTRACT_ADDRESS_INVALID,
@@ -20,6 +21,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
     message: `Contract address ${address} is invalid`,
   };
 };
+
 export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => {
   return {
     code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
@@ -28,6 +30,19 @@ export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => 
         OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
       ],
     message: `Document ${merkleRoot} has not been issued under contract ${address}`,
+  };
+};
+
+/**
+ * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare 429 rate limits, Cloudflare's random 502)
+ * @param address the token store address
+ */
+export const badResponse = (): Reason => {
+  return {
+    code: OpenAttestationEthereumTokenRegistryStatusCode.BAD_RESPONSE,
+    codeString:
+      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.BAD_RESPONSE],
+    message: `Unable to connect to the Ethereum network, please try again later`,
   };
 };
 
@@ -50,7 +65,10 @@ export const getErrorReason = (error: EthersError, address: string, hash: Hash):
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
+  } else if (reason.toLowerCase() === "bad response".toLowerCase()) {
+    return badResponse();
   }
+
   return {
     message: `Error with smart contract ${address}: ${error.reason}`,
     code: OpenAttestationEthereumTokenRegistryStatusCode.ETHERS_UNHANDLED_ERROR,
