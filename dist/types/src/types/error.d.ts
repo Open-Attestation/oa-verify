@@ -6,7 +6,8 @@ export declare enum OpenAttestationEthereumDocumentStoreStatusCode {
     SKIPPED = 4,
     DOCUMENT_REVOKED = 5,
     CONTRACT_NOT_FOUND = 404,
-    BAD_RESPONSE = 500
+    MISSING_RESPONSE = 429,
+    BAD_RESPONSE = 502
 }
 export declare enum OpenAttestationDocumentSignedCode {
     UNEXPECTED_ERROR = 0,
@@ -21,7 +22,8 @@ export declare enum OpenAttestationEthereumTokenRegistryStatusCode {
     ETHERS_UNHANDLED_ERROR = 3,
     SKIPPED = 4,
     CONTRACT_NOT_FOUND = 404,
-    BAD_RESPONSE = 500
+    MISSING_RESPONSE = 429,
+    BAD_RESPONSE = 502
 }
 export declare enum OpenAttestationDnsTxtCode {
     UNEXPECTED_ERROR = 0,

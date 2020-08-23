@@ -51,7 +51,7 @@ exports.openAttestationEthereumDocumentStoreStatus = exports.isAnyHashRevoked = 
 var open_attestation_1 = require("@govtechsg/open-attestation");
 var document_store_1 = require("@govtechsg/document-store");
 var error_1 = require("../../types/error");
-var documentStoreErrors_1 = require("../../common/smartContract/documentStoreErrors");
+var errors_1 = require("./errors");
 var utils_1 = require("../../common/utils");
 var name = "OpenAttestationEthereumDocumentStoreStatus";
 var type = "DOCUMENT_STATUS";
@@ -129,12 +129,12 @@ exports.openAttestationEthereumDocumentStoreStatus = {
                                             address: documentStore,
                                         };
                                         if (!issued) {
-                                            status.reason = documentStoreErrors_1.contractNotIssued(merkleRoot_1, documentStore);
+                                            status.reason = errors_1.contractNotIssued(merkleRoot_1, documentStore);
                                         }
                                         return [2 /*return*/, status];
                                     case 3:
                                         e_2 = _a.sent();
-                                        return [2 /*return*/, { issued: false, address: documentStore, reason: documentStoreErrors_1.getErrorReason(e_2, documentStore) }];
+                                        return [2 /*return*/, { issued: false, address: documentStore, reason: errors_1.getErrorReason(e_2, documentStore) }];
                                     case 4: return [2 /*return*/];
                                 }
                             });
@@ -174,12 +174,12 @@ exports.openAttestationEthereumDocumentStoreStatus = {
                                             address: documentStore,
                                         };
                                         if (revokedHash) {
-                                            status.reason = documentStoreErrors_1.contractRevoked(merkleRoot_1, documentStore);
+                                            status.reason = errors_1.contractRevoked(merkleRoot_1, documentStore);
                                         }
                                         return [2 /*return*/, status];
                                     case 3:
                                         e_3 = _a.sent();
-                                        return [2 /*return*/, { revoked: true, address: documentStore, reason: documentStoreErrors_1.getErrorReason(e_3, documentStore) }];
+                                        return [2 /*return*/, { revoked: true, address: documentStore, reason: errors_1.getErrorReason(e_3, documentStore) }];
                                     case 4: return [2 /*return*/];
                                 }
                             });

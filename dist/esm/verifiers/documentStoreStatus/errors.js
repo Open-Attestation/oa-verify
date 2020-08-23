@@ -28,16 +28,20 @@ export var contractRevoked = function (merkleRoot, address) {
         message: "Document " + merkleRoot + " has been revoked under contract " + address,
     };
 };
-/**
- * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare rate limits, Cloudflare's random 502)
- * @param address the document store address
- * TODO: Add the same for tokenStore
- */
+// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
+export var missingResponse = function () {
+    return {
+        code: OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE,
+        codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE],
+        message: "Unable to connect to the Ethereum network, please try again later",
+    };
+};
+// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
 export var badResponse = function () {
     return {
         code: OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
         codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-        message: "Unable to connect to Ethereum, please try again later",
+        message: "Unable to connect to the Ethereum network, please try again later",
     };
 };
 export var getErrorReason = function (error, address) {
@@ -54,6 +58,9 @@ export var getErrorReason = function (error, address) {
         ((_d = error.message) === null || _d === void 0 ? void 0 : _d.toLowerCase()) === "name not found".toLowerCase() ||
         (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)) {
         return contractAddressInvalid(address);
+    }
+    else if (reason.toLowerCase() === "missing response".toLowerCase()) {
+        return missingResponse();
     }
     else if (reason.toLowerCase() === "bad response".toLowerCase()) {
         return badResponse();

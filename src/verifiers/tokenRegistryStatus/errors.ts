@@ -33,10 +33,17 @@ export const contractNotMinted = (merkleRoot: Hash, address: string): Reason => 
   };
 };
 
-/**
- * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare 429 rate limits, Cloudflare's random 502)
- * @param address the token store address
- */
+// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
+export const missingResponse = (): Reason => {
+  return {
+    code: OpenAttestationEthereumTokenRegistryStatusCode.MISSING_RESPONSE,
+    codeString:
+      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.MISSING_RESPONSE],
+    message: `Unable to connect to the Ethereum network, please try again later`,
+  };
+};
+
+// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
 export const badResponse = (): Reason => {
   return {
     code: OpenAttestationEthereumTokenRegistryStatusCode.BAD_RESPONSE,
@@ -65,6 +72,8 @@ export const getErrorReason = (error: EthersError, address: string, hash: Hash):
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
+  } else if (reason.toLowerCase() === "missing response".toLowerCase()) {
+    return missingResponse();
   } else if (reason.toLowerCase() === "bad response".toLowerCase()) {
     return badResponse();
   }

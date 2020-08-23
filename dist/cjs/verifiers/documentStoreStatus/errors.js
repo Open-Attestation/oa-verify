@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getErrorReason = exports.badResponse = exports.contractRevoked = exports.contractNotIssued = void 0;
+exports.getErrorReason = exports.badResponse = exports.missingResponse = exports.contractRevoked = exports.contractNotIssued = void 0;
 var ethers_1 = require("ethers");
 var __1 = require("../..");
 var contractNotFound = function (address) {
@@ -31,16 +31,20 @@ exports.contractRevoked = function (merkleRoot, address) {
         message: "Document " + merkleRoot + " has been revoked under contract " + address,
     };
 };
-/**
- * This function handles all non-200 HTTP response codes (e.g. Infura/Cloudflare rate limits, Cloudflare's random 502)
- * @param address the document store address
- * TODO: Add the same for tokenStore
- */
+// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
+exports.missingResponse = function () {
+    return {
+        code: __1.OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE,
+        codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE],
+        message: "Unable to connect to the Ethereum network, please try again later",
+    };
+};
+// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
 exports.badResponse = function () {
     return {
         code: __1.OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
         codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-        message: "Unable to connect to Ethereum, please try again later",
+        message: "Unable to connect to the Ethereum network, please try again later",
     };
 };
 exports.getErrorReason = function (error, address) {
@@ -57,6 +61,9 @@ exports.getErrorReason = function (error, address) {
         ((_d = error.message) === null || _d === void 0 ? void 0 : _d.toLowerCase()) === "name not found".toLowerCase() ||
         (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === ethers_1.errors.INVALID_ARGUMENT)) {
         return contractAddressInvalid(address);
+    }
+    else if (reason.toLowerCase() === "missing response".toLowerCase()) {
+        return exports.missingResponse();
     }
     else if (reason.toLowerCase() === "bad response".toLowerCase()) {
         return exports.badResponse();

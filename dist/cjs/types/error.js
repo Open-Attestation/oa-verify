@@ -12,7 +12,8 @@ var OpenAttestationEthereumDocumentStoreStatusCode;
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["SKIPPED"] = 4] = "SKIPPED";
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["DOCUMENT_REVOKED"] = 5] = "DOCUMENT_REVOKED";
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["CONTRACT_NOT_FOUND"] = 404] = "CONTRACT_NOT_FOUND";
-    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["BAD_RESPONSE"] = 500] = "BAD_RESPONSE";
+    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["MISSING_RESPONSE"] = 429] = "MISSING_RESPONSE";
+    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["BAD_RESPONSE"] = 502] = "BAD_RESPONSE";
 })(OpenAttestationEthereumDocumentStoreStatusCode = exports.OpenAttestationEthereumDocumentStoreStatusCode || (exports.OpenAttestationEthereumDocumentStoreStatusCode = {}));
 var OpenAttestationDocumentSignedCode;
 (function (OpenAttestationDocumentSignedCode) {
@@ -29,7 +30,8 @@ var OpenAttestationEthereumTokenRegistryStatusCode;
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["ETHERS_UNHANDLED_ERROR"] = 3] = "ETHERS_UNHANDLED_ERROR";
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["SKIPPED"] = 4] = "SKIPPED";
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["CONTRACT_NOT_FOUND"] = 404] = "CONTRACT_NOT_FOUND";
-    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["BAD_RESPONSE"] = 500] = "BAD_RESPONSE";
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["MISSING_RESPONSE"] = 429] = "MISSING_RESPONSE";
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["BAD_RESPONSE"] = 502] = "BAD_RESPONSE";
 })(OpenAttestationEthereumTokenRegistryStatusCode = exports.OpenAttestationEthereumTokenRegistryStatusCode || (exports.OpenAttestationEthereumTokenRegistryStatusCode = {}));
 var OpenAttestationDnsTxtCode;
 (function (OpenAttestationDnsTxtCode) {

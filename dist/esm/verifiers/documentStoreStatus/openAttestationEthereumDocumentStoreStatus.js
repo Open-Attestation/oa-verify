@@ -48,7 +48,7 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 import { utils, getData, v3 } from "@govtechsg/open-attestation";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
-import { contractNotIssued, getErrorReason, contractRevoked } from "../../common/smartContract/documentStoreErrors";
+import { contractNotIssued, getErrorReason, contractRevoked } from "./errors";
 import { getIssuersDocumentStore, getProvider } from "../../common/utils";
 var name = "OpenAttestationEthereumDocumentStoreStatus";
 var type = "DOCUMENT_STATUS";
