@@ -5,9 +5,9 @@ export declare enum OpenAttestationEthereumDocumentStoreStatusCode {
     ETHERS_UNHANDLED_ERROR = 3,
     SKIPPED = 4,
     DOCUMENT_REVOKED = 5,
+    INVALID_ARGUMENT = 6,
     CONTRACT_NOT_FOUND = 404,
-    MISSING_RESPONSE = 429,
-    BAD_RESPONSE = 502
+    SERVER_ERROR = 500
 }
 export declare enum OpenAttestationDocumentSignedCode {
     UNEXPECTED_ERROR = 0,
@@ -21,9 +21,9 @@ export declare enum OpenAttestationEthereumTokenRegistryStatusCode {
     CONTRACT_ADDRESS_INVALID = 2,
     ETHERS_UNHANDLED_ERROR = 3,
     SKIPPED = 4,
+    INVALID_ARGUMENT = 6,
     CONTRACT_NOT_FOUND = 404,
-    MISSING_RESPONSE = 429,
-    BAD_RESPONSE = 502
+    SERVER_ERROR = 500
 }
 export declare enum OpenAttestationDnsTxtCode {
     UNEXPECTED_ERROR = 0,

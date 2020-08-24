@@ -8,9 +8,9 @@ export var OpenAttestationEthereumDocumentStoreStatusCode;
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["ETHERS_UNHANDLED_ERROR"] = 3] = "ETHERS_UNHANDLED_ERROR";
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["SKIPPED"] = 4] = "SKIPPED";
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["DOCUMENT_REVOKED"] = 5] = "DOCUMENT_REVOKED";
+    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["INVALID_ARGUMENT"] = 6] = "INVALID_ARGUMENT";
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["CONTRACT_NOT_FOUND"] = 404] = "CONTRACT_NOT_FOUND";
-    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["MISSING_RESPONSE"] = 429] = "MISSING_RESPONSE";
-    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["BAD_RESPONSE"] = 502] = "BAD_RESPONSE";
+    OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode["SERVER_ERROR"] = 500] = "SERVER_ERROR";
 })(OpenAttestationEthereumDocumentStoreStatusCode || (OpenAttestationEthereumDocumentStoreStatusCode = {}));
 export var OpenAttestationDocumentSignedCode;
 (function (OpenAttestationDocumentSignedCode) {
@@ -26,9 +26,9 @@ export var OpenAttestationEthereumTokenRegistryStatusCode;
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["CONTRACT_ADDRESS_INVALID"] = 2] = "CONTRACT_ADDRESS_INVALID";
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["ETHERS_UNHANDLED_ERROR"] = 3] = "ETHERS_UNHANDLED_ERROR";
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["SKIPPED"] = 4] = "SKIPPED";
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["INVALID_ARGUMENT"] = 6] = "INVALID_ARGUMENT";
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["CONTRACT_NOT_FOUND"] = 404] = "CONTRACT_NOT_FOUND";
-    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["MISSING_RESPONSE"] = 429] = "MISSING_RESPONSE";
-    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["BAD_RESPONSE"] = 502] = "BAD_RESPONSE";
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode["SERVER_ERROR"] = 500] = "SERVER_ERROR";
 })(OpenAttestationEthereumTokenRegistryStatusCode || (OpenAttestationEthereumTokenRegistryStatusCode = {}));
 export var OpenAttestationDnsTxtCode;
 (function (OpenAttestationDnsTxtCode) {

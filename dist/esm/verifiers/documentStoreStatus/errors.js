@@ -28,20 +28,21 @@ export var contractRevoked = function (merkleRoot, address) {
         message: "Document " + merkleRoot + " has been revoked under contract " + address,
     };
 };
-// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
-export var missingResponse = function () {
+// This function handles ALL of Ethers SERVER_ERRORs, most likely caused by HTTP 4xx or 5xx errors.
+export var serverError = function () {
     return {
-        code: OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE,
-        codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE],
+        code: OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
+        codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR],
         message: "Unable to connect to the Ethereum network, please try again later",
     };
 };
-// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
-export var badResponse = function () {
+// This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
+// hex data is odd-length or incorrect data length
+export var invalidArgument = function () {
     return {
-        code: OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
-        codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-        message: "Unable to connect to the Ethereum network, please try again later",
+        code: OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
+        codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
+        message: "Document has been tampered with",
     };
 };
 export var getErrorReason = function (error, address) {
@@ -59,11 +60,11 @@ export var getErrorReason = function (error, address) {
         (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)) {
         return contractAddressInvalid(address);
     }
-    else if (reason.toLowerCase() === "missing response".toLowerCase()) {
-        return missingResponse();
+    else if (error.code === errors.SERVER_ERROR) {
+        return serverError();
     }
-    else if (reason.toLowerCase() === "bad response".toLowerCase()) {
-        return badResponse();
+    else if (error.code === errors.INVALID_ARGUMENT) {
+        return invalidArgument();
     }
     return {
         message: "Error with smart contract " + address + ": " + error.reason,

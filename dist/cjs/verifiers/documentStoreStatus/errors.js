@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getErrorReason = exports.badResponse = exports.missingResponse = exports.contractRevoked = exports.contractNotIssued = void 0;
+exports.getErrorReason = exports.invalidArgument = exports.serverError = exports.contractRevoked = exports.contractNotIssued = void 0;
 var ethers_1 = require("ethers");
 var __1 = require("../..");
 var contractNotFound = function (address) {
@@ -31,20 +31,21 @@ exports.contractRevoked = function (merkleRoot, address) {
         message: "Document " + merkleRoot + " has been revoked under contract " + address,
     };
 };
-// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
-exports.missingResponse = function () {
+// This function handles ALL of Ethers SERVER_ERRORs, most likely caused by HTTP 4xx or 5xx errors.
+exports.serverError = function () {
     return {
-        code: __1.OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE,
-        codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE],
+        code: __1.OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
+        codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR],
         message: "Unable to connect to the Ethereum network, please try again later",
     };
 };
-// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
-exports.badResponse = function () {
+// This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
+// hex data is odd-length or incorrect data length
+exports.invalidArgument = function () {
     return {
-        code: __1.OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
-        codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-        message: "Unable to connect to the Ethereum network, please try again later",
+        code: __1.OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
+        codeString: __1.OpenAttestationEthereumDocumentStoreStatusCode[__1.OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
+        message: "Document has been tampered with",
     };
 };
 exports.getErrorReason = function (error, address) {
@@ -62,11 +63,11 @@ exports.getErrorReason = function (error, address) {
         (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === ethers_1.errors.INVALID_ARGUMENT)) {
         return contractAddressInvalid(address);
     }
-    else if (reason.toLowerCase() === "missing response".toLowerCase()) {
-        return exports.missingResponse();
+    else if (error.code === ethers_1.errors.SERVER_ERROR) {
+        return exports.serverError();
     }
-    else if (reason.toLowerCase() === "bad response".toLowerCase()) {
-        return exports.badResponse();
+    else if (error.code === ethers_1.errors.INVALID_ARGUMENT) {
+        return exports.invalidArgument();
     }
     return {
         message: "Error with smart contract " + address + ": " + error.reason,

@@ -41,23 +41,24 @@ export const contractRevoked = (merkleRoot: string, address: string): Reason => 
   };
 };
 
-// This function handles Ethers "missing response" error, most likely caused by HTTP 4xx errors.
-export const missingResponse = (): Reason => {
+// This function handles ALL of Ethers SERVER_ERRORs, most likely caused by HTTP 4xx or 5xx errors.
+export const serverError = (): Reason => {
   return {
-    code: OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE,
+    code: OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
     codeString:
-      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.MISSING_RESPONSE],
+      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR],
     message: `Unable to connect to the Ethereum network, please try again later`,
   };
 };
 
-// This function handles Ethers "bad response" error, most likely caused by HTTP 5xx errors.
-export const badResponse = (): Reason => {
+// This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
+// hex data is odd-length or incorrect data length
+export const invalidArgument = (): Reason => {
   return {
-    code: OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE,
+    code: OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
     codeString:
-      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.BAD_RESPONSE],
-    message: `Unable to connect to the Ethereum network, please try again later`,
+      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
+    message: `Document has been tampered with`,
   };
 };
 
@@ -77,10 +78,10 @@ export const getErrorReason = (error: EthersError, address: string): Reason | nu
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
-  } else if (reason.toLowerCase() === "missing response".toLowerCase()) {
-    return missingResponse();
-  } else if (reason.toLowerCase() === "bad response".toLowerCase()) {
-    return badResponse();
+  } else if (error.code === errors.SERVER_ERROR) {
+    return serverError();
+  } else if (error.code === errors.INVALID_ARGUMENT) {
+    return invalidArgument();
   }
 
   return {
