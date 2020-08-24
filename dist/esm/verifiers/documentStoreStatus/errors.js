@@ -38,11 +38,11 @@ export var serverError = function () {
 };
 // This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
 // hex data is odd-length or incorrect data length
-export var invalidArgument = function () {
+export var invalidArgument = function (error, address) {
     return {
         code: OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
         codeString: OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
-        message: "Document has been tampered with",
+        message: "Error with smart contract " + address + ": " + error.reason,
     };
 };
 export var getErrorReason = function (error, address) {
@@ -64,7 +64,7 @@ export var getErrorReason = function (error, address) {
         return serverError();
     }
     else if (error.code === errors.INVALID_ARGUMENT) {
-        return invalidArgument();
+        return invalidArgument(error, address);
     }
     return {
         message: "Error with smart contract " + address + ": " + error.reason,

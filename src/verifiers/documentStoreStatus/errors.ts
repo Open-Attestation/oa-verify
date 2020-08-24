@@ -53,12 +53,12 @@ export const serverError = (): Reason => {
 
 // This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
 // hex data is odd-length or incorrect data length
-export const invalidArgument = (): Reason => {
+export const invalidArgument = (error: EthersError, address: string): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
     codeString:
       OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
-    message: `Document has been tampered with`,
+    message: `Error with smart contract ${address}: ${error.reason}`,
   };
 };
 
@@ -81,7 +81,7 @@ export const getErrorReason = (error: EthersError, address: string): Reason | nu
   } else if (error.code === errors.SERVER_ERROR) {
     return serverError();
   } else if (error.code === errors.INVALID_ARGUMENT) {
-    return invalidArgument();
+    return invalidArgument(error, address);
   }
 
   return {
