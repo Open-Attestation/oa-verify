@@ -49,7 +49,7 @@ export const invalidArgument = (error: EthersError, address: string): Reason => 
   return {
     code: OpenAttestationEthereumTokenRegistryStatusCode.INVALID_ARGUMENT,
     codeString:
-    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.INVALID_ARGUMENT],
+      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.INVALID_ARGUMENT],
     message: `Error with smart contract ${address}: ${error.reason}`,
   };
 };
