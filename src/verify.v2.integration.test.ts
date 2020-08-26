@@ -823,7 +823,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  describe.only("HTTP responses", () => {
+  describe("HTTP responses", () => {
     // Placing the following tests in a separate block due to how msw works
     // Note: This is just an initial setup. Some tests will use a different
     const server = setupServer(
