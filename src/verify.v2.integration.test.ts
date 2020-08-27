@@ -20,6 +20,8 @@ import {
   documentRinkebyRevokedWithDocumentStore,
   documentRinkebyValidWithDocumentStore,
 } from "../test/fixtures/v2/documentRinkebyWithDocumentStore";
+import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
+import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 
 describe("verify(integration)", () => {
   afterEach(() => {
@@ -666,7 +668,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 
-  it("should should work when document with document store has been issued to rinkeby network", async () => {
+  it("should work when document with document store has been issued to rinkeby network", async () => {
     const results = await verify(documentRinkebyValidWithDocumentStore, {
       network: "rinkeby",
     });
@@ -738,7 +740,7 @@ describe("verify(integration)", () => {
     expect(isValid(results)).toStrictEqual(true);
   });
 
-  it("should should work when document with document store has been issued and revoked to rinkeby network", async () => {
+  it("should work when document with document store has been issued and revoked to rinkeby network", async () => {
     const results = await verify(documentRinkebyRevokedWithDocumentStore, {
       network: "rinkeby",
     });
@@ -823,18 +825,178 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  describe("Handling HTTP responses", () => {
-    // Placing the following tests in a separate block due to how msw intercepts ALL connections
-    const server = setupServer();
+  it("should be invalid with a merkle root that is odd-length", async () => {
+    const results = await verify(documentMainnetInvalidWithOddLengthMerkleRoot, {
+      network: "mainnet",
+    });
+    expect(results).toMatchInlineSnapshot(`
+     Array [
+         Object {
+           "data": false,
+           "name": "OpenAttestationHash",
+           "reason": Object {
+             "code": 0,
+             "codeString": "DOCUMENT_TAMPERED",
+             "message": "Document has been tampered with",
+           },
+           "status": "INVALID",
+           "type": "DOCUMENT_INTEGRITY",
+         },
+         Object {
+           "name": "OpenAttestationSignedProof",
+           "reason": Object {
+             "code": 4,
+             "codeString": "SKIPPED",
+             "message": "Document does not have a proof block",
+           },
+           "status": "SKIPPED",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "name": "OpenAttestationEthereumTokenRegistryStatus",
+           "reason": Object {
+             "code": 4,
+             "codeString": "SKIPPED",
+             "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+           },
+           "status": "SKIPPED",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "data": Object {
+             "details": Object {
+               "issuance": Array [
+                 Object {
+                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                   "issued": false,
+                   "reason": Object {
+                     "code": 6,
+                     "codeString": "INVALID_ARGUMENT",
+                     "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+                   },
+                 },
+               ],
+             },
+             "issuedOnAll": false,
+           },
+           "name": "OpenAttestationEthereumDocumentStoreStatus",
+           "reason": Object {
+             "code": 6,
+             "codeString": "INVALID_ARGUMENT",
+             "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+           },
+           "status": "INVALID",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "data": Array [
+             Object {
+               "location": "demo.tradetrust.io",
+               "status": "VALID",
+               "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+             },
+           ],
+           "name": "OpenAttestationDnsTxt",
+           "status": "VALID",
+           "type": "ISSUER_IDENTITY",
+         },
+       ]
+    `);
+    expect(isValid(results)).toStrictEqual(false);
+    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+    expect(isValid(results, ["DOCUMENT_STATUS", "DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+  });
 
-    // Enable API mocking before tests.
-    beforeAll(() => server.listen());
+  it("should be invalid with a merkle root that is of incorrect length", async () => {
+    // incorrect length means even-length, but not 64 characters as required of merkleRoots
+    const results = await verify(documentMainnetInvalidWithIncorrectMerkleRoot, {
+      network: "mainnet",
+    });
+    expect(results).toMatchInlineSnapshot(`
+     Array [
+         Object {
+           "data": false,
+           "name": "OpenAttestationHash",
+           "reason": Object {
+             "code": 0,
+             "codeString": "DOCUMENT_TAMPERED",
+             "message": "Document has been tampered with",
+           },
+           "status": "INVALID",
+           "type": "DOCUMENT_INTEGRITY",
+         },
+         Object {
+           "name": "OpenAttestationSignedProof",
+           "reason": Object {
+             "code": 4,
+             "codeString": "SKIPPED",
+             "message": "Document does not have a proof block",
+           },
+           "status": "SKIPPED",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "name": "OpenAttestationEthereumTokenRegistryStatus",
+           "reason": Object {
+             "code": 4,
+             "codeString": "SKIPPED",
+             "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+           },
+           "status": "SKIPPED",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "data": Object {
+             "details": Object {
+               "issuance": Array [
+                 Object {
+                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                   "issued": false,
+                   "reason": Object {
+                     "code": 6,
+                     "codeString": "INVALID_ARGUMENT",
+                     "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+                   },
+                 },
+               ],
+             },
+             "issuedOnAll": false,
+           },
+           "name": "OpenAttestationEthereumDocumentStoreStatus",
+           "reason": Object {
+             "code": 6,
+             "codeString": "INVALID_ARGUMENT",
+             "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+           },
+           "status": "INVALID",
+           "type": "DOCUMENT_STATUS",
+         },
+         Object {
+           "data": Array [
+             Object {
+               "location": "demo.tradetrust.io",
+               "status": "VALID",
+               "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+             },
+           ],
+           "name": "OpenAttestationDnsTxt",
+           "status": "VALID",
+           "type": "ISSUER_IDENTITY",
+         },
+       ]
+    `);
+    expect(isValid(results)).toStrictEqual(false);
+    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+    expect(isValid(results, ["DOCUMENT_STATUS", "DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+  });
 
-    // Reset any runtime request handlers we may add during the tests.
-    afterEach(() => server.resetHandlers());
-
-    // Disable API mocking after the tests are done.
-    afterAll(() => server.close());
+  describe("Handling HTTP response errors", () => {
+    const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
+    beforeAll(() => server.listen()); // Enable API mocking before tests
+    afterEach(() => server.resetHandlers()); // Reset any runtime request handlers we may add during the tests
+    afterAll(() => server.close()); // Disable API mocking after the tests are done
 
     it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 429)", async () => {
       server.use(
@@ -924,7 +1086,7 @@ describe("verify(integration)", () => {
         rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
           return res(
             ctx.status(502, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 2 })
           );
         })
       );
@@ -1008,7 +1170,7 @@ describe("verify(integration)", () => {
         rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
           return res(
             ctx.status(429, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 3 })
           );
         })
       );
@@ -1092,7 +1254,7 @@ describe("verify(integration)", () => {
         rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
           return res(
             ctx.status(502, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 4 })
           );
         })
       );
