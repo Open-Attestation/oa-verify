@@ -830,77 +830,77 @@ describe("verify(integration)", () => {
       network: "mainnet",
     });
     expect(results).toMatchInlineSnapshot(`
-     Array [
-         Object {
-           "data": false,
-           "name": "OpenAttestationHash",
-           "reason": Object {
-             "code": 0,
-             "codeString": "DOCUMENT_TAMPERED",
-             "message": "Document has been tampered with",
-           },
-           "status": "INVALID",
-           "type": "DOCUMENT_INTEGRITY",
-         },
-         Object {
-           "name": "OpenAttestationSignedProof",
-           "reason": Object {
-             "code": 4,
-             "codeString": "SKIPPED",
-             "message": "Document does not have a proof block",
-           },
-           "status": "SKIPPED",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "name": "OpenAttestationEthereumTokenRegistryStatus",
-           "reason": Object {
-             "code": 4,
-             "codeString": "SKIPPED",
-             "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-           },
-           "status": "SKIPPED",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "data": Object {
-             "details": Object {
-               "issuance": Array [
-                 Object {
-                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-                   "issued": false,
-                   "reason": Object {
-                     "code": 6,
-                     "codeString": "INVALID_ARGUMENT",
-                     "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
-                   },
-                 },
-               ],
-             },
-             "issuedOnAll": false,
-           },
-           "name": "OpenAttestationEthereumDocumentStoreStatus",
-           "reason": Object {
-             "code": 6,
-             "codeString": "INVALID_ARGUMENT",
-             "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
-           },
-           "status": "INVALID",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "data": Array [
-             Object {
-               "location": "demo.tradetrust.io",
-               "status": "VALID",
-               "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-             },
-           ],
-           "name": "OpenAttestationDnsTxt",
-           "status": "VALID",
-           "type": "ISSUER_IDENTITY",
-         },
-       ]
+      Array [
+        Object {
+          "data": false,
+          "name": "OpenAttestationHash",
+          "reason": Object {
+            "code": 0,
+            "codeString": "DOCUMENT_TAMPERED",
+            "message": "Document has been tampered with",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationSignedProof",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document does not have a proof block",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                  "issued": false,
+                  "reason": Object {
+                    "code": 6,
+                    "codeString": "INVALID_ARGUMENT",
+                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+                  },
+                },
+              ],
+            },
+            "issuedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_ARGUMENT",
+            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxt",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+      ]
     `);
     expect(isValid(results)).toStrictEqual(false);
     // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
@@ -914,77 +914,77 @@ describe("verify(integration)", () => {
       network: "mainnet",
     });
     expect(results).toMatchInlineSnapshot(`
-     Array [
-         Object {
-           "data": false,
-           "name": "OpenAttestationHash",
-           "reason": Object {
-             "code": 0,
-             "codeString": "DOCUMENT_TAMPERED",
-             "message": "Document has been tampered with",
-           },
-           "status": "INVALID",
-           "type": "DOCUMENT_INTEGRITY",
-         },
-         Object {
-           "name": "OpenAttestationSignedProof",
-           "reason": Object {
-             "code": 4,
-             "codeString": "SKIPPED",
-             "message": "Document does not have a proof block",
-           },
-           "status": "SKIPPED",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "name": "OpenAttestationEthereumTokenRegistryStatus",
-           "reason": Object {
-             "code": 4,
-             "codeString": "SKIPPED",
-             "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-           },
-           "status": "SKIPPED",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "data": Object {
-             "details": Object {
-               "issuance": Array [
-                 Object {
-                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-                   "issued": false,
-                   "reason": Object {
-                     "code": 6,
-                     "codeString": "INVALID_ARGUMENT",
-                     "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
-                   },
-                 },
-               ],
-             },
-             "issuedOnAll": false,
-           },
-           "name": "OpenAttestationEthereumDocumentStoreStatus",
-           "reason": Object {
-             "code": 6,
-             "codeString": "INVALID_ARGUMENT",
-             "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
-           },
-           "status": "INVALID",
-           "type": "DOCUMENT_STATUS",
-         },
-         Object {
-           "data": Array [
-             Object {
-               "location": "demo.tradetrust.io",
-               "status": "VALID",
-               "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-             },
-           ],
-           "name": "OpenAttestationDnsTxt",
-           "status": "VALID",
-           "type": "ISSUER_IDENTITY",
-         },
-       ]
+      Array [
+        Object {
+          "data": false,
+          "name": "OpenAttestationHash",
+          "reason": Object {
+            "code": 0,
+            "codeString": "DOCUMENT_TAMPERED",
+            "message": "Document has been tampered with",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationSignedProof",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document does not have a proof block",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                  "issued": false,
+                  "reason": Object {
+                    "code": 6,
+                    "codeString": "INVALID_ARGUMENT",
+                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+                  },
+                },
+              ],
+            },
+            "issuedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_ARGUMENT",
+            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxt",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+      ]
     `);
     expect(isValid(results)).toStrictEqual(false);
     // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
