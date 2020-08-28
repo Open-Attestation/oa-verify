@@ -904,7 +904,8 @@ describe("verify(integration)", () => {
     `);
     expect(isValid(results)).toStrictEqual(false);
     // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_STATUS", "DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
@@ -988,7 +989,8 @@ describe("verify(integration)", () => {
     `);
     expect(isValid(results)).toStrictEqual(false);
     // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_STATUS", "DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
