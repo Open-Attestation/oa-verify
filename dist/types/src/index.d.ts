@@ -1,0 +1,13 @@
+import { verificationBuilder } from "./verifiers/verificationBuilder";
+import { Verifier, Verifiers } from "./types/core";
+import { openAttestationHash } from "./verifiers/hash/openAttestationHash";
+import { Identity, openAttestationDnsTxt } from "./verifiers/dnsText/openAttestationDnsTxt";
+import { openAttestationSignedProof } from "./verifiers/signedProof/openAttestationSignedProof";
+import { isValid } from "./validator";
+import { openAttestationEthereumTokenRegistryStatus } from "./verifiers/tokenRegistryStatus/openAttestationEthereumTokenRegistryStatus";
+import { openAttestationEthereumDocumentStoreStatus } from "./verifiers/documentStoreStatus/openAttestationEthereumDocumentStoreStatus";
+declare const openAttestationVerifiers: Verifiers[];
+declare const verify: (document: import("./types/core").DocumentsToVerify, options: import("./types/core").VerificationManagerOptions) => Promise<import("./types/core").VerificationFragment<any>[]>;
+export * from "./types/core";
+export * from "./types/error";
+export { verificationBuilder, openAttestationVerifiers, isValid, verify, Verifier, Identity, openAttestationHash, openAttestationSignedProof, openAttestationDnsTxt, openAttestationEthereumDocumentStoreStatus, openAttestationEthereumTokenRegistryStatus, };
