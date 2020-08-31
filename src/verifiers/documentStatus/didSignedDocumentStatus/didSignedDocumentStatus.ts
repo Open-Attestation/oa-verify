@@ -1,4 +1,4 @@
-import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument, getData } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
 
@@ -19,8 +19,11 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
-const test: VerifierType["test"] = (_document) => {
-  return true;
+const test: VerifierType["test"] = (document) => {
+  const documentAsAny = document as any; // Casting to any first to prevent change at the OA level
+  if (documentAsAny.proof && documentAsAny.proof.some((proof: any) => proof.type === "DidGenericSignature"))
+    return true;
+  return false;
 };
 
 const verify: VerifierType["verify"] = async (_document, _option) => {
