@@ -9,6 +9,7 @@ const contractNotFound = (address: Hash): Reason => {
     message: `Contract ${address} was not found`,
   };
 };
+
 const contractAddressInvalid = (address: Hash): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.CONTRACT_ADDRESS_INVALID,
@@ -19,6 +20,7 @@ const contractAddressInvalid = (address: Hash): Reason => {
     message: `Contract address ${address} is invalid`,
   };
 };
+
 export const contractNotIssued = (merkleRoot: Hash, address: string): Reason => {
   return {
     code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
@@ -39,6 +41,27 @@ export const contractRevoked = (merkleRoot: string, address: string): Reason => 
   };
 };
 
+// This function handles ALL of Ethers SERVER_ERRORs, most likely caused by HTTP 4xx or 5xx errors.
+export const serverError = (): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
+    codeString:
+      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR],
+    message: `Unable to connect to the Ethereum network, please try again later`,
+  };
+};
+
+// This function handles all INVALID_ARGUMENT errors likely due to invalid hex string,
+// hex data is odd-length or incorrect data length
+export const invalidArgument = (error: EthersError, address: string): Reason => {
+  return {
+    code: OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT,
+    codeString:
+      OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ARGUMENT],
+    message: `Error with smart contract ${address}: ${error.reason}`,
+  };
+};
+
 export const getErrorReason = (error: EthersError, address: string): Reason | null => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   if (
@@ -55,7 +78,12 @@ export const getErrorReason = (error: EthersError, address: string): Reason | nu
     (reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT)
   ) {
     return contractAddressInvalid(address);
+  } else if (error.code === errors.SERVER_ERROR) {
+    return serverError();
+  } else if (error.code === errors.INVALID_ARGUMENT) {
+    return invalidArgument(error, address);
   }
+
   return {
     message: `Error with smart contract ${address}: ${error.reason}`,
     code: OpenAttestationEthereumDocumentStoreStatusCode.ETHERS_UNHANDLED_ERROR,

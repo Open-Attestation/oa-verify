@@ -3,7 +3,7 @@ import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
 import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
-import { contractNotIssued, getErrorReason, contractRevoked } from "../../common/smartContract/documentStoreErrors";
+import { contractNotIssued, getErrorReason, contractRevoked } from "./errors";
 import { getIssuersDocumentStore, getProvider } from "../../common/utils";
 
 interface IssuanceStatus {
