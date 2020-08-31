@@ -1,13 +1,13 @@
 import { openAttestationEthereumDocumentStoreStatus } from "./openAttestationEthereumDocumentStoreStatus";
-import { documentRopstenRevokedWithDocumentStore } from "../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
-import { documentRopstenRevokedWithCertificateStore } from "../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
-import { documentRopstenNotIssuedWithCertificateStore } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
-import { documentRopstenValidWithDocumentStore as v3documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v3/documentRopstenValid";
-import { documentRopstenValidWithCertificateStore } from "../../../test/fixtures/v2/documentRopstenValidWithCertificateStore";
-import { documentRopstenRevoked } from "../../../test/fixtures/v3/documentRopstenRevoked";
-import { documentRopstenNotIssuedWithTokenRegistry } from "../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
-import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
-import { verificationBuilder } from "../verificationBuilder";
+import { documentRopstenRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
+import { documentRopstenRevokedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
+import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
+import { documentRopstenValidWithDocumentStore as v3documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v3/documentRopstenValid";
+import { documentRopstenValidWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenValidWithCertificateStore";
+import { documentRopstenRevoked } from "../../../../test/fixtures/v3/documentRopstenRevoked";
+import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
+import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
+import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationEthereumDocumentStoreStatus]);
 

@@ -1,10 +1,10 @@
 import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
-import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../types/core";
-import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
-import { contractNotIssued, getErrorReason, contractRevoked } from "../../common/smartContract/documentStoreErrors";
-import { getIssuersDocumentStore, getProvider } from "../../common/utils";
+import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../../types/core";
+import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../../types/error";
+import { contractNotIssued, getErrorReason, contractRevoked } from "../../../common/smartContract/documentStoreErrors";
+import { getIssuersDocumentStore, getProvider } from "../../../common/utils";
 
 interface IssuanceStatus {
   issued: boolean;

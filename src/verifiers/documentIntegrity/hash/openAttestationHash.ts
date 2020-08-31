@@ -1,6 +1,6 @@
 import { verifySignature } from "@govtechsg/open-attestation";
-import { VerificationFragmentType, Verifier } from "../../types/core";
-import { OpenAttestationHashCode } from "../../types/error";
+import { VerificationFragmentType, Verifier } from "../../../types/core";
+import { OpenAttestationHashCode } from "../../../types/error";
 
 const name = "OpenAttestationHash";
 const type: VerificationFragmentType = "DOCUMENT_INTEGRITY";

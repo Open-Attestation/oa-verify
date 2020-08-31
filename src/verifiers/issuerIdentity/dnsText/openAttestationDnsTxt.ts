@@ -1,8 +1,8 @@
 import { getData, v2, v3, WrappedDocument, utils as oaUtils } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { getDefaultProvider } from "ethers";
-import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../types/core";
-import { OpenAttestationDnsTxtCode } from "../../types/error";
+import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../../types/core";
+import { OpenAttestationDnsTxtCode } from "../../../types/error";
 
 export interface Identity {
   status: "VALID" | "INVALID" | "SKIPPED";

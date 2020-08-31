@@ -31,6 +31,15 @@ export enum OpenAttestationDnsTxtCode {
 export enum OpenAttestationHashCode {
   DOCUMENT_TAMPERED = 0,
 }
+export enum OpenAttestationDidSignedDocumentStatusCode {
+  SKIPPED = 0,
+}
+export enum OpenAttestationDidSignedDidIdentityProofCode {
+  SKIPPED = 0,
+}
+export enum OpenAttestationDnsDidCode {
+  SKIPPED = 0,
+}
 
 export interface EthersError extends Error {
   reason?: string | string[];

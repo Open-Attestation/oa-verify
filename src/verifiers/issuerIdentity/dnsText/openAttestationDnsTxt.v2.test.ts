@@ -1,6 +1,6 @@
 import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
-import { documentRopstenValidWithToken } from "../../../test/fixtures/v2/documentRopstenValidWithToken";
-import { verificationBuilder } from "../verificationBuilder";
+import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
+import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationDnsTxt]);
 describe("OpenAttestationDnsTxt v2 document", () => {

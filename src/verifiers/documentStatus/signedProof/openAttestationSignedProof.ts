@@ -1,7 +1,7 @@
 import * as ethers from "ethers";
 import { utils } from "@govtechsg/open-attestation";
-import { DocumentsToVerify, Verifier } from "../../types/core";
-import { OpenAttestationDocumentSignedCode } from "../../types/error";
+import { DocumentsToVerify, Verifier } from "../../../types/core";
+import { OpenAttestationDocumentSignedCode } from "../../../types/error";
 
 const name = "OpenAttestationSignedProof";
 const type = "DOCUMENT_STATUS";

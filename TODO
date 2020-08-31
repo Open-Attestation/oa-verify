@@ -1,0 +1,14 @@
+Todo
+
+1. Generate sample document for
+    - direct signed by eth (DID)
+    - direct signed by eth and using dns proof (DNS-DID)
+    - issued via document store, using did (DID-CONTRACT)
+2. Write document status module for
+    - DID (uses didSignedDocumentStatus)
+    - DNS-DID (uses didSignedDocumentStatus)
+3. Write identity module for 
+    - DID (uses didIdentityProof)
+    - DID-CONTRACT (uses didIdentityProof)
+    - DNS-DID (uses dnsText or another one dnsDidProof)
+4. Ensure existing test skips when the falls into these cases

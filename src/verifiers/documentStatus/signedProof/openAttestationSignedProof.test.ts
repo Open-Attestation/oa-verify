@@ -1,9 +1,9 @@
-import { verificationBuilder } from "../verificationBuilder";
+import { verificationBuilder } from "../../verificationBuilder";
 import { openAttestationSignedProof } from "./openAttestationSignedProof";
-import { documentSignedProofValid } from "../../../test/fixtures/v2/documentSignedProofValid";
-import { documentSignedProofInvalidProofType } from "../../../test/fixtures/v2/documentSignedProofInvalidProofType";
-import { documentSignedProofInvalidSignature } from "../../../test/fixtures/v2/documentSignedProofInvalidSignature";
-import { documentMainnetValidWithCertificateStore } from "../../../test/fixtures/v2/documentMainnetValidWithCertificateStore";
+import { documentSignedProofValid } from "../../../../test/fixtures/v2/documentSignedProofValid";
+import { documentSignedProofInvalidProofType } from "../../../../test/fixtures/v2/documentSignedProofInvalidProofType";
+import { documentSignedProofInvalidSignature } from "../../../../test/fixtures/v2/documentSignedProofInvalidSignature";
+import { documentMainnetValidWithCertificateStore } from "../../../../test/fixtures/v2/documentMainnetValidWithCertificateStore";
 
 const verify = verificationBuilder([openAttestationSignedProof]);
 
