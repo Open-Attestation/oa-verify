@@ -3,50 +3,16 @@ import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
-import { getData, sign } from "@govtechsg/open-attestation";
-import { Wallet, utils } from "ethers";
+// import { Wallet, utils } from "ethers";
 
-// const pub = "0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89";
-// const priv = "0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655";
-// const signature =
-//   "0xc2d684525e4e6230a5488a120f78e1246fb4e526366120352f6d57e474fff9d67693d6389cc7e7d829a3e0923cfa69730f2541599fdb0f04e5213e3e28ddfaf21b";
-// const wallet = new Wallet(priv);
-
-// // Specific for Secp256k1VerificationKey2018
-// const verifySignature = (message: string, signature: string, signingAddress: string) => {
-//   const messageBytes = utils.arrayify(message);
-//   return utils.verifyMessage(messageBytes, signature).toLowerCase() === signingAddress.toLowerCase();
-// };
-
-// describe("verifySignature", () => {
-//   it("should return true for correctly signed message", async () => {
-//     const wallet = Wallet.createRandom();
-//     const { address } = wallet;
-//     const message = "0x9f9118b68d1e0311987b2f7f6c382dd623e25d6ee2c20eec5e0963fe631e234c";
-//     const signature = await wallet.signMessage(utils.arrayify(message));
-//     const verified = await verifySignature(message, signature, address);
-//     expect(verified).toBe(true);
-//   });
-//   it("should return false for incorrectly signed message", async () => {
-//     const message = "0x9f9118b68d1e0311987b2f7f6c382dd623e25d6ee2c20eec5e0963fe631e234c";
-//     const address = "0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89";
-//     const signature =
-//       "0xc2d684525e4e6230a5488a120f78e1246fb4e526366120352f6d57e474fff9d67693d6389cc7e7d829a3e0923cfa69730f2541599fdb0f04e5213e3e28ddfaf21c";
-//     const verified = await verifySignature(message, signature, address);
-//     expect(verified).toBe(false);
-//   });
+// it("use for signing message", () => {
+//   // key below is not used, don't freak out. Corresponds to 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89
+//   const priv = "0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655";
+//   const wallet = new Wallet(priv);
+//   console.log(wallet.signMessage(utils.arrayify("0x69fe778652b6a94959bc16400440c3a3dae4ce744622430e705939fafb23d01f")));
 // });
 
-// it("works", () => {
-//   // console.log(JSON.stringify(getData(documentRopstenValidWithDocumentStore), null, 2));
-//   // wallet.signMessage(utils.arrayify("0x"))
-//   // console.log(wallet.signMessage(utils.arrayify("0x9f9118b68d1e0311987b2f7f6c382dd623e25d6ee2c20eec5e0963fe631e234c")));
-//   console.log(
-//     utils.verifyMessage(utils.arrayify("0x9f9118b68d1e0311987b2f7f6c382dd623e25d6ee2c20eec5e0963fe631e234c"), signature)
-//   );
-// });
-
-// Temporarily passing in this option, until make the entire option optional in another PR
+// TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
   network: "ropsten",
 };
@@ -91,15 +57,37 @@ describe("test", () => {
 
 describe("verify", () => {
   describe("v2", () => {
-    it("should pass for documents using `DID` and is correctly signed", () => {});
-    it("should pass for documents using `DID-DNS` and is correctly signed", () => {});
-    it("should fail for documents using `DID` and is incorrectly signed", () => {});
-    it("should fail for documents using `DID-DNS` and is incorrectly signed", () => {});
-  });
-  describe.skip("v3", () => {
-    it("should pass for documents using `DID` and is correctly signed", () => {});
-    it("should pass for documents using `DID-DNS` and is correctly signed", () => {});
-    it("should fail for documents using `DID` and is incorrectly signed", () => {});
-    it("should fail for documents using `DID-DNS` and is incorrectly signed", () => {});
+    it("should pass for documents using `DID` and is correctly signed", async () => {
+      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
+      expect(res).toEqual({
+        name: "OpenAttestationDidSignedDocumentStatus",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: true,
+          revokedOnAny: false,
+          details: { issuance: [{ did: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89", issued: true }] },
+        },
+        status: "VALID",
+      });
+    });
+    it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
+      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDnsDidSigned, options);
+      expect(res).toEqual({
+        name: "OpenAttestationDidSignedDocumentStatus",
+        type: "DOCUMENT_STATUS",
+        data: {
+          issuedOnAll: true,
+          revokedOnAny: false,
+          details: { issuance: [{ did: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89", issued: true }] },
+        },
+        status: "VALID",
+      });
+    });
+    it("should fail when revocation block is missing", () => {});
+    it("should fail when key does not match did", () => {});
+    it("should fail when revocation is not set to NONE (for now)", () => {});
+    it("should fail when proof is missing", () => {});
+    it("should fail when did resolver fails for some reasons", () => {});
+    it("should fail when corresponding proof to key is not found in proof", () => {});
   });
 });
