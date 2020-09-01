@@ -5,6 +5,52 @@ import { verificationBuilder } from "../verificationBuilder";
 const verify = verificationBuilder([openAttestationDnsTxt]);
 describe("OpenAttestationDnsTxt v2 document", () => {
   describe("with one issuer", () => {
+    it("should return a skipped fragment when document does not have data", async () => {
+      const fragment = await verify(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        { ...documentRopstenValidWithToken, data: null },
+        {
+          network: "ropsten",
+        }
+      );
+      expect(fragment).toStrictEqual([
+        {
+          type: "ISSUER_IDENTITY",
+          name: "OpenAttestationDnsTxt",
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          },
+          status: "SKIPPED",
+        },
+      ]);
+    });
+    it("should return a skipped fragment when document does not have issuers", async () => {
+      const fragment = await verify(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        { ...documentRopstenValidWithToken, data: { ...documentRopstenValidWithToken.data, issuers: null } },
+        {
+          network: "ropsten",
+        }
+      );
+      expect(fragment).toStrictEqual([
+        {
+          type: "ISSUER_IDENTITY",
+          name: "OpenAttestationDnsTxt",
+          reason: {
+            code: 2,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+          },
+          status: "SKIPPED",
+        },
+      ]);
+    });
     it("should return a valid fragment when document has valid identity", async () => {
       const fragment = await verify(documentRopstenValidWithToken, {
         network: "ropsten",
