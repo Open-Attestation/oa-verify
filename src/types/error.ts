@@ -34,6 +34,7 @@ export enum OpenAttestationDnsTxtCode {
 }
 export enum OpenAttestationHashCode {
   DOCUMENT_TAMPERED = 0,
+  SKIPPED = 2,
 }
 
 export interface EthersError extends Error {

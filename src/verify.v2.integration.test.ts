@@ -27,6 +27,74 @@ describe("verify(integration)", () => {
   afterEach(() => {
     delete process.env.ETHEREUM_PROVIDER;
   });
+  it("should skip all verifiers when the document is an empty object", async () => {
+    const fragments = await verify(
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      {},
+      {
+        network: "ropsten",
+      }
+    );
+    expect(fragments).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "name": "OpenAttestationHash",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document does not have merkle root, target hash or data.",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationSignedProof",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document does not have a proof block",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+      ]
+    `);
+    expect(isValid(fragments)).toStrictEqual(false);
+    expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+  });
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
     const results = await verify(tamperedDocumentWithCertificateStore, {
       network: "ropsten",

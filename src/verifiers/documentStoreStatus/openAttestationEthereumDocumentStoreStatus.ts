@@ -49,6 +49,9 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   return revokedStatuses.find((hash) => hash);
 };
 
+const isWrappedV2Document = (document: any): document is WrappedDocument<v2.OpenAttestationDocument> => {
+  return document.data && document.data.issuers;
+};
 export const openAttestationEthereumDocumentStoreStatus: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 > = {
@@ -69,9 +72,11 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
     if (utils.isWrappedV3Document(document)) {
       const documentData = getData(document);
       return documentData.proof.method === v3.Method.DocumentStore;
+    } else if (isWrappedV2Document(document)) {
+      const documentData = getData(document);
+      return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
     }
-    const documentData = getData(document);
-    return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
+    return false;
   },
   verify: async (document, options): Promise<VerificationFragment<DocumentStoreStatusFragment>> => {
     try {

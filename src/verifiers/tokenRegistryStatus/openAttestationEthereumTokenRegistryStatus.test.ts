@@ -11,6 +11,53 @@ const verify = verificationBuilder([openAttestationEthereumTokenRegistryStatus])
 
 describe("openAttestationEthereumTokenRegistryStatus", () => {
   describe("v2", () => {
+    it("should return a skipped fragment when document does not have data", async () => {
+      const fragment = await verify(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        { ...documentRopstenValidWithToken, data: null },
+        {
+          network: "ropsten",
+        }
+      );
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          reason: {
+            code: 4,
+            codeString: "SKIPPED",
+            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+          },
+          status: "SKIPPED",
+          type: "DOCUMENT_STATUS",
+        },
+      ]);
+    });
+    it("should return a skipped fragment when document does not have issuers", async () => {
+      const fragment = await verify(
+        {
+          ...documentRopstenValidWithToken,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          data: { ...documentRopstenValidWithToken.data, issuers: null },
+        },
+        {
+          network: "ropsten",
+        }
+      );
+      expect(fragment).toStrictEqual([
+        {
+          name: "OpenAttestationEthereumTokenRegistryStatus",
+          reason: {
+            code: 4,
+            codeString: "SKIPPED",
+            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
+          },
+          status: "SKIPPED",
+          type: "DOCUMENT_STATUS",
+        },
+      ]);
+    });
     it("should return a skipped fragment when document uses certificate store", async () => {
       const fragment = await verify(documentRopstenNotIssuedWithCertificateStore, {
         network: "ropsten",
