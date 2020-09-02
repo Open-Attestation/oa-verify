@@ -1,4 +1,4 @@
-export const documentDidSigned: any = {
+export const documentDidMissingProof: any = {
   version: "https://schema.openattestation.com/2.0/schema.json",
   data: {
     id: "c4deaa44-b58a-4c9f-b66b-30c0c28f81c9:string:SGCNM21566325",
@@ -57,13 +57,4 @@ export const documentDidSigned: any = {
     proof: [],
     merkleRoot: "2a77f5aea82add5574eaa4f4bde9a6c9e0230fb6e99489edfd5e51dce81be055",
   },
-  proof: [
-    {
-      type: "OpenAttestationSignature2018",
-      proofPurpose: "assertionMethod",
-      verificationMethod: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-      signature:
-        "0x0974ce1ed68a24f90f4b8d1a797f59674e13bad9f9caa2e59ae5206101d8dad16b464c83c1cbf65c40e2a99fdd2f34b2c570c36c8b648713b51b8903416b2acc1b",
-    },
-  ],
 };

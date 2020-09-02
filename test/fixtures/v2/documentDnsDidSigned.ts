@@ -60,7 +60,7 @@ export const documentDnsDidSigned: any = {
   },
   proof: [
     {
-      type: "DidGenericSignature",
+      type: "OpenAttestationSignature2018",
       proofPurpose: "assertionMethod",
       verificationMethod: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
       signature:

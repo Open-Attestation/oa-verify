@@ -33,6 +33,7 @@ export enum OpenAttestationHashCode {
 }
 export enum OpenAttestationDidSignedDocumentStatusCode {
   SKIPPED = 0,
+  UNEXPECTED_ERROR = 1,
 }
 export enum OpenAttestationDidSignedDidIdentityProofCode {
   SKIPPED = 0,

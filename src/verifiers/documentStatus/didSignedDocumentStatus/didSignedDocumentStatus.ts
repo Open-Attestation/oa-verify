@@ -24,7 +24,7 @@ const skip: VerifierType["skip"] = async () => {
 
 const test: VerifierType["test"] = (_document) => {
   const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-  if (document.proof && document.proof.some((proof: any) => proof.type === "DidGenericSignature")) return true;
+  if (document.proof && document.proof.some((proof: any) => proof.type === "OpenAttestationSignature2018")) return true;
   return false;
 };
 
@@ -84,7 +84,7 @@ const verifySignature = async (
   identityProof: IdentityProof,
   proof: Proof[]
 ): Promise<IssuanceStatus> => {
-  const { id: key, type } = identityProof.key;
+  const { id: key } = identityProof.key;
   const { id: did } = identityProof;
   try {
     const publicKey = await getPublicKey(did, key);
@@ -93,7 +93,7 @@ const verifySignature = async (
     const correspondingProof = proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
     if (!correspondingProof) throw new Error(`Proof not found for ${key}`);
 
-    switch (type) {
+    switch (publicKey.type) {
       case "Secp256k1VerificationKey2018":
         return verifySecp256k1VerificationKey2018({
           did,
@@ -118,40 +118,55 @@ interface Revocation {
 }
 
 const verify: VerifierType["verify"] = async (_document, _option) => {
-  const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-  const data: any = getData(document);
-  const merkleRoot = `0x${document.signature.merkleRoot}`;
-  const issuers = data.issuers.filter(
-    (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
-  );
+  try {
+    const document = _document as any; // TODO Casting to any first to prevent change at the OA level
+    const data: any = getData(document);
+    const merkleRoot = `0x${document.signature.merkleRoot}`;
+    const issuers = data.issuers.filter(
+      (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
+    );
 
-  // If revocation block does not exist, throw error to prevent case where revocation method is revoked
-  const revocation: (Revocation | undefined)[] = issuers.map((issuer: any) => issuer.revocation);
-  if (revocation.some((r) => typeof r?.type === "undefined"))
-    throw new Error("revocation block not found for an issuer");
-  // Support for the NONE method only
-  const revokedOnAny = !revocation.every((r) => r?.type === "NONE");
+    // If revocation block does not exist, throw error to prevent case where revocation method is revoked
+    const revocation: (Revocation | undefined)[] = issuers.map((issuer: any) => issuer.revocation);
+    if (revocation.some((r) => typeof r?.type === "undefined"))
+      throw new Error("revocation block not found for an issuer");
+    // Support for the NONE method only
+    const revokedOnAny = !revocation.every((r) => r?.type === "NONE");
 
-  // Check that all the issuers have signed on the document
-  if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
-  const issuanceDeferred: IssuanceStatus[] = issuers.map((issuer: any) =>
-    verifySignature(merkleRoot, issuer.identityProof, document.proof)
-  );
-  const issuance = await Promise.all(issuanceDeferred);
-  const issuedOnAll = issuance.every((i) => i.issued);
+    // Check that all the issuers have signed on the document
+    if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
+    const issuanceDeferred: IssuanceStatus[] = issuers.map((issuer: any) =>
+      verifySignature(merkleRoot, issuer.identityProof, document.proof)
+    );
+    const issuance = await Promise.all(issuanceDeferred);
+    const issuedOnAll = issuance.every((i) => i.issued);
 
-  return {
-    name,
-    type,
-    data: {
-      issuedOnAll,
-      revokedOnAny,
-      details: {
-        issuance,
+    return {
+      name,
+      type,
+      data: {
+        issuedOnAll,
+        revokedOnAny,
+        details: {
+          issuance,
+        },
       },
-    },
-    status: issuedOnAll && !revokedOnAny ? "VALID" : "INVALID",
-  };
+      status: issuedOnAll && !revokedOnAny ? "VALID" : "INVALID",
+    };
+  } catch (e) {
+    return {
+      name,
+      type,
+      data: e,
+      reason: {
+        message: e.message,
+        code: OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
+        codeString:
+          OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR],
+      },
+      status: "ERROR",
+    };
+  }
 };
 
 export const OpenAttestationDidSignedDocumentStatus: VerifierType = {

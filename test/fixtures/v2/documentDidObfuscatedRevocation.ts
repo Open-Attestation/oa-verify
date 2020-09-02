@@ -1,4 +1,4 @@
-export const documentDidSigned: any = {
+export const documentDidObfuscatedRevocation: any = {
   version: "https://schema.openattestation.com/2.0/schema.json",
   data: {
     id: "c4deaa44-b58a-4c9f-b66b-30c0c28f81c9:string:SGCNM21566325",
@@ -10,7 +10,6 @@ export const documentDidSigned: any = {
     issuers: [
       {
         name: "48c17918-af33-4578-a0ce-0efbcad6a088:string:DEMO STORE",
-        revocation: { type: "15c54c38-d2eb-4c5d-adf9-41f028be1f89:string:NONE" },
         identityProof: {
           type: "4d9787d9-05f5-48fe-9e4f-8d8577c1612d:string:DID",
           id: "859aae23-cf04-45bb-b687-43e4d20b0790:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
@@ -66,4 +65,7 @@ export const documentDidSigned: any = {
         "0x0974ce1ed68a24f90f4b8d1a797f59674e13bad9f9caa2e59ae5206101d8dad16b464c83c1cbf65c40e2a99fdd2f34b2c570c36c8b648713b51b8903416b2acc1b",
     },
   ],
+  privacy: {
+    obfuscatedData: ["fc3cb56fe0c9a5ac1a91af35b1d3a61c976a0158a35dc0709550c97b21a8b2ae"],
+  },
 };
