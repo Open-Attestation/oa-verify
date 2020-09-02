@@ -25,7 +25,7 @@
   "dependencies": {
     "@govtechsg/dnsprove": "^2.0.6",
     "@govtechsg/document-store": "^2.0.0",
-    "@govtechsg/open-attestation": "^3.11.0",
+    "@govtechsg/open-attestation": "^3.11.2",
     "@govtechsg/token-registry": "^2.0.0",
     "debug": "^4.1.1",
     "ethers": "^5.0.4",
