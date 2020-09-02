@@ -24,6 +24,13 @@ const whenPublicKeyResolvesSuccessfully = () => {
   });
 };
 
+import { Wallet, utils } from "ethers";
+it("signs", () => {
+  const wallet = new Wallet("0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655");
+  const merkleRoot = "0xd0ebc96b62001b10348d3f9931f91b3c7aa421445f9719a984d67c22465a86c5";
+  console.log(wallet.signMessage(utils.arrayify(merkleRoot)));
+});
+
 // TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
   network: "ropsten",
