@@ -177,21 +177,14 @@ describe("verify", () => {
       const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "issued": false,
-                  "reason": "Error from DID resolver",
-                },
-              ],
-            },
-            "issuedOnAll": false,
-            "revokedOnAny": false,
-          },
+          "data": [Error: Error from DID resolver],
           "name": "OpenAttestationDidSignedDocumentStatus",
-          "status": "INVALID",
+          "reason": Object {
+            "code": 1,
+            "codeString": "UNEXPECTED_ERROR",
+            "message": "Error from DID resolver",
+          },
+          "status": "ERROR",
           "type": "DOCUMENT_STATUS",
         }
       `);
@@ -201,21 +194,14 @@ describe("verify", () => {
       const res = await OpenAttestationDidSignedDocumentStatus.verify({ ...documentDidSigned, proof: [] }, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "issued": false,
-                  "reason": "Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-                },
-              ],
-            },
-            "issuedOnAll": false,
-            "revokedOnAny": false,
-          },
+          "data": [Error: Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller],
           "name": "OpenAttestationDidSignedDocumentStatus",
-          "status": "INVALID",
+          "reason": Object {
+            "code": 1,
+            "codeString": "UNEXPECTED_ERROR",
+            "message": "Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          },
+          "status": "ERROR",
           "type": "DOCUMENT_STATUS",
         }
       `);
