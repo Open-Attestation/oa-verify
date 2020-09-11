@@ -1,64 +1,58 @@
 export const documentDidCustomRevocation: any = {
   version: "https://schema.openattestation.com/2.0/schema.json",
   data: {
-    id: "3b015577-0f88-4568-9b71-b9e3bc3a9d22:string:SGCNM21566325",
+    id: "875d57ec-2768-408a-b8d3-bb5ebda17b80:string:SGCNM21566325",
     $template: {
-      name: "23db7ca9-825c-4178-b951-f53a1c1ba8f9:string:CERTIFICATE_OF_NON_MANIPULATION",
-      type: "f31b4c6e-f68a-4de9-bd94-1a84e2a2bbbf:string:EMBEDDED_RENDERER",
-      url: "2746d44a-a5da-4fb3-a334-c4e2b7ebd181:string:https://demo-cnm.openattestation.com",
+      name: "1449b124-9bc4-4722-bed1-47272c69f802:string:CERTIFICATE_OF_NON_MANIPULATION",
+      type: "ba303026-4130-4801-a6a0-1d17db61a6c5:string:EMBEDDED_RENDERER",
+      url: "87c3c915-4d6e-4f27-b7d1-614181d2f620:string:https://demo-cnm.openattestation.com",
     },
     issuers: [
       {
-        name: "dd05a2ed-04c8-4713-b108-72bb7ea4e47a:string:DEMO STORE",
+        id: "21d8b192-f449-4413-a311-5c9e211082d6:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+        name: "f1ca0af7-5e9a-45f3-8635-720babd76387:string:DEMO STORE",
         revocation: {
-          type: "a1829139-a274-409e-a21e-7d08666d2952:string:CUSTOM",
-          foo: "5f626461-63f0-453f-a875-b9c8b03fe920:string:BAR",
+          type: "edcb13e4-1e1a-4317-a194-ec372345c14f:string:CUSTOM",
+          foo: "4f18c9c0-e872-44b0-961e-23c3e6b7be50:string:bar",
         },
         identityProof: {
-          type: "c1230275-89b3-4c44-b755-626b854a89e5:string:DID",
-          id: "86eac6e9-7442-4099-a01e-6304eb03cdaa:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-          purpose: "4f6704ef-278b-4751-b6c1-07e2dcf31eda:string:DOCUMENT_ISSUANCE",
-          key: {
-            id:
-              "38de287f-5d23-4789-8df8-c60043ab202f:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-            type: "dd9e4541-36c1-4e59-8087-7f2e05413461:string:Secp256k1VerificationKey2018",
-            ethereumAddress: "5bbc7f70-e0bb-4f32-a7d5-b0c5df82f5a5:string:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-            owner: "68c4ed9f-2a72-4b31-a29c-777494e7e8e8:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-          },
+          type: "877d7405-ee94-434a-a258-ec6add2877d5:string:DID",
+          key:
+            "37fec355-da53-4c2f-b8d7-b064b305e879:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
         },
       },
     ],
     recipient: {
-      name: "b6e85c9f-cbbc-4aa9-ac43-0b17b1133283:string:SG FREIGHT",
+      name: "8a5bffe7-ceb1-41b9-b240-84025eebdc0c:string:SG FREIGHT",
       address: {
-        street: "becaa52d-2d57-4984-8df3-6f83fdf7d4cc:string:101 ORCHARD ROAD",
-        country: "cc6cf75e-3d6b-4c1a-a619-5d9f4b898684:string:SINGAPORE",
+        street: "83265d64-7fc8-4201-b21e-0b87d5bc8007:string:101 ORCHARD ROAD",
+        country: "beb02ccd-02cf-48c2-adb2-9ea1b55442b0:string:SINGAPORE",
       },
     },
     consignment: {
-      description: "662aad56-c334-475c-9e81-140130de4863:string:16667 CARTONS OF RED WINE",
+      description: "bfd4a9ae-47fb-4b72-a131-1827d45f8b72:string:16667 CARTONS OF RED WINE",
       quantity: {
-        value: "513997aa-fad1-4a3f-82d1-9b77643267d7:number:5000",
-        unit: "79e25740-22a2-4111-8c9b-1f348b8d5035:string:LITRES",
+        value: "003d32f5-e663-48f1-ac7d-db4ae1f79cce:number:5000",
+        unit: "2dac8afd-3a2b-43f5-9853-b92ad5727fd2:string:LITRES",
       },
-      countryOfOrigin: "879e30bf-3de3-4c82-b7ea-0f7593ae195d:string:AUSTRALIA",
-      outwardBillNo: "3a303587-ed64-494b-87dd-27995bf0f5c9:string:AQSIQ170923130",
-      dateOfDischarge: "9e937f2f-fc94-4f64-944b-6fd3d151d312:string:2018-01-26",
-      dateOfDeparture: "29af5d36-bba2-48cd-b87f-3c889093bff6:string:2018-01-30",
-      countryOfFinalDestination: "a523c2ab-8dcd-4598-8da2-8112a8b2addc:string:CHINA",
-      outgoingVehicleNo: "dea8373e-114a-4a9d-a5ec-119accd7b027:string:COSCO JAPAN 074E/30-JAN",
+      countryOfOrigin: "20e4cadc-41e8-49b0-bad9-534f4cdae00f:string:AUSTRALIA",
+      outwardBillNo: "3cb5790f-379d-4360-884b-d45345437394:string:AQSIQ170923130",
+      dateOfDischarge: "1d774eb3-759d-4d3e-a38f-1aaa5579a3fe:string:2018-01-26",
+      dateOfDeparture: "0538a21c-acdd-4de3-aa33-9000b818dc9a:string:2018-01-30",
+      countryOfFinalDestination: "2a55a98e-0043-4f26-b23b-7b08d2c30505:string:CHINA",
+      outgoingVehicleNo: "154ae7f3-74dc-4972-b001-275a929cb72a:string:COSCO JAPAN 074E/30-JAN",
     },
     declaration: {
-      name: "45e4fad8-7671-46ce-ad8c-a7cb1a4ce5fe:string:PETER LEE",
-      designation: "9bd77cf3-2240-473d-9c5b-9cbfdb2581e6:string:SHIPPING MANAGER",
-      date: "94eb16ce-47ef-4b70-a139-bf268f676db8:string:2018-01-28",
+      name: "397bd565-7902-4201-92fd-2a7b3686d740:string:PETER LEE",
+      designation: "53feef96-c973-4f03-bdee-3bae76b139e3:string:SHIPPING MANAGER",
+      date: "52c7a56b-23ab-41b5-b7f6-a86e9fbeae44:string:2018-01-28",
     },
   },
   signature: {
     type: "SHA3MerkleProof",
-    targetHash: "b51cb42afd96ddfb6698b32224ef9b79e57914c718ada76a85d4d1f8292828d3",
+    targetHash: "eea9ad6c2998a3d00fe70f91b3c6cefcd7a5c2068e6b13c9d93c00e5d4fcec1a",
     proof: [],
-    merkleRoot: "b51cb42afd96ddfb6698b32224ef9b79e57914c718ada76a85d4d1f8292828d3",
+    merkleRoot: "eea9ad6c2998a3d00fe70f91b3c6cefcd7a5c2068e6b13c9d93c00e5d4fcec1a",
   },
   proof: [
     {
@@ -66,7 +60,7 @@ export const documentDidCustomRevocation: any = {
       proofPurpose: "assertionMethod",
       verificationMethod: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
       signature:
-        "0x1b9a0c17f613685ab9b82bca4c6e13c380bdee50ed127f690201bf8dba906e2c7c8bf74a6baedd76ea362893864437056a5ad7ef6678e74b2afcdcf6560199581c",
+        "0x5fff5ed3d62fbe92b7a358260f924ea31ba57c53d01fe849d4fc3843beec4b7345a1c00035cf96f11cab9d908ad10aac8d077d5feca2c393240c9cc9e0b9c7e81b",
     },
   ],
 };

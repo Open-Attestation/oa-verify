@@ -32,10 +32,7 @@ interface IdentityProof {
   type: string;
   id: string;
   purpose: string;
-  key: {
-    id: string;
-    type: string;
-  };
+  key: string;
 }
 interface Proof {
   type: string;
@@ -79,13 +76,18 @@ const verifySecp256k1VerificationKey2018 = ({
   };
 };
 
-const verifySignature = async (
-  merkleRoot: string,
-  identityProof: IdentityProof,
-  proof: Proof[]
-): Promise<IssuanceStatus> => {
-  const { id: key } = identityProof.key;
-  const { id: did } = identityProof;
+const verifySignature = async ({
+  merkleRoot,
+  identityProof,
+  proof,
+  did,
+}: {
+  merkleRoot: string;
+  identityProof: IdentityProof;
+  proof: Proof[];
+  did: string;
+}): Promise<IssuanceStatus> => {
+  const { key } = identityProof;
   try {
     const publicKey = await getPublicKey(did, key);
     if (!publicKey) throw new Error(`No public key found on DID document for the DID ${did} and key ${key}`);
@@ -136,7 +138,7 @@ const verify: VerifierType["verify"] = async (_document, _option) => {
     // Check that all the issuers have signed on the document
     if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
     const issuanceDeferred: IssuanceStatus[] = issuers.map((issuer: any) =>
-      verifySignature(merkleRoot, issuer.identityProof, document.proof)
+      verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
     );
     const issuance = await Promise.all(issuanceDeferred);
     const issuedOnAll = issuance.every((i) => i.issued);
