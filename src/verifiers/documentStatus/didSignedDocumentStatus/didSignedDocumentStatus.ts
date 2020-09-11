@@ -88,30 +88,22 @@ const verifySignature = async ({
   did: string;
 }): Promise<IssuanceStatus> => {
   const { key } = identityProof;
-  try {
-    const publicKey = await getPublicKey(did, key);
-    if (!publicKey) throw new Error(`No public key found on DID document for the DID ${did} and key ${key}`);
+  const publicKey = await getPublicKey(did, key);
+  if (!publicKey) throw new Error(`No public key found on DID document for the DID ${did} and key ${key}`);
 
-    const correspondingProof = proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
-    if (!correspondingProof) throw new Error(`Proof not found for ${key}`);
+  const correspondingProof = proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
+  if (!correspondingProof) throw new Error(`Proof not found for ${key}`);
 
-    switch (publicKey.type) {
-      case "Secp256k1VerificationKey2018":
-        return verifySecp256k1VerificationKey2018({
-          did,
-          publicKey,
-          merkleRoot,
-          signature: correspondingProof.signature,
-        });
-      default:
-        throw new Error(`Signature type ${type} is currently not support`);
-    }
-  } catch (e) {
-    return {
-      did,
-      issued: false,
-      reason: e.message,
-    };
+  switch (publicKey.type) {
+    case "Secp256k1VerificationKey2018":
+      return verifySecp256k1VerificationKey2018({
+        did,
+        publicKey,
+        merkleRoot,
+        signature: correspondingProof.signature,
+      });
+    default:
+      throw new Error(`Signature type ${type} is currently not support`);
   }
 };
 
