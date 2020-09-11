@@ -21,7 +21,7 @@
     "prepare": "npm run snyk-protect"
   },
   "author": "",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.0.6",
     "@govtechsg/document-store": "^2.0.0",
