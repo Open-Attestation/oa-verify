@@ -1,6 +1,7 @@
-import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument, getData } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
+import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
 
 const name = "OpenAttestationDidSignedDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -19,16 +20,33 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
-const test: VerifierType["test"] = (_document) => {
-  return true;
+const test: VerifierType["test"] = (document) => {
+  const { issuers } = getData(document) as any; // TODO Casting to any first to prevent change at the OA level
+  if (issuers.some((issuer: any) => issuer.identityProof?.type === "DID")) return true;
+  return false;
 };
 
 const verify: VerifierType["verify"] = async (_document, _option) => {
+  const document = _document as any; // TODO Casting to any first to prevent change at the OA level
+  const data: any = getData(document);
+  const merkleRoot = `0x${document.signature.merkleRoot}`;
+  const issuers = data.issuers.filter(
+    (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
+  );
+  const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
+    verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
+  );
+  const signatureVerifications = await (await Promise.all(signatureVerificationDeferred)).map(({ did, verified }) => ({
+    did,
+    status: verified ? "VALID" : "INVALID",
+  }));
+  const signedOnAll = signatureVerifications.every((i) => i.status === "VALID");
+
   return {
     name,
     type,
-    data: {},
-    status: "VALID",
+    data: signatureVerifications,
+    status: signedOnAll ? "VALID" : "INVALID",
   };
 };
 

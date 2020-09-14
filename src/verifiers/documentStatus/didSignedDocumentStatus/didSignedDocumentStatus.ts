@@ -1,9 +1,7 @@
 import { v2, v3, WrappedDocument, getData } from "@govtechsg/open-attestation";
-import { utils } from "ethers";
-import { PublicKey } from "did-resolver";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
-import { getPublicKey } from "../../../did/resolver";
+import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
 
 const name = "OpenAttestationDidSignedDocumentStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -28,85 +26,6 @@ const test: VerifierType["test"] = (_document) => {
   return false;
 };
 
-interface IdentityProof {
-  type: string;
-  id: string;
-  purpose: string;
-  key: string;
-}
-interface Proof {
-  type: string;
-  proofPurpose: string;
-  verificationMethod: string;
-  signature: string;
-}
-
-interface IssuanceStatus {
-  issued: boolean;
-  did: string;
-  reason?: any;
-}
-
-interface VerifySignature {
-  did: string;
-  signature: string;
-  merkleRoot: string;
-  publicKey: PublicKey;
-}
-
-const verifySecp256k1VerificationKey2018 = ({
-  did,
-  publicKey,
-  merkleRoot,
-  signature,
-}: VerifySignature): IssuanceStatus => {
-  const messageBytes = utils.arrayify(merkleRoot);
-  const { ethereumAddress } = publicKey;
-  if (!ethereumAddress) {
-    return {
-      did,
-      issued: false,
-      reason: `ethereumAddress not found on public key ${JSON.stringify(publicKey)}`,
-    };
-  }
-
-  return {
-    did,
-    issued: utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase(),
-  };
-};
-
-const verifySignature = async ({
-  merkleRoot,
-  identityProof,
-  proof,
-  did,
-}: {
-  merkleRoot: string;
-  identityProof: IdentityProof;
-  proof: Proof[];
-  did: string;
-}): Promise<IssuanceStatus> => {
-  const { key } = identityProof;
-  const publicKey = await getPublicKey(did, key);
-  if (!publicKey) throw new Error(`No public key found on DID document for the DID ${did} and key ${key}`);
-
-  const correspondingProof = proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
-  if (!correspondingProof) throw new Error(`Proof not found for ${key}`);
-
-  switch (publicKey.type) {
-    case "Secp256k1VerificationKey2018":
-      return verifySecp256k1VerificationKey2018({
-        did,
-        publicKey,
-        merkleRoot,
-        signature: correspondingProof.signature,
-      });
-    default:
-      throw new Error(`Signature type ${type} is currently not support`);
-  }
-};
-
 interface Revocation {
   type: string;
 }
@@ -129,10 +48,14 @@ const verify: VerifierType["verify"] = async (_document, _option) => {
 
     // Check that all the issuers have signed on the document
     if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
-    const issuanceDeferred: IssuanceStatus[] = issuers.map((issuer: any) =>
+    const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
       verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
     );
-    const issuance = await Promise.all(issuanceDeferred);
+    const issuance = await (await Promise.all(signatureVerificationDeferred)).map(({ verified, reason, did }) => ({
+      issued: verified,
+      did,
+      ...(reason && { reason }),
+    }));
     const issuedOnAll = issuance.every((i) => i.issued);
 
     return {
