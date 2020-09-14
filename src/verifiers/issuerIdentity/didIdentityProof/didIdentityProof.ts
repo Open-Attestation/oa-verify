@@ -27,27 +27,44 @@ const test: VerifierType["test"] = (document) => {
 };
 
 const verify: VerifierType["verify"] = async (_document, _option) => {
-  const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-  const data: any = getData(document);
-  const merkleRoot = `0x${document.signature.merkleRoot}`;
-  const issuers = data.issuers.filter(
-    (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
-  );
-  const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
-    verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
-  );
-  const signatureVerifications = await (await Promise.all(signatureVerificationDeferred)).map(({ did, verified }) => ({
-    did,
-    status: verified ? "VALID" : "INVALID",
-  }));
-  const signedOnAll = signatureVerifications.every((i) => i.status === "VALID");
+  try {
+    const document = _document as any; // TODO Casting to any first to prevent change at the OA level
+    const data: any = getData(document);
+    const merkleRoot = `0x${document.signature.merkleRoot}`;
+    const issuers = data.issuers.filter(
+      (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
+    );
+    const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
+      verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
+    );
+    const signatureVerifications = await (await Promise.all(signatureVerificationDeferred)).map(
+      ({ did, verified }) => ({
+        did,
+        status: verified ? "VALID" : "INVALID",
+      })
+    );
+    const signedOnAll = signatureVerifications.every((i) => i.status === "VALID");
 
-  return {
-    name,
-    type,
-    data: signatureVerifications,
-    status: signedOnAll ? "VALID" : "INVALID",
-  };
+    return {
+      name,
+      type,
+      data: signatureVerifications,
+      status: signedOnAll ? "VALID" : "INVALID",
+    };
+  } catch (e) {
+    return {
+      name,
+      type,
+      data: e,
+      reason: {
+        message: e.message,
+        code: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
+        codeString:
+          OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
+      },
+      status: "ERROR",
+    };
+  }
 };
 
 export const OpenAttestationDidSignedDidIdentityProof: VerifierType = {
