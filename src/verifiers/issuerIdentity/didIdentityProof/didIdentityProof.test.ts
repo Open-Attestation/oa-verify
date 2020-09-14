@@ -35,15 +35,9 @@ describe("test", () => {
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
       expect(OpenAttestationDidSignedDidIdentityProof.test(documentDidSigned, options)).toBe(true);
     });
-    it.skip("should return true for documents where any issuer is using the `DID-CONTRACT` identity proof", () => {});
-    it("should return false for documents where any issuer is using the `DNS-CONTRACT` identity proof", () => {
+    it("should return false for documents where any issuer is using the `DNS-DID` identity proof", () => {
       expect(OpenAttestationDidSignedDidIdentityProof.test(documentDnsDidSigned, options)).toBe(false);
     });
-  });
-  describe.skip("v3", () => {
-    it("should return false for documents not using DID as top level identifier", () => {});
-    it("should return true for documents where any issuer is using the `DID` identity proof", () => {});
-    it("should return true for documents where any issuer is using the `DNS-CONTRACT` identity proof", () => {});
   });
 });
 
@@ -84,13 +78,5 @@ describe("verify", () => {
         }
       `);
     });
-    it.skip("should pass for documents using `DID-CONTRACT` and documentStore is correctly signed", () => {});
-    it.skip("should fail for documents using `DID-CONTRACT` and documentStore is incorrectly signed", () => {});
-  });
-  describe.skip("v3", () => {
-    it("should pass for documents using `DID` and did signature is correct", () => {});
-    it("should pass for documents using `DID-CONTRACT` and documentStore is correctly signed", () => {});
-    it("should fail for documents using `DID` and did signature is not correct", () => {});
-    it("should fail for documents using `DID-CONTRACT` and documentStore is incorrectly signed", () => {});
   });
 });

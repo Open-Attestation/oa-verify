@@ -8,9 +8,9 @@ Todo
     - DID (uses didSignedDocumentStatus) [DONE]
     - DNS-DID (uses didSignedDocumentStatus) [DONE]
 3. Write identity module for 
-    - DID (uses didIdentityProof)
-    - DID-CONTRACT (uses didIdentityProof)
+    - DID (uses didIdentityProof) [DONE]
     - DNS-DID (uses dnsText or another one dnsDidProof)
+    - DID-CONTRACT (uses didContractIdentityProof)
 4. Ensure existing test skips when the falls into these cases
 
 Not to be done in first impl
