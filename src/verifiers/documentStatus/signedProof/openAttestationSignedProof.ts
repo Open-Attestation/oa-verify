@@ -1,5 +1,5 @@
 import * as ethers from "ethers";
-import { utils } from "@govtechsg/open-attestation";
+import { utils, getData } from "@govtechsg/open-attestation";
 import { DocumentsToVerify, Verifier } from "../../../types/core";
 import { OpenAttestationDocumentSignedCode } from "../../../types/error";
 
@@ -20,7 +20,7 @@ export const openAttestationSignedProof: Verifier<DocumentsToVerify> = {
     });
   },
   test: (document) => {
-    return utils.isSignedWrappedV2Document(document);
+    return utils.isSignedWrappedV2Document(document) && document.proof.proofPurpose === "assertionMethod";
   },
   verify: async (document) => {
     try {
