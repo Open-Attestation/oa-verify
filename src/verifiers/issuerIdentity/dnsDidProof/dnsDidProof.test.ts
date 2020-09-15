@@ -3,7 +3,10 @@ import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidNoDns } from "../../../../test/fixtures/v2/documentDnsDidNoDns";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-
+import {
+  documentDnsDidMixedTokenRegistryValid,
+  documentDnsDidMixedTokenRegistryInvalid,
+} from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
 // TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
   network: "ropsten",
@@ -69,6 +72,46 @@ describe("verify", () => {
             "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
             "location": "example.com",
             "status": "INVALID",
+          },
+        ],
+        "name": "OpenAttestationDnsDid",
+        "status": "INVALID",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
+  });
+
+  it("should skip issuers which are not using DNS-DID", async () => {
+    const validFragment = await OpenAttestationDnsDid.verify(documentDnsDidMixedTokenRegistryValid, options);
+    expect(validFragment).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+            "location": "example.tradetrust.io",
+            "status": "VALID",
+          },
+          Object {
+            "status": "SKIPPED",
+          },
+        ],
+        "name": "OpenAttestationDnsDid",
+        "status": "VALID",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
+
+    const invalidFragment = await OpenAttestationDnsDid.verify(documentDnsDidMixedTokenRegistryInvalid, options);
+    expect(invalidFragment).toMatchInlineSnapshot(`
+      Object {
+        "data": Array [
+          Object {
+            "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+            "location": "example.com",
+            "status": "INVALID",
+          },
+          Object {
+            "status": "SKIPPED",
           },
         ],
         "name": "OpenAttestationDnsDid",

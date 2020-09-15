@@ -57,8 +57,12 @@ const verify: VerifierType["verify"] = async (document, _option) => {
     // TODO fix the OA schema
     const documentData = getData(document) as any;
     const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers
-      .filter((issuer: any) => issuer.identityProof?.type === "DNS-DID")
-      .map((issuer: any) => verifyIssuerDnsDid(issuer.identityProof));
+      .map((issuer: any) => {
+        if (issuer.identityProof?.type === "DNS-DID") return verifyIssuerDnsDid(issuer.identityProof);
+        return Promise.resolve({
+          status: "SKIPPED",
+        });
+      });
     const verificationStatus = await Promise.all(deferredVerificationStatus);
     const overallStatus =
       verificationStatus.some((status) => status.status === "VALID") &&
