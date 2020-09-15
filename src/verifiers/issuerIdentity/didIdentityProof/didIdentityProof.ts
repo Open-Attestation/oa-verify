@@ -1,7 +1,7 @@
 import { v2, v3, WrappedDocument, getData } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
-import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
+import { verifySignature } from "../../../did/verifier";
 
 const name = "OpenAttestationDidSignedDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -26,24 +26,34 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
+interface SignatureVerificationFragment {
+  status: "VALID" | "INVALID" | "SKIPPED";
+  did?: string;
+}
+
 const verify: VerifierType["verify"] = async (_document, _option) => {
   try {
     const document = _document as any; // TODO Casting to any first to prevent change at the OA level
     const data: any = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
-    const issuers = data.issuers.filter(
-      (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
+    const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(
+      async (issuer: any) => {
+        if (issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID") {
+          const { did, verified } = await verifySignature({
+            merkleRoot,
+            identityProof: issuer.identityProof,
+            proof: document.proof,
+            did: issuer.id,
+          });
+          return { did, status: verified ? "VALID" : "INVALID" };
+        }
+        return { status: "SKIPPED" };
+      }
     );
-    const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
-      verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
-    );
-    const signatureVerifications = await (await Promise.all(signatureVerificationDeferred)).map(
-      ({ did, verified }) => ({
-        did,
-        status: verified ? "VALID" : "INVALID",
-      })
-    );
-    const signedOnAll = signatureVerifications.every((i) => i.status === "VALID");
+    const signatureVerifications = await Promise.all(signatureVerificationDeferred);
+    const signedOnAll =
+      signatureVerifications.some((i) => i.status === "VALID") &&
+      signatureVerifications.every((i) => i.status === "VALID" || i.status === "SKIPPED");
 
     return {
       name,

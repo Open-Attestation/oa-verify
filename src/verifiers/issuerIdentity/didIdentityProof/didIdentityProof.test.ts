@@ -3,6 +3,7 @@ import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDidWrongSignature } from "../../../../test/fixtures/v2/documentDidWrongSignature";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
+import { documentDidMixedTokenRegistry } from "../../../../test/fixtures/v2/documentDidMixedTokenRegistry";
 
 // TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
@@ -74,6 +75,28 @@ describe("verify", () => {
           ],
           "name": "OpenAttestationDidSignedDidIdentityProof",
           "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
+    });
+    it("should skip other issuers", async () => {
+      const verificationFragment = await OpenAttestationDidSignedDidIdentityProof.verify(
+        documentDidMixedTokenRegistry,
+        options
+      );
+      expect(verificationFragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Array [
+            Object {
+              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "status": "VALID",
+            },
+            Object {
+              "status": "SKIPPED",
+            },
+          ],
+          "name": "OpenAttestationDidSignedDidIdentityProof",
+          "status": "VALID",
           "type": "ISSUER_IDENTITY",
         }
       `);
