@@ -1,5 +1,5 @@
 import * as ethers from "ethers";
-import { utils, getData } from "@govtechsg/open-attestation";
+import { utils } from "@govtechsg/open-attestation";
 import { DocumentsToVerify, Verifier } from "../../../types/core";
 import { OpenAttestationDocumentSignedCode } from "../../../types/error";
 

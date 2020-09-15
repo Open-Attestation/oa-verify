@@ -32,7 +32,7 @@ interface SignatureVerificationFragment {
   did?: string;
 }
 
-const verify: VerifierType["verify"] = async (_document, _option) => {
+const verify: VerifierType["verify"] = async (_document) => {
   try {
     if (!utils.isWrappedV2Document(_document)) throw new Error("Only v2 is supported now");
     const document = _document as any; // TODO Casting to any first to prevent change at the OA level

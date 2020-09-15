@@ -39,8 +39,12 @@ interface VerificationFragment {
   key?: string;
 }
 
-const verifyIssuerDnsDid = async ({ key, location, type }: IdentityProof): Promise<VerificationFragment> => {
-  if (type !== "DNS-DID")
+const verifyIssuerDnsDid = async ({
+  key,
+  location,
+  type: identityType,
+}: IdentityProof): Promise<VerificationFragment> => {
+  if (identityType !== "DNS-DID")
     return {
       status: "SKIPPED",
     };
@@ -52,18 +56,17 @@ const verifyIssuerDnsDid = async ({ key, location, type }: IdentityProof): Promi
   };
 };
 
-const verify: VerifierType["verify"] = async (document, _option) => {
+const verify: VerifierType["verify"] = async (document) => {
   try {
     if (!utils.isWrappedV2Document(document)) throw new Error("Only v2 is supported now");
     // TODO fix the OA schema
     const documentData = getData(document) as any;
-    const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers
-      .map((issuer: any) => {
-        if (issuer.identityProof?.type === "DNS-DID") return verifyIssuerDnsDid(issuer.identityProof);
-        return Promise.resolve({
-          status: "SKIPPED",
-        });
+    const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers.map((issuer: any) => {
+      if (issuer.identityProof?.type === "DNS-DID") return verifyIssuerDnsDid(issuer.identityProof);
+      return Promise.resolve({
+        status: "SKIPPED",
       });
+    });
     const verificationStatus = await Promise.all(deferredVerificationStatus);
     const overallStatus =
       verificationStatus.some((status) => status.status === "VALID") &&

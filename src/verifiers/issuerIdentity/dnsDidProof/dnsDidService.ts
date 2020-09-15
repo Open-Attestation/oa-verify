@@ -34,7 +34,7 @@ const decodeDidDnsRecord = ({ data }: IDNSRecord) => {
   keyValuePairs.forEach((pair) => {
     const matched = matcher.exec(pair);
     if (matched) {
-      const [_, key, value] = matched;
+      const [, key, value] = matched;
       record[key] = trimTrailingSemicolon(value);
     }
   });
