@@ -21,8 +21,14 @@ const skip: VerifierType["skip"] = async () => {
 };
 
 const test: VerifierType["test"] = (_document) => {
+  if (!utils.isWrappedV2Document(_document)) return false;
   const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-  if (document.proof && document.proof.some((proof: any) => proof.type === "OpenAttestationSignature2018")) return true;
+  if (
+    document.proof &&
+    Array.isArray(document.proof) && // TODO, remove when removing for proof block with one element
+    document.proof.some((proof: any) => proof.type === "OpenAttestationSignature2018")
+  )
+    return true;
   return false;
 };
 

@@ -7,6 +7,9 @@ import { openAttestationSignedProof } from "./verifiers/documentStatus/signedPro
 import { isValid } from "./validator";
 import { openAttestationEthereumTokenRegistryStatus } from "./verifiers/documentStatus/tokenRegistryStatus/openAttestationEthereumTokenRegistryStatus";
 import { openAttestationEthereumDocumentStoreStatus } from "./verifiers/documentStatus/documentStoreStatus/openAttestationEthereumDocumentStoreStatus";
+import { OpenAttestationDidSignedDocumentStatus } from "./verifiers/documentStatus/didSignedDocumentStatus";
+import { OpenAttestationDidSignedDidIdentityProof } from "./verifiers/issuerIdentity/didIdentityProof";
+import { OpenAttestationDnsDid } from "./verifiers/issuerIdentity/dnsDidProof";
 
 const openAttestationVerifiers: Verifiers[] = [
   openAttestationHash,
@@ -14,6 +17,9 @@ const openAttestationVerifiers: Verifiers[] = [
   openAttestationEthereumTokenRegistryStatus,
   openAttestationEthereumDocumentStoreStatus,
   openAttestationDnsTxt,
+  OpenAttestationDnsDid,
+  OpenAttestationDidSignedDidIdentityProof,
+  OpenAttestationDidSignedDocumentStatus,
 ];
 
 const verify = verificationBuilder<
