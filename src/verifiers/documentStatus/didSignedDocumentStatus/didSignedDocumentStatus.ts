@@ -1,4 +1,4 @@
-import { v2, v3, WrappedDocument, getData } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
 import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
@@ -32,6 +32,7 @@ interface Revocation {
 
 const verify: VerifierType["verify"] = async (_document, _option) => {
   try {
+    if (!utils.isWrappedV2Document(_document)) throw new Error("Only v2 is supported now");
     const document = _document as any; // TODO Casting to any first to prevent change at the OA level
     const data: any = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
