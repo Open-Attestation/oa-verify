@@ -1,7 +1,7 @@
 import { OpenAttestationDnsDid } from "./dnsDidProof";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
-import { documentDnsDidNoDns } from "../../../../test/fixtures/v2/documentDnsDidNoDns";
+import { documentDnsDidNoDnsTxt } from "../../../../test/fixtures/v2/documentDnsDidNoDnsTxt";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
 import {
   documentDnsDidMixedTokenRegistryValid,
@@ -64,7 +64,7 @@ describe("verify", () => {
   });
 
   it("should verify a document without dns binding to did", async () => {
-    const fragment = await OpenAttestationDnsDid.verify(documentDnsDidNoDns, options);
+    const fragment = await OpenAttestationDnsDid.verify(documentDnsDidNoDnsTxt, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "data": Array [

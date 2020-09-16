@@ -1513,14 +1513,14 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "data": [TypeError: Cannot read property 'find' of undefined],
+          "data": Array [
+            Object {
+              "reason": "\`proof\` is missing from the document",
+              "status": "INVALID",
+            },
+          ],
           "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 1,
-            "codeString": "UNEXPECTED_ERROR",
-            "message": "Cannot read property 'find' of undefined",
-          },
-          "status": "ERROR",
+          "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
         Object {

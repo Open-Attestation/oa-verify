@@ -1,4 +1,4 @@
-export const documentDnsDidNoDns: any = {
+export const documentDnsDidNoDnsTxt: any = {
   version: "https://schema.openattestation.com/2.0/schema.json",
   data: {
     id: "e3c28bb6-2d76-4fb4-9ee1-05a41afe9c42:string:SGCNM21566325",
