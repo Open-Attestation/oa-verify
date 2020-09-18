@@ -37,9 +37,11 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
 }
 export enum OpenAttestationDidSignedDidIdentityProofCode {
   SKIPPED = 0,
+  UNEXPECTED_ERROR = 1,
 }
 export enum OpenAttestationDnsDidCode {
   SKIPPED = 0,
+  UNEXPECTED_ERROR = 1,
 }
 
 export interface EthersError extends Error {

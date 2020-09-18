@@ -24,7 +24,7 @@ const resolveIssuerIdentity = async (
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
     (record) =>
-      record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
+      record.addr?.toLowerCase() === smartContractAddress.toLowerCase() && // TODO Fix in dnsproof
       record.netId === network.chainId.toString(10) &&
       record.type === "openatts" &&
       record.net === "ethereum"

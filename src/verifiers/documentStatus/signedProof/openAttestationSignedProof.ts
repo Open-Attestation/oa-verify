@@ -20,7 +20,7 @@ export const openAttestationSignedProof: Verifier<DocumentsToVerify> = {
     });
   },
   test: (document) => {
-    return utils.isSignedWrappedV2Document(document);
+    return utils.isSignedWrappedV2Document(document) && document.proof.proofPurpose === "assertionMethod";
   },
   verify: async (document) => {
     try {

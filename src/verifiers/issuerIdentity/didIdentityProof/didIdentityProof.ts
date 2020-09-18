@@ -1,6 +1,7 @@
-import { v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
+import { verifySignature } from "../../../did/verifier";
 
 const name = "OpenAttestationDidSignedDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -19,17 +20,63 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
-const test: VerifierType["test"] = (_document) => {
-  return true;
+const test: VerifierType["test"] = (document) => {
+  if (!utils.isWrappedV2Document(document)) return false;
+  const { issuers } = getData(document) as any; // TODO Casting to any first to prevent change at the OA level
+  return issuers.some((issuer: any) => issuer.identityProof?.type === "DID");
 };
 
-const verify: VerifierType["verify"] = async (_document, _option) => {
-  return {
-    name,
-    type,
-    data: {},
-    status: "VALID",
-  };
+interface SignatureVerificationFragment {
+  status: "VALID" | "INVALID" | "SKIPPED";
+  did?: string;
+}
+
+const verify: VerifierType["verify"] = async (_document) => {
+  try {
+    if (!utils.isWrappedV2Document(_document)) throw new Error("Only v2 is supported now");
+    const document = _document as any; // TODO Casting to any first to prevent change at the OA level
+    const data: any = getData(document);
+    const merkleRoot = `0x${document.signature.merkleRoot}`;
+    const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(
+      async (issuer: any) => {
+        if (issuer.identityProof.type === "DID") {
+          if (!document.proof) return { status: "INVALID", reason: "`proof` is missing from the document" };
+          const { did, verified } = await verifySignature({
+            merkleRoot,
+            identityProof: issuer.identityProof,
+            proof: document.proof,
+            did: issuer.id,
+          });
+          return { did, status: verified ? "VALID" : "INVALID" };
+        }
+        return { status: "SKIPPED" };
+      }
+    );
+    const signatureVerifications = await Promise.all(signatureVerificationDeferred);
+    const signedOnAll =
+      signatureVerifications.some((i) => i.status === "VALID") &&
+      signatureVerifications.every((i) => i.status === "VALID" || i.status === "SKIPPED");
+
+    return {
+      name,
+      type,
+      data: signatureVerifications,
+      status: signedOnAll ? "VALID" : "INVALID",
+    };
+  } catch (e) {
+    return {
+      name,
+      type,
+      data: e,
+      reason: {
+        message: e.message,
+        code: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
+        codeString:
+          OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
+      },
+      status: "ERROR",
+    };
+  }
 };
 
 export const OpenAttestationDidSignedDidIdentityProof: VerifierType = {
