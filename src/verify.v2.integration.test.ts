@@ -23,7 +23,6 @@ import {
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
-import { documentRopstenObfuscatedWithEmptyObject } from "../test/fixtures/v2/documentRopstenObfuscatedWithEmptyObject";
 
 describe("verify(integration)", () => {
   afterEach(() => {
