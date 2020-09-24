@@ -23,7 +23,6 @@ import {
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
-import { documentRopstenObfuscatedWithEmptyObject } from "../test/fixtures/v2/documentRopstenObfuscatedWithEmptyObject";
 
 describe("verify(integration)", () => {
   afterEach(() => {
@@ -260,88 +259,6 @@ describe("verify(integration)", () => {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
       documentRopstenObfuscated,
-      {
-        network: "ropsten",
-      }
-    );
-    expect(fragments).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "data": true,
-          "name": "OpenAttestationHash",
-          "status": "VALID",
-          "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumTokenRegistryStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "address": "0x532C9Ff853CA54370D7492cD84040F9f8099f11B",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "0x532C9Ff853CA54370D7492cD84040F9f8099f11B",
-                  "revoked": false,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": false,
-          },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Array [
-            Object {
-              "location": "example.openattestation.com",
-              "status": "VALID",
-              "value": "0x532C9Ff853CA54370D7492cD84040F9f8099f11B",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-      ]
-    `);
-    expect(isValid(fragments)).toStrictEqual(true);
-    expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-    expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
-    expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
-
-  it("should be valid for all checks when obfuscation leaves behind empty objects", async () => {
-    // This happens in the following case.
-    // Given "data: { recipient: { a: 1 } }", recipient.a is obfuscated instead of recipient, it currently leaves behind "recipient: {}"
-    const fragments = await verify(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      documentRopstenObfuscatedWithEmptyObject,
       {
         network: "ropsten",
       }
