@@ -3,7 +3,6 @@ import { verificationBuilder } from "./verifiers/verificationBuilder";
 import { Verifier, Verifiers } from "./types/core";
 import { openAttestationHash } from "./verifiers/documentIntegrity/hash/openAttestationHash";
 import { Identity, openAttestationDnsTxt } from "./verifiers/issuerIdentity/dnsText/openAttestationDnsTxt";
-import { openAttestationSignedProof } from "./verifiers/documentStatus/signedProof/openAttestationSignedProof";
 import { isValid } from "./validator";
 import { openAttestationEthereumTokenRegistryStatus } from "./verifiers/documentStatus/tokenRegistryStatus/openAttestationEthereumTokenRegistryStatus";
 import { openAttestationEthereumDocumentStoreStatus } from "./verifiers/documentStatus/documentStoreStatus/openAttestationEthereumDocumentStoreStatus";
@@ -13,7 +12,6 @@ import { OpenAttestationDnsDid } from "./verifiers/issuerIdentity/dnsDidProof";
 
 const openAttestationVerifiers: Verifiers[] = [
   openAttestationHash,
-  openAttestationSignedProof,
   openAttestationEthereumTokenRegistryStatus,
   openAttestationEthereumDocumentStoreStatus,
   openAttestationDnsTxt,
@@ -37,7 +35,6 @@ export {
   Verifier,
   Identity,
   openAttestationHash,
-  openAttestationSignedProof,
   openAttestationDnsTxt,
   openAttestationEthereumDocumentStoreStatus,
   openAttestationEthereumTokenRegistryStatus,

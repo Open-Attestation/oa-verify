@@ -1,24 +1,12 @@
 import { PublicKey } from "did-resolver";
 import { utils } from "ethers";
+import { Proof, v2 } from "@govtechsg/open-attestation";
 import { getPublicKey } from "./resolver";
 
 export interface DidVerificationStatus {
   verified: boolean;
   did: string;
   reason?: any;
-}
-
-interface IdentityProof {
-  type: string;
-  id: string;
-  purpose: string;
-  key: string;
-}
-interface Proof {
-  type: string;
-  proofPurpose: string;
-  verificationMethod: string;
-  signature: string;
 }
 
 interface VerifySignature {
@@ -57,10 +45,12 @@ export const verifySignature = async ({
   did,
 }: {
   merkleRoot: string;
-  identityProof: IdentityProof;
+  identityProof?: v2.IdentityProof;
   proof: Proof[];
-  did: string;
+  did?: string;
 }): Promise<DidVerificationStatus> => {
+  if (!identityProof?.key) throw new Error("Key is not present");
+  if (!did) throw new Error("DID is not present");
   const { key } = identityProof;
   const publicKey = await getPublicKey(did, key);
   if (!publicKey) throw new Error(`No public key found on DID document for the DID ${did} and key ${key}`);
