@@ -22,8 +22,8 @@ const skip: VerifierType["skip"] = async () => {
 
 const test: VerifierType["test"] = (document) => {
   if (!utils.isWrappedV2Document(document)) return false;
-  const { issuers } = getData(document) as any; // TODO Casting to any first to prevent change at the OA level
-  if (issuers.some((issuer: any) => issuer.identityProof?.type === "DNS-DID")) return true;
+  const data = getData(document); // TODO casting to any first before OA is updated
+  if (data?.issuers.some((issuer: any) => issuer.identityProof?.type === "DNS-DID")) return true;
   return false;
 };
 

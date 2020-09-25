@@ -44,6 +44,9 @@ const resolveIssuerIdentity = async (
 
 const name = "OpenAttestationDnsTxt";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
+const isWrappedV2Document = (document: any): document is WrappedDocument<v2.OpenAttestationDocument> => {
+  return document.data && document.data.issuers;
+};
 export const openAttestationDnsTxt: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
   VerificationManagerOptions,
@@ -62,7 +65,10 @@ export const openAttestationDnsTxt: Verifier<
     });
   },
   test: (document) => {
-    if (oaUtils.isWrappedV2Document(document)) {
+    if (oaUtils.isWrappedV3Document(document)) {
+      const documentData = getData(document);
+      return documentData.issuer.identityProof.type === v3.IdentityProofType.DNSTxt;
+    } else if (isWrappedV2Document(document)) {
       const documentData = getData(document);
       // at least one issuer uses DNS-TXT
       return documentData.issuers.some((issuer) => {
@@ -72,8 +78,7 @@ export const openAttestationDnsTxt: Verifier<
         );
       });
     }
-    const documentData = getData(document);
-    return documentData.issuer.identityProof.type === v3.IdentityProofType.DNSTxt;
+    return false;
   },
   verify: async (document, options) => {
     try {

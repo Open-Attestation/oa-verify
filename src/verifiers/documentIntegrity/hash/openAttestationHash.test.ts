@@ -6,6 +6,73 @@ import { verificationBuilder } from "../../verificationBuilder";
 const verify = verificationBuilder([openAttestationHash]);
 
 describe("OpenAttestationHash", () => {
+  it("should return a skipped fragment when document is missing target hash", async () => {
+    const newDocument = {
+      ...tamperedDocumentWithCertificateStore,
+      signature: { ...tamperedDocumentWithCertificateStore.signature },
+    };
+    delete newDocument.signature.targetHash;
+    const fragment = await verify(newDocument, {
+      network: "ropsten",
+    });
+    expect(fragment).toStrictEqual([
+      {
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: "Document does not have merkle root, target hash or data.",
+        },
+        status: "SKIPPED",
+      },
+    ]);
+  });
+  it("should return a skipped fragment when document is missing merkle root", async () => {
+    const newDocument = {
+      ...tamperedDocumentWithCertificateStore,
+      signature: { ...tamperedDocumentWithCertificateStore.signature },
+    };
+    delete newDocument.signature.merkleRoot;
+    const fragment = await verify(newDocument, {
+      network: "ropsten",
+    });
+    expect(fragment).toStrictEqual([
+      {
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: "Document does not have merkle root, target hash or data.",
+        },
+        status: "SKIPPED",
+      },
+    ]);
+  });
+  it("should return a skipped fragment when document is missing data", async () => {
+    const newDocument = {
+      ...tamperedDocumentWithCertificateStore,
+      data: { ...tamperedDocumentWithCertificateStore.data },
+    };
+    delete newDocument.data;
+    const fragment = await verify(newDocument, {
+      network: "ropsten",
+    });
+    expect(fragment).toStrictEqual([
+      {
+        name: "OpenAttestationHash",
+        type: "DOCUMENT_INTEGRITY",
+        reason: {
+          code: 2,
+          codeString: "SKIPPED",
+          message: "Document does not have merkle root, target hash or data.",
+        },
+        status: "SKIPPED",
+      },
+    ]);
+  });
+
   it("should return an invalid fragment when document has been tampered", async () => {
     const fragment = await verify(tamperedDocumentWithCertificateStore, { network: "" });
     expect(fragment).toStrictEqual([

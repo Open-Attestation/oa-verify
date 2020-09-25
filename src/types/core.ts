@@ -1,6 +1,10 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Reason } from "./error";
 
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>;
+};
+
 /**
  * - network on which to run the verification (if needed to connect to ethereum), For instance "ropste" or "homestead"
  * - promisesCallback callback function that will provide back the promises resolving to the verification fragment. It will be called before the promises are all resolved and thus give the possibility to consumers to perform their own extra checks.
@@ -54,7 +58,7 @@ export interface Verifier<
   Data = any
 > {
   skip: (document: Document, options: Options) => Promise<SkippedVerificationFragment>;
-  test: (document: Document, options: Options) => boolean;
+  test: (document: DeepPartial<Document>, options: Options) => boolean;
   verify: (document: Document, options: Options) => Promise<VerificationFragment<Data>>;
 }
 export type Hash = string;

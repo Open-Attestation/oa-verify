@@ -21,11 +21,11 @@
     "prepare": "npm run snyk-protect"
   },
   "author": "",
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.0.9",
     "@govtechsg/document-store": "^2.0.0",
-    "@govtechsg/open-attestation": "^3.11.0",
+    "@govtechsg/open-attestation": "^3.12.0",
     "@govtechsg/token-registry": "^2.0.0",
     "axios": "^0.20.0",
     "debug": "^4.1.1",
@@ -54,6 +54,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "git-cz": "^4.7.0",
     "jest": "^26.1.0",
+    "msw": "^0.20.5",
     "prettier": "^2.0.5",
     "semantic-release": "^17.1.1",
     "ts-jest": "^26.1.1",
