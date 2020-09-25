@@ -18,7 +18,6 @@ const openAttestationVerifiers: Verifiers[] = [
   openAttestationEthereumDocumentStoreStatus,
   openAttestationDnsTxt,
   OpenAttestationDnsDid,
-  OpenAttestationDidSignedDidIdentityProof,
   OpenAttestationDidSignedDocumentStatus,
 ];
 
@@ -42,4 +41,7 @@ export {
   openAttestationDnsTxt,
   openAttestationEthereumDocumentStoreStatus,
   openAttestationEthereumTokenRegistryStatus,
+  OpenAttestationDnsDid,
+  OpenAttestationDidSignedDocumentStatus,
+  OpenAttestationDidSignedDidIdentityProof,
 };

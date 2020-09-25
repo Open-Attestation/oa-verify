@@ -1,7 +1,7 @@
 import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
+import { getDnsDidRecords } from "@govtechsg/dnsprove";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
-import { getDnsDidRecords } from "@govtechsg/dnsprove";
 
 const name = "OpenAttestationDnsDid";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";

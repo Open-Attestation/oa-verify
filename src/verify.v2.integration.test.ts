@@ -2,7 +2,13 @@
  * @jest-environment node
  */
 
-import { isValid, verify } from "./index";
+import {
+  isValid,
+  verify,
+  verificationBuilder,
+  openAttestationVerifiers,
+  OpenAttestationDidSignedDidIdentityProof,
+} from "./index";
 import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
 import {
   tamperedDocumentWithCertificateStore,
@@ -111,16 +117,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -220,16 +216,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -317,16 +303,6 @@ describe("verify(integration)", () => {
             "code": 0,
             "codeString": "SKIPPED",
             "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
@@ -424,16 +400,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -503,16 +469,6 @@ describe("verify(integration)", () => {
             "code": 0,
             "codeString": "SKIPPED",
             "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
@@ -597,16 +553,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -686,16 +632,6 @@ describe("verify(integration)", () => {
             "code": 0,
             "codeString": "SKIPPED",
             "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
@@ -790,16 +726,6 @@ describe("verify(integration)", () => {
             "code": 0,
             "codeString": "SKIPPED",
             "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
@@ -913,16 +839,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1011,16 +927,6 @@ describe("verify(integration)", () => {
             "code": 0,
             "codeString": "SKIPPED",
             "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
@@ -1128,16 +1034,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1155,7 +1051,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  it("should pass with document signed directly with DID", async () => {
+  it("should fail with document signed directly with DID (default verifier)", async () => {
     const results = await verify(documentDidSigned, {
       network: "rinkeby",
     });
@@ -1218,14 +1114,91 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "data": Array [
-            Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-              "status": "VALID",
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
             },
-          ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
           "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+    expect(isValid(results)).toStrictEqual(false);
+  });
+
+  it("should pass with document signed directly with DID with custom verifier", async () => {
+    const customVerify = verificationBuilder([...openAttestationVerifiers, OpenAttestationDidSignedDidIdentityProof]);
+    const results = await customVerify(documentDidSigned, {
+      network: "rinkeby",
+    });
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": true,
+          "name": "OpenAttestationHash",
+          "status": "VALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationSignedProof",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document does not have a proof block",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
         Object {
@@ -1244,6 +1217,17 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "status": "VALID",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "status": "VALID",
+            },
+          ],
+          "name": "OpenAttestationDidSignedDidIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1315,16 +1299,6 @@ describe("verify(integration)", () => {
           ],
           "name": "OpenAttestationDnsDid",
           "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document is not using DID as top level identifier",
-          },
-          "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
         Object {
@@ -1415,17 +1389,6 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "data": Array [
-            Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-              "status": "INVALID",
-            },
-          ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
@@ -1510,17 +1473,6 @@ describe("verify(integration)", () => {
             "message": "Document was not issued using DNS-DID",
           },
           "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "data": Array [
-            Object {
-              "reason": "\`proof\` is missing from the document",
-              "status": "INVALID",
-            },
-          ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
         Object {
