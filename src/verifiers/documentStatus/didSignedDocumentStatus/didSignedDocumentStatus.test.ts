@@ -160,12 +160,12 @@ describe("verify", () => {
       const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidMissingProof, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Document is not signed. Proofs are missing.],
+          "data": [Error: Only signed v2 is supported now],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 1,
             "codeString": "UNEXPECTED_ERROR",
-            "message": "Document is not signed. Proofs are missing.",
+            "message": "Only signed v2 is supported now",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",

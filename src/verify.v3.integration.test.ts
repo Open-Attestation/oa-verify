@@ -25,16 +25,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_INTEGRITY",
         },
         Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
           "reason": Object {
             "code": 4,
@@ -113,16 +103,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -209,16 +189,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -312,16 +282,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_INTEGRITY",
         },
         Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
           "reason": Object {
             "code": 4,
@@ -402,16 +362,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "data": Object {

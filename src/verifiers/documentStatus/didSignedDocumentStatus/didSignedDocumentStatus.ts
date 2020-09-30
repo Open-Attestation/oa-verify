@@ -20,34 +20,23 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
-const test: VerifierType["test"] = (_document) => {
-  if (!utils.isWrappedV2Document(_document)) return false;
-  const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-  if (
-    document.proof &&
-    Array.isArray(document.proof) && // TODO, remove when removing for proof block with one element
-    document.proof.some((proof: any) => proof.type === "OpenAttestationSignature2018")
-  )
-    return true;
+const test: VerifierType["test"] = (document) => {
+  if (!utils.isSignedWrappedV2Document(document)) return false;
+  if (document.proof.some((proof) => proof.type === "OpenAttestationSignature2018")) return true;
   return false;
 };
 
-interface Revocation {
-  type: string;
-}
-
-const verify: VerifierType["verify"] = async (_document) => {
+const verify: VerifierType["verify"] = async (document) => {
   try {
-    if (!utils.isWrappedV2Document(_document)) throw new Error("Only v2 is supported now");
-    const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-    const data: any = getData(document);
+    if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only signed v2 is supported now");
+    const data = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
     const issuers = data.issuers.filter(
-      (issuer: any) => issuer.identityProof.type === "DID" || issuer.identityProof.type === "DNS-DID"
+      (issuer) => issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"
     );
 
     // If revocation block does not exist, throw error to prevent case where revocation method is revoked
-    const revocation: (Revocation | undefined)[] = issuers.map((issuer: any) => issuer.revocation);
+    const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
     if (revocation.some((r) => typeof r?.type === "undefined"))
       throw new Error("revocation block not found for an issuer");
     // Support for the NONE method only
@@ -55,7 +44,7 @@ const verify: VerifierType["verify"] = async (_document) => {
 
     // Check that all the issuers have signed on the document
     if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
-    const signatureVerificationDeferred: DidVerificationStatus[] = issuers.map((issuer: any) =>
+    const signatureVerificationDeferred: Promise<DidVerificationStatus>[] = issuers.map((issuer) =>
       verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
     );
     const issuance = await (await Promise.all(signatureVerificationDeferred)).map(({ verified, reason, did }) => ({
