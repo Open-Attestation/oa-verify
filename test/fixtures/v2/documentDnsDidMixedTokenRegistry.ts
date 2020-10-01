@@ -60,6 +60,15 @@ export const documentDnsDidMixedTokenRegistryInvalid: any = {
     proof: [],
     merkleRoot: "ee1548c091767b09be53a54e576341d8fd07d1ba3fb17873ad334e22f4a28dcc",
   },
+  proof: [
+    {
+      type: "OpenAttestationSignature2018",
+      proofPurpose: "assertionMethod",
+      verificationMethod: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature:
+        "0xd05bb71bdb6f78451e2d12851825421666c6c5e355f516325ce5002a0586f89f6ebbd465227bec59c745dd26918dd8dab9122dcd398256d8e487e0ecf82a53421b",
+    },
+  ],
 };
 
 export const documentDnsDidMixedTokenRegistryValid: any = {
@@ -124,4 +133,13 @@ export const documentDnsDidMixedTokenRegistryValid: any = {
     proof: [],
     merkleRoot: "3795511eabef18fa494b20e4634f8a138bf69376eaf42dedd29766bf3d47d703",
   },
+  proof: [
+    {
+      type: "OpenAttestationSignature2018",
+      proofPurpose: "assertionMethod",
+      verificationMethod: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature:
+        "0xd05bb71bdb6f78451e2d12851825421666c6c5e355f516325ce5002a0586f89f6ebbd465227bec59c745dd26918dd8dab9122dcd398256d8e487e0ecf82a53421b",
+    },
+  ],
 };

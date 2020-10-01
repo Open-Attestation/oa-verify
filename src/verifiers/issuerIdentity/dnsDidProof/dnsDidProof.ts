@@ -21,16 +21,16 @@ const skip: VerifierType["skip"] = async () => {
 };
 
 const test: VerifierType["test"] = (document) => {
-  if (!utils.isWrappedV2Document(document)) return false;
-  const data = getData(document); // TODO casting to any first before OA is updated
-  if (data?.issuers.some((issuer: any) => issuer.identityProof?.type === "DNS-DID")) return true;
+  if (!utils.isSignedWrappedV2Document(document)) return false;
+  const data = getData(document);
+  if (data?.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID")) return true;
   return false;
 };
 
 interface IdentityProof {
   type: string;
-  key: string;
-  location: string;
+  key?: string;
+  location?: string;
 }
 
 interface VerificationFragment {
@@ -48,6 +48,8 @@ const verifyIssuerDnsDid = async ({
     return {
       status: "SKIPPED",
     };
+  if (!location) throw new Error("location is not present in identity proof");
+  if (!key) throw new Error("key is not present in identity proof");
   const records = await getDnsDidRecords(location);
   return {
     location,
@@ -58,10 +60,9 @@ const verifyIssuerDnsDid = async ({
 
 const verify: VerifierType["verify"] = async (document) => {
   try {
-    if (!utils.isWrappedV2Document(document)) throw new Error("Only v2 is supported now");
-    // TODO fix the OA schema
-    const documentData = getData(document) as any;
-    const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers.map((issuer: any) => {
+    if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only v2 is supported now");
+    const documentData = getData(document);
+    const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers.map((issuer) => {
       if (issuer.identityProof?.type === "DNS-DID") return verifyIssuerDnsDid(issuer.identityProof);
       return Promise.resolve({
         status: "SKIPPED",
