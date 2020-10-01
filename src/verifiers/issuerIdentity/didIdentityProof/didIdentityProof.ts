@@ -22,20 +22,19 @@ const skip: VerifierType["skip"] = async () => {
 
 const test: VerifierType["test"] = (document) => {
   if (!utils.isWrappedV2Document(document)) return false;
-  const { issuers } = getData(document) as any; // TODO Casting to any first to prevent change at the OA level
+  const { issuers } = getData(document);
   return issuers.some((issuer: any) => issuer.identityProof?.type === "DID");
 };
 
 interface SignatureVerificationFragment {
-  status: "VALID" | "INVALID" | "SKIPPED";
+  status: string;
   did?: string;
 }
 
-const verify: VerifierType["verify"] = async (_document) => {
+const verify: VerifierType["verify"] = async (document) => {
   try {
-    if (!utils.isWrappedV2Document(_document)) throw new Error("Only v2 is supported now");
-    const document = _document as any; // TODO Casting to any first to prevent change at the OA level
-    const data: any = getData(document);
+    if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only v2 is supported now");
+    const data = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
     const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(
       async (issuer: any) => {
