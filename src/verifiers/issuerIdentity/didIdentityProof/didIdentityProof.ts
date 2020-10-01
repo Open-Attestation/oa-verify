@@ -23,7 +23,7 @@ const skip: VerifierType["skip"] = async () => {
 const test: VerifierType["test"] = (document) => {
   if (!utils.isWrappedV2Document(document)) return false;
   const { issuers } = getData(document);
-  return issuers.some((issuer: any) => issuer.identityProof?.type === "DID");
+  return issuers.some((issuer) => issuer.identityProof?.type === "DID");
 };
 
 interface SignatureVerificationFragment {
@@ -36,21 +36,19 @@ const verify: VerifierType["verify"] = async (document) => {
     if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only v2 is supported now");
     const data = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
-    const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(
-      async (issuer: any) => {
-        if (issuer.identityProof.type === "DID") {
-          if (!document.proof) return { status: "INVALID", reason: "`proof` is missing from the document" };
-          const { did, verified } = await verifySignature({
-            merkleRoot,
-            identityProof: issuer.identityProof,
-            proof: document.proof,
-            did: issuer.id,
-          });
-          return { did, status: verified ? "VALID" : "INVALID" };
-        }
-        return { status: "SKIPPED" };
+    const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(async (issuer) => {
+      if (issuer.identityProof?.type === "DID") {
+        if (!document.proof) return { status: "INVALID", reason: "`proof` is missing from the document" };
+        const { did, verified } = await verifySignature({
+          merkleRoot,
+          identityProof: issuer.identityProof,
+          proof: document.proof,
+          did: issuer.id,
+        });
+        return { did, status: verified ? "VALID" : "INVALID" };
       }
-    );
+      return { status: "SKIPPED" };
+    });
     const signatureVerifications = await Promise.all(signatureVerificationDeferred);
     const signedOnAll =
       signatureVerifications.some((i) => i.status === "VALID") &&

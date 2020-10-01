@@ -48,6 +48,10 @@ export enum OpenAttestationDnsDidCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
 }
+export enum OpenAttestationSignatureCode {
+  UNEXPECTED_ERROR = 0,
+  KEY_MISSING = 1,
+}
 
 export interface EthersError extends Error {
   reason?: string | string[];

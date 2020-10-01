@@ -2,11 +2,12 @@ import { PublicKey } from "did-resolver";
 import { utils } from "ethers";
 import { Proof, v2 } from "@govtechsg/open-attestation";
 import { getPublicKey } from "./resolver";
+import { Reason, OpenAttestationSignatureCode } from "../types/error";
 
 export interface DidVerificationStatus {
   verified: boolean;
   did: string;
-  reason?: any;
+  reason?: Reason;
 }
 
 interface VerifySignature {
@@ -28,7 +29,11 @@ export const verifySecp256k1VerificationKey2018 = ({
     return {
       did,
       verified: false,
-      reason: `ethereumAddress not found on public key ${JSON.stringify(publicKey)}`,
+      reason: {
+        code: OpenAttestationSignatureCode.KEY_MISSING,
+        codeString: OpenAttestationSignatureCode[OpenAttestationSignatureCode.KEY_MISSING],
+        message: `ethereumAddress not found on public key ${JSON.stringify(publicKey)}`,
+      },
     };
   }
 

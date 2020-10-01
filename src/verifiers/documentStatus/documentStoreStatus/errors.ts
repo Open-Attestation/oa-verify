@@ -62,7 +62,7 @@ export const invalidArgument = (error: EthersError, address: string): Reason => 
   };
 };
 
-export const getErrorReason = (error: EthersError, address: string): Reason | null => {
+export const getErrorReason = (error: EthersError, address: string): Reason => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   if (
     !error.reason &&
