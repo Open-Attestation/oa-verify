@@ -27,6 +27,7 @@ const verify = verificationBuilder<
 
 export * from "./types/core";
 export * from "./types/error";
+export * from "./common/error";
 export {
   verificationBuilder,
   openAttestationVerifiers,
