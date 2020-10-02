@@ -1,6 +1,6 @@
 import { errors } from "ethers";
-import { Hash } from "../../types/core";
-import { EthersError, OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../types/error";
+import { Hash } from "../../../types/core";
+import { EthersError, OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../../types/error";
 
 const contractNotFound = (address: Hash): Reason => {
   return {

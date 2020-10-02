@@ -1,7 +1,7 @@
 import { openAttestationHash } from "./openAttestationHash";
-import { tamperedDocumentWithCertificateStore } from "../../../test/fixtures/v2/tamperedDocument";
-import { document } from "../../../test/fixtures/v2/document";
-import { verificationBuilder } from "../verificationBuilder";
+import { tamperedDocumentWithCertificateStore } from "../../../../test/fixtures/v2/tamperedDocument";
+import { document } from "../../../../test/fixtures/v2/document";
+import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationHash]);
 

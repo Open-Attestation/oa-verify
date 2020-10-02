@@ -1,10 +1,10 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
 import { constants } from "ethers";
-import { VerificationFragmentType, Verifier } from "../../types/core";
-import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../types/error";
+import { VerificationFragmentType, Verifier } from "../../../types/core";
+import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
 import { contractNotMinted, getErrorReason } from "./errors";
-import { getIssuersTokenRegistry, getProvider } from "../../common/utils";
+import { getIssuersTokenRegistry, getProvider } from "../../../common/utils";
 
 interface Status {
   minted: boolean;

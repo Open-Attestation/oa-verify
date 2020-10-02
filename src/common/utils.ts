@@ -5,7 +5,7 @@ import { INFURA_API_KEY } from "../config";
 export const getProvider = (options: { network: string }): ethers.providers.Provider =>
   process.env.ETHEREUM_PROVIDER === "cloudflare"
     ? new ethers.providers.CloudflareProvider()
-    : new ethers.providers.InfuraProvider(options.network, process.env.INFURA_API_KEY || INFURA_API_KEY);
+    : new ethers.providers.InfuraProvider(options.network, INFURA_API_KEY);
 
 export const getIssuersDocumentStore = (
   document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>

@@ -25,16 +25,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_INTEGRITY",
         },
         Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
           "reason": Object {
             "code": 4,
@@ -78,6 +68,26 @@ describe("verify v3(integration)", () => {
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -93,16 +103,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -153,6 +153,26 @@ describe("verify v3(integration)", () => {
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -169,16 +189,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -234,6 +244,26 @@ describe("verify v3(integration)", () => {
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -250,16 +280,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -305,6 +325,26 @@ describe("verify v3(integration)", () => {
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
@@ -322,16 +362,6 @@ describe("verify v3(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "data": Object {
@@ -369,6 +399,26 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
         },
       ]
     `);

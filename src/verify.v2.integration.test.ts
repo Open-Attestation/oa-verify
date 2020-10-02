@@ -4,7 +4,13 @@
 
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { isValid, verify } from "./index";
+import {
+  isValid,
+  verify,
+  verificationBuilder,
+  openAttestationVerifiers,
+  OpenAttestationDidSignedDidIdentityProof,
+} from "./index";
 import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
 import {
   tamperedDocumentWithCertificateStore,
@@ -14,12 +20,14 @@ import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/do
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
-import { documentSignedProofValid } from "../test/fixtures/v2/documentSignedProofValid";
-import { documentSignedProofInvalidSignature } from "../test/fixtures/v2/documentSignedProofInvalidSignature";
 import {
   documentRinkebyRevokedWithDocumentStore,
   documentRinkebyValidWithDocumentStore,
 } from "../test/fixtures/v2/documentRinkebyWithDocumentStore";
+import { documentDidSigned } from "../test/fixtures/v2/documentDidSigned";
+import { documentDidWrongSignature } from "../test/fixtures/v2/documentDidWrongSignature";
+import { documentDnsDidSigned } from "../test/fixtures/v2/documentDnsDidSigned";
+import { documentDidMissingProof } from "../test/fixtures/v2/documentDidMissingProof";
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
@@ -48,16 +56,6 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -89,6 +87,26 @@ describe("verify(integration)", () => {
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(fragments)).toStrictEqual(false);
@@ -112,16 +130,6 @@ describe("verify(integration)", () => {
           },
           "status": "INVALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -169,6 +177,26 @@ describe("verify(integration)", () => {
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -191,16 +219,6 @@ describe("verify(integration)", () => {
           },
           "status": "INVALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -248,6 +266,26 @@ describe("verify(integration)", () => {
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -270,16 +308,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -326,85 +354,32 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(fragments)).toStrictEqual(true);
     expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
     expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
-
-  it("should be valid for all checks when document with certificate store is valid on mainnet using Cloudflare", async () => {
-    process.env.ETHEREUM_PROVIDER = "cloudflare";
-    const results = await verify(documentMainnetValidWithCertificateStore, {
-      network: "homestead",
-    });
-    expect(results).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "data": true,
-          "name": "OpenAttestationHash",
-          "status": "VALID",
-          "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumTokenRegistryStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                  "revoked": false,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": false,
-          },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-      ]
-    `);
-    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
   });
 
   it("should be valid for all checks when document with certificate store is valid on ropsten", async () => {
@@ -420,16 +395,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_INTEGRITY",
         },
         Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
           "reason": Object {
             "code": 4,
@@ -472,123 +437,31 @@ describe("verify(integration)", () => {
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
         },
-      ]
-    `);
-    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
-  });
-
-  it("should be valid for all checks when document has a valid signed proof block", async () => {
-    const results = await verify(documentSignedProofValid, {
-      network: "homestead",
-    });
-    expect(results).toMatchInlineSnapshot(`
-      Array [
         Object {
-          "data": true,
-          "name": "OpenAttestationHash",
-          "status": "VALID",
-          "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "name": "OpenAttestationDnsDid",
           "reason": Object {
-            "code": 4,
+            "code": 0,
             "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            "message": "Document was not issued using DNS-DID",
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
         },
       ]
     `);
     // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
     expect(isValid(results)).toStrictEqual(false);
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
-  });
-
-  it("should fail when document has an invalid signed proof block", async () => {
-    const results = await verify(documentSignedProofInvalidSignature, {
-      network: "ropsten",
-    });
-    expect(results).toMatchInlineSnapshot(`
-      Array [
-        Object {
-          "data": true,
-          "name": "OpenAttestationHash",
-          "status": "VALID",
-          "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 1,
-            "codeString": "DOCUMENT_PROOF_INVALID",
-            "message": "Document proof is invalid",
-          },
-          "status": "INVALID",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumTokenRegistryStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-      ]
-    `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
   });
 
   it("should be valid for all checks when document with token registry is valid on ropsten", async () => {
@@ -602,16 +475,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "data": Object {
@@ -649,9 +512,599 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(true);
+  });
+  it("should be invalid with a merkle root that is odd-length", async () => {
+    const results = await verify(documentMainnetInvalidWithOddLengthMerkleRoot, {
+      network: "mainnet",
+    });
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": false,
+          "name": "OpenAttestationHash",
+          "reason": Object {
+            "code": 0,
+            "codeString": "DOCUMENT_TAMPERED",
+            "message": "Document has been tampered with",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                  "issued": false,
+                  "reason": Object {
+                    "code": 6,
+                    "codeString": "INVALID_ARGUMENT",
+                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+                  },
+                },
+              ],
+            },
+            "issuedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_ARGUMENT",
+            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxt",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results)).toStrictEqual(false);
+    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+  });
+
+  it("should be invalid with a merkle root that is of incorrect length", async () => {
+    // incorrect length means even-length, but not 64 characters as required of merkleRoots
+    const results = await verify(documentMainnetInvalidWithIncorrectMerkleRoot, {
+      network: "mainnet",
+    });
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": false,
+          "name": "OpenAttestationHash",
+          "reason": Object {
+            "code": 0,
+            "codeString": "DOCUMENT_TAMPERED",
+            "message": "Document has been tampered with",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+                  "issued": false,
+                  "reason": Object {
+                    "code": 6,
+                    "codeString": "INVALID_ARGUMENT",
+                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+                  },
+                },
+              ],
+            },
+            "issuedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_ARGUMENT",
+            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxt",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results)).toStrictEqual(false);
+    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+  });
+
+  describe("Handling HTTP response errors", () => {
+    const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
+    beforeAll(() => server.listen()); // Enable API mocking before tests
+    afterEach(() => server.resetHandlers()); // Reset any runtime request handlers we may add during the tests
+    afterAll(() => server.close()); // Disable API mocking after the tests are done
+
+    it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 429)", async () => {
+      server.use(
+        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+          return res(
+            ctx.status(429, "Mocked rate limit error"),
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
+          );
+        })
+      );
+      const results = await verify(documentMainnetValidWithCertificateStore, {
+        network: "homestead",
+      });
+      expect(results).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Array [
+                  Object {
+                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                    "issued": false,
+                    "reason": Object {
+                      "code": 500,
+                      "codeString": "SERVER_ERROR",
+                      "message": "Unable to connect to the Ethereum network, please try again later",
+                    },
+                  },
+                ],
+              },
+              "issuedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 500,
+              "codeString": "SERVER_ERROR",
+              "message": "Unable to connect to the Ethereum network, please try again later",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDid",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not signed by DID directly",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+    });
+    it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 502)", async () => {
+      server.use(
+        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+          return res(
+            ctx.status(502, "Mocked rate limit error"),
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 2 })
+          );
+        })
+      );
+      const results = await verify(documentMainnetValidWithCertificateStore, {
+        network: "homestead",
+      });
+      expect(results).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Array [
+                  Object {
+                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                    "issued": false,
+                    "reason": Object {
+                      "code": 500,
+                      "codeString": "SERVER_ERROR",
+                      "message": "Unable to connect to the Ethereum network, please try again later",
+                    },
+                  },
+                ],
+              },
+              "issuedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 500,
+              "codeString": "SERVER_ERROR",
+              "message": "Unable to connect to the Ethereum network, please try again later",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDid",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not signed by DID directly",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+    });
+    it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 429)", async () => {
+      // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
+      server.use(
+        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+          return res(
+            ctx.status(429, "Mocked rate limit error"),
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 3 })
+          );
+        })
+      );
+      const results = await verify(documentMainnetValidWithCertificateStore, {
+        network: "ropsten",
+      });
+      expect(results).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Array [
+                  Object {
+                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                    "issued": false,
+                    "reason": Object {
+                      "code": 500,
+                      "codeString": "SERVER_ERROR",
+                      "message": "Unable to connect to the Ethereum network, please try again later",
+                    },
+                  },
+                ],
+              },
+              "issuedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 500,
+              "codeString": "SERVER_ERROR",
+              "message": "Unable to connect to the Ethereum network, please try again later",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDid",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not signed by DID directly",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+    });
+    it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 502)", async () => {
+      // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
+      server.use(
+        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+          return res(
+            ctx.status(502, "Mocked rate limit error"),
+            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 4 })
+          );
+        })
+      );
+      const results = await verify(documentMainnetValidWithCertificateStore, {
+        network: "ropsten",
+      });
+      expect(results).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Array [
+                  Object {
+                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                    "issued": false,
+                    "reason": Object {
+                      "code": 500,
+                      "codeString": "SERVER_ERROR",
+                      "message": "Unable to connect to the Ethereum network, please try again later",
+                    },
+                  },
+                ],
+              },
+              "issuedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 500,
+              "codeString": "SERVER_ERROR",
+              "message": "Unable to connect to the Ethereum network, please try again later",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDid",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not signed by DID directly",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+    });
   });
 
   it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
@@ -666,16 +1119,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "data": Object {
@@ -723,6 +1166,26 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -740,16 +1203,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -811,6 +1264,26 @@ describe("verify(integration)", () => {
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -828,16 +1301,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -884,6 +1347,26 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(true);
@@ -900,16 +1383,6 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationHash",
           "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -966,6 +1439,26 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
       ]
     `);
     expect(isValid(results)).toStrictEqual(false);
@@ -974,32 +1467,17 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  it("should be invalid with a merkle root that is odd-length", async () => {
-    const results = await verify(documentMainnetInvalidWithOddLengthMerkleRoot, {
-      network: "mainnet",
+  it("should fail with document signed directly with DID (default verifier)", async () => {
+    const results = await verify(documentDidSigned, {
+      network: "rinkeby",
     });
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
-          "data": false,
+          "data": true,
           "name": "OpenAttestationHash",
-          "reason": Object {
-            "code": 0,
-            "codeString": "DOCUMENT_TAMPERED",
-            "message": "Document has been tampered with",
-          },
-          "status": "INVALID",
+          "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -1012,79 +1490,72 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-                  "issued": false,
-                  "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
-                  },
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
                 },
               ],
             },
-            "issuedOnAll": false,
+            "issuedOnAll": true,
+            "revokedOnAny": false,
           },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
-          },
-          "status": "INVALID",
-          "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Array [
-            Object {
-              "location": "demo.tradetrust.io",
-              "status": "VALID",
-              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
+          "name": "OpenAttestationDidSignedDocumentStatus",
           "status": "VALID",
-          "type": "ISSUER_IDENTITY",
+          "type": "DOCUMENT_STATUS",
         },
       ]
     `);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
     expect(isValid(results)).toStrictEqual(false);
-    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  it("should be invalid with a merkle root that is of incorrect length", async () => {
-    // incorrect length means even-length, but not 64 characters as required of merkleRoots
-    const results = await verify(documentMainnetInvalidWithIncorrectMerkleRoot, {
-      network: "mainnet",
+  it("should pass with document signed directly with DID with custom verifier", async () => {
+    const customVerify = verificationBuilder([...openAttestationVerifiers, OpenAttestationDidSignedDidIdentityProof]);
+    const results = await customVerify(documentDidSigned, {
+      network: "rinkeby",
     });
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
-          "data": false,
+          "data": true,
           "name": "OpenAttestationHash",
-          "reason": Object {
-            "code": 0,
-            "codeString": "DOCUMENT_TAMPERED",
-            "message": "Document has been tampered with",
-          },
-          "status": "INVALID",
+          "status": "VALID",
           "type": "DOCUMENT_INTEGRITY",
-        },
-        Object {
-          "name": "OpenAttestationSignedProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SKIPPED",
-            "message": "Document does not have a proof block",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
         Object {
           "name": "OpenAttestationEthereumTokenRegistryStatus",
@@ -1097,391 +1568,294 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-                  "issued": false,
-                  "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
-                  },
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
                 },
               ],
             },
-            "issuedOnAll": false,
+            "issuedOnAll": true,
+            "revokedOnAny": false,
           },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
-          },
-          "status": "INVALID",
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
           "type": "DOCUMENT_STATUS",
         },
         Object {
           "data": Array [
             Object {
-              "location": "demo.tradetrust.io",
+              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
               "status": "VALID",
-              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
             },
           ],
-          "name": "OpenAttestationDnsTxt",
+          "name": "OpenAttestationDidSignedDidIdentityProof",
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    expect(isValid(results)).toStrictEqual(true);
   });
 
-  describe("Handling HTTP response errors", () => {
-    const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
-    beforeAll(() => server.listen()); // Enable API mocking before tests
-    afterEach(() => server.resetHandlers()); // Reset any runtime request handlers we may add during the tests
-    afterAll(() => server.close()); // Disable API mocking after the tests are done
+  it("should pass with document signed directly with DID and have top level identity as DNS", async () => {
+    const results = await verify(documentDnsDidSigned, {
+      network: "rinkeby",
+    });
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": true,
+          "name": "OpenAttestationHash",
+          "status": "VALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+              "location": "example.tradetrust.io",
+              "status": "VALID",
+            },
+          ],
+          "name": "OpenAttestationDnsDid",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    expect(isValid(results)).toStrictEqual(true);
+  });
 
-    it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 429)", async () => {
-      server.use(
-        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
-          return res(
-            ctx.status(429, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
-          );
-        })
-      );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "homestead",
-      });
-      expect(results).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "data": true,
-            "name": "OpenAttestationHash",
-            "status": "VALID",
-            "type": "DOCUMENT_INTEGRITY",
-          },
-          Object {
-            "name": "OpenAttestationSignedProof",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document does not have a proof block",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationEthereumTokenRegistryStatus",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
-            "name": "OpenAttestationEthereumDocumentStoreStatus",
-            "reason": Object {
-              "code": 500,
-              "codeString": "SERVER_ERROR",
-              "message": "Unable to connect to the Ethereum network, please try again later",
-            },
-            "status": "INVALID",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-        ]
-      `);
-      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-      expect(isValid(results)).toStrictEqual(false);
-      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+  it("should fail with document incorrectly signed with DID", async () => {
+    const results = await verify(documentDidWrongSignature, {
+      network: "rinkeby",
     });
-    it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 502)", async () => {
-      server.use(
-        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
-          return res(
-            ctx.status(502, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 2 })
-          );
-        })
-      );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "homestead",
-      });
-      expect(results).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "data": true,
-            "name": "OpenAttestationHash",
-            "status": "VALID",
-            "type": "DOCUMENT_INTEGRITY",
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": true,
+          "name": "OpenAttestationHash",
+          "status": "VALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
           },
-          Object {
-            "name": "OpenAttestationSignedProof",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document does not have a proof block",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
           },
-          Object {
-            "name": "OpenAttestationEthereumTokenRegistryStatus",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
           },
-          Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
-            "name": "OpenAttestationEthereumDocumentStoreStatus",
-            "reason": Object {
-              "code": 500,
-              "codeString": "SERVER_ERROR",
-              "message": "Unable to connect to the Ethereum network, please try again later",
-            },
-            "status": "INVALID",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
           },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": false,
+                },
+              ],
             },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
+            "issuedOnAll": false,
+            "revokedOnAny": false,
           },
-        ]
-      `);
-      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-      expect(isValid(results)).toStrictEqual(false);
-      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+    expect(isValid(results)).toStrictEqual(false);
+  });
+
+  it("should fail with document with missing DID signature", async () => {
+    const results = await verify(documentDidMissingProof, {
+      network: "rinkeby",
     });
-    it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 429)", async () => {
-      // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
-      server.use(
-        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
-          return res(
-            ctx.status(429, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 3 })
-          );
-        })
-      );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "ropsten",
-      });
-      expect(results).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "data": true,
-            "name": "OpenAttestationHash",
-            "status": "VALID",
-            "type": "DOCUMENT_INTEGRITY",
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": true,
+          "name": "OpenAttestationHash",
+          "status": "VALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
           },
-          Object {
-            "name": "OpenAttestationSignedProof",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document does not have a proof block",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
           },
-          Object {
-            "name": "OpenAttestationEthereumTokenRegistryStatus",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxt",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
           },
-          Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
-            "name": "OpenAttestationEthereumDocumentStoreStatus",
-            "reason": Object {
-              "code": 500,
-              "codeString": "SERVER_ERROR",
-              "message": "Unable to connect to the Ethereum network, please try again later",
-            },
-            "status": "INVALID",
-            "type": "DOCUMENT_STATUS",
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDid",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
           },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
           },
-        ]
-      `);
-      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-      expect(isValid(results)).toStrictEqual(false);
-      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
-    });
-    it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 502)", async () => {
-      // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
-      server.use(
-        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
-          return res(
-            ctx.status(502, "Mocked rate limit error"),
-            ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 4 })
-          );
-        })
-      );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "ropsten",
-      });
-      expect(results).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "data": true,
-            "name": "OpenAttestationHash",
-            "status": "VALID",
-            "type": "DOCUMENT_INTEGRITY",
-          },
-          Object {
-            "name": "OpenAttestationSignedProof",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document does not have a proof block",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationEthereumTokenRegistryStatus",
-            "reason": Object {
-              "code": 4,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
-            },
-            "status": "SKIPPED",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
-            "name": "OpenAttestationEthereumDocumentStoreStatus",
-            "reason": Object {
-              "code": 500,
-              "codeString": "SERVER_ERROR",
-              "message": "Unable to connect to the Ethereum network, please try again later",
-            },
-            "status": "INVALID",
-            "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-        ]
-      `);
-      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-      expect(isValid(results)).toStrictEqual(false);
-      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
-    });
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+      ]
+    `);
+    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+    expect(isValid(results)).toStrictEqual(false);
   });
 });
