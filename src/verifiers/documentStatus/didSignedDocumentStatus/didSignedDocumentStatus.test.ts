@@ -123,8 +123,8 @@ describe("verify", () => {
           "data": [Error: revocation block not found for an issuer],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 1,
-            "codeString": "UNEXPECTED_ERROR",
+            "code": 2,
+            "codeString": "MISSING_REVOCATION",
             "message": "revocation block not found for an issuer",
           },
           "status": "ERROR",
@@ -197,8 +197,8 @@ describe("verify", () => {
           "data": [Error: Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 1,
-            "codeString": "UNEXPECTED_ERROR",
+            "code": 5,
+            "codeString": "CORRESPONDING_PROOF_MISSING",
             "message": "Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           },
           "status": "ERROR",

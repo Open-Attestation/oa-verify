@@ -39,6 +39,8 @@ export enum OpenAttestationHashCode {
 export enum OpenAttestationDidSignedDocumentStatusCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
+  MISSING_REVOCATION = 2,
+  UNSIGNED = 3,
 }
 export enum OpenAttestationDidSignedDidIdentityProofCode {
   SKIPPED = 0,
@@ -47,10 +49,16 @@ export enum OpenAttestationDidSignedDidIdentityProofCode {
 export enum OpenAttestationDnsDidCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
+  MALFORMED_IDENTITY_PROOF = 2,
 }
 export enum OpenAttestationSignatureCode {
   UNEXPECTED_ERROR = 0,
   KEY_MISSING = 1,
+  MALFORMED_IDENTITY_PROOF = 2,
+  DID_MISSING = 3,
+  KEY_NOT_IN_DID = 4,
+  CORRESPONDING_PROOF_MISSING = 5,
+  UNSUPPORTED_KEY_TYPE = 6,
 }
 
 export interface EthersError extends Error {

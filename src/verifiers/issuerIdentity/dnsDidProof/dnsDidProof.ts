@@ -2,6 +2,7 @@ import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attesta
 import { getDnsDidRecords } from "@govtechsg/dnsprove";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
+import { CodedError } from "../../../common/error";
 
 const name = "OpenAttestationDnsDid";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -48,8 +49,18 @@ const verifyIssuerDnsDid = async ({
     return {
       status: "SKIPPED",
     };
-  if (!location) throw new Error("location is not present in identity proof");
-  if (!key) throw new Error("key is not present in identity proof");
+  if (!location)
+    throw new CodedError(
+      "location is not present in identity proof",
+      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+      "MALFORMED_IDENTITY_PROOF"
+    );
+  if (!key)
+    throw new CodedError(
+      "key is not present in identity proof",
+      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+      "MALFORMED_IDENTITY_PROOF"
+    );
   const records = await getDnsDidRecords(location);
   return {
     location,
@@ -87,8 +98,8 @@ const verify: VerifierType["verify"] = async (document) => {
       data: e,
       reason: {
         message: e.message,
-        code: OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
-        codeString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
+        code: e.code || OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
+        codeString: e.codeString || OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
       },
       status: "ERROR",
     };

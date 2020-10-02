@@ -2,6 +2,7 @@ import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attesta
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
 import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
+import { CodedError } from "../../../common/error";
 
 const name = "OpenAttestationDidSignedDocumentStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -38,12 +39,22 @@ const verify: VerifierType["verify"] = async (document) => {
     // If revocation block does not exist, throw error to prevent case where revocation method is revoked
     const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
     if (revocation.some((r) => typeof r?.type === "undefined"))
-      throw new Error("revocation block not found for an issuer");
+      throw new CodedError(
+        "revocation block not found for an issuer",
+        OpenAttestationDidSignedDocumentStatusCode.MISSING_REVOCATION,
+        "MISSING_REVOCATION"
+      );
+
     // Support for the NONE method only
     const revokedOnAny = !revocation.every((r) => r?.type === "NONE");
 
     // Check that all the issuers have signed on the document
-    if (!document.proof) throw new Error("Document is not signed. Proofs are missing.");
+    if (!document.proof)
+      throw new CodedError(
+        "Document is not signed. Proofs are missing.",
+        OpenAttestationDidSignedDocumentStatusCode.UNSIGNED,
+        "UNSIGNED"
+      );
     const signatureVerificationDeferred: Promise<DidVerificationStatus>[] = issuers.map((issuer) =>
       verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
     );
@@ -73,8 +84,9 @@ const verify: VerifierType["verify"] = async (document) => {
       data: e,
       reason: {
         message: e.message,
-        code: OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
+        code: e.code || OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
         codeString:
+          e.codeString ||
           OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR],
       },
       status: "ERROR",
