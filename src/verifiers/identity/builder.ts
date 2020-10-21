@@ -4,6 +4,7 @@ import {
   Verifier,
   VerificationFragmentStatus,
   SkippedVerificationFragment,
+  VerificationManagerOptions,
 } from "../../types/core";
 import { Reason } from "../../types/error";
 import { OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
@@ -23,7 +24,15 @@ export interface VerifierResults<T = any> {
 export type IssuerIdentityVerifier<
   Document = WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>,
   ResultData = any
-> = (document: Document, issuerIndex?: number) => Promise<VerifierResults<ResultData>>;
+> = ({
+  document,
+  options,
+  issuerIndex,
+}: {
+  document: Document;
+  options: VerificationManagerOptions;
+  issuerIndex?: number;
+}) => Promise<VerifierResults<ResultData>>;
 
 export type IssuerIdentityVerifierDefinition = {
   type: string;
@@ -41,14 +50,14 @@ const skipFragment: SkippedVerificationFragment = {
   },
 };
 
-const defaultVerifier: IssuerIdentityVerifier = async (_, index) => {
+const defaultVerifier: IssuerIdentityVerifier = async ({ issuerIndex }) => {
   return {
     verifier: "SKIPPED_VERIFIER",
     status: "SKIPPED",
     reason: {
       code: OpenAttestationIssuerIdentityVerifierCode.SKIPPED,
       codeString: OpenAttestationIssuerIdentityVerifierCode[OpenAttestationIssuerIdentityVerifierCode.SKIPPED],
-      message: `No verifier found for issuer ${index}`,
+      message: `No verifier found for issuer ${issuerIndex}`,
     },
   };
 };
@@ -62,12 +71,12 @@ export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierD
   const skip: VerifierType["skip"] = async () => skipFragment;
   const test: VerifierType["test"] = () => true;
 
-  const verify: VerifierType["verify"] = async (document) => {
+  const verify: VerifierType["verify"] = async (document, options) => {
     try {
       if (utils.isWrappedV3Document(document)) {
         const documentData = getData(document);
         const verifier = getVerifier(documentData.issuer.identityProof.type);
-        const verificationResults = await verifier(document);
+        const verificationResults = await verifier({ document, issuerIndex: undefined, options });
         return {
           name,
           type,
@@ -77,11 +86,11 @@ export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierD
       }
       if (utils.isWrappedV2Document(document)) {
         const documentData = getData(document);
-        const verificationResultsDeferred = documentData.issuers.map((issuer, index) => {
+        const verificationResultsDeferred = documentData.issuers.map((issuer, issuerIndex) => {
           const identityProofType = issuer.identityProof?.type;
           if (!identityProofType) throw new Error("");
           const verifier = getVerifier(identityProofType);
-          return verifier(document, index);
+          return verifier({ document, issuerIndex, options });
         });
         const verificationResults = await Promise.all(verificationResultsDeferred);
         const overallStatus =

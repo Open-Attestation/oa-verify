@@ -1,4 +1,4 @@
-import { issuerIdentityVerifierBuilder, IssuerIdentityVerifier, IssuerIdentityVerifierDefinition } from "./verifier";
+import { issuerIdentityVerifierBuilder, IssuerIdentityVerifier, IssuerIdentityVerifierDefinition } from "./builder";
 
 const mockVerify: IssuerIdentityVerifier = () => {
   return Promise.resolve({
