@@ -48,7 +48,7 @@ export type VerificationFragmentStatus = "ERROR" | "VALID" | "INVALID" | "SKIPPE
  * - a *verify* function, who must return the result of the verification as a {@link VerificationFragment}
  * - a *skip* function, who must return the result of a verification when it's skipped by providing additional data on why the validation didn't run.
  */
-interface SkippedVerificationFragment extends VerificationFragment {
+export interface SkippedVerificationFragment extends VerificationFragment {
   status: "SKIPPED";
   reason: Reason;
 }

@@ -61,6 +61,12 @@ export enum OpenAttestationSignatureCode {
   UNSUPPORTED_KEY_TYPE = 6,
 }
 
+export enum OpenAttestationIssuerIdentityVerifierCode {
+  SKIPPED = 0,
+  UNEXPECTED_ERROR = 1,
+  UNEXPECTED_DOCUMENT_FORMAT = 2,
+}
+
 export interface EthersError extends Error {
   reason?: string | string[];
   code?: string;
