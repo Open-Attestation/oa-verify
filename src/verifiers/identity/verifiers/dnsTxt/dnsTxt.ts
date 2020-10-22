@@ -4,8 +4,15 @@ import { getDefaultProvider } from "ethers";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { VerifierResults, IssuerIdentityVerifier } from "../../builder";
 import { OpenAttestationDnsTxtCode } from "../../../../types/error";
+import { CodedError } from "../../../../common/error";
+import { codedErrorResponse } from "../../utils/codedErrorResponse";
 
 const verifier = "OpenAttestationDnsTxt";
+
+const unexpectedErrorHandler = codedErrorResponse({
+  verifier,
+  unexpectedErrorCode: OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
+});
 
 // Resolve identity of an issuer, currently supporting only DNS-TXT
 // DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
@@ -17,25 +24,9 @@ const resolveIssuerIdentity = async (
   const type = issuer?.identityProof?.type ?? "";
   const identifier = issuer?.identityProof?.location ?? "";
   if (type !== "DNS-TXT")
-    return {
-      verifier,
-      status: "ERROR",
-      reason: {
-        code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
-        codeString: "INVALID_IDENTITY",
-        message: "Identity type not supported",
-      },
-    };
+    throw new CodedError("Identity type not supported", OpenAttestationDnsTxtCode.INVALID_IDENTITY, "INVALID_IDENTITY");
   if (!identifier)
-    return {
-      verifier,
-      status: "ERROR",
-      reason: {
-        code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
-        codeString: "INVALID_IDENTITY",
-        message: "Location is missing",
-      },
-    };
+    throw new CodedError("Location is missing", OpenAttestationDnsTxtCode.INVALID_IDENTITY, "INVALID_IDENTITY");
   const network = await getDefaultProvider(options.network).getNetwork();
   const records = await getDocumentStoreRecords(identifier);
   const matchingRecord = records.find(
@@ -61,21 +52,25 @@ const resolveIssuerIdentity = async (
 };
 
 export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex, options }) => {
-  if (utils.isWrappedV2Document(document)) {
-    if (typeof issuerIndex === "undefined") throw new Error("issuerIndex undefined for V2 document");
-    const issuer = getData(document).issuers[issuerIndex];
-    const status = resolveIssuerIdentity(
-      issuer,
-      // we expect the test function to prevent this issue => smart contract address MUST be populated
-      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore)!,
-      options
-    );
-    return status;
-  } else {
-    const documentData = getData(document);
-    const status = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
-    return status;
+  try {
+    if (utils.isWrappedV2Document(document)) {
+      if (typeof issuerIndex === "undefined") throw new Error("issuerIndex undefined for V2 document");
+      const issuer = getData(document).issuers[issuerIndex];
+      const status = resolveIssuerIdentity(
+        issuer,
+        // we expect the test function to prevent this issue => smart contract address MUST be populated
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore)!,
+        options
+      );
+      return status;
+    } else {
+      const documentData = getData(document);
+      const status = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
+      return status;
+    }
+  } catch (e) {
+    return unexpectedErrorHandler(e);
   }
 };
 

@@ -30,7 +30,7 @@ export type IssuerIdentityVerifier<
 }: {
   document: Document;
   options: VerificationManagerOptions;
-  issuerIndex?: number;
+  issuerIndex: Document extends WrappedDocument<v2.OpenAttestationDocument> ? number : undefined;
 }) => Promise<VerifierResults<ResultData>>;
 
 export type IssuerIdentityVerifierDefinition = {
