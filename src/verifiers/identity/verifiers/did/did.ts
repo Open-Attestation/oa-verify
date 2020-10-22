@@ -42,5 +42,6 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
 };
 
 export const OpenAttestationDidSignedDidIdentityProof = {
+  type: "DID",
   verify,
 };

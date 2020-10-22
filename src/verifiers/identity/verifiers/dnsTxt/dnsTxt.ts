@@ -55,6 +55,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex, op
   try {
     if (utils.isWrappedV2Document(document)) {
       if (typeof issuerIndex === "undefined") throw new Error("issuerIndex undefined for V2 document");
+      if (!options) throw new Error("options is undefined");
       const issuer = getData(document).issuers[issuerIndex];
       const status = resolveIssuerIdentity(
         issuer,
@@ -65,6 +66,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex, op
       );
       return status;
     } else {
+      if (!options) throw new Error("options is undefined");
       const documentData = getData(document);
       const status = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
       return status;

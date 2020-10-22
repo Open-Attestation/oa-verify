@@ -29,8 +29,8 @@ export type IssuerIdentityVerifier<
   issuerIndex,
 }: {
   document: Document;
-  options: VerificationManagerOptions;
   issuerIndex: Document extends WrappedDocument<v2.OpenAttestationDocument> ? number : undefined;
+  options?: VerificationManagerOptions;
 }) => Promise<VerifierResults<ResultData>>;
 
 export type IssuerIdentityVerifierDefinition = {
@@ -64,6 +64,8 @@ const defaultVerifier: IssuerIdentityVerifier = async ({ issuerIndex }) => {
 export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierDefinition[]): VerifierType => {
   const registeredVerifiers: { [identityProofType: string]: IssuerIdentityVerifier } = {};
   verifiers.forEach((verifier) => {
+    if (registeredVerifiers[verifier.type])
+      throw new Error(`Cannot register verifier to a type ${verifier.type} which has existing verifier assigned`);
     registeredVerifiers[verifier.type] = verifier.verify;
   });
 
