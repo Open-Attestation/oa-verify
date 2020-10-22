@@ -3,7 +3,6 @@ import { VerificationManagerOptions } from "src/types/core";
 import { getDefaultProvider } from "ethers";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { VerifierResults, IssuerIdentityVerifier } from "../../builder";
-import { CodedError } from "../../../../common/error";
 import { OpenAttestationDnsTxtCode } from "../../../../types/error";
 
 const verifier = "OpenAttestationDnsTxt";
@@ -18,9 +17,25 @@ const resolveIssuerIdentity = async (
   const type = issuer?.identityProof?.type ?? "";
   const identifier = issuer?.identityProof?.location ?? "";
   if (type !== "DNS-TXT")
-    throw new CodedError("Identity type not supported", OpenAttestationDnsTxtCode.INVALID_IDENTITY, "INVALID_IDENTITY");
+    return {
+      verifier,
+      status: "ERROR",
+      reason: {
+        code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
+        codeString: "INVALID_IDENTITY",
+        message: "Identity type not supported",
+      },
+    };
   if (!identifier)
-    throw new CodedError("Location is missing", OpenAttestationDnsTxtCode.INVALID_IDENTITY, "INVALID_IDENTITY");
+    return {
+      verifier,
+      status: "ERROR",
+      reason: {
+        code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
+        codeString: "INVALID_IDENTITY",
+        message: "Location is missing",
+      },
+    };
   const network = await getDefaultProvider(options.network).getNetwork();
   const records = await getDocumentStoreRecords(identifier);
   const matchingRecord = records.find(
