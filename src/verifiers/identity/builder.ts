@@ -6,8 +6,7 @@ import {
   SkippedVerificationFragment,
   VerificationManagerOptions,
 } from "../../types/core";
-import { Reason } from "../../types/error";
-import { OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
+import { Reason, OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
 
 const name = "OpenAttestationIssuerIdentityVerifier";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -64,7 +63,9 @@ const defaultVerifier: IssuerIdentityVerifier = async ({ issuerIndex }) => {
 
 export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierDefinition[]): VerifierType => {
   const registeredVerifiers: { [identityProofType: string]: IssuerIdentityVerifier } = {};
-  verifiers.forEach((verifier) => (registeredVerifiers[verifier.type] = verifier.verify));
+  verifiers.forEach((verifier) => {
+    registeredVerifiers[verifier.type] = verifier.verify;
+  });
 
   const getVerifier = (identityProofType: string): IssuerIdentityVerifier =>
     registeredVerifiers[identityProofType] || defaultVerifier;
@@ -94,7 +95,7 @@ export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierD
         });
         const verificationResults = await Promise.all(verificationResultsDeferred);
         const overallStatus =
-          verificationResults.every((result) => result.status === "VALID") && documentData.issuers.length > 0
+          verificationResults.every((result) => result.status === "VALID") && verificationResults.length > 0
             ? "VALID"
             : "INVALID";
         return {

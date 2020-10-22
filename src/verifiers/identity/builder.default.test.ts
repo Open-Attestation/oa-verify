@@ -1,11 +1,11 @@
-import { issuerIdentityVerifierBuilder, IssuerIdentityVerifier, IssuerIdentityVerifierDefinition } from "./builder";
-import dnsTxtVerifier from "./verifiers/dnsTxt/dnsTxt";
+import { issuerIdentityVerifierBuilder } from "./builder";
+import { OpenAttestationDnsTxt } from "./verifiers/dnsTxt/dnsTxt";
 
 import { documentRopstenValidWithToken } from "../../../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenValidWithDocumentStore } from "../../../test/fixtures/v3/documentRopstenValid";
 
 it("works for v2", async () => {
-  const verifier = issuerIdentityVerifierBuilder([dnsTxtVerifier]);
+  const verifier = issuerIdentityVerifierBuilder([OpenAttestationDnsTxt]);
   const results = await verifier.verify(documentRopstenValidWithToken, { network: "ropsten" });
   expect(results).toMatchInlineSnapshot(`
     Object {
@@ -27,7 +27,7 @@ it("works for v2", async () => {
 });
 
 it("works for v3", async () => {
-  const verifier = issuerIdentityVerifierBuilder([dnsTxtVerifier]);
+  const verifier = issuerIdentityVerifierBuilder([OpenAttestationDnsTxt]);
   const results = await verifier.verify(
     {
       ...documentRopstenValidWithDocumentStore,
