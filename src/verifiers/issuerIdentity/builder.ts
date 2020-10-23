@@ -7,6 +7,7 @@ import {
   IssuerIdentityVerifierDefinition,
 } from "../../types/core";
 import { OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
+import { CodedError } from "../../common/error";
 
 const name = "OpenAttestationIssuerIdentityVerifier";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -65,7 +66,12 @@ export const issuerIdentityVerifierBuilder = (verifiers: IssuerIdentityVerifierD
         const documentData = getData(document);
         const verificationResultsDeferred = documentData.issuers.map((issuer, issuerIndex) => {
           const identityProofType = issuer.identityProof?.type;
-          if (!identityProofType) throw new Error("");
+          if (!identityProofType)
+            throw new CodedError(
+              "Missing identity proof type",
+              OpenAttestationIssuerIdentityVerifierCode.MALFORMED_ISSUER,
+              "MALFORMED_ISSUER"
+            );
           const verifier = getVerifier(identityProofType);
           return verifier({ document, issuerIndex, options });
         });

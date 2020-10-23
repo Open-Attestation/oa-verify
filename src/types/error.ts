@@ -68,6 +68,7 @@ export enum OpenAttestationIssuerIdentityVerifierCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
   UNEXPECTED_DOCUMENT_FORMAT = 2,
+  MALFORMED_ISSUER = 3,
 }
 
 export interface EthersError extends Error {

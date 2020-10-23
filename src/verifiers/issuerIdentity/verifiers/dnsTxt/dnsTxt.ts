@@ -24,9 +24,17 @@ const resolveIssuerIdentity = async (
   const type = issuer?.identityProof?.type ?? "";
   const identifier = issuer?.identityProof?.location ?? "";
   if (type !== "DNS-TXT")
-    throw new CodedError("Identity type not supported", OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY, "INVALID_IDENTITY");
+    throw new CodedError(
+      "Identity type not supported",
+      OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY,
+      "INVALID_IDENTITY"
+    );
   if (!identifier)
-    throw new CodedError("Location is missing", OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY, "INVALID_IDENTITY");
+    throw new CodedError(
+      "Location is missing",
+      OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY,
+      "INVALID_IDENTITY"
+    );
   const network = await getDefaultProvider(options.network).getNetwork();
   const records = await getDocumentStoreRecords(identifier);
   const matchingRecord = records.find(
@@ -76,7 +84,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex, op
   }
 };
 
-export const OpenAttestationDnsTxtIdentityProof:IssuerIdentityVerifierDefinition = {
+export const OpenAttestationDnsTxtIdentityProof: IssuerIdentityVerifierDefinition = {
   type: "DNS-TXT",
   verify,
 };

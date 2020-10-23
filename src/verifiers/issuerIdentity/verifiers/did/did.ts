@@ -15,11 +15,7 @@ const unexpectedErrorHandler = codedErrorResponse({
 export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) => {
   try {
     if (!utils.isSignedWrappedV2Document(document))
-      throw new CodedError(
-        "Only v2 is supported now",
-        OpenAttestationDidIdentityProofCode.UNSUPPORTED,
-        "UNSUPPORTED"
-      );
+      throw new CodedError("Only v2 is supported now", OpenAttestationDidIdentityProofCode.UNSUPPORTED, "UNSUPPORTED");
     const merkleRoot = `0x${document.signature.merkleRoot}`;
     if (typeof issuerIndex === "undefined") throw new Error("issuerIndex undefined for V2 document");
     const issuer = getData(document).issuers[issuerIndex];
@@ -35,6 +31,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
       proof: document.proof,
       did: issuer.id,
     });
+
     return { verifier, identifier: did, status: verified ? "VALID" : "INVALID" };
   } catch (e) {
     return unexpectedErrorHandler(e);

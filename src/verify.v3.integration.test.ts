@@ -54,31 +54,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -87,6 +62,19 @@ describe("verify v3(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "data": Object {
+              "smartContractAddress": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+            "identifier": "some.io",
+            "status": "INVALID",
+            "verifier": "OpenAttestationDnsTxtIdentityProof",
+          },
+          "name": "OpenAttestationIssuerIdentityVerifier",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -139,31 +127,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -172,6 +135,19 @@ describe("verify v3(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "data": Object {
+              "smartContractAddress": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+            "identifier": "some.io",
+            "status": "INVALID",
+            "verifier": "OpenAttestationDnsTxtIdentityProof",
+          },
+          "name": "OpenAttestationIssuerIdentityVerifier",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -230,31 +206,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -263,6 +214,19 @@ describe("verify v3(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "data": Object {
+              "smartContractAddress": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+            "identifier": "some.io",
+            "status": "INVALID",
+            "verifier": "OpenAttestationDnsTxtIdentityProof",
+          },
+          "name": "OpenAttestationIssuerIdentityVerifier",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -311,31 +275,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -344,6 +283,19 @@ describe("verify v3(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "data": Object {
+              "smartContractAddress": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+            "identifier": "some.io",
+            "status": "INVALID",
+            "verifier": "OpenAttestationDnsTxtIdentityProof",
+          },
+          "name": "OpenAttestationIssuerIdentityVerifier",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -386,31 +338,6 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "status": "INVALID",
-            "value": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-          },
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -419,6 +346,19 @@ describe("verify v3(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "data": Object {
+              "smartContractAddress": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+            },
+            "identifier": "some.io",
+            "status": "INVALID",
+            "verifier": "OpenAttestationDnsTxtIdentityProof",
+          },
+          "name": "OpenAttestationIssuerIdentityVerifier",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
