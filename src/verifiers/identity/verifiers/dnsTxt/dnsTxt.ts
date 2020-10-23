@@ -7,7 +7,7 @@ import { OpenAttestationDnsTxtCode } from "../../../../types/error";
 import { CodedError } from "../../../../common/error";
 import { codedErrorResponse } from "../../utils/codedErrorResponse";
 
-const verifier = "OpenAttestationDnsTxt";
+const verifier = "OpenAttestationDnsTxtIdentityProof";
 
 const unexpectedErrorHandler = codedErrorResponse({
   verifier,
@@ -57,7 +57,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex, op
       if (typeof issuerIndex === "undefined") throw new Error("issuerIndex undefined for V2 document");
       if (!options) throw new Error("options is undefined");
       const issuer = getData(document).issuers[issuerIndex];
-      const status = resolveIssuerIdentity(
+      const status = await resolveIssuerIdentity(
         issuer,
         // we expect the test function to prevent this issue => smart contract address MUST be populated
         // eslint-disable-next-line @typescript-eslint/no-non-null-assertion

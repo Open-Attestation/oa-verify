@@ -5,7 +5,7 @@ import { VerifierResults, IssuerIdentityVerifier } from "../../builder";
 import { CodedError } from "../../../../common/error";
 import { codedErrorResponse } from "../../utils/codedErrorResponse";
 
-const verifier = "OpenAttestationDnsDid";
+const verifier = "OpenAttestationDnsDidIdentityProof";
 
 interface IdentityProof {
   type: string;
@@ -62,7 +62,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
           message: "Identity proof is not present",
         },
       };
-    const status = verifyIssuerDnsDid(issuer.identityProof);
+    const status = await verifyIssuerDnsDid(issuer.identityProof);
     return status;
   } catch (e) {
     return unexpectedErrorHandler(e);

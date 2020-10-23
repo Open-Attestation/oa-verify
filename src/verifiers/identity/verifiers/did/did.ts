@@ -5,7 +5,7 @@ import { CodedError } from "../../../../common/error";
 import { IssuerIdentityVerifier } from "../../builder";
 import { codedErrorResponse } from "../../utils/codedErrorResponse";
 
-const verifier = "OpenAttestationDidSignedDidIdentityProof";
+const verifier = "OpenAttestationDidIdentityProof";
 
 const unexpectedErrorHandler = codedErrorResponse({
   verifier,

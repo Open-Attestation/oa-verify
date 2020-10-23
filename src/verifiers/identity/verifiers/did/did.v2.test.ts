@@ -10,7 +10,7 @@ describe("verify (v2)", () => {
       Object {
         "identifier": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
         "status": "VALID",
-        "verifier": "OpenAttestationDidSignedDidIdentityProof",
+        "verifier": "OpenAttestationDidIdentityProof",
       }
     `);
   });
@@ -20,7 +20,7 @@ describe("verify (v2)", () => {
       Object {
         "identifier": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
         "status": "INVALID",
-        "verifier": "OpenAttestationDidSignedDidIdentityProof",
+        "verifier": "OpenAttestationDidIdentityProof",
       }
     `);
   });
@@ -34,7 +34,7 @@ describe("verify (v2)", () => {
           "message": "Key is not present",
         },
         "status": "ERROR",
-        "verifier": "OpenAttestationDidSignedDidIdentityProof",
+        "verifier": "OpenAttestationDidIdentityProof",
       }
     `);
   });
