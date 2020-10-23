@@ -1,5 +1,7 @@
 import { CodedError } from "../../../common/error";
-import { VerifierResults } from "../builder";
+import {
+  VerifierResults,
+} from "../../../types/core";
 
 export const codedErrorResponse = ({
   verifier,

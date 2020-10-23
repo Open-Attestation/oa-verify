@@ -1,15 +1,15 @@
 import { getData, utils } from "@govtechsg/open-attestation";
-import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../../types/error";
+import { OpenAttestationDidIdentityProofCode } from "../../../../types/error";
 import { verifySignature } from "../../../../did/verifier";
 import { CodedError } from "../../../../common/error";
-import { IssuerIdentityVerifier } from "../../builder";
 import { codedErrorResponse } from "../../utils/codedErrorResponse";
+import { IssuerIdentityVerifier, IssuerIdentityVerifierDefinition } from "../../../../types/core";
 
 const verifier = "OpenAttestationDidIdentityProof";
 
 const unexpectedErrorHandler = codedErrorResponse({
   verifier,
-  unexpectedErrorCode: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
+  unexpectedErrorCode: OpenAttestationDidIdentityProofCode.UNEXPECTED_ERROR,
 });
 
 export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) => {
@@ -17,7 +17,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
     if (!utils.isSignedWrappedV2Document(document))
       throw new CodedError(
         "Only v2 is supported now",
-        OpenAttestationDidSignedDidIdentityProofCode.UNSUPPORTED,
+        OpenAttestationDidIdentityProofCode.UNSUPPORTED,
         "UNSUPPORTED"
       );
     const merkleRoot = `0x${document.signature.merkleRoot}`;
@@ -26,7 +26,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
     if (!document.proof)
       throw new CodedError(
         "`proof` is missing from document",
-        OpenAttestationDidSignedDidIdentityProofCode.MALFORMED_DOCUMENT,
+        OpenAttestationDidIdentityProofCode.MALFORMED_DOCUMENT,
         "MALFORMED_DOCUMENT"
       );
     const { did, verified } = await verifySignature({
@@ -41,7 +41,7 @@ export const verify: IssuerIdentityVerifier = async ({ document, issuerIndex }) 
   }
 };
 
-export const OpenAttestationDidSignedDidIdentityProof = {
+export const OpenAttestationDidIdentityProof: IssuerIdentityVerifierDefinition = {
   type: "DID",
   verify,
 };

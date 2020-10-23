@@ -2,41 +2,15 @@ import { v2, v3, WrappedDocument, utils, getData } from "@govtechsg/open-attesta
 import {
   VerificationFragmentType,
   Verifier,
-  VerificationFragmentStatus,
   SkippedVerificationFragment,
-  VerificationManagerOptions,
+  IssuerIdentityVerifier,
+  IssuerIdentityVerifierDefinition,
 } from "../../types/core";
-import { Reason, OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
+import { OpenAttestationIssuerIdentityVerifierCode } from "../../types/error";
 
 const name = "OpenAttestationIssuerIdentityVerifier";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
-
-export interface VerifierResults<T = any> {
-  verifier: string; // Which verifier returned this result
-  identifier?: string; // Human readable interpretation of the issuer
-  status: VerificationFragmentStatus; // Status of this verification result
-  data?: T; // Other metadata returned by verifier
-  reason?: Reason; // Reasons for status
-}
-
-export type IssuerIdentityVerifier<
-  Document = WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>,
-  ResultData = any
-> = ({
-  document,
-  options,
-  issuerIndex,
-}: {
-  document: Document;
-  issuerIndex: Document extends WrappedDocument<v2.OpenAttestationDocument> ? number : undefined;
-  options?: VerificationManagerOptions;
-}) => Promise<VerifierResults<ResultData>>;
-
-export type IssuerIdentityVerifierDefinition = {
-  type: string;
-  verify: IssuerIdentityVerifier;
-};
 
 const skipFragment: SkippedVerificationFragment = {
   status: "SKIPPED",

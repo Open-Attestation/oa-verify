@@ -27,7 +27,7 @@ export enum OpenAttestationEthereumTokenRegistryStatusCode {
   CONTRACT_NOT_FOUND = 404,
   SERVER_ERROR = 500,
 }
-export enum OpenAttestationDnsTxtCode {
+export enum OpenAttestationDnsTxtIdentityProofCode {
   UNEXPECTED_ERROR = 0,
   INVALID_IDENTITY = 1,
   SKIPPED = 2,
@@ -42,13 +42,13 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   MISSING_REVOCATION = 2,
   UNSIGNED = 3,
 }
-export enum OpenAttestationDidSignedDidIdentityProofCode {
+export enum OpenAttestationDidIdentityProofCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
   MALFORMED_DOCUMENT = 2,
   UNSUPPORTED = 3,
 }
-export enum OpenAttestationDnsDidCode {
+export enum OpenAttestationDnsDidIdentityProofCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
   MALFORMED_IDENTITY_PROOF = 2,

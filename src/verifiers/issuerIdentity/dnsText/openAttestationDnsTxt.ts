@@ -2,7 +2,7 @@ import { getData, v2, v3, WrappedDocument, utils as oaUtils } from "@govtechsg/o
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
 import { getDefaultProvider } from "ethers";
 import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../../types/core";
-import { OpenAttestationDnsTxtCode } from "../../../types/error";
+import { OpenAttestationDnsTxtIdentityProofCode } from "../../../types/error";
 
 export interface Identity {
   status: "VALID" | "INVALID" | "SKIPPED";
@@ -58,8 +58,8 @@ export const openAttestationDnsTxt: Verifier<
       type,
       name,
       reason: {
-        code: OpenAttestationDnsTxtCode.SKIPPED,
-        codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.SKIPPED],
+        code: OpenAttestationDnsTxtIdentityProofCode.SKIPPED,
+        codeString: OpenAttestationDnsTxtIdentityProofCode[OpenAttestationDnsTxtIdentityProofCode.SKIPPED],
         message: `Document issuers doesn't have "documentStore" / "tokenRegistry" property or doesn't use ${v3.IdentityProofType.DNSTxt} type`,
       },
     });
@@ -115,8 +115,8 @@ export const openAttestationDnsTxt: Verifier<
             type,
             data: identities,
             reason: {
-              code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
-              codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
+              code: OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY,
+              codeString: OpenAttestationDnsTxtIdentityProofCode[OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY],
               message: `Document issuer identity for ${smartContractAddress} is invalid`,
             },
             status: "INVALID",
@@ -138,8 +138,8 @@ export const openAttestationDnsTxt: Verifier<
             type,
             data: identity,
             reason: {
-              code: OpenAttestationDnsTxtCode.INVALID_IDENTITY,
-              codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_IDENTITY],
+              code: OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY,
+              codeString: OpenAttestationDnsTxtIdentityProofCode[OpenAttestationDnsTxtIdentityProofCode.INVALID_IDENTITY],
               message: "Document issuer identity is invalid",
             },
             status: "INVALID",
@@ -159,8 +159,8 @@ export const openAttestationDnsTxt: Verifier<
         type,
         data: e,
         reason: {
-          code: OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
-          codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNEXPECTED_ERROR],
+          code: OpenAttestationDnsTxtIdentityProofCode.UNEXPECTED_ERROR,
+          codeString: OpenAttestationDnsTxtIdentityProofCode[OpenAttestationDnsTxtIdentityProofCode.UNEXPECTED_ERROR],
           message: e.message,
         },
         status: "ERROR",

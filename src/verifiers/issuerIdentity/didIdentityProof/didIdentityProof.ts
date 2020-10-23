@@ -1,6 +1,6 @@
 import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
-import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
+import { OpenAttestationDidIdentityProofCode } from "../../../types/error";
 import { verifySignature } from "../../../did/verifier";
 
 const name = "OpenAttestationDidSignedDidIdentityProof";
@@ -13,8 +13,8 @@ const skip: VerifierType["skip"] = async () => {
     type,
     name,
     reason: {
-      code: OpenAttestationDidSignedDidIdentityProofCode.SKIPPED,
-      codeString: OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.SKIPPED],
+      code: OpenAttestationDidIdentityProofCode.SKIPPED,
+      codeString: OpenAttestationDidIdentityProofCode[OpenAttestationDidIdentityProofCode.SKIPPED],
       message: `Document is not using DID as top level identifier`,
     },
   };
@@ -67,9 +67,9 @@ const verify: VerifierType["verify"] = async (document) => {
       data: e,
       reason: {
         message: e.message,
-        code: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
+        code: OpenAttestationDidIdentityProofCode.UNEXPECTED_ERROR,
         codeString:
-          OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
+          OpenAttestationDidIdentityProofCode[OpenAttestationDidIdentityProofCode.UNEXPECTED_ERROR],
       },
       status: "ERROR",
     };

@@ -1,7 +1,7 @@
 import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
 import { getDnsDidRecords } from "@govtechsg/dnsprove";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
-import { OpenAttestationDnsDidCode } from "../../../types/error";
+import { OpenAttestationDnsDidIdentityProofCode } from "../../../types/error";
 import { CodedError } from "../../../common/error";
 
 const name = "OpenAttestationDnsDid";
@@ -14,8 +14,8 @@ const skip: VerifierType["skip"] = async () => {
     type,
     name,
     reason: {
-      code: OpenAttestationDnsDidCode.SKIPPED,
-      codeString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.SKIPPED],
+      code: OpenAttestationDnsDidIdentityProofCode.SKIPPED,
+      codeString: OpenAttestationDnsDidIdentityProofCode[OpenAttestationDnsDidIdentityProofCode.SKIPPED],
       message: `Document was not issued using DNS-DID`,
     },
   };
@@ -52,13 +52,13 @@ const verifyIssuerDnsDid = async ({
   if (!location)
     throw new CodedError(
       "location is not present in identity proof",
-      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+      OpenAttestationDnsDidIdentityProofCode.MALFORMED_IDENTITY_PROOF,
       "MALFORMED_IDENTITY_PROOF"
     );
   if (!key)
     throw new CodedError(
       "key is not present in identity proof",
-      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+      OpenAttestationDnsDidIdentityProofCode.MALFORMED_IDENTITY_PROOF,
       "MALFORMED_IDENTITY_PROOF"
     );
   const records = await getDnsDidRecords(location);
@@ -98,8 +98,8 @@ const verify: VerifierType["verify"] = async (document) => {
       data: e,
       reason: {
         message: e.message,
-        code: e.code || OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
-        codeString: e.codeString || OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
+        code: e.code || OpenAttestationDnsDidIdentityProofCode.UNEXPECTED_ERROR,
+        codeString: e.codeString || OpenAttestationDnsDidIdentityProofCode[OpenAttestationDnsDidIdentityProofCode.UNEXPECTED_ERROR],
       },
       status: "ERROR",
     };
