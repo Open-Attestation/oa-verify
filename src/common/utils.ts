@@ -16,13 +16,3 @@ export const getIssuersDocumentStore = (
   }
   return [getData(document).proof.value];
 };
-
-export const getIssuersTokenRegistry = (
-  document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
-): string[] => {
-  if (utils.isWrappedV2Document(document)) {
-    const data = getData(document);
-    return data.issuers.map((issuer) => issuer.tokenRegistry || "");
-  }
-  return [getData(document).proof.value];
-};
