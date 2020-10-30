@@ -1,12 +1,11 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
-import { constants } from "ethers";
+import { constants, errors } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
 import { getProvider } from "../../../common/utils";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
-import { errors } from "ethers";
 
 interface Status {
   minted: boolean;
@@ -70,6 +69,7 @@ export const isTokenMintedOnRegistry = async ({
       // Token is not minted
       case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
         error.code === errors.CALL_EXCEPTION:
+        return false;
       // Contract not found
       case !error.reason &&
         error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
@@ -78,8 +78,10 @@ export const isTokenMintedOnRegistry = async ({
       // ENS not configured
       case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
         error.code === errors.UNSUPPORTED_OPERATION:
+        return false;
       // Invalid token registry address
       case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+        return false;
       // Invalid arguments
       case error.code === errors.INVALID_ARGUMENT:
         return false;
