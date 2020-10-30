@@ -3,6 +3,7 @@ import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
 import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
+import { withCodedErrorHandler } from "../../../common/errorHandler";
 
 const name = "OpenAttestationDidSignedDocumentStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -27,14 +28,20 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
-const verify: VerifierType["verify"] = async (document) => {
-  try {
+const verify: VerifierType["verify"] = withCodedErrorHandler(
+  async (document) => {
     if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only signed v2 is supported now");
     const data = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
-    const issuers = data.issuers.filter(
-      (issuer) => issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"
-    );
+    data.issuers.forEach((issuer) => {
+      if (!(issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"))
+        throw new CodedError(
+          "All issuers must use DID or DNS-DID identityProof type.",
+          OpenAttestationDidSignedDocumentStatusCode.INVALID_ISSUERS,
+          OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.INVALID_ISSUERS]
+        );
+    });
+    const { issuers } = data;
 
     // If revocation block does not exist, throw error to prevent case where revocation method is revoked
     const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
@@ -77,22 +84,15 @@ const verify: VerifierType["verify"] = async (document) => {
       },
       status: issuedOnAll && !revokedOnAny ? "VALID" : "INVALID",
     };
-  } catch (e) {
-    return {
-      name,
-      type,
-      data: e,
-      reason: {
-        message: e.message,
-        code: e.code || OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
-        codeString:
-          e.codeString ||
-          OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR],
-      },
-      status: "ERROR",
-    };
+  },
+  {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
+    unexpectedErrorString:
+      OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR],
   }
-};
+);
 
 export const OpenAttestationDidSignedDocumentStatus: VerifierType = {
   skip,

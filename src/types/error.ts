@@ -45,6 +45,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   UNEXPECTED_ERROR = 1,
   MISSING_REVOCATION = 2,
   UNSIGNED = 3,
+  INVALID_ISSUERS = 4,
 }
 export enum OpenAttestationDidSignedDidIdentityProofCode {
   SKIPPED = 0,
