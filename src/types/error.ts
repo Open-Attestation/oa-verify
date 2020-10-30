@@ -23,8 +23,10 @@ export enum OpenAttestationEthereumTokenRegistryStatusCode {
   CONTRACT_ADDRESS_INVALID = 2,
   ETHERS_UNHANDLED_ERROR = 3,
   SKIPPED = 4,
+  INVALID_ISSUERS = 5,
   INVALID_ARGUMENT = 6,
-  CONTRACT_NOT_FOUND = 404,
+  UNDEFINED_TOKEN_REGISTRY = 7,
+  INVALID_VALIDATION_METHOD = 8,
   SERVER_ERROR = 500,
 }
 export enum OpenAttestationDnsTxtCode {
