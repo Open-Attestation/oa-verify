@@ -148,11 +148,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
                   "issued": false,
-                  "reason": Object {
-                    "code": 404,
-                    "codeString": "CONTRACT_NOT_FOUND",
-                    "message": "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
-                  },
+                  "reason": "Contract is not found",
                 },
               ],
             },
@@ -160,9 +156,9 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 404,
-            "codeString": "CONTRACT_NOT_FOUND",
-            "message": "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Contract is not found",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -237,11 +233,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53991",
                   "issued": false,
-                  "reason": Object {
-                    "code": 2,
-                    "codeString": "CONTRACT_ADDRESS_INVALID",
-                    "message": "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid",
-                  },
+                  "reason": "Bad document store address checksum",
                 },
               ],
             },
@@ -249,9 +241,9 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 2,
-            "codeString": "CONTRACT_ADDRESS_INVALID",
-            "message": "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Bad document store address checksum",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -570,11 +562,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
-                  "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
-                  },
+                  "reason": "Invalid call arguments",
                 },
               ],
             },
@@ -582,9 +570,9 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Invalid call arguments",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -665,11 +653,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
-                  "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
-                  },
+                  "reason": "Invalid call arguments",
                 },
               ],
             },
@@ -677,9 +661,9 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Invalid call arguments",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -762,29 +746,14 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
           },
           Object {
@@ -855,29 +824,14 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
           },
           Object {
@@ -949,29 +903,14 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
           },
           Object {
@@ -1043,29 +982,14 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
           },
           Object {
@@ -1221,11 +1145,7 @@ describe("verify(integration)", () => {
               "revocation": Array [
                 Object {
                   "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "reason": Object {
-                    "code": 5,
-                    "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  },
+                  "reason": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "revoked": true,
                 },
               ],
@@ -1401,11 +1321,7 @@ describe("verify(integration)", () => {
               "revocation": Array [
                 Object {
                   "address": "0x718B518565B81097b185661EBba3966Ff32A0039",
-                  "reason": Object {
-                    "code": 5,
-                    "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
-                  },
+                  "reason": "Document 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
                   "revoked": true,
                 },
               ],
