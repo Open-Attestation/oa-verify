@@ -16,16 +16,17 @@ export const withCodedErrorHandler = (verify: Verifier["verify"], errorOptions: 
     // Using return await to ensure async function execute in try loop
     return await verify(document, options);
   } catch (e) {
+    const { message, code, codeString } = e;
     const { name, type, unexpectedErrorCode, unexpectedErrorString } = errorOptions;
-    if (e instanceof CodedError) {
+    if (message && code && codeString) {
       return {
         name,
         type: type as any,
         data: e,
         reason: {
-          message: e.message,
-          code: e.code,
-          codeString: e.codeString,
+          message,
+          code,
+          codeString,
         },
         status: "ERROR" as VerificationFragmentStatus,
       };
