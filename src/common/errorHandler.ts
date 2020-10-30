@@ -12,7 +12,7 @@ export const withCodedErrorHandler = (verify: Verifier["verify"], errorOptions: 
   options: Parameters<Verifier["verify"]>[1]
 ) => {
   try {
-    // Using return await to ensure async function execute in try loop
+    // Using return await to ensure async function execute in try block
     return await verify(document, options);
   } catch (e) {
     const { message, code, codeString } = e;
