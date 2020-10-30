@@ -80,6 +80,12 @@ export const isTokenMintedOnRegistry = async ({
         return { minted: false, reason: `Invalid token registry address ${tokenRegistry}` };
       case error.code === errors.INVALID_ARGUMENT:
         return { minted: false, reason: `Invalid contract arguments` };
+      case error.code === errors.SERVER_ERROR:
+        throw new CodedError(
+          "Unable to connect to the Ethereum network, please try again later",
+          OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR,
+          OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR]
+        );
       default:
         throw error;
     }
