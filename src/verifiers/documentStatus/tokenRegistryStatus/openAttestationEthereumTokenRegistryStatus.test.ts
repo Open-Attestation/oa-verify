@@ -126,7 +126,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "reason": Object {
               "code": 1,
               "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xabcd",
+              "message": "Invalid token registry address 0xabcd",
             },
             "status": "INVALID",
             "type": "DOCUMENT_STATUS",
@@ -152,28 +152,29 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          type: "DOCUMENT_STATUS",
-          data: {
-            details: [
-              {
-                address: "0x0000000000000000000000000000000000000000",
-                minted: false,
-              },
-            ],
-            mintedOnAll: false,
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Object {
+              "details": Array [
+                Object {
+                  "address": "0x0000000000000000000000000000000000000000",
+                  "minted": false,
+                },
+              ],
+              "mintedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 1,
+              "codeString": "DOCUMENT_NOT_MINTED",
+              "message": "Token registry 0x0000000000000000000000000000000000000000 is not found",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
           },
-          reason: {
-            code: 1,
-            codeString: "DOCUMENT_NOT_MINTED",
-            message:
-              "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0x0000000000000000000000000000000000000000",
-          },
-          status: "INVALID",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return an invalid fragment when document with token registry has not been minted", async () => {
       const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry, {

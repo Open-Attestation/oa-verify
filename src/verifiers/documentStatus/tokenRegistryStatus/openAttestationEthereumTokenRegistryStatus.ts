@@ -58,34 +58,28 @@ export const isTokenMintedOnRegistry = async ({
   tokenRegistry: string;
   merkleRoot: string;
   network: string;
-}) => {
+}): Promise<{ minted: boolean; reason?: string }> => {
   try {
     const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, getProvider({ network }));
     const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
-    return minted;
+    return { minted };
   } catch (error) {
     const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
     switch (true) {
-      // Token is not minted
       case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
         error.code === errors.CALL_EXCEPTION:
-        return false;
-      // Contract not found
+        return { minted: false, reason: `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}` };
       case !error.reason &&
         error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
         error.code === errors.CALL_EXCEPTION:
-        return false;
-      // ENS not configured
+        return { minted: false, reason: `Token registry ${tokenRegistry} is not found` };
       case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
         error.code === errors.UNSUPPORTED_OPERATION:
-        return false;
-      // Invalid token registry address
+        return { minted: false, reason: "ENS name is not configured" };
       case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
-        return false;
-      // Invalid arguments
+        return { minted: false, reason: `Invalid token registry address ${tokenRegistry}` };
       case error.code === errors.INVALID_ARGUMENT:
-        return false;
-      // Otherwise allow other errors to bubble up as unexpected error
+        return { minted: false, reason: `Invalid contract arguments` };
       default:
         throw error;
     }
@@ -122,14 +116,14 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
     async (document, options) => {
       const tokenRegistry = getTokenRegistry(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
-      const isMinted = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, network: options.network });
+      const { minted, reason } = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, network: options.network });
 
       const status: Status = {
-        minted: isMinted,
+        minted,
         address: tokenRegistry,
       };
 
-      return isMinted
+      return minted
         ? {
             name,
             type,
@@ -146,7 +140,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
                 OpenAttestationEthereumTokenRegistryStatusCode[
                   OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
                 ],
-              message: `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`,
+              message: reason || `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`,
             },
             status: "INVALID",
           };
