@@ -224,7 +224,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
         },
       ]);
     });
-    it.only("should return an error fragment when document has 2 issuers with token registry", async () => {
+    it("should return an error fragment when document has 2 issuers with token registry", async () => {
       const fragment = await verify(
         {
           ...documentRopstenValidWithToken,
@@ -278,8 +278,8 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": [Error: Only one issuer is allowed for tokens],
             "name": "OpenAttestationEthereumTokenRegistryStatus",
             "reason": Object {
-              "code": 0,
-              "codeString": "UNEXPECTED_ERROR",
+              "code": 5,
+              "codeString": "INVALID_ISSUERS",
               "message": "Only one issuer is allowed for tokens",
             },
             "status": "ERROR",

@@ -1,5 +1,4 @@
 import { Verifier, VerificationFragmentStatus, VerificationFragmentType } from "../types/core";
-import { CodedError } from "./error";
 
 export interface ErrorOptions {
   name: string;
