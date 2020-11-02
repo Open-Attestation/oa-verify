@@ -148,7 +148,11 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
                   "issued": false,
-                  "reason": "Contract is not found",
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Contract is not found",
+                  },
                 },
               ],
             },
@@ -233,7 +237,11 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53991",
                   "issued": false,
-                  "reason": "Bad document store address checksum",
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Bad document store address checksum",
+                  },
                 },
               ],
             },
@@ -562,7 +570,11 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
-                  "reason": "Invalid call arguments",
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Invalid call arguments",
+                  },
                 },
               ],
             },
@@ -653,7 +665,11 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
-                  "reason": "Invalid call arguments",
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Invalid call arguments",
+                  },
                 },
               ],
             },
@@ -1033,7 +1049,6 @@ describe("verify(integration)", () => {
 
   it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
     const results = await verify(documentRopstenRevokedWithToken, {
-      // TODO: Revoked should be checked by .. asserting that it was previously minted (has transfer event), but currently not issued (owned by 0x0)
       network: "ropsten",
     });
     expect(results).toMatchInlineSnapshot(`
@@ -1050,6 +1065,11 @@ describe("verify(integration)", () => {
               Object {
                 "address": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
                 "minted": false,
+                "reason": Object {
+                  "code": 1,
+                  "codeString": "DOCUMENT_NOT_MINTED",
+                  "message": "Document 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+                },
               },
             ],
             "mintedOnAll": false,
@@ -1145,7 +1165,11 @@ describe("verify(integration)", () => {
               "revocation": Array [
                 Object {
                   "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "reason": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "reason": Object {
+                    "code": 5,
+                    "codeString": "DOCUMENT_REVOKED",
+                    "message": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
                   "revoked": true,
                 },
               ],
@@ -1326,7 +1350,11 @@ describe("verify(integration)", () => {
               "revocation": Array [
                 Object {
                   "address": "0x718B518565B81097b185661EBba3966Ff32A0039",
-                  "reason": "Document 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
+                  "reason": Object {
+                    "code": 5,
+                    "codeString": "DOCUMENT_REVOKED",
+                    "message": "Document 0x92c04840038856f29890720bb57db655b9131ad2f93cf29cefcf17ea84dfb7d5 has been revoked under contract 0x718B518565B81097b185661EBba3966Ff32A0039",
+                  },
                   "revoked": true,
                 },
               ],
@@ -1687,6 +1715,11 @@ describe("verify(integration)", () => {
                 Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "issued": false,
+                  "reason": Object {
+                    "code": 7,
+                    "codeString": "WRONG_SIGNATURE",
+                    "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+                  },
                 },
               ],
             },

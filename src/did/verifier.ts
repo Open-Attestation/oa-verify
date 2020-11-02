@@ -5,11 +5,18 @@ import { getPublicKey } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
 import { CodedError } from "../common/error";
 
-export interface DidVerificationStatus {
-  verified: boolean;
+export interface ValidDidVerificationStatus {
+  verified: true;
   did: string;
-  reason?: Reason;
 }
+
+export interface InvalidDidVerificationStatus {
+  verified: false;
+  did: string;
+  reason: Reason;
+}
+
+export type DidVerificationStatus = ValidDidVerificationStatus | InvalidDidVerificationStatus;
 
 interface VerifySignature {
   did: string;
@@ -38,9 +45,22 @@ export const verifySecp256k1VerificationKey2018 = ({
     };
   }
 
+  const merkleRootSigned = utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
+  if (!merkleRootSigned) {
+    return {
+      did,
+      verified: false,
+      reason: {
+        code: OpenAttestationSignatureCode.WRONG_SIGNATURE,
+        codeString: OpenAttestationSignatureCode[OpenAttestationSignatureCode.WRONG_SIGNATURE],
+        message: `merkle root is not signed correctly by ${ethereumAddress}`,
+      },
+    };
+  }
+
   return {
     did,
-    verified: utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase(),
+    verified: true,
   };
 };
 

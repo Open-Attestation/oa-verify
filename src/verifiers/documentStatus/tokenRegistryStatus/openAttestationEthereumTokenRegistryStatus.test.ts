@@ -118,6 +118,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
                 Object {
                   "address": "0xabcd",
                   "minted": false,
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_MINTED",
+                    "message": "Invalid token registry address 0xabcd",
+                  },
                 },
               ],
               "mintedOnAll": false,
@@ -160,6 +165,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
                 Object {
                   "address": "0x0000000000000000000000000000000000000000",
                   "minted": false,
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_MINTED",
+                    "message": "Token registry 0x0000000000000000000000000000000000000000 is not found",
+                  },
                 },
               ],
               "mintedOnAll": false,
@@ -180,28 +190,34 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
       const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          type: "DOCUMENT_STATUS",
-          data: {
-            details: [
-              {
-                address: "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-                minted: false,
-              },
-            ],
-            mintedOnAll: false,
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Object {
+              "details": Array [
+                Object {
+                  "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                  "minted": false,
+                  "reason": Object {
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_MINTED",
+                    "message": "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                  },
+                },
+              ],
+              "mintedOnAll": false,
+            },
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 1,
+              "codeString": "DOCUMENT_NOT_MINTED",
+              "message": "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+            },
+            "status": "INVALID",
+            "type": "DOCUMENT_STATUS",
           },
-          reason: {
-            code: 1,
-            codeString: "DOCUMENT_NOT_MINTED",
-            message:
-              "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-          },
-          status: "INVALID",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a valid fragment when document with token registry has been minted", async () => {
       const fragment = await verify(documentRopstenValidWithToken, {
@@ -301,6 +317,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
               "details": Object {
                 "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
                 "minted": false,
+                "reason": Object {
+                  "code": 1,
+                  "codeString": "DOCUMENT_NOT_MINTED",
+                  "message": "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                },
               },
               "mintedOnAll": false,
             },

@@ -125,7 +125,11 @@ describe("verify v3(integration)", () => {
               "issuance": Object {
                 "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                 "issued": false,
-                "reason": "Document 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "reason": Object {
+                  "code": 1,
+                  "codeString": "DOCUMENT_NOT_ISSUED",
+                  "message": "Document 0x76cb959f49db0cffc05107af4a3ecef14092fd445d9acb0c2e7e27908d262142 has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                },
               },
             },
             "issuedOnAll": false,
@@ -215,7 +219,11 @@ describe("verify v3(integration)", () => {
               },
               "revocation": Object {
                 "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                "reason": "Document 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "reason": Object {
+                  "code": 5,
+                  "codeString": "DOCUMENT_REVOKED",
+                  "message": "Document 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                },
                 "revoked": true,
               },
             },
