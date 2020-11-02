@@ -92,11 +92,16 @@ describe("verify", () => {
             "status": "VALID",
           },
           Object {
-            "status": "SKIPPED",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DID identityProof type",
+            },
+            "status": "INVALID",
           },
         ],
         "name": "OpenAttestationDnsDid",
-        "status": "VALID",
+        "status": "INVALID",
         "type": "ISSUER_IDENTITY",
       }
     `);
@@ -111,7 +116,12 @@ describe("verify", () => {
             "status": "INVALID",
           },
           Object {
-            "status": "SKIPPED",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DID identityProof type",
+            },
+            "status": "INVALID",
           },
         ],
         "name": "OpenAttestationDnsDid",
