@@ -77,7 +77,12 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers.map((issuer) => {
       if (issuer.identityProof?.type === "DNS-DID") return verifyIssuerDnsDid(issuer.identityProof);
       return Promise.resolve({
-        status: "SKIPPED",
+        status: "INVALID",
+        reason: {
+          message: "Issuer is not using DID identityProof type",
+          code: OpenAttestationDnsDidCode.INVALID_ISSUERS,
+          codeString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.INVALID_ISSUERS],
+        },
       });
     });
     const verificationStatus = await Promise.all(deferredVerificationStatus);
