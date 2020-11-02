@@ -50,6 +50,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
 export enum OpenAttestationDidSignedDidIdentityProofCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
+  INVALID_ISSUERS = 2,
 }
 export enum OpenAttestationDnsDidCode {
   SKIPPED = 0,
