@@ -2,16 +2,23 @@ import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attesta
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
 import { constants, errors } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
-import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
+import { OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../../types/error";
 import { getProvider } from "../../../common/utils";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
 
-interface Status {
-  minted: boolean;
+interface ValidMintedStatus {
+  minted: true;
   address: string;
-  reason?: any;
 }
+
+interface InvalidMintedStatus {
+  minted: false;
+  address: string;
+  reason: Reason;
+}
+
+type MintedStatus = ValidMintedStatus | InvalidMintedStatus;
 
 const name = "OpenAttestationEthereumTokenRegistryStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -58,28 +65,53 @@ export const isTokenMintedOnRegistry = async ({
   tokenRegistry: string;
   merkleRoot: string;
   network: string;
-}): Promise<{ minted: boolean; reason?: string }> => {
+}): Promise<MintedStatus> => {
   try {
     const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, getProvider({ network }));
     const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
-    return { minted };
+    return minted
+      ? { minted, address: tokenRegistry }
+      : {
+          minted,
+          address: tokenRegistry,
+          reason: {
+            code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
+            codeString:
+              OpenAttestationEthereumTokenRegistryStatusCode[
+                OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
+              ],
+            message: `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`,
+          },
+        };
   } catch (error) {
     const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+    const makeStatus = (reasonMessage: string) => ({
+      minted: false,
+      address: tokenRegistry,
+      reason: {
+        message: reasonMessage,
+        code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
+        codeString:
+          OpenAttestationEthereumTokenRegistryStatusCode[
+            OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
+          ],
+      },
+    });
     switch (true) {
       case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
         error.code === errors.CALL_EXCEPTION:
-        return { minted: false, reason: `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}` };
+        return makeStatus(`Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`);
       case !error.reason &&
         error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
         error.code === errors.CALL_EXCEPTION:
-        return { minted: false, reason: `Token registry ${tokenRegistry} is not found` };
+        return makeStatus(`Token registry ${tokenRegistry} is not found`);
       case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
         error.code === errors.UNSUPPORTED_OPERATION:
-        return { minted: false, reason: "ENS name is not configured" };
+        return makeStatus("ENS name is not configured");
       case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
-        return { minted: false, reason: `Invalid token registry address ${tokenRegistry}` };
+        return makeStatus(`Invalid token registry address ${tokenRegistry}`);
       case error.code === errors.INVALID_ARGUMENT:
-        return { minted: false, reason: `Invalid contract arguments` };
+        return makeStatus(`Invalid contract arguments`);
       case error.code === errors.SERVER_ERROR:
         throw new CodedError(
           "Unable to connect to the Ethereum network, please try again later",
@@ -122,14 +154,20 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
     async (document, options) => {
       const tokenRegistry = getTokenRegistry(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
-      const { minted, reason } = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, network: options.network });
+      const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, network: options.network });
 
-      const status: Status = {
-        minted,
-        address: tokenRegistry,
-      };
+      const status: MintedStatus = mintStatus.minted
+        ? {
+            minted: true,
+            address: tokenRegistry,
+          }
+        : {
+            minted: false,
+            address: tokenRegistry,
+            reason: mintStatus.reason,
+          };
 
-      return minted
+      return mintStatus.minted
         ? {
             name,
             type,
@@ -140,14 +178,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
             name,
             type,
             data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? status : [status] },
-            reason: {
-              code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
-              codeString:
-                OpenAttestationEthereumTokenRegistryStatusCode[
-                  OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
-                ],
-              message: reason || `Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`,
-            },
+            reason: mintStatus.reason,
             status: "INVALID",
           };
     },

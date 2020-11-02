@@ -107,7 +107,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                   Object {
                     "address": "0xabcd",
                     "issued": false,
-                    "reason": "Invalid document store address",
+                    "reason": Object {
+                      "code": 1,
+                      "codeString": "DOCUMENT_NOT_ISSUED",
+                      "message": "Invalid document store address",
+                    },
                   },
                 ],
               },
@@ -152,7 +156,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                   Object {
                     "address": "0x0000000000000000000000000000000000000000",
                     "issued": false,
-                    "reason": "Contract is not found",
+                    "reason": Object {
+                      "code": 1,
+                      "codeString": "DOCUMENT_NOT_ISSUED",
+                      "message": "Contract is not found",
+                    },
                   },
                 ],
               },
@@ -183,7 +191,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                   Object {
                     "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                     "issued": false,
-                    "reason": "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    "reason": Object {
+                      "code": 1,
+                      "codeString": "DOCUMENT_NOT_ISSUED",
+                      "message": "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    },
                   },
                 ],
               },
@@ -219,7 +231,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                 "revocation": Array [
                   Object {
                     "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                    "reason": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    "reason": Object {
+                      "code": 5,
+                      "codeString": "DOCUMENT_REVOKED",
+                      "message": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    },
                     "revoked": true,
                   },
                 ],
@@ -257,7 +273,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                 "revocation": Array [
                   Object {
                     "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                    "reason": "Document 0xa874e4c79b27ddd3701984aaff9bc8bd30248f3214401d53ff238286900204a6 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    "reason": Object {
+                      "code": 5,
+                      "codeString": "DOCUMENT_REVOKED",
+                      "message": "Document 0xa874e4c79b27ddd3701984aaff9bc8bd30248f3214401d53ff238286900204a6 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    },
                     "revoked": true,
                   },
                 ],
@@ -356,7 +376,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
                 },
                 "revocation": Object {
                   "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "reason": "Document 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "reason": Object {
+                    "code": 5,
+                    "codeString": "DOCUMENT_REVOKED",
+                    "message": "Document 0xba106f273697b46862f5842fc805902fa65d1f41d50953e0aeb815e43e989fc1 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
                   "revoked": true,
                 },
               },

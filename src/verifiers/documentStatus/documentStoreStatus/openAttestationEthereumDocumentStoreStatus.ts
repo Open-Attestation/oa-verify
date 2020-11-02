@@ -3,36 +3,36 @@ import { errors } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
 import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../../types/core";
-import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../../types/error";
+import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
 import { getProvider } from "../../../common/utils";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 
-interface PassingIssuanceStatus {
+interface ValidIssuanceStatus {
   issued: true;
   address: string;
 }
 
-interface FailingIssuanceStatus {
+interface InvalidIssuanceStatus {
   issued: false;
   address: string;
-  reason: string;
+  reason: Reason;
 }
 
-type IssuanceStatus = PassingIssuanceStatus | FailingIssuanceStatus;
+type IssuanceStatus = ValidIssuanceStatus | InvalidIssuanceStatus;
 
-interface PassingRevocationStatus {
+interface ValidRevocationStatus {
   revoked: false;
   address: string;
 }
 
-interface FailingRevocationStatus {
+interface InvalidRevocationStatus {
   revoked: true;
   address: string;
-  reason: string;
+  reason: Reason;
 }
 
-type RevocationStatus = PassingRevocationStatus | FailingRevocationStatus;
+type RevocationStatus = ValidRevocationStatus | InvalidRevocationStatus;
 
 export interface DocumentStoreStatusFragment {
   issuedOnAll: boolean;
@@ -128,12 +128,30 @@ export const isIssuedOnDocumentStore = async ({
       : {
           issued: false,
           address: documentStore,
-          reason: `Document ${merkleRoot} has not been issued under contract ${documentStore}`,
+          reason: {
+            message: `Document ${merkleRoot} has not been issued under contract ${documentStore}`,
+            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
+            codeString:
+              OpenAttestationEthereumDocumentStoreStatusCode[
+                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
+              ],
+          },
         };
   } catch (error) {
     // If error can be decoded and it's because of document is not issued, we return false
     // Else allow error to continue to bubble up
-    return { issued: false, address: documentStore, reason: decodeError(error) };
+    return {
+      issued: false,
+      address: documentStore,
+      reason: {
+        message: decodeError(error),
+        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
+        codeString:
+          OpenAttestationEthereumDocumentStoreStatusCode[
+            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
+          ],
+      },
+    };
   }
 };
 
@@ -178,7 +196,14 @@ export const isRevokedOnDocumentStore = async ({
       ? {
           revoked: true,
           address: documentStore,
-          reason: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
+          reason: {
+            message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
+            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+            codeString:
+              OpenAttestationEthereumDocumentStoreStatusCode[
+                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+              ],
+          },
         }
       : {
           revoked: false,
@@ -187,7 +212,18 @@ export const isRevokedOnDocumentStore = async ({
   } catch (error) {
     // If error can be decoded and it's because of document is not issued, we return false
     // Else allow error to continue to bubble up
-    return { revoked: true, address: documentStore, reason: decodeError(error) };
+    return {
+      revoked: true,
+      address: documentStore,
+      reason: {
+        message: decodeError(error),
+        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+        codeString:
+          OpenAttestationEthereumDocumentStoreStatusCode[
+            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+          ],
+      },
+    };
   }
 };
 
@@ -232,7 +268,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
           isIssuedOnDocumentStore({ documentStore, merkleRoot, network: options.network })
         )
       );
-      const notIssued = issuanceStatuses.find((status): status is FailingIssuanceStatus => !status.issued);
+      const notIssued = issuanceStatuses.find((status): status is InvalidIssuanceStatus => !status.issued);
       const issuedOnAll = !notIssued;
       if (notIssued) {
         return {
@@ -244,14 +280,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
               ? { issuance: issuanceStatuses[0] }
               : { issuance: issuanceStatuses },
           },
-          reason: {
-            message: notIssued.reason,
-            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
-            codeString:
-              OpenAttestationEthereumDocumentStoreStatusCode[
-                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
-              ],
-          },
+          reason: notIssued.reason,
           status: "INVALID",
         };
       }
@@ -267,19 +296,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
           })
         )
       );
-      const revoked = revocationStatuses.find((status): status is FailingRevocationStatus => status.revoked);
-      const revokeReasonFragment = revoked
-        ? {
-            reason: {
-              message: revoked.reason,
-              code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-              codeString:
-                OpenAttestationEthereumDocumentStoreStatusCode[
-                  OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-                ],
-            },
-          }
-        : {};
+      const revoked = revocationStatuses.find((status): status is InvalidRevocationStatus => status.revoked);
 
       return {
         name,
@@ -291,7 +308,9 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
             ? { issuance: issuanceStatuses[0], revocation: revocationStatuses[0] }
             : { issuance: issuanceStatuses, revocation: revocationStatuses },
         },
-        ...revokeReasonFragment,
+        ...(revoked && {
+          reason: revoked.reason,
+        }),
         status: revoked ? "INVALID" : "VALID",
       };
     },

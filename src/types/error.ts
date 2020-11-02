@@ -68,6 +68,7 @@ export enum OpenAttestationSignatureCode {
   KEY_NOT_IN_DID = 4,
   CORRESPONDING_PROOF_MISSING = 5,
   UNSUPPORTED_KEY_TYPE = 6,
+  WRONG_SIGNATURE = 7,
 }
 
 export interface EthersError extends Error {
