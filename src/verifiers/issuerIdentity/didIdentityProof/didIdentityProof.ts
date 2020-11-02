@@ -2,6 +2,7 @@ import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attesta
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
 import { verifySignature } from "../../../did/verifier";
+import { withCodedErrorHandler } from "../../../common/errorHandler";
 
 const name = "OpenAttestationDidSignedDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -31,8 +32,8 @@ interface SignatureVerificationFragment {
   did?: string;
 }
 
-const verify: VerifierType["verify"] = async (document) => {
-  try {
+const verify: VerifierType["verify"] = withCodedErrorHandler(
+  async (document) => {
     if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only v2 is supported now");
     const data = getData(document);
     const merkleRoot = `0x${document.signature.merkleRoot}`;
@@ -60,21 +61,15 @@ const verify: VerifierType["verify"] = async (document) => {
       data: signatureVerifications,
       status: signedOnAll ? "VALID" : "INVALID",
     };
-  } catch (e) {
-    return {
-      name,
-      type,
-      data: e,
-      reason: {
-        message: e.message,
-        code: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
-        codeString:
-          OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
-      },
-      status: "ERROR",
-    };
+  },
+  {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
+    unexpectedErrorString:
+      OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
   }
-};
+);
 
 export const OpenAttestationDidSignedDidIdentityProof: VerifierType = {
   skip,
