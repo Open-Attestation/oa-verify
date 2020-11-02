@@ -49,7 +49,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   UNSIGNED = 3,
   INVALID_ISSUERS = 4,
 }
-export enum OpenAttestationDidSignedDidIdentityProofCode {
+export enum OpenAttestationDidCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
   INVALID_ISSUERS = 2,

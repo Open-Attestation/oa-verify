@@ -58,12 +58,12 @@ const resolveIssuerIdentity = async (
       };
 };
 
-const name = "OpenAttestationDnsTxt";
+const name = "OpenAttestationDnsTxtIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 const isWrappedV2Document = (document: any): document is WrappedDocument<v2.OpenAttestationDocument> => {
   return document.data && document.data.issuers;
 };
-export const openAttestationDnsTxt: Verifier<
+export const openAttestationDnsTxtIdentityProof: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
   VerificationManagerOptions,
   Identity | Identity[]

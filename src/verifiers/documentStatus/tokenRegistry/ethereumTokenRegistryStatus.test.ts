@@ -1,4 +1,4 @@
-import { openAttestationEthereumTokenRegistryStatus } from "./openAttestationEthereumTokenRegistryStatus";
+import { openAttestationEthereumTokenRegistryStatus } from "./ethereumTokenRegistryStatus";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenValidWithTokenRegistry as v3documentRopstenValidWithTokenRegistry } from "../../../../test/fixtures/v3/documentRopstenValid";

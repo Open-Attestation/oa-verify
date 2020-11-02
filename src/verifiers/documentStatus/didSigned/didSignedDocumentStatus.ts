@@ -101,7 +101,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
   }
 );
 
-export const OpenAttestationDidSignedDocumentStatus: VerifierType = {
+export const openAttestationDidSignedDocumentStatus: VerifierType = {
   skip,
   test,
   verify,

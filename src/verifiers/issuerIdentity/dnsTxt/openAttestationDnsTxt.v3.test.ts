@@ -1,9 +1,9 @@
-import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
+import { openAttestationDnsTxtIdentityProof } from "./openAttestationDnsTxt";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v3/documentRopstenValid";
 
 describe("OpenAttestationDnsTxt v3 document", () => {
   it("should return a valid fragment when document has valid identity", async () => {
-    const fragment = await openAttestationDnsTxt.verify(
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(
       {
         ...documentRopstenValidWithDocumentStore,
         data: {
@@ -24,7 +24,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "location": "example.openattestation.com",
-        "name": "OpenAttestationDnsTxt",
+        "name": "OpenAttestationDnsTxtIdentityProof",
         "status": "VALID",
         "type": "ISSUER_IDENTITY",
         "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
@@ -32,13 +32,13 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     `);
   });
   it("should return an invalid fragment when document identity does not match", async () => {
-    const fragment = await openAttestationDnsTxt.verify(documentRopstenValidWithDocumentStore, {
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(documentRopstenValidWithDocumentStore, {
       network: "ropsten",
     });
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "location": "some.io",
-        "name": "OpenAttestationDnsTxt",
+        "name": "OpenAttestationDnsTxtIdentityProof",
         "reason": Object {
           "code": 4,
           "codeString": "MATCHING_RECORD_NOT_FOUND",
@@ -66,20 +66,22 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
-    const fragment = await openAttestationDnsTxt.verify(document, {
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, {
       network: "ropsten",
     });
-    expect(fragment).toStrictEqual({
-      type: "ISSUER_IDENTITY",
-      name: "OpenAttestationDnsTxt",
-      data: new Error("Identity type not supported"),
-      reason: {
-        code: 0,
-        codeString: "UNEXPECTED_ERROR",
-        message: "Identity type not supported",
-      },
-      status: "ERROR",
-    });
+    expect(fragment).toMatchInlineSnapshot(`
+      Object {
+        "data": [Error: Identity type not supported],
+        "name": "OpenAttestationDnsTxtIdentityProof",
+        "reason": Object {
+          "code": 0,
+          "codeString": "UNEXPECTED_ERROR",
+          "message": "Identity type not supported",
+        },
+        "status": "ERROR",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
   });
   it("should return an error fragment when document has no identity location", async () => {
     const document = {
@@ -97,26 +99,28 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
-    const fragment = await openAttestationDnsTxt.verify(document, {
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, {
       network: "ropsten",
     });
-    expect(fragment).toStrictEqual({
-      type: "ISSUER_IDENTITY",
-      name: "OpenAttestationDnsTxt",
-      data: new Error("Location is missing"),
-      reason: {
-        code: 0,
-        codeString: "UNEXPECTED_ERROR",
-        message: "Location is missing",
-      },
-      status: "ERROR",
-    });
+    expect(fragment).toMatchInlineSnapshot(`
+      Object {
+        "data": [Error: Location is missing],
+        "name": "OpenAttestationDnsTxtIdentityProof",
+        "reason": Object {
+          "code": 0,
+          "codeString": "UNEXPECTED_ERROR",
+          "message": "Location is missing",
+        },
+        "status": "ERROR",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
   });
 
   describe("test", () => {
     it("should return true if identityProof type is DNS-TXT", () => {
       expect(
-        openAttestationDnsTxt.test(documentRopstenValidWithDocumentStore, {
+        openAttestationDnsTxtIdentityProof.test(documentRopstenValidWithDocumentStore, {
           network: "ropsten",
         })
       ).toStrictEqual(true);
@@ -136,7 +140,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
         },
       };
       expect(
-        openAttestationDnsTxt.test(document, {
+        openAttestationDnsTxtIdentityProof.test(document, {
           network: "ropsten",
         })
       ).toStrictEqual(false);

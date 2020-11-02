@@ -1,4 +1,4 @@
-import { OpenAttestationDidSignedDocumentStatus } from "./didSignedDocumentStatus";
+import { openAttestationDidSignedDocumentStatus } from "./didSignedDocumentStatus";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
@@ -31,7 +31,7 @@ const options = {
 
 describe("skip", () => {
   it("should return skip message", async () => {
-    const message = await OpenAttestationDidSignedDocumentStatus.skip(undefined as any, undefined as any);
+    const message = await openAttestationDidSignedDocumentStatus.skip(undefined as any, undefined as any);
     expect(message).toMatchInlineSnapshot(`
       Object {
         "name": "OpenAttestationDidSignedDocumentStatus",
@@ -50,16 +50,16 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not signed by DID", () => {
-      expect(OpenAttestationDidSignedDocumentStatus.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
-      expect(OpenAttestationDidSignedDocumentStatus.test(documentRopstenNotIssuedWithTokenRegistry, options)).toBe(
+      expect(openAttestationDidSignedDocumentStatus.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDidSignedDocumentStatus.test(documentRopstenNotIssuedWithTokenRegistry, options)).toBe(
         false
       );
     });
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
-      expect(OpenAttestationDidSignedDocumentStatus.test(documentDidSigned, options)).toBe(true);
+      expect(openAttestationDidSignedDocumentStatus.test(documentDidSigned, options)).toBe(true);
     });
     it("should return true for documents where any issuer is using the `DNS-DID` identity proof", () => {
-      expect(OpenAttestationDidSignedDocumentStatus.test(documentDnsDidSigned, options)).toBe(true);
+      expect(openAttestationDidSignedDocumentStatus.test(documentDnsDidSigned, options)).toBe(true);
     });
   });
 });
@@ -71,7 +71,7 @@ describe("verify", () => {
   describe("v2", () => {
     it("should pass for documents using `DID` and is correctly signed", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -94,7 +94,7 @@ describe("verify", () => {
     });
     it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDnsDidSigned, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDnsDidSigned, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -117,7 +117,7 @@ describe("verify", () => {
     });
     it("should fail when revocation block is missing", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidObfuscatedRevocation, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidObfuscatedRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": [Error: revocation block not found for an issuer],
@@ -134,7 +134,7 @@ describe("verify", () => {
     });
     it("should fail when revocation is not set to NONE (for now)", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -157,7 +157,7 @@ describe("verify", () => {
     });
     it("should fail when proof is missing", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidMissingProof, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidMissingProof, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": [Error: Only signed v2 is supported now],
@@ -174,7 +174,7 @@ describe("verify", () => {
     });
     it("should fail when did resolver fails for some reasons", async () => {
       mockGetPublicKey.mockRejectedValue(new Error("Error from DID resolver"));
-      const res = await OpenAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": [Error: Error from DID resolver],
@@ -191,7 +191,7 @@ describe("verify", () => {
     });
     it("should fail when corresponding proof to key is not found in proof", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await OpenAttestationDidSignedDocumentStatus.verify({ ...documentDidSigned, proof: [] }, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify({ ...documentDidSigned, proof: [] }, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": [Error: Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller],

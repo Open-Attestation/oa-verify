@@ -1,4 +1,4 @@
-import { openAttestationEthereumDocumentStoreStatus } from "./openAttestationEthereumDocumentStoreStatus";
+import { openAttestationEthereumDocumentStoreStatus } from "./ethereumDocumentStoreStatus";
 import { documentRopstenRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
 import { documentRopstenRevokedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
