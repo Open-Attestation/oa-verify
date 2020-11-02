@@ -2,6 +2,7 @@ import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attesta
 import { getDnsDidRecords } from "@govtechsg/dnsprove";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
+import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
 
 const name = "OpenAttestationDnsDid";
@@ -69,8 +70,8 @@ const verifyIssuerDnsDid = async ({
   };
 };
 
-const verify: VerifierType["verify"] = async (document) => {
-  try {
+const verify: VerifierType["verify"] = withCodedErrorHandler(
+  async (document) => {
     if (!utils.isSignedWrappedV2Document(document)) throw new Error("Only v2 is supported now");
     const documentData = getData(document);
     const deferredVerificationStatus: Promise<VerificationFragment>[] = documentData.issuers.map((issuer) => {
@@ -91,20 +92,14 @@ const verify: VerifierType["verify"] = async (document) => {
       data: verificationStatus,
       status: overallStatus,
     };
-  } catch (e) {
-    return {
-      name,
-      type,
-      data: e,
-      reason: {
-        message: e.message,
-        code: e.code || OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
-        codeString: e.codeString || OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
-      },
-      status: "ERROR",
-    };
+  },
+  {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
+    unexpectedErrorString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
   }
-};
+);
 
 export const OpenAttestationDnsDid: VerifierType = {
   skip,
