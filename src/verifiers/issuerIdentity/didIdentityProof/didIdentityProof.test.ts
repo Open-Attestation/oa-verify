@@ -92,11 +92,16 @@ describe("verify", () => {
               "status": "VALID",
             },
             Object {
-              "status": "SKIPPED",
+              "reason": Object {
+                "code": 2,
+                "codeString": "INVALID_ISSUERS",
+                "message": "Issuer is not using DID identityProof type",
+              },
+              "status": "INVALID",
             },
           ],
           "name": "OpenAttestationDidSignedDidIdentityProof",
-          "status": "VALID",
+          "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
       `);

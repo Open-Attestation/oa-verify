@@ -48,7 +48,15 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
         });
         return { did, status: verified ? "VALID" : "INVALID" };
       }
-      return { status: "SKIPPED" };
+      return {
+        status: "INVALID",
+        reason: {
+          message: "Issuer is not using DID identityProof type",
+          code: OpenAttestationDidSignedDidIdentityProofCode.INVALID_ISSUERS,
+          codeString:
+            OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.INVALID_ISSUERS],
+        },
+      };
     });
     const signatureVerifications = await Promise.all(signatureVerificationDeferred);
     const signedOnAll =
