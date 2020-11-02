@@ -36,18 +36,28 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     const fragment = await openAttestationDnsTxt.verify(documentRopstenValidWithDocumentStore, {
       network: "ropsten",
     });
-    expect(fragment).toStrictEqual({
-      type: "ISSUER_IDENTITY",
-      name: "OpenAttestationDnsTxt",
-      data: { location: "some.io", value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3", status: "INVALID" },
-
-      reason: {
-        code: 1,
-        codeString: "INVALID_IDENTITY",
-        message: "Document issuer identity is invalid",
-      },
-      status: "INVALID",
-    });
+    expect(fragment).toMatchInlineSnapshot(`
+      Object {
+        "data": Object {
+          "location": "some.io",
+          "reason": Object {
+            "code": 4,
+            "codeString": "MATCHING_RECORD_NOT_FOUND",
+            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+          },
+          "status": "INVALID",
+          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+        },
+        "name": "OpenAttestationDnsTxt",
+        "reason": Object {
+          "code": 4,
+          "codeString": "MATCHING_RECORD_NOT_FOUND",
+          "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+        },
+        "status": "INVALID",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
   });
   it("should return an error fragment when document has no identity type", async () => {
     const document = {

@@ -159,25 +159,32 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(document, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "INVALID",
-              value: "0xabcd",
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "reason": Object {
+                  "code": 4,
+                  "codeString": "MATCHING_RECORD_NOT_FOUND",
+                  "message": "Matching DNS record not found for 0xabcd",
+                },
+                "status": "INVALID",
+                "value": "0xabcd",
+              },
+            ],
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 4,
+              "codeString": "MATCHING_RECORD_NOT_FOUND",
+              "message": "Matching DNS record not found for 0xabcd",
             },
-          ],
-          reason: {
-            code: 1,
-            codeString: "INVALID_IDENTITY",
-            message: "Document issuer identity for 0xabcd is invalid",
+            "status": "INVALID",
+            "type": "ISSUER_IDENTITY",
           },
-          status: "INVALID",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return an error fragment when document has no identity location", async () => {
       const document = {
@@ -351,7 +358,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
   });
 
   describe("with multiple issuers", () => {
-    it("should return a valid fragment when document has one issuer with document store/valid identity and a second issuer without identity", async () => {
+    it("should return an invalid fragment when document has one issuer with document store/valid identity and a second issuer without identity", async () => {
       const document = {
         ...documentRopstenValidWithToken,
         data: {
@@ -375,23 +382,35 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              status: "SKIPPED",
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "reason": Object {
+                  "code": 3,
+                  "codeString": "INVALID_ISSUERS",
+                  "message": "Issuer is not using DNS-TXT identityProof type",
+                },
+                "status": "INVALID",
+              },
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+            ],
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DNS-TXT identityProof type",
             },
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          status: "VALID",
-        },
-      ]);
+            "status": "INVALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
     it("should return an invalid fragment when document has one issuer with document store/valid identity and a second issuer with invalid identity", async () => {
       const document = {
@@ -422,32 +441,39 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "INVALID",
-              value: "0xabcd",
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "reason": Object {
+                  "code": 4,
+                  "codeString": "MATCHING_RECORD_NOT_FOUND",
+                  "message": "Matching DNS record not found for 0xabcd",
+                },
+                "status": "INVALID",
+                "value": "0xabcd",
+              },
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+            ],
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 4,
+              "codeString": "MATCHING_RECORD_NOT_FOUND",
+              "message": "Matching DNS record not found for 0xabcd",
             },
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          reason: {
-            code: 1,
-            codeString: "INVALID_IDENTITY",
-            message: "Document issuer identity for 0xabcd is invalid",
+            "status": "INVALID",
+            "type": "ISSUER_IDENTITY",
           },
-          status: "INVALID",
-        },
-      ]);
+        ]
+      `);
     });
-    it("should return a valid fragment when document has one issuer with token registry/valid identity and a second issuer without identity", async () => {
+    it("should return an invalid fragment when document has one issuer with token registry/valid identity and a second issuer without identity", async () => {
       const document = {
         ...documentRopstenValidWithToken,
         data: {
@@ -465,23 +491,35 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(document, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+              Object {
+                "reason": Object {
+                  "code": 3,
+                  "codeString": "INVALID_ISSUERS",
+                  "message": "Issuer is not using DNS-TXT identityProof type",
+                },
+                "status": "INVALID",
+              },
+            ],
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DNS-TXT identityProof type",
             },
-            {
-              status: "SKIPPED",
-            },
-          ],
-          status: "VALID",
-        },
-      ]);
+            "status": "INVALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
     it("should return skipped fragment if no issuer has a tokenRegistry or documentStore", async () => {
       const document = {

@@ -35,6 +35,8 @@ export enum OpenAttestationDnsTxtCode {
   UNEXPECTED_ERROR = 0,
   INVALID_IDENTITY = 1,
   SKIPPED = 2,
+  INVALID_ISSUERS = 3,
+  MATCHING_RECORD_NOT_FOUND = 4,
 }
 export enum OpenAttestationHashCode {
   DOCUMENT_TAMPERED = 0,
