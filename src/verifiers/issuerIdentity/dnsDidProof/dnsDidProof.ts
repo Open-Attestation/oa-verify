@@ -79,7 +79,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
       return Promise.resolve({
         status: "INVALID",
         reason: {
-          message: "Issuer is not using DID identityProof type",
+          message: "Issuer is not using DID-DNS identityProof type",
           code: OpenAttestationDnsDidCode.INVALID_ISSUERS,
           codeString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.INVALID_ISSUERS],
         },

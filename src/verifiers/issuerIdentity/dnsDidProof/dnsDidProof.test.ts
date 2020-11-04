@@ -95,7 +95,7 @@ describe("verify", () => {
             "reason": Object {
               "code": 3,
               "codeString": "INVALID_ISSUERS",
-              "message": "Issuer is not using DID identityProof type",
+              "message": "Issuer is not using DID-DNS identityProof type",
             },
             "status": "INVALID",
           },
@@ -119,7 +119,7 @@ describe("verify", () => {
             "reason": Object {
               "code": 3,
               "codeString": "INVALID_ISSUERS",
-              "message": "Issuer is not using DID identityProof type",
+              "message": "Issuer is not using DID-DNS identityProof type",
             },
             "status": "INVALID",
           },
