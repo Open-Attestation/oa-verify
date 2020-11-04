@@ -1186,14 +1186,25 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": [Error: Request failed with status code 429],
+          "data": Array [
+            Object {
+              "location": "tradetrust.io",
+              "reason": Object {
+                "code": 4,
+                "codeString": "MATCHING_RECORD_NOT_FOUND",
+                "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+              },
+              "status": "INVALID",
+              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+          ],
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
-            "code": 0,
-            "codeString": "UNEXPECTED_ERROR",
-            "message": "Request failed with status code 429",
+            "code": 4,
+            "codeString": "MATCHING_RECORD_NOT_FOUND",
+            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
           },
-          "status": "ERROR",
+          "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         },
         Object {

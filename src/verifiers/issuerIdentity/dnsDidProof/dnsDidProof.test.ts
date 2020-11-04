@@ -49,14 +49,15 @@ describe("verify", () => {
     const fragment = await OpenAttestationDnsDid.verify(documentDnsDidSigned, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
-        "data": [Error: Request failed with status code 429],
+        "data": Array [
+          Object {
+            "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+            "location": "example.tradetrust.io",
+            "status": "VALID",
+          },
+        ],
         "name": "OpenAttestationDnsDid",
-        "reason": Object {
-          "code": 1,
-          "codeString": "UNEXPECTED_ERROR",
-          "message": "Request failed with status code 429",
-        },
-        "status": "ERROR",
+        "status": "VALID",
         "type": "ISSUER_IDENTITY",
       }
     `);
