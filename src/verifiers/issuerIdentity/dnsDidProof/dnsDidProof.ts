@@ -88,7 +88,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     const verificationStatus = await Promise.all(deferredVerificationStatus);
     const overallStatus =
       verificationStatus.some((status) => status.status === "VALID") &&
-      verificationStatus.every((status) => status.status === "VALID" || status.status === "SKIPPED")
+      verificationStatus.every((status) => status.status === "VALID")
         ? "VALID"
         : "INVALID";
     return {
