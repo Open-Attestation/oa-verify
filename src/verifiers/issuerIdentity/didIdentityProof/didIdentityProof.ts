@@ -61,7 +61,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     const signatureVerifications = await Promise.all(signatureVerificationDeferred);
     const signedOnAll =
       signatureVerifications.some((i) => i.status === "VALID") &&
-      signatureVerifications.every((i) => i.status === "VALID" || i.status === "SKIPPED");
+      signatureVerifications.every((i) => i.status === "VALID");
 
     return {
       name,
