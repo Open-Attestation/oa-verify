@@ -112,7 +112,7 @@ export const openAttestationDnsTxt: Verifier<
                 options
               );
             }
-            const skippedResponse: Identity = {
+            const invalidResponse: Identity = {
               status: "INVALID",
               reason: {
                 message: "Issuer is not using DNS-TXT identityProof type",
@@ -120,12 +120,12 @@ export const openAttestationDnsTxt: Verifier<
                 codeString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_ISSUERS],
               },
             };
-            return skippedResponse; // eslint is happy, so am I (https://github.com/bradzacher/eslint-plugin-typescript/blob/master/docs/rules/no-object-literal-type-assertion.md)
+            return invalidResponse; // eslint is happy, so am I (https://github.com/bradzacher/eslint-plugin-typescript/blob/master/docs/rules/no-object-literal-type-assertion.md)
           })
         );
 
         const invalidIdentity = identities.find(
-          (identity): identity is InvalidIdentity => identity.status === "INVALID"
+          (identity): identity is InvalidIdentity => identity.status !== "VALID"
         );
         if (invalidIdentity) {
           return {
