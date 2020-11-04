@@ -14,7 +14,6 @@ interface ValidMintedStatus {
 
 interface InvalidMintedStatus {
   minted: false;
-  address: string;
   reason: Reason;
 }
 
@@ -57,6 +56,34 @@ export const getTokenRegistry = (
   }
 };
 
+const decodeError = (error: any) => {
+  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  switch (true) {
+    case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
+      error.code === errors.CALL_EXCEPTION:
+      return `Document has not been issued under token registry`;
+    case !error.reason &&
+      error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
+      error.code === errors.CALL_EXCEPTION:
+      return `Token registry is not found`;
+    case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
+      error.code === errors.UNSUPPORTED_OPERATION:
+      return "ENS name is not configured";
+    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+      return `Invalid token registry address`;
+    case error.code === errors.INVALID_ARGUMENT:
+      return `Invalid contract arguments`;
+    case error.code === errors.SERVER_ERROR:
+      throw new CodedError(
+        "Unable to connect to the Ethereum network, please try again later",
+        OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR,
+        OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR]
+      );
+    default:
+      throw error;
+  }
+};
+
 export const isTokenMintedOnRegistry = async ({
   tokenRegistry,
   merkleRoot,
@@ -73,7 +100,6 @@ export const isTokenMintedOnRegistry = async ({
       ? { minted, address: tokenRegistry }
       : {
           minted,
-          address: tokenRegistry,
           reason: {
             code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
             codeString:
@@ -84,43 +110,17 @@ export const isTokenMintedOnRegistry = async ({
           },
         };
   } catch (error) {
-    const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
-    const makeStatus = (reasonMessage: string) => ({
+    return {
       minted: false,
-      address: tokenRegistry,
       reason: {
-        message: reasonMessage,
+        message: decodeError(error),
         code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
         codeString:
           OpenAttestationEthereumTokenRegistryStatusCode[
             OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED
           ],
       },
-    });
-    switch (true) {
-      case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
-        error.code === errors.CALL_EXCEPTION:
-        return makeStatus(`Document ${merkleRoot} has not been issued under contract ${tokenRegistry}`);
-      case !error.reason &&
-        error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
-        error.code === errors.CALL_EXCEPTION:
-        return makeStatus(`Token registry ${tokenRegistry} is not found`);
-      case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-        error.code === errors.UNSUPPORTED_OPERATION:
-        return makeStatus("ENS name is not configured");
-      case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
-        return makeStatus(`Invalid token registry address ${tokenRegistry}`);
-      case error.code === errors.INVALID_ARGUMENT:
-        return makeStatus(`Invalid contract arguments`);
-      case error.code === errors.SERVER_ERROR:
-        throw new CodedError(
-          "Unable to connect to the Ethereum network, please try again later",
-          OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR,
-          OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR]
-        );
-      default:
-        throw error;
-    }
+    };
   }
 };
 
@@ -163,7 +163,6 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
           }
         : {
             minted: false,
-            address: tokenRegistry,
             reason: mintStatus.reason,
           };
 

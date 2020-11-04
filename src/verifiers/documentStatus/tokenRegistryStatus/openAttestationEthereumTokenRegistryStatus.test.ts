@@ -116,12 +116,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
-                  "address": "0xabcd",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
                     "codeString": "DOCUMENT_NOT_MINTED",
-                    "message": "Invalid token registry address 0xabcd",
+                    "message": "Invalid token registry address",
                   },
                 },
               ],
@@ -131,7 +130,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "reason": Object {
               "code": 1,
               "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Invalid token registry address 0xabcd",
+              "message": "Invalid token registry address",
             },
             "status": "INVALID",
             "type": "DOCUMENT_STATUS",
@@ -163,12 +162,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
-                  "address": "0x0000000000000000000000000000000000000000",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
                     "codeString": "DOCUMENT_NOT_MINTED",
-                    "message": "Token registry 0x0000000000000000000000000000000000000000 is not found",
+                    "message": "Token registry is not found",
                   },
                 },
               ],
@@ -178,7 +176,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "reason": Object {
               "code": 1,
               "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Token registry 0x0000000000000000000000000000000000000000 is not found",
+              "message": "Token registry is not found",
             },
             "status": "INVALID",
             "type": "DOCUMENT_STATUS",
@@ -196,12 +194,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
-                  "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
                     "codeString": "DOCUMENT_NOT_MINTED",
-                    "message": "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                    "message": "Document has not been issued under token registry",
                   },
                 },
               ],
@@ -211,7 +208,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "reason": Object {
               "code": 1,
               "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Document 0x693c86fbb8f75ac56f865f5b3100e545875f2154b3749bdcf448c874a1d67ef3 has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+              "message": "Document has not been issued under token registry",
             },
             "status": "INVALID",
             "type": "DOCUMENT_STATUS",
@@ -315,12 +312,11 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           Object {
             "data": Object {
               "details": Object {
-                "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_MINTED",
-                  "message": "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                  "message": "Document has not been issued under token registry",
                 },
               },
               "mintedOnAll": false,
@@ -329,7 +325,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "reason": Object {
               "code": 1,
               "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Document 0x7c56cf6bac41a744060e515cac8eb177c8f3d2d56f705a0a7df884906623bddc has not been issued under contract 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+              "message": "Document has not been issued under token registry",
             },
             "status": "INVALID",
             "type": "DOCUMENT_STATUS",

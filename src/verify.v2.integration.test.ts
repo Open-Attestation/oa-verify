@@ -1063,12 +1063,11 @@ describe("verify(integration)", () => {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_MINTED",
-                  "message": "Document 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+                  "message": "Document has not been issued under token registry",
                 },
               },
             ],
@@ -1078,7 +1077,7 @@ describe("verify(integration)", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_MINTED",
-            "message": "Document 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            "message": "Document has not been issued under token registry",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
