@@ -54,16 +54,7 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "reason": Object {
-              "code": 4,
-              "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-            },
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
+          "location": "some.io",
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
             "code": 4,
@@ -72,6 +63,7 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
         },
         Object {
           "name": "OpenAttestationDnsDid",
@@ -144,16 +136,7 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "reason": Object {
-              "code": 4,
-              "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-            },
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
+          "location": "some.io",
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
             "code": 4,
@@ -162,6 +145,7 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
         },
         Object {
           "name": "OpenAttestationDnsDid",
@@ -240,16 +224,7 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "reason": Object {
-              "code": 4,
-              "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-            },
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
+          "location": "some.io",
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
             "code": 4,
@@ -258,6 +233,7 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
         },
         Object {
           "name": "OpenAttestationDnsDid",
@@ -326,16 +302,7 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "reason": Object {
-              "code": 4,
-              "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-            },
-            "status": "INVALID",
-            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
+          "location": "some.io",
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
             "code": 4,
@@ -344,6 +311,7 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
         },
         Object {
           "name": "OpenAttestationDnsDid",
@@ -406,16 +374,7 @@ describe("verify v3(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Object {
-            "location": "some.io",
-            "reason": Object {
-              "code": 4,
-              "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-            },
-            "status": "INVALID",
-            "value": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
-          },
+          "location": "some.io",
           "name": "OpenAttestationDnsTxt",
           "reason": Object {
             "code": 4,
@@ -424,6 +383,7 @@ describe("verify v3(integration)", () => {
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
+          "value": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
         },
         Object {
           "name": "OpenAttestationDnsDid",

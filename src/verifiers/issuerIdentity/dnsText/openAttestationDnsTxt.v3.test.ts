@@ -21,16 +21,15 @@ describe("OpenAttestationDnsTxt v3 document", () => {
         network: "ropsten",
       }
     );
-    expect(fragment).toStrictEqual({
-      type: "ISSUER_IDENTITY",
-      name: "OpenAttestationDnsTxt",
-      data: {
-        location: "example.openattestation.com",
-        status: "VALID",
-        value: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-      },
-      status: "VALID",
-    });
+    expect(fragment).toMatchInlineSnapshot(`
+      Object {
+        "location": "example.openattestation.com",
+        "name": "OpenAttestationDnsTxt",
+        "status": "VALID",
+        "type": "ISSUER_IDENTITY",
+        "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+      }
+    `);
   });
   it("should return an invalid fragment when document identity does not match", async () => {
     const fragment = await openAttestationDnsTxt.verify(documentRopstenValidWithDocumentStore, {
@@ -38,16 +37,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     });
     expect(fragment).toMatchInlineSnapshot(`
       Object {
-        "data": Object {
-          "location": "some.io",
-          "reason": Object {
-            "code": 4,
-            "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "status": "INVALID",
-          "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-        },
+        "location": "some.io",
         "name": "OpenAttestationDnsTxt",
         "reason": Object {
           "code": 4,
@@ -56,6 +46,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
         },
         "status": "INVALID",
         "type": "ISSUER_IDENTITY",
+        "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
       }
     `);
   });

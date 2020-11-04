@@ -124,9 +124,7 @@ export const openAttestationDnsTxt: Verifier<
           })
         );
 
-        const invalidIdentity = identities.find(
-          (identity): identity is InvalidIdentity => identity.status !== "VALID"
-        );
+        const invalidIdentity = identities.find((identity): identity is InvalidIdentity => identity.status !== "VALID");
         if (invalidIdentity) {
           return {
             name,
@@ -146,21 +144,11 @@ export const openAttestationDnsTxt: Verifier<
         // we have a v3 document
         const documentData = getData(document);
         const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
-        if (identity.status === "INVALID") {
-          return {
-            name,
-            type,
-            data: identity,
-            reason: identity.reason,
-            status: "INVALID",
-          };
-        }
 
         return {
           name,
           type,
-          data: identity,
-          status: "VALID",
+          ...identity,
         };
       }
     },
