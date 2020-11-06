@@ -1,9 +1,9 @@
-import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
+import { openAttestationDnsTxtIdentityProof } from "./openAttestationDnsTxt";
 import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
-const verify = verificationBuilder([openAttestationDnsTxt]);
+const verify = verificationBuilder([openAttestationDnsTxtIdentityProof]);
 describe("OpenAttestationDnsTxt v2 document", () => {
   describe("with one issuer", () => {
     it("should return a skipped fragment when document does not have data", async () => {
@@ -15,19 +15,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          status: "SKIPPED",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a skipped fragment when document does not have issuers", async () => {
       const fragment = await verify(
@@ -38,38 +39,41 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           network: "ropsten",
         }
       );
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          status: "SKIPPED",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a valid fragment when document has valid identity", async () => {
       const fragment = await verify(documentRopstenValidWithToken, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          status: "VALID",
-        },
-      ]);
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+            ],
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "status": "VALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
     it("should return a valid fragment when document has valid identity and uses document store", async () => {
       const document = {
@@ -92,20 +96,22 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(document, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          status: "VALID",
-        },
-      ]);
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+            ],
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "status": "VALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
     it("should return a valid fragment when document has valid identity and uses certificate store", async () => {
       const document = {
@@ -129,20 +135,22 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(document, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: [
-            {
-              location: "example.tradetrust.io",
-              status: "VALID",
-              value: "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          status: "VALID",
-        },
-      ]);
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "status": "VALID",
+                "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+              },
+            ],
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "status": "VALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
     it("should return an invalid fragment when document identity does not match", async () => {
       const document = {
@@ -175,7 +183,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
                 "value": "0xabcd",
               },
             ],
-            "name": "OpenAttestationDnsTxt",
+            "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 4,
               "codeString": "MATCHING_RECORD_NOT_FOUND",
@@ -208,19 +216,21 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(document, {
         network: "ropsten",
       });
-      expect(fragment).toStrictEqual([
-        {
-          type: "ISSUER_IDENTITY",
-          name: "OpenAttestationDnsTxt",
-          data: new Error("Location is missing"),
-          reason: {
-            code: 0,
-            codeString: "UNEXPECTED_ERROR",
-            message: "Location is missing",
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": [Error: Location is missing],
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "UNEXPECTED_ERROR",
+              "message": "Location is missing",
+            },
+            "status": "ERROR",
+            "type": "ISSUER_IDENTITY",
           },
-          status: "ERROR",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a skipped fragment if issuer has a tokenRegistry but does not provide identity proof", async () => {
       const document = {
@@ -240,19 +250,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          name: "OpenAttestationDnsTxt",
-          status: "SKIPPED",
-          type: "ISSUER_IDENTITY",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a skipped fragment if issuer has a document store but does not provide identity proof", async () => {
       const document = {
@@ -272,19 +283,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          name: "OpenAttestationDnsTxt",
-          status: "SKIPPED",
-          type: "ISSUER_IDENTITY",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a skipped if issuer has a tokenRegistry but does not use DNS-TXT as identity proof", async () => {
       const document = {
@@ -307,19 +319,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          name: "OpenAttestationDnsTxt",
-          status: "SKIPPED",
-          type: "ISSUER_IDENTITY",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return a skipped if issuer has a documentStore but does not use DNS-TXT as identity proof", async () => {
       const document = {
@@ -342,19 +355,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          name: "OpenAttestationDnsTxt",
-          status: "SKIPPED",
-          type: "ISSUER_IDENTITY",
-        },
-      ]);
+        ]
+      `);
     });
   });
 
@@ -401,7 +415,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
                 "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
               },
             ],
-            "name": "OpenAttestationDnsTxt",
+            "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 3,
               "codeString": "INVALID_ISSUERS",
@@ -462,7 +476,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
                 "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
               },
             ],
-            "name": "OpenAttestationDnsTxt",
+            "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 4,
               "codeString": "MATCHING_RECORD_NOT_FOUND",
@@ -510,7 +524,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
                 "status": "INVALID",
               },
             ],
-            "name": "OpenAttestationDnsTxt",
+            "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 3,
               "codeString": "INVALID_ISSUERS",
@@ -543,19 +557,20 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         await verify(document, {
           network: "ropsten",
         })
-      ).toStrictEqual([
-        {
-          reason: {
-            code: 2,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" / "tokenRegistry" property or doesn\'t use DNS-TXT type',
+      ).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
-          name: "OpenAttestationDnsTxt",
-          status: "SKIPPED",
-          type: "ISSUER_IDENTITY",
-        },
-      ]);
+        ]
+      `);
     });
     it("should return an invalid fragment when used with other issuance methods", async () => {
       const fragment = await verify(documentRopstenMixedIssuance, {
@@ -603,7 +618,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
                 "status": "INVALID",
               },
             ],
-            "name": "OpenAttestationDnsTxt",
+            "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 4,
               "codeString": "MATCHING_RECORD_NOT_FOUND",

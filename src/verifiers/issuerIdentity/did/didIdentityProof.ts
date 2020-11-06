@@ -1,10 +1,10 @@
 import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
-import { OpenAttestationDidSignedDidIdentityProofCode } from "../../../types/error";
+import { OpenAttestationDidCode } from "../../../types/error";
 import { verifySignature } from "../../../did/verifier";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 
-const name = "OpenAttestationDidSignedDidIdentityProof";
+const name = "OpenAttestationDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
 
@@ -14,8 +14,8 @@ const skip: VerifierType["skip"] = async () => {
     type,
     name,
     reason: {
-      code: OpenAttestationDidSignedDidIdentityProofCode.SKIPPED,
-      codeString: OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.SKIPPED],
+      code: OpenAttestationDidCode.SKIPPED,
+      codeString: OpenAttestationDidCode[OpenAttestationDidCode.SKIPPED],
       message: `Document is not using DID as top level identifier`,
     },
   };
@@ -52,9 +52,8 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
         status: "INVALID",
         reason: {
           message: "Issuer is not using DID identityProof type",
-          code: OpenAttestationDidSignedDidIdentityProofCode.INVALID_ISSUERS,
-          codeString:
-            OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.INVALID_ISSUERS],
+          code: OpenAttestationDidCode.INVALID_ISSUERS,
+          codeString: OpenAttestationDidCode[OpenAttestationDidCode.INVALID_ISSUERS],
         },
       };
     });
@@ -73,13 +72,12 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
   {
     name,
     type,
-    unexpectedErrorCode: OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR,
-    unexpectedErrorString:
-      OpenAttestationDidSignedDidIdentityProofCode[OpenAttestationDidSignedDidIdentityProofCode.UNEXPECTED_ERROR],
+    unexpectedErrorCode: OpenAttestationDidCode.UNEXPECTED_ERROR,
+    unexpectedErrorString: OpenAttestationDidCode[OpenAttestationDidCode.UNEXPECTED_ERROR],
   }
 );
 
-export const OpenAttestationDidSignedDidIdentityProof: VerifierType = {
+export const openAttestationDidIdentityProof: VerifierType = {
   skip,
   test,
   verify,

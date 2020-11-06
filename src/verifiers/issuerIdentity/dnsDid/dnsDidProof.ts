@@ -5,7 +5,7 @@ import { OpenAttestationDnsDidCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
 
-const name = "OpenAttestationDnsDid";
+const name = "OpenAttestationDnsDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
 
@@ -106,7 +106,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
   }
 );
 
-export const OpenAttestationDnsDid: VerifierType = {
+export const openAttestationDnsDidIdentityProof: VerifierType = {
   skip,
   test,
   verify,
