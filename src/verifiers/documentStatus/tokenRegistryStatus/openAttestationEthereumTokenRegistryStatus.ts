@@ -14,6 +14,7 @@ interface ValidMintedStatus {
 
 interface InvalidMintedStatus {
   minted: false;
+  address: string;
   reason: Reason;
 }
 
@@ -100,6 +101,7 @@ export const isTokenMintedOnRegistry = async ({
       ? { minted, address: tokenRegistry }
       : {
           minted,
+          address: tokenRegistry,
           reason: {
             code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
             codeString:
@@ -112,6 +114,7 @@ export const isTokenMintedOnRegistry = async ({
   } catch (error) {
     return {
       minted: false,
+      address: tokenRegistry,
       reason: {
         message: decodeError(error),
         code: OpenAttestationEthereumTokenRegistryStatusCode.DOCUMENT_NOT_MINTED,
@@ -163,6 +166,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
           }
         : {
             minted: false,
+            address: tokenRegistry,
             reason: mintStatus.reason,
           };
 

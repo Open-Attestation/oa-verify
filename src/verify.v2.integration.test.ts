@@ -1063,6 +1063,7 @@ describe("verify(integration)", () => {
           "data": Object {
             "details": Array [
               Object {
+                "address": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
                 "minted": false,
                 "reason": Object {
                   "code": 1,

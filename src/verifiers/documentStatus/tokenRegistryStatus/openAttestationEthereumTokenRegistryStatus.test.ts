@@ -117,6 +117,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
+                  "address": "0xabcd",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
@@ -163,6 +164,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
+                  "address": "0x0000000000000000000000000000000000000000",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
@@ -195,6 +197,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             "data": Object {
               "details": Array [
                 Object {
+                  "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
@@ -334,6 +337,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           Object {
             "data": Object {
               "details": Object {
+                "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
