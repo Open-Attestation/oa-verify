@@ -9,7 +9,7 @@ import {
   verify,
   verificationBuilder,
   openAttestationVerifiers,
-  OpenAttestationDidSignedDidIdentityProof,
+  openAttestationDidIdentityProof,
 } from "./index";
 import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
 import {
@@ -78,7 +78,17 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 2,
             "codeString": "SKIPPED",
@@ -88,7 +98,7 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDnsDid",
+          "name": "OpenAttestationDnsDidIdentityProof",
           "reason": Object {
             "code": 0,
             "codeString": "SKIPPED",
@@ -96,16 +106,6 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not signed by DID directly",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
       ]
     `);
@@ -149,9 +149,9 @@ describe("verify(integration)", () => {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53990",
                   "issued": false,
                   "reason": Object {
-                    "code": 404,
-                    "codeString": "CONTRACT_NOT_FOUND",
-                    "message": "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Contract is not found",
                   },
                 },
               ],
@@ -160,32 +160,12 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 404,
-            "codeString": "CONTRACT_NOT_FOUND",
-            "message": "Contract 0x20bc9C354A18C8178A713B9BcCFFaC2152b53990 was not found",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Contract is not found",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
         },
         Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
@@ -196,6 +176,26 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -238,9 +238,9 @@ describe("verify(integration)", () => {
                   "address": "0x20bc9C354A18C8178A713B9BcCFFaC2152b53991",
                   "issued": false,
                   "reason": Object {
-                    "code": 2,
-                    "codeString": "CONTRACT_ADDRESS_INVALID",
-                    "message": "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid",
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Bad document store address checksum",
                   },
                 },
               ],
@@ -249,32 +249,12 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 2,
-            "codeString": "CONTRACT_ADDRESS_INVALID",
-            "message": "Contract address 0x20bc9C354A18C8178A713B9BcCFFaC2152b53991 is invalid",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Bad document store address checksum",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
         },
         Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
@@ -285,6 +265,26 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -343,28 +343,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "example.openattestation.com",
-              "status": "VALID",
-              "value": "0x532C9Ff853CA54370D7492cD84040F9f8099f11B",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -373,6 +351,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "example.openattestation.com",
+              "status": "VALID",
+              "value": "0x532C9Ff853CA54370D7492cD84040F9f8099f11B",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -428,7 +428,17 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 2,
             "codeString": "SKIPPED",
@@ -438,7 +448,7 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDnsDid",
+          "name": "OpenAttestationDnsDidIdentityProof",
           "reason": Object {
             "code": 0,
             "codeString": "SKIPPED",
@@ -446,16 +456,6 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not signed by DID directly",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
       ]
     `);
@@ -501,28 +501,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "example.tradetrust.io",
-              "status": "VALID",
-              "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -531,6 +509,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "example.tradetrust.io",
+              "status": "VALID",
+              "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -571,9 +571,9 @@ describe("verify(integration)", () => {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
                   "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Invalid call arguments",
                   },
                 },
               ],
@@ -582,34 +582,12 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: hex data is odd-length",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Invalid call arguments",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Array [
-            Object {
-              "location": "demo.tradetrust.io",
-              "status": "VALID",
-              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
         },
         Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
@@ -620,6 +598,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -666,9 +666,9 @@ describe("verify(integration)", () => {
                   "address": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
                   "issued": false,
                   "reason": Object {
-                    "code": 6,
-                    "codeString": "INVALID_ARGUMENT",
-                    "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+                    "code": 1,
+                    "codeString": "DOCUMENT_NOT_ISSUED",
+                    "message": "Invalid call arguments",
                   },
                 },
               ],
@@ -677,34 +677,12 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
-            "code": 6,
-            "codeString": "INVALID_ARGUMENT",
-            "message": "Error with smart contract 0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7: incorrect data length",
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Invalid call arguments",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
-        },
-        Object {
-          "data": Array [
-            Object {
-              "location": "demo.tradetrust.io",
-              "status": "VALID",
-              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
         },
         Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
@@ -715,6 +693,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "demo.tradetrust.io",
+              "status": "VALID",
+              "value": "0x6d71da10Ae0e5B73d0565E2De46741231Eb247C7",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -762,50 +762,15 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-          Object {
-            "name": "OpenAttestationDnsDid",
-            "reason": Object {
-              "code": 0,
-              "codeString": "SKIPPED",
-              "message": "Document was not issued using DNS-DID",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
           },
           Object {
             "name": "OpenAttestationDidSignedDocumentStatus",
@@ -816,6 +781,26 @@ describe("verify(integration)", () => {
             },
             "status": "SKIPPED",
             "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
         ]
       `);
@@ -855,50 +840,15 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-          Object {
-            "name": "OpenAttestationDnsDid",
-            "reason": Object {
-              "code": 0,
-              "codeString": "SKIPPED",
-              "message": "Document was not issued using DNS-DID",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
           },
           Object {
             "name": "OpenAttestationDidSignedDocumentStatus",
@@ -909,6 +859,26 @@ describe("verify(integration)", () => {
             },
             "status": "SKIPPED",
             "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
         ]
       `);
@@ -949,50 +919,15 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-          Object {
-            "name": "OpenAttestationDnsDid",
-            "reason": Object {
-              "code": 0,
-              "codeString": "SKIPPED",
-              "message": "Document was not issued using DNS-DID",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
           },
           Object {
             "name": "OpenAttestationDidSignedDocumentStatus",
@@ -1003,6 +938,26 @@ describe("verify(integration)", () => {
             },
             "status": "SKIPPED",
             "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
         ]
       `);
@@ -1043,50 +998,15 @@ describe("verify(integration)", () => {
             "type": "DOCUMENT_STATUS",
           },
           Object {
-            "data": Object {
-              "details": Object {
-                "issuance": Array [
-                  Object {
-                    "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
-                    "issued": false,
-                    "reason": Object {
-                      "code": 500,
-                      "codeString": "SERVER_ERROR",
-                      "message": "Unable to connect to the Ethereum network, please try again later",
-                    },
-                  },
-                ],
-              },
-              "issuedOnAll": false,
-            },
+            "data": [Error: Unable to connect to the Ethereum network, please try again later],
             "name": "OpenAttestationEthereumDocumentStoreStatus",
             "reason": Object {
               "code": 500,
               "codeString": "SERVER_ERROR",
               "message": "Unable to connect to the Ethereum network, please try again later",
             },
-            "status": "INVALID",
+            "status": "ERROR",
             "type": "DOCUMENT_STATUS",
-          },
-          Object {
-            "name": "OpenAttestationDnsTxt",
-            "reason": Object {
-              "code": 2,
-              "codeString": "SKIPPED",
-              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
-          },
-          Object {
-            "name": "OpenAttestationDnsDid",
-            "reason": Object {
-              "code": 0,
-              "codeString": "SKIPPED",
-              "message": "Document was not issued using DNS-DID",
-            },
-            "status": "SKIPPED",
-            "type": "ISSUER_IDENTITY",
           },
           Object {
             "name": "OpenAttestationDidSignedDocumentStatus",
@@ -1097,6 +1017,26 @@ describe("verify(integration)", () => {
             },
             "status": "SKIPPED",
             "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
           },
         ]
       `);
@@ -1109,7 +1049,6 @@ describe("verify(integration)", () => {
 
   it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
     const results = await verify(documentRopstenRevokedWithToken, {
-      // TODO: Revoked should be checked by .. asserting that it was previously minted (has transfer event), but currently not issued (owned by 0x0)
       network: "ropsten",
     });
     expect(results).toMatchInlineSnapshot(`
@@ -1129,7 +1068,7 @@ describe("verify(integration)", () => {
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_MINTED",
-                  "message": "Document 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+                  "message": "Document has not been issued under token registry",
                 },
               },
             ],
@@ -1139,7 +1078,7 @@ describe("verify(integration)", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_MINTED",
-            "message": "Document 0x1e63c39cdd668da652484fd781f8c0812caadad0f6ebf71bf68bf3670242d1ef has not been issued under contract 0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            "message": "Document has not been issued under token registry",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -1155,28 +1094,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "tradetrust.io",
-              "status": "VALID",
-              "value": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1185,6 +1102,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "tradetrust.io",
+              "status": "VALID",
+              "value": "0x48399Fb88bcD031C556F53e93F690EEC07963Af3",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1248,33 +1187,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "tradetrust.io",
-              "status": "INVALID",
-              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 1,
-            "codeString": "INVALID_IDENTITY",
-            "message": "Document issuer identity for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3 is invalid",
-          },
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1283,6 +1195,38 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "tradetrust.io",
+              "reason": Object {
+                "code": 4,
+                "codeString": "MATCHING_RECORD_NOT_FOUND",
+                "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+              },
+              "status": "INVALID",
+              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 4,
+            "codeString": "MATCHING_RECORD_NOT_FOUND",
+            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+          },
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1336,28 +1280,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "example.openattestation.com",
-              "status": "VALID",
-              "value": "0x718B518565B81097b185661EBba3966Ff32A0039",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1366,6 +1288,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "example.openattestation.com",
+              "status": "VALID",
+              "value": "0x718B518565B81097b185661EBba3966Ff32A0039",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1428,28 +1372,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": Array [
-            Object {
-              "location": "example.openattestation.com",
-              "status": "VALID",
-              "value": "0x718B518565B81097b185661EBba3966Ff32A0039",
-            },
-          ],
-          "name": "OpenAttestationDnsTxt",
-          "status": "VALID",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 0,
@@ -1458,6 +1380,28 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Array [
+            Object {
+              "location": "example.openattestation.com",
+              "status": "VALID",
+              "value": "0x718B518565B81097b185661EBba3966Ff32A0039",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1500,26 +1444,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
@@ -1536,6 +1460,26 @@ describe("verify(integration)", () => {
           "status": "VALID",
           "type": "DOCUMENT_STATUS",
         },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
       ]
     `);
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
@@ -1545,7 +1489,7 @@ describe("verify(integration)", () => {
   });
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
-    const customVerify = verificationBuilder([...openAttestationVerifiers, OpenAttestationDidSignedDidIdentityProof]);
+    const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof]);
     const results = await customVerify(documentDidSigned, {
       network: "rinkeby",
     });
@@ -1578,26 +1522,6 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
@@ -1615,13 +1539,33 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
           "data": Array [
             Object {
               "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
               "status": "VALID",
             },
           ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
+          "name": "OpenAttestationDidIdentityProof",
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
@@ -1666,7 +1610,24 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 2,
             "codeString": "SKIPPED",
@@ -1683,26 +1644,9 @@ describe("verify(integration)", () => {
               "status": "VALID",
             },
           ],
-          "name": "OpenAttestationDnsDid",
+          "name": "OpenAttestationDnsDidIdentityProof",
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "issued": true,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": false,
-          },
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
         },
       ]
     `);
@@ -1745,32 +1689,17 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
-          "reason": Object {
-            "code": 2,
-            "codeString": "SKIPPED",
-            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDnsDid",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not issued using DNS-DID",
-          },
-          "status": "SKIPPED",
-          "type": "ISSUER_IDENTITY",
-        },
-        Object {
           "data": Object {
             "details": Object {
               "issuance": Array [
                 Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "issued": false,
+                  "reason": Object {
+                    "code": 7,
+                    "codeString": "WRONG_SIGNATURE",
+                    "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+                  },
                 },
               ],
             },
@@ -1780,6 +1709,26 @@ describe("verify(integration)", () => {
           "name": "OpenAttestationDidSignedDocumentStatus",
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
         },
       ]
     `);
@@ -1822,7 +1771,17 @@ describe("verify(integration)", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "name": "OpenAttestationDnsTxt",
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 2,
             "codeString": "SKIPPED",
@@ -1832,7 +1791,7 @@ describe("verify(integration)", () => {
           "type": "ISSUER_IDENTITY",
         },
         Object {
-          "name": "OpenAttestationDnsDid",
+          "name": "OpenAttestationDnsDidIdentityProof",
           "reason": Object {
             "code": 0,
             "codeString": "SKIPPED",
@@ -1840,16 +1799,6 @@ describe("verify(integration)", () => {
           },
           "status": "SKIPPED",
           "type": "ISSUER_IDENTITY",
-        },
-        Object {
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "reason": Object {
-            "code": 0,
-            "codeString": "SKIPPED",
-            "message": "Document was not signed by DID directly",
-          },
-          "status": "SKIPPED",
-          "type": "DOCUMENT_STATUS",
         },
       ]
     `);

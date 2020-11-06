@@ -1,4 +1,4 @@
-import { OpenAttestationDnsDid } from "./dnsDidProof";
+import { openAttestationDnsDidIdentityProof } from "./dnsDidProof";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidNoDnsTxt } from "../../../../test/fixtures/v2/documentDnsDidNoDnsTxt";
@@ -14,10 +14,10 @@ const options = {
 
 describe("skip", () => {
   it("should return skip message", async () => {
-    const message = await OpenAttestationDnsDid.skip(undefined as any, undefined as any);
+    const message = await openAttestationDnsDidIdentityProof.skip(undefined as any, undefined as any);
     expect(message).toMatchInlineSnapshot(`
       Object {
-        "name": "OpenAttestationDnsDid",
+        "name": "OpenAttestationDnsDidIdentityProof",
         "reason": Object {
           "code": 0,
           "codeString": "SKIPPED",
@@ -33,20 +33,20 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(OpenAttestationDnsDid.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDnsDidIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
     });
     it("should return false for documents where any issuer is using the `DID` identity proof", () => {
-      expect(OpenAttestationDnsDid.test(documentDidSigned, options)).toBe(false);
+      expect(openAttestationDnsDidIdentityProof.test(documentDidSigned, options)).toBe(false);
     });
     it("should return true for documents where any issuer is using the `DNS-DID` identity proof", () => {
-      expect(OpenAttestationDnsDid.test(documentDnsDidSigned, options)).toBe(true);
+      expect(openAttestationDnsDidIdentityProof.test(documentDnsDidSigned, options)).toBe(true);
     });
   });
 });
 
 describe("verify", () => {
   it("should verify a document with dns binding to did", async () => {
-    const fragment = await OpenAttestationDnsDid.verify(documentDnsDidSigned, options);
+    const fragment = await openAttestationDnsDidIdentityProof.verify(documentDnsDidSigned, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "data": Array [
@@ -56,7 +56,7 @@ describe("verify", () => {
             "status": "VALID",
           },
         ],
-        "name": "OpenAttestationDnsDid",
+        "name": "OpenAttestationDnsDidIdentityProof",
         "status": "VALID",
         "type": "ISSUER_IDENTITY",
       }
@@ -64,7 +64,7 @@ describe("verify", () => {
   });
 
   it("should verify a document without dns binding to did", async () => {
-    const fragment = await OpenAttestationDnsDid.verify(documentDnsDidNoDnsTxt, options);
+    const fragment = await openAttestationDnsDidIdentityProof.verify(documentDnsDidNoDnsTxt, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "data": Array [
@@ -74,15 +74,18 @@ describe("verify", () => {
             "status": "INVALID",
           },
         ],
-        "name": "OpenAttestationDnsDid",
+        "name": "OpenAttestationDnsDidIdentityProof",
         "status": "INVALID",
         "type": "ISSUER_IDENTITY",
       }
     `);
   });
 
-  it("should skip issuers which are not using DNS-DID", async () => {
-    const validFragment = await OpenAttestationDnsDid.verify(documentDnsDidMixedTokenRegistryValid, options);
+  it("should fail if document has issuers not using DNS-DID", async () => {
+    const validFragment = await openAttestationDnsDidIdentityProof.verify(
+      documentDnsDidMixedTokenRegistryValid,
+      options
+    );
     expect(validFragment).toMatchInlineSnapshot(`
       Object {
         "data": Array [
@@ -92,16 +95,24 @@ describe("verify", () => {
             "status": "VALID",
           },
           Object {
-            "status": "SKIPPED",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DID-DNS identityProof type",
+            },
+            "status": "INVALID",
           },
         ],
-        "name": "OpenAttestationDnsDid",
-        "status": "VALID",
+        "name": "OpenAttestationDnsDidIdentityProof",
+        "status": "INVALID",
         "type": "ISSUER_IDENTITY",
       }
     `);
 
-    const invalidFragment = await OpenAttestationDnsDid.verify(documentDnsDidMixedTokenRegistryInvalid, options);
+    const invalidFragment = await openAttestationDnsDidIdentityProof.verify(
+      documentDnsDidMixedTokenRegistryInvalid,
+      options
+    );
     expect(invalidFragment).toMatchInlineSnapshot(`
       Object {
         "data": Array [
@@ -111,10 +122,15 @@ describe("verify", () => {
             "status": "INVALID",
           },
           Object {
-            "status": "SKIPPED",
+            "reason": Object {
+              "code": 3,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Issuer is not using DID-DNS identityProof type",
+            },
+            "status": "INVALID",
           },
         ],
-        "name": "OpenAttestationDnsDid",
+        "name": "OpenAttestationDnsDidIdentityProof",
         "status": "INVALID",
         "type": "ISSUER_IDENTITY",
       }

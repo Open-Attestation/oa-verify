@@ -1,4 +1,4 @@
-import { OpenAttestationDidSignedDidIdentityProof } from "./didIdentityProof";
+import { openAttestationDidIdentityProof } from "./didIdentityProof";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDidWrongSignature } from "../../../../test/fixtures/v2/documentDidWrongSignature";
@@ -12,10 +12,10 @@ const options = {
 
 describe("skip", () => {
   it("should return skip message", async () => {
-    const message = await OpenAttestationDidSignedDidIdentityProof.skip(undefined as any, undefined as any);
+    const message = await openAttestationDidIdentityProof.skip(undefined as any, undefined as any);
     expect(message).toMatchInlineSnapshot(`
       Object {
-        "name": "OpenAttestationDidSignedDidIdentityProof",
+        "name": "OpenAttestationDidIdentityProof",
         "reason": Object {
           "code": 0,
           "codeString": "SKIPPED",
@@ -31,13 +31,13 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(OpenAttestationDidSignedDidIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDidIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
     });
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
-      expect(OpenAttestationDidSignedDidIdentityProof.test(documentDidSigned, options)).toBe(true);
+      expect(openAttestationDidIdentityProof.test(documentDidSigned, options)).toBe(true);
     });
     it("should return false for documents where any issuer is using the `DNS-DID` identity proof", () => {
-      expect(OpenAttestationDidSignedDidIdentityProof.test(documentDnsDidSigned, options)).toBe(false);
+      expect(openAttestationDidIdentityProof.test(documentDnsDidSigned, options)).toBe(false);
     });
   });
 });
@@ -45,7 +45,7 @@ describe("test", () => {
 describe("verify", () => {
   describe("v2", () => {
     it("should pass for documents using `DID` and did signature is correct", async () => {
-      const verificationFragment = await OpenAttestationDidSignedDidIdentityProof.verify(documentDidSigned, options);
+      const verificationFragment = await openAttestationDidIdentityProof.verify(documentDidSigned, options);
       expect(verificationFragment).toMatchInlineSnapshot(`
         Object {
           "data": Array [
@@ -54,17 +54,14 @@ describe("verify", () => {
               "status": "VALID",
             },
           ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
+          "name": "OpenAttestationDidIdentityProof",
           "status": "VALID",
           "type": "ISSUER_IDENTITY",
         }
       `);
     });
     it("should fail for documents using `DID` and did signature is not correct", async () => {
-      const verificationFragment = await OpenAttestationDidSignedDidIdentityProof.verify(
-        documentDidWrongSignature,
-        options
-      );
+      const verificationFragment = await openAttestationDidIdentityProof.verify(documentDidWrongSignature, options);
       expect(verificationFragment).toMatchInlineSnapshot(`
         Object {
           "data": Array [
@@ -73,17 +70,14 @@ describe("verify", () => {
               "status": "INVALID",
             },
           ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
+          "name": "OpenAttestationDidIdentityProof",
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
       `);
     });
-    it("should skip other issuers", async () => {
-      const verificationFragment = await OpenAttestationDidSignedDidIdentityProof.verify(
-        documentDidMixedTokenRegistry,
-        options
-      );
+    it("should fail for documents with other issuers", async () => {
+      const verificationFragment = await openAttestationDidIdentityProof.verify(documentDidMixedTokenRegistry, options);
       expect(verificationFragment).toMatchInlineSnapshot(`
         Object {
           "data": Array [
@@ -92,11 +86,16 @@ describe("verify", () => {
               "status": "VALID",
             },
             Object {
-              "status": "SKIPPED",
+              "reason": Object {
+                "code": 2,
+                "codeString": "INVALID_ISSUERS",
+                "message": "Issuer is not using DID identityProof type",
+              },
+              "status": "INVALID",
             },
           ],
-          "name": "OpenAttestationDidSignedDidIdentityProof",
-          "status": "VALID",
+          "name": "OpenAttestationDidIdentityProof",
+          "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
       `);
