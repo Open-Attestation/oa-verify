@@ -81,7 +81,7 @@ describe("verify", () => {
     `);
   });
 
-  it("should skip issuers which are not using DNS-DID", async () => {
+  it("should fail if document has issuers not using DNS-DID", async () => {
     const validFragment = await OpenAttestationDnsDid.verify(documentDnsDidMixedTokenRegistryValid, options);
     expect(validFragment).toMatchInlineSnapshot(`
       Object {

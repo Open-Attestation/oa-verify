@@ -5,6 +5,7 @@ import { documentRopstenValidWithTokenRegistry as v3documentRopstenValidWithToke
 import { documentRopstenNotIssuedWithTokenRegistry as v3documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v3/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
 import { documentRopstenNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
+import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationEthereumTokenRegistryStatus]);
@@ -285,6 +286,27 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
           network: "ropsten",
         }
       );
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": [Error: Only one issuer is allowed for tokens],
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 5,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Only one issuer is allowed for tokens",
+            },
+            "status": "ERROR",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
+    });
+    it("should return an invalid fragment when used with other issuance methods", async () => {
+      const fragment = await verify(documentRopstenMixedIssuance, {
+        network: "ropsten",
+      });
+
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {

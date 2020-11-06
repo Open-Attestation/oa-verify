@@ -7,6 +7,7 @@ import { documentRopstenValidWithCertificateStore } from "../../../../test/fixtu
 import { documentRopstenRevoked } from "../../../../test/fixtures/v3/documentRopstenRevoked";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
+import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationEthereumDocumentStoreStatus]);
@@ -358,6 +359,27 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           status: "VALID",
         },
       ]);
+    });
+    it("should return an invalid fragment when used with other issuance methods", async () => {
+      const fragment = await verify(documentRopstenMixedIssuance, {
+        network: "ropsten",
+      });
+
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": [Error: Document store address not found in issuer DEMO STORE],
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 7,
+              "codeString": "INVALID_ISSUERS",
+              "message": "Document store address not found in issuer DEMO STORE",
+            },
+            "status": "ERROR",
+            "type": "DOCUMENT_STATUS",
+          },
+        ]
+      `);
     });
   });
   describe("v3", () => {

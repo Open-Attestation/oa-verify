@@ -1,5 +1,6 @@
 import { openAttestationDnsTxt } from "./openAttestationDnsTxt";
 import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
+import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
 const verify = verificationBuilder([openAttestationDnsTxt]);
@@ -555,6 +556,64 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           type: "ISSUER_IDENTITY",
         },
       ]);
+    });
+    it("should return an invalid fragment when used with other issuance methods", async () => {
+      const fragment = await verify(documentRopstenMixedIssuance, {
+        network: "ropsten",
+      });
+
+      expect(fragment).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": Array [
+              Object {
+                "location": "example.tradetrust.io",
+                "reason": Object {
+                  "code": 4,
+                  "codeString": "MATCHING_RECORD_NOT_FOUND",
+                  "message": "Matching DNS record not found for 0x257DFD21f991DA9BD420882365020991eec0494E",
+                },
+                "status": "INVALID",
+                "value": "0x257DFD21f991DA9BD420882365020991eec0494E",
+              },
+              Object {
+                "location": "example.tradetrust.io",
+                "reason": Object {
+                  "code": 4,
+                  "codeString": "MATCHING_RECORD_NOT_FOUND",
+                  "message": "Matching DNS record not found for 0xEE1772da1Fe18a4506de2AA0567637E9b7aD27Bf",
+                },
+                "status": "INVALID",
+                "value": "0xEE1772da1Fe18a4506de2AA0567637E9b7aD27Bf",
+              },
+              Object {
+                "reason": Object {
+                  "code": 3,
+                  "codeString": "INVALID_ISSUERS",
+                  "message": "Issuer is not using DNS-TXT identityProof type",
+                },
+                "status": "INVALID",
+              },
+              Object {
+                "reason": Object {
+                  "code": 3,
+                  "codeString": "INVALID_ISSUERS",
+                  "message": "Issuer is not using DNS-TXT identityProof type",
+                },
+                "status": "INVALID",
+              },
+            ],
+            "name": "OpenAttestationDnsTxt",
+            "reason": Object {
+              "code": 4,
+              "codeString": "MATCHING_RECORD_NOT_FOUND",
+              "message": "Matching DNS record not found for 0x257DFD21f991DA9BD420882365020991eec0494E",
+            },
+            "status": "INVALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
     });
   });
 });

@@ -79,7 +79,7 @@ describe("verify", () => {
         }
       `);
     });
-    it("should skip other issuers", async () => {
+    it("should fail for documents with other issuers", async () => {
       const verificationFragment = await OpenAttestationDidSignedDidIdentityProof.verify(
         documentDidMixedTokenRegistry,
         options
