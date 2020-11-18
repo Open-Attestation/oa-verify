@@ -1,4 +1,4 @@
-import { isValid, verify } from "./index";
+import { isValid, verificationBuilder, openAttestationVerifiers } from "./index";
 import {
   documentRopstenValidWithDocumentStore,
   documentRopstenValidWithTokenRegistry,
@@ -7,9 +7,11 @@ import { documentRopstenTampered } from "../test/fixtures/v3/documentRopstenTamp
 import { documentRopstenNotIssued } from "../test/fixtures/v3/documentRopstenNotIssued";
 import { documentRopstenRevoked } from "../test/fixtures/v3/documentRopstenRevoked";
 
+const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+
 describe("verify v3(integration)", () => {
   it("should fail for OpenAttestationHash when document's hash is invalid and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenTampered, { network: "ropsten" });
+    const results = await verify(documentRopstenTampered);
 
     expect(results).toMatchInlineSnapshot(`
       Array [
@@ -91,7 +93,7 @@ describe("verify v3(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
   });
   it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was not issued and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenNotIssued, { network: "ropsten" });
+    const results = await verify(documentRopstenNotIssued);
 
     expect(results).toMatchInlineSnapshot(`
       Array [
@@ -174,7 +176,7 @@ describe("verify v3(integration)", () => {
   });
 
   it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued an revoked and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenRevoked, { network: "ropsten" });
+    const results = await verify(documentRopstenRevoked);
 
     expect(results).toMatchInlineSnapshot(`
       Array [
@@ -262,7 +264,7 @@ describe("verify v3(integration)", () => {
   });
 
   it("should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with certificate store is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithDocumentStore, { network: "ropsten" });
+    const results = await verify(documentRopstenValidWithDocumentStore);
 
     expect(results).toMatchInlineSnapshot(`
       Array [
@@ -341,7 +343,7 @@ describe("verify v3(integration)", () => {
   });
 
   it("should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with token registry is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithTokenRegistry, { network: "ropsten" });
+    const results = await verify(documentRopstenValidWithTokenRegistry);
 
     expect(results).toMatchInlineSnapshot(`
       Array [

@@ -3,17 +3,14 @@ import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/docu
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
-const verify = verificationBuilder([openAttestationDnsTxtIdentityProof]);
+const verify = verificationBuilder([openAttestationDnsTxtIdentityProof], { network: "ropsten" });
 describe("OpenAttestationDnsTxt v2 document", () => {
   describe("with one issuer", () => {
     it("should return a skipped fragment when document does not have data", async () => {
       const fragment = await verify(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        { ...documentRopstenValidWithToken, data: null },
-        {
-          network: "ropsten",
-        }
+        { ...documentRopstenValidWithToken, data: null }
       );
       expect(fragment).toMatchInlineSnapshot(`
         Array [
@@ -34,10 +31,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       const fragment = await verify(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        { ...documentRopstenValidWithToken, data: { ...documentRopstenValidWithToken.data, issuers: null } },
-        {
-          network: "ropsten",
-        }
+        { ...documentRopstenValidWithToken, data: { ...documentRopstenValidWithToken.data, issuers: null } }
       );
       expect(fragment).toMatchInlineSnapshot(`
         Array [
@@ -55,9 +49,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       `);
     });
     it("should return a valid fragment when document has valid identity", async () => {
-      const fragment = await verify(documentRopstenValidWithToken, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenValidWithToken);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -93,9 +85,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         },
       };
 
-      const fragment = await verify(document, {
-        network: "ropsten",
-      });
+      const fragment = await verify(document);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -132,9 +122,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         },
       };
 
-      const fragment = await verify(document, {
-        network: "ropsten",
-      });
+      const fragment = await verify(document);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -165,9 +153,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      const fragment = await verify(document, {
-        network: "ropsten",
-      });
+      const fragment = await verify(document);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -213,9 +199,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       };
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore valid error, need to ignore
-      const fragment = await verify(document, {
-        network: "ropsten",
-      });
+      const fragment = await verify(document);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -246,11 +230,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "name": "OpenAttestationDnsTxtIdentityProof",
@@ -279,11 +259,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "name": "OpenAttestationDnsTxtIdentityProof",
@@ -315,11 +291,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "name": "OpenAttestationDnsTxtIdentityProof",
@@ -351,11 +323,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "name": "OpenAttestationDnsTxtIdentityProof",
@@ -393,11 +361,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Array [
@@ -452,11 +416,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Array [
@@ -503,9 +463,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
         },
       };
 
-      const fragment = await verify(document, {
-        network: "ropsten",
-      });
+      const fragment = await verify(document);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -553,11 +511,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
           ],
         },
       };
-      expect(
-        await verify(document, {
-          network: "ropsten",
-        })
-      ).toMatchInlineSnapshot(`
+      expect(await verify(document)).toMatchInlineSnapshot(`
         Array [
           Object {
             "name": "OpenAttestationDnsTxtIdentityProof",
@@ -573,9 +527,7 @@ describe("OpenAttestationDnsTxt v2 document", () => {
       `);
     });
     it("should return an invalid fragment when used with other issuance methods", async () => {
-      const fragment = await verify(documentRopstenMixedIssuance, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenMixedIssuance);
 
       expect(fragment).toMatchInlineSnapshot(`
         Array [

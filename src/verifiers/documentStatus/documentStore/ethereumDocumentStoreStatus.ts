@@ -1,10 +1,9 @@
 import { utils, getData, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { errors } from "ethers";
+import { errors, providers } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
 import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
-import { getProvider } from "../../../common/utils";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 
@@ -110,14 +109,14 @@ export const decodeError = (error: any) => {
 export const isIssuedOnDocumentStore = async ({
   documentStore,
   merkleRoot,
-  network,
+  provider,
 }: {
   documentStore: string;
   merkleRoot: string;
-  network: string;
+  provider: providers.Provider;
 }): Promise<IssuanceStatus> => {
   try {
-    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider({ network }));
+    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
     const issued = await documentStoreContract.isIssued(merkleRoot);
 
     return issued
@@ -177,18 +176,18 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
 export const isRevokedOnDocumentStore = async ({
   documentStore,
   merkleRoot,
-  network,
+  provider,
   targetHash,
   proofs,
 }: {
   documentStore: string;
   merkleRoot: string;
-  network: string;
+  provider: providers.Provider;
   targetHash: Hash;
   proofs?: Hash[];
 }): Promise<RevocationStatus> => {
   try {
-    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, getProvider({ network }));
+    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
     const intermediateHashes = getIntermediateHashes(targetHash, proofs);
     const revokedHash = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
 
@@ -265,7 +264,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
 
       const issuanceStatuses: IssuanceStatus[] = await Promise.all(
         documentStores.map((documentStore) =>
-          isIssuedOnDocumentStore({ documentStore, merkleRoot, network: options.network })
+          isIssuedOnDocumentStore({ documentStore, merkleRoot, provider: options.provider })
         )
       );
       const notIssued = issuanceStatuses.find((status): status is InvalidIssuanceStatus => !status.issued);
@@ -292,7 +291,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
             merkleRoot,
             targetHash,
             proofs,
-            network: options.network,
+            provider: options.provider,
           })
         )
       );

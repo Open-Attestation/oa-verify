@@ -1,7 +1,6 @@
 import { getData, v2, v3, WrappedDocument, utils as oaUtils } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
-import { getDefaultProvider } from "ethers";
-import { VerificationFragmentType, VerificationManagerOptions, Verifier } from "../../../types/core";
+import { VerificationFragmentType, VerifierOptions, Verifier } from "../../../types/core";
 import { OpenAttestationDnsTxtCode, Reason } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 
@@ -25,13 +24,13 @@ export type Identity = ValidIdentity | InvalidIdentity;
 const resolveIssuerIdentity = async (
   issuer: v2.Issuer | v3.Issuer,
   smartContractAddress: string,
-  options: VerificationManagerOptions
+  options: VerifierOptions
 ): Promise<Identity> => {
   const type = issuer?.identityProof?.type ?? "";
   const location = issuer?.identityProof?.location ?? "";
   if (type !== "DNS-TXT") throw new Error("Identity type not supported");
   if (!location) throw new Error("Location is missing");
-  const network = await getDefaultProvider(options.network).getNetwork();
+  const network = await options.provider.getNetwork();
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
     (record) =>
@@ -65,7 +64,7 @@ const isWrappedV2Document = (document: any): document is WrappedDocument<v2.Open
 };
 export const openAttestationDnsTxtIdentityProof: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
-  VerificationManagerOptions,
+  VerifierOptions,
   Identity | Identity[]
 > = {
   skip: () => {

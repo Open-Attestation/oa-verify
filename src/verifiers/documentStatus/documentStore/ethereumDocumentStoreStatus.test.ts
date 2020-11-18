@@ -10,7 +10,7 @@ import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocu
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
-const verify = verificationBuilder([openAttestationEthereumDocumentStoreStatus]);
+const verify = verificationBuilder([openAttestationEthereumDocumentStoreStatus], { network: "ropsten" });
 
 describe("OpenAttestationEthereumDocumentStoreStatus", () => {
   describe("v2", () => {
@@ -18,10 +18,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       const fragment = await verify(
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-expect-error
-        { ...v2documentRopstenValidWithDocumentStore, data: null },
-        {
-          network: "ropsten",
-        }
+        { ...v2documentRopstenValidWithDocumentStore, data: null }
       );
       expect(fragment).toStrictEqual([
         {
@@ -38,34 +35,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       ]);
     });
     it("should return a skipped fragment when document does not have issuers", async () => {
-      const fragment = await verify(
-        {
-          ...v2documentRopstenValidWithDocumentStore,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-expect-error
-          data: { ...v2documentRopstenValidWithDocumentStore.data, issuers: null },
-        },
-        {
-          network: "ropsten",
-        }
-      );
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
-          },
-          status: "SKIPPED",
-        },
-      ]);
-    });
-    it("should return a skipped fragment when document uses token registry", async () => {
-      const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry, {
-        network: "ropsten",
+      const fragment = await verify({
+        ...v2documentRopstenValidWithDocumentStore,
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        data: { ...v2documentRopstenValidWithDocumentStore.data, issuers: null },
       });
       expect(fragment).toStrictEqual([
         {
@@ -81,24 +55,35 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
         },
       ]);
     });
-    it("should return an invalid fragment when document store is invalid", async () => {
-      const fragment = await verify(
+    it("should return a skipped fragment when document uses token registry", async () => {
+      const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry);
+      expect(fragment).toStrictEqual([
         {
-          ...documentRopstenRevokedWithDocumentStore,
-          data: {
-            ...documentRopstenRevokedWithDocumentStore.data,
-            issuers: [
-              {
-                ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
-                documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xabcd",
-              },
-            ],
+          name: "OpenAttestationEthereumDocumentStoreStatus",
+          type: "DOCUMENT_STATUS",
+          reason: {
+            code: 4,
+            codeString: "SKIPPED",
+            message:
+              'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
           },
+          status: "SKIPPED",
         },
-        {
-          network: "ropsten",
-        }
-      );
+      ]);
+    });
+    it("should return an invalid fragment when document store is invalid", async () => {
+      const fragment = await verify({
+        ...documentRopstenRevokedWithDocumentStore,
+        data: {
+          ...documentRopstenRevokedWithDocumentStore.data,
+          issuers: [
+            {
+              ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
+              documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xabcd",
+            },
+          ],
+        },
+      });
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -131,23 +116,18 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return an invalid fragment when document store does not exists", async () => {
-      const fragment = await verify(
-        {
-          ...documentRopstenRevokedWithDocumentStore,
-          data: {
-            ...documentRopstenRevokedWithDocumentStore.data,
-            issuers: [
-              {
-                ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
-                documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
-              },
-            ],
-          },
+      const fragment = await verify({
+        ...documentRopstenRevokedWithDocumentStore,
+        data: {
+          ...documentRopstenRevokedWithDocumentStore.data,
+          issuers: [
+            {
+              ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
+              documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
+            },
+          ],
         },
-        {
-          network: "ropsten",
-        }
-      );
+      });
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -180,9 +160,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return an invalid fragment when document was not issued", async () => {
-      const fragment = await verify(documentRopstenNotIssuedWithCertificateStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenNotIssuedWithCertificateStore);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -215,9 +193,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return an invalid fragment when document with document store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevokedWithDocumentStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenRevokedWithDocumentStore);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -257,9 +233,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return an invalid fragment when document with certificate store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevokedWithCertificateStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenRevokedWithCertificateStore);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -299,9 +273,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return a valid fragment when document with document store that has not been revoked", async () => {
-      const fragment = await verify(v2documentRopstenValidWithDocumentStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(v2documentRopstenValidWithDocumentStore);
 
       expect(fragment).toStrictEqual([
         {
@@ -330,9 +302,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       ]);
     });
     it("should return a valid fragment when document with certificate store that has not been revoked", async () => {
-      const fragment = await verify(documentRopstenValidWithCertificateStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenValidWithCertificateStore);
 
       expect(fragment).toStrictEqual([
         {
@@ -361,9 +331,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       ]);
     });
     it("should return an invalid fragment when used with other issuance methods", async () => {
-      const fragment = await verify(documentRopstenMixedIssuance, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenMixedIssuance);
 
       expect(fragment).toMatchInlineSnapshot(`
         Array [
@@ -384,9 +352,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
   });
   describe("v3", () => {
     it("should return an invalid fragment when document with document store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevoked, {
-        network: "ropsten",
-      });
+      const fragment = await verify(documentRopstenRevoked);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -422,9 +388,7 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
       `);
     });
     it("should return a valid fragment when document with document store that has not been revoked", async () => {
-      const fragment = await verify(v3documentRopstenValidWithDocumentStore, {
-        network: "ropsten",
-      });
+      const fragment = await verify(v3documentRopstenValidWithDocumentStore);
       expect(fragment).toStrictEqual([
         {
           name: "OpenAttestationEthereumDocumentStoreStatus",

@@ -4,10 +4,12 @@ import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigne
 import { documentDidWrongSignature } from "../../../../test/fixtures/v2/documentDidWrongSignature";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
 import { documentDidMixedTokenRegistry } from "../../../../test/fixtures/v2/documentDidMixedTokenRegistry";
+import { getProvider } from "../../../common/utils";
 
-// TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
-  network: "ropsten",
+  provider: getProvider({
+    network: "ropsten",
+  }),
 };
 
 describe("skip", () => {

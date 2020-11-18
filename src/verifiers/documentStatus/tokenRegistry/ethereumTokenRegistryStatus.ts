@@ -1,9 +1,8 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
-import { constants, errors } from "ethers";
+import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../../types/error";
-import { getProvider } from "../../../common/utils";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
 
@@ -57,15 +56,24 @@ export const getTokenRegistry = (
   }
 };
 
+const isNonExistentToken = (error: any) => {
+  const message: string | undefined = error.body?.error?.message;
+  if (!message) return false;
+  return message.includes("owner query for nonexistent token");
+};
+const isMissingTokenRegistry = (error: any) => {
+  return (
+    !error.reason &&
+    error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
+    error.code === errors.CALL_EXCEPTION
+  );
+};
 const decodeError = (error: any) => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
   switch (true) {
-    case reason.toLowerCase() === "ERC721: owner query for nonexistent token".toLowerCase() &&
-      error.code === errors.CALL_EXCEPTION:
+    case isNonExistentToken(error):
       return `Document has not been issued under token registry`;
-    case !error.reason &&
-      error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
-      error.code === errors.CALL_EXCEPTION:
+    case isMissingTokenRegistry(error):
       return `Token registry is not found`;
     case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
       error.code === errors.UNSUPPORTED_OPERATION:
@@ -88,14 +96,14 @@ const decodeError = (error: any) => {
 export const isTokenMintedOnRegistry = async ({
   tokenRegistry,
   merkleRoot,
-  network,
+  provider,
 }: {
   tokenRegistry: string;
   merkleRoot: string;
-  network: string;
+  provider: providers.Provider;
 }): Promise<MintedStatus> => {
   try {
-    const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, getProvider({ network }));
+    const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, provider);
     const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
     return minted
       ? { minted, address: tokenRegistry }
@@ -157,7 +165,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
     async (document, options) => {
       const tokenRegistry = getTokenRegistry(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
-      const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, network: options.network });
+      const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
 
       const status: MintedStatus = mintStatus.minted
         ? {
