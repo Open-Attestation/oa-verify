@@ -3,7 +3,7 @@ import { tamperedDocumentWithCertificateStore } from "../../../../test/fixtures/
 import { document } from "../../../../test/fixtures/v2/document";
 import { verificationBuilder } from "../../verificationBuilder";
 
-const verify = verificationBuilder([openAttestationHash]);
+const verify = verificationBuilder([openAttestationHash], { network: "ropsten" });
 
 describe("OpenAttestationHash", () => {
   it("should return a skipped fragment when document is missing target hash", async () => {
@@ -12,9 +12,7 @@ describe("OpenAttestationHash", () => {
       signature: { ...tamperedDocumentWithCertificateStore.signature },
     };
     delete newDocument.signature.targetHash;
-    const fragment = await verify(newDocument, {
-      network: "ropsten",
-    });
+    const fragment = await verify(newDocument);
     expect(fragment).toStrictEqual([
       {
         name: "OpenAttestationHash",
@@ -34,9 +32,7 @@ describe("OpenAttestationHash", () => {
       signature: { ...tamperedDocumentWithCertificateStore.signature },
     };
     delete newDocument.signature.merkleRoot;
-    const fragment = await verify(newDocument, {
-      network: "ropsten",
-    });
+    const fragment = await verify(newDocument);
     expect(fragment).toStrictEqual([
       {
         name: "OpenAttestationHash",
@@ -56,9 +52,7 @@ describe("OpenAttestationHash", () => {
       data: { ...tamperedDocumentWithCertificateStore.data },
     };
     delete newDocument.data;
-    const fragment = await verify(newDocument, {
-      network: "ropsten",
-    });
+    const fragment = await verify(newDocument);
     expect(fragment).toStrictEqual([
       {
         name: "OpenAttestationHash",
@@ -74,7 +68,7 @@ describe("OpenAttestationHash", () => {
   });
 
   it("should return an invalid fragment when document has been tampered", async () => {
-    const fragment = await verify(tamperedDocumentWithCertificateStore, { network: "" });
+    const fragment = await verify(tamperedDocumentWithCertificateStore);
     expect(fragment).toStrictEqual([
       {
         name: "OpenAttestationHash",
@@ -90,7 +84,7 @@ describe("OpenAttestationHash", () => {
     ]);
   });
   it("should return a valid fragment when document has not been tampered", async () => {
-    const fragment = await verify(document, { network: "" });
+    const fragment = await verify(document);
     expect(fragment).toStrictEqual([
       {
         name: "OpenAttestationHash",

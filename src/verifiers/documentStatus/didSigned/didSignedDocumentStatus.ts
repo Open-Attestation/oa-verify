@@ -63,7 +63,12 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
         "UNSIGNED"
       );
     const signatureVerificationDeferred: Promise<DidVerificationStatus>[] = issuers.map((issuer) =>
-      verifySignature({ merkleRoot, identityProof: issuer.identityProof, proof: document.proof, did: issuer.id })
+      verifySignature({
+        merkleRoot,
+        identityProof: issuer.identityProof,
+        proof: document.proof,
+        did: issuer.id,
+      })
     );
     const issuance = await (await Promise.all(signatureVerificationDeferred)).map((status) => {
       return status.verified

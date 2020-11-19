@@ -7,9 +7,10 @@ import {
   documentDnsDidMixedTokenRegistryValid,
   documentDnsDidMixedTokenRegistryInvalid,
 } from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
-// TODO Temporarily passing in this option, until make the entire option optional in another PR
+import { getProvider } from "../../../common/utils";
+
 const options = {
-  network: "ropsten",
+  provider: getProvider({ network: "ropsten" }),
 };
 
 describe("skip", () => {

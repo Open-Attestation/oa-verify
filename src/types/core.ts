@@ -1,4 +1,5 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { providers } from "ethers";
 import { Reason } from "./error";
 
 type DeepPartial<T> = {
@@ -6,12 +7,22 @@ type DeepPartial<T> = {
 };
 
 /**
- * - network on which to run the verification (if needed to connect to ethereum), For instance "ropste" or "homestead"
- * - promisesCallback callback function that will provide back the promises resolving to the verification fragment. It will be called before the promises are all resolved and thus give the possibility to consumers to perform their own extra checks.
+ * Callback function that will provide back the promises resolving to the verification fragment. It will be called before the promises are all resolved and thus give the possibility to consumers to perform their own extra checks.
  */
-export interface VerificationManagerOptions {
+export type PromiseCallback = (promises: Promise<VerificationFragment>[]) => void;
+
+export interface VerificationBuilderOptionsWithProvider {
+  provider: providers.Provider;
+}
+
+export interface VerificationBuilderOptionsWithNetwork {
   network: string;
-  promisesCallback?: (promises: Promise<VerificationFragment>[]) => void;
+}
+
+export type VerificationBuilderOptions = VerificationBuilderOptionsWithProvider | VerificationBuilderOptionsWithNetwork;
+
+export interface VerifierOptions {
+  provider: providers.Provider;
 }
 
 /**
@@ -54,7 +65,7 @@ interface SkippedVerificationFragment extends VerificationFragment {
 }
 export interface Verifier<
   Document = WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>,
-  Options = VerificationManagerOptions,
+  Options = VerifierOptions,
   Data = any
 > {
   skip: (document: Document, options: Options) => Promise<SkippedVerificationFragment>;

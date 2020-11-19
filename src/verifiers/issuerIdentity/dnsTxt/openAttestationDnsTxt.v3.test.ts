@@ -1,5 +1,9 @@
 import { openAttestationDnsTxtIdentityProof } from "./openAttestationDnsTxt";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v3/documentRopstenValid";
+import { getProvider } from "../../../common/utils";
+
+const provider = getProvider({ network: "ropsten" });
+const options = { provider };
 
 describe("OpenAttestationDnsTxt v3 document", () => {
   it("should return a valid fragment when document has valid identity", async () => {
@@ -17,9 +21,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
           },
         },
       },
-      {
-        network: "ropsten",
-      }
+      options
     );
     expect(fragment).toMatchInlineSnapshot(`
       Object {
@@ -32,9 +34,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     `);
   });
   it("should return an invalid fragment when document identity does not match", async () => {
-    const fragment = await openAttestationDnsTxtIdentityProof.verify(documentRopstenValidWithDocumentStore, {
-      network: "ropsten",
-    });
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(documentRopstenValidWithDocumentStore, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "location": "some.io",
@@ -66,9 +66,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
-    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, {
-      network: "ropsten",
-    });
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "data": [Error: Identity type not supported],
@@ -99,9 +97,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
     };
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore valid error, need to ignore
-    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, {
-      network: "ropsten",
-    });
+    const fragment = await openAttestationDnsTxtIdentityProof.verify(document, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "data": [Error: Location is missing],
@@ -119,11 +115,9 @@ describe("OpenAttestationDnsTxt v3 document", () => {
 
   describe("test", () => {
     it("should return true if identityProof type is DNS-TXT", () => {
-      expect(
-        openAttestationDnsTxtIdentityProof.test(documentRopstenValidWithDocumentStore, {
-          network: "ropsten",
-        })
-      ).toStrictEqual(true);
+      expect(openAttestationDnsTxtIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toStrictEqual(
+        true
+      );
     });
     it("should return false if identityProof type is not DNS-TXT", () => {
       const document = {
@@ -141,7 +135,7 @@ describe("OpenAttestationDnsTxt v3 document", () => {
       };
       expect(
         openAttestationDnsTxtIdentityProof.test(document, {
-          network: "ropsten",
+          provider,
         })
       ).toStrictEqual(false);
     });

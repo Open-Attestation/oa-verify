@@ -16,7 +16,7 @@ npm install @govtechsg/oa-verify
 import { documentRopstenValidWithToken } from "./test/fixtures/v2/documentRopstenValidWithToken";
 import { verify, isValid } from "@govtechsg/oa-verify";
 
-const fragments = await verify(documentRopstenValidWithToken, { network: "ropsten" });
+const fragments = await verify(documentRopstenValidWithToken);
 console.log(fragments); // see below
 console.log(isValid(fragments)); // display true
 ```
@@ -82,8 +82,26 @@ console.log(isValid(fragments)); // display true
 
 ### Environment Variables
 
-- `ETHEREUM_PROVIDER`: let you pick the provider you want to use. Available values: `cloudflare`. The provider will default to `infura` if the variable is not set.
 - `INFURA_API_KEY`: let you provide your own `INFURA` API key.
+
+### Switching network
+
+You may build the verifier to verify against a custom network by either:
+
+1. providing your own web3 provider
+2. specifying the network name (provider will be using the default ones)
+
+To provide your own provider:
+
+```ts
+const verify = verificationBuilder(openAttestationVerifiers, { provider: customProvider });
+```
+
+To specify network:
+
+```ts
+const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+```
 
 ### Verify
 

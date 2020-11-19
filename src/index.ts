@@ -19,11 +19,15 @@ const openAttestationVerifiers: Verifiers[] = [
   openAttestationDnsDidIdentityProof,
 ];
 
+const defaultBuilderOption = {
+  network: "homestead",
+};
+
 const verify = verificationBuilder<
   | SignedWrappedDocument<v2.OpenAttestationDocument>
   | WrappedDocument<v2.OpenAttestationDocument>
   | WrappedDocument<v3.OpenAttestationDocument>
->(openAttestationVerifiers);
+>(openAttestationVerifiers, defaultBuilderOption);
 
 export * from "./types/core";
 export * from "./types/error";

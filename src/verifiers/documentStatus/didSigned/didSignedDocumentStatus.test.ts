@@ -7,6 +7,7 @@ import { documentDidMissingProof } from "../../../../test/fixtures/v2/documentDi
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
 import { getPublicKey } from "../../../did/resolver";
+import { getProvider } from "../../../common/utils";
 
 jest.mock("../../../did/resolver");
 
@@ -24,9 +25,10 @@ const whenPublicKeyResolvesSuccessfully = () => {
   });
 };
 
-// TODO Temporarily passing in this option, until make the entire option optional in another PR
 const options = {
-  network: "ropsten",
+  provider: getProvider({
+    network: "ropsten",
+  }),
 };
 
 describe("skip", () => {

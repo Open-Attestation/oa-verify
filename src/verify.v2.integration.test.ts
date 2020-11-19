@@ -31,19 +31,21 @@ import { documentDidMissingProof } from "../test/fixtures/v2/documentDidMissingP
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
+import { INFURA_API_KEY } from "./config";
+
+const verifyHomestead = verify;
+const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const verifyRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
 
 describe("verify(integration)", () => {
   afterEach(() => {
     delete process.env.ETHEREUM_PROVIDER;
   });
   it("should skip all verifiers when the document is an empty object", async () => {
-    const fragments = await verify(
+    const fragments = await verifyRopsten(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      {},
-      {
-        network: "ropsten",
-      }
+      {}
     );
     expect(fragments).toMatchInlineSnapshot(`
       Array [
@@ -115,9 +117,7 @@ describe("verify(integration)", () => {
     expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
   });
   it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
-    const results = await verify(tamperedDocumentWithCertificateStore, {
-      network: "ropsten",
-    });
+    const results = await verifyHomestead(tamperedDocumentWithCertificateStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -204,9 +204,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreStatus when document's hash is invalid and was not issued", async () => {
-    const results = await verify(tamperedDocumentWithInvalidCertificateStore, {
-      network: "ropsten",
-    });
+    const results = await verifyRopsten(tamperedDocumentWithInvalidCertificateStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -293,13 +291,10 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks for a document with obfuscated fields", async () => {
-    const fragments = await verify(
+    const fragments = await verifyRopsten(
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error
-      documentRopstenObfuscated,
-      {
-        network: "ropsten",
-      }
+      documentRopstenObfuscated
     );
     expect(fragments).toMatchInlineSnapshot(`
       Array [
@@ -383,9 +378,7 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks when document with certificate store is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithCertificateStore, {
-      network: "ropsten",
-    });
+    const results = await verifyRopsten(documentRopstenValidWithCertificateStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -465,9 +458,7 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks when document with token registry is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithToken, {
-      network: "ropsten",
-    });
+    const results = await verifyRopsten(documentRopstenValidWithToken);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -537,9 +528,7 @@ describe("verify(integration)", () => {
     expect(isValid(results)).toStrictEqual(true);
   });
   it("should be invalid with a merkle root that is odd-length", async () => {
-    const results = await verify(documentMainnetInvalidWithOddLengthMerkleRoot, {
-      network: "mainnet",
-    });
+    const results = await verifyHomestead(documentMainnetInvalidWithOddLengthMerkleRoot);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -632,9 +621,7 @@ describe("verify(integration)", () => {
 
   it("should be invalid with a merkle root that is of incorrect length", async () => {
     // incorrect length means even-length, but not 64 characters as required of merkleRoots
-    const results = await verify(documentMainnetInvalidWithIncorrectMerkleRoot, {
-      network: "mainnet",
-    });
+    const results = await verifyHomestead(documentMainnetInvalidWithIncorrectMerkleRoot);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -733,16 +720,14 @@ describe("verify(integration)", () => {
 
     it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 429)", async () => {
       server.use(
-        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+        rest.post(`https://mainnet.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
           return res(
             ctx.status(429, "Mocked rate limit error"),
             ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 1 })
           );
         })
       );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "homestead",
-      });
+      const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -811,16 +796,14 @@ describe("verify(integration)", () => {
     });
     it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 502)", async () => {
       server.use(
-        rest.post("https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+        rest.post(`https://mainnet.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
           return res(
             ctx.status(502, "Mocked rate limit error"),
             ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 2 })
           );
         })
       );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "homestead",
-      });
+      const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -890,16 +873,14 @@ describe("verify(integration)", () => {
     it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 429)", async () => {
       // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
       server.use(
-        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+        rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
           return res(
             ctx.status(429, "Mocked rate limit error"),
             ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 3 })
           );
         })
       );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "ropsten",
-      });
+      const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -969,16 +950,14 @@ describe("verify(integration)", () => {
     it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 502)", async () => {
       // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
       server.use(
-        rest.post("https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18", (req, res, ctx) => {
+        rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
           return res(
             ctx.status(502, "Mocked rate limit error"),
             ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 4 })
           );
         })
       );
-      const results = await verify(documentMainnetValidWithCertificateStore, {
-        network: "ropsten",
-      });
+      const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -1048,9 +1027,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
-    const results = await verify(documentRopstenRevokedWithToken, {
-      network: "ropsten",
-    });
+    const results = await verifyRopsten(documentRopstenRevokedWithToken);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1132,9 +1109,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued then subsequently revoked", async () => {
-    const results = await verify(documentRopstenRevokedWithDocumentStore, {
-      network: "ropsten",
-    });
+    const results = await verifyRopsten(documentRopstenRevokedWithDocumentStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1235,9 +1210,7 @@ describe("verify(integration)", () => {
   });
 
   it("should work when document with document store has been issued to rinkeby network", async () => {
-    const results = await verify(documentRinkebyValidWithDocumentStore, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentRinkebyValidWithDocumentStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1317,9 +1290,7 @@ describe("verify(integration)", () => {
   });
 
   it("should work when document with document store has been issued and revoked to rinkeby network", async () => {
-    const results = await verify(documentRinkebyRevokedWithDocumentStore, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentRinkebyRevokedWithDocumentStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1412,9 +1383,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail with document signed directly with DID (default verifier)", async () => {
-    const results = await verify(documentDidSigned, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentDidSigned);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1489,10 +1458,10 @@ describe("verify(integration)", () => {
   });
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
-    const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof]);
-    const results = await customVerify(documentDidSigned, {
+    const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
       network: "rinkeby",
     });
+    const results = await customVerify(documentDidSigned);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1578,9 +1547,7 @@ describe("verify(integration)", () => {
   });
 
   it("should pass with document signed directly with DID and have top level identity as DNS", async () => {
-    const results = await verify(documentDnsDidSigned, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentDnsDidSigned);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1657,9 +1624,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail with document incorrectly signed with DID", async () => {
-    const results = await verify(documentDidWrongSignature, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentDidWrongSignature);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1739,9 +1704,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail with document with missing DID signature", async () => {
-    const results = await verify(documentDidMissingProof, {
-      network: "rinkeby",
-    });
+    const results = await verifyRinkeby(documentDidMissingProof);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
