@@ -1,4 +1,5 @@
-import { isValid, verificationBuilder, openAttestationVerifiers } from "./index";
+import { providers } from "ethers";
+import { isValid, openAttestationVerifiers, verificationBuilder } from "./index";
 import {
   documentRopstenValidWithDocumentStore,
   documentRopstenValidWithTokenRegistry,
@@ -7,13 +8,25 @@ import { documentRopstenTampered } from "../test/fixtures/v3/documentRopstenTamp
 import { documentRopstenNotIssued } from "../test/fixtures/v3/documentRopstenNotIssued";
 import { documentRopstenRevoked } from "../test/fixtures/v3/documentRopstenRevoked";
 
-const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const defaultVerify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const alchemyVerify = verificationBuilder(openAttestationVerifiers, {
+  // this is nebulis personal key, feel free to change to another one :)
+  provider: new providers.AlchemyProvider("ropsten", "zPyvUi9PX4yE_rnUvj6Ue3aP3d7OrENk"),
+});
+
+type Element = [string, typeof defaultVerify];
+const verifiers: Element[] = [
+  ["infura", defaultVerify],
+  ["alchemy", alchemyVerify],
+];
 
 describe("verify v3(integration)", () => {
-  it("should fail for OpenAttestationHash when document's hash is invalid and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenTampered);
+  it.each(verifiers)(
+    "on %s, should fail for OpenAttestationHash when document's hash is invalid and OpenAttestationDnsTxt when identity is invalid",
+    async (_, verify) => {
+      const results = await verify(documentRopstenTampered);
 
-    expect(results).toMatchInlineSnapshot(`
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": false,
@@ -89,13 +102,16 @@ describe("verify v3(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
-  });
-  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was not issued and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenNotIssued);
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
+    }
+  );
+  it.each(verifiers)(
+    "on %s, should fail for OpenAttestationEthereumDocumentStoreStatus when document was not issued and OpenAttestationDnsTxt when identity is invalid",
+    async (_, verify) => {
+      const results = await verify(documentRopstenNotIssued);
 
-    expect(results).toMatchInlineSnapshot(`
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -171,14 +187,17 @@ describe("verify v3(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
+    }
+  );
 
-  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued an revoked and OpenAttestationDnsTxt when identity is invalid", async () => {
-    const results = await verify(documentRopstenRevoked);
+  it.each(verifiers)(
+    "on %s, should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued an revoked and OpenAttestationDnsTxt when identity is invalid",
+    async (_, verify) => {
+      const results = await verify(documentRopstenRevoked);
 
-    expect(results).toMatchInlineSnapshot(`
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -259,14 +278,17 @@ describe("verify v3(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
+    }
+  );
 
-  it("should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with certificate store is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithDocumentStore);
+  it.each(verifiers)(
+    "on %s, should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with certificate store is valid on ropsten",
+    async (_, verify) => {
+      const results = await verify(documentRopstenValidWithDocumentStore);
 
-    expect(results).toMatchInlineSnapshot(`
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -337,15 +359,18 @@ describe("verify v3(integration)", () => {
         },
       ]
     `);
-    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
-  });
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+    }
+  );
 
-  it("should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with token registry is valid on ropsten", async () => {
-    const results = await verify(documentRopstenValidWithTokenRegistry);
+  it.each(verifiers)(
+    "on %s, should fail for OpenAttestationDnsTxt when identity is invalid and be valid for remaining checks when document with token registry is valid on ropsten",
+    async (_, verify) => {
+      const results = await verify(documentRopstenValidWithTokenRegistry);
 
-    expect(results).toMatchInlineSnapshot(`
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -409,8 +434,9 @@ describe("verify v3(integration)", () => {
         },
       ]
     `);
-    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
-  });
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+    }
+  );
 });

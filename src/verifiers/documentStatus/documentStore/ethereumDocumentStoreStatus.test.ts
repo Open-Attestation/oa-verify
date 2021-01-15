@@ -1,3 +1,4 @@
+import { providers } from "ethers";
 import { openAttestationEthereumDocumentStoreStatus } from "./ethereumDocumentStoreStatus";
 import { documentRopstenRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
 import { documentRopstenRevokedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
@@ -10,68 +11,87 @@ import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocu
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { verificationBuilder } from "../../verificationBuilder";
 
-const verify = verificationBuilder([openAttestationEthereumDocumentStoreStatus], { network: "ropsten" });
+const defaultVerify = verificationBuilder([openAttestationEthereumDocumentStoreStatus], { network: "ropsten" });
+const alchemyVerify = verificationBuilder([openAttestationEthereumDocumentStoreStatus], {
+  // this is nebulis personal key, feel free to change to another one :)
+  provider: new providers.AlchemyProvider("ropsten", "zPyvUi9PX4yE_rnUvj6Ue3aP3d7OrENk"),
+});
+
+type Element = [string, typeof defaultVerify];
+const verifiers: Element[] = [
+  ["infura", defaultVerify],
+  ["alchemy", alchemyVerify],
+];
 
 describe("OpenAttestationEthereumDocumentStoreStatus", () => {
   describe("v2", () => {
-    it("should return a skipped fragment when document does not have data", async () => {
-      const fragment = await verify(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        { ...v2documentRopstenValidWithDocumentStore, data: null }
-      );
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+    it.each(verifiers)(
+      "on %s, should return a skipped fragment when document does not have data",
+      async (_, verify) => {
+        const fragment = await verify(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          { ...v2documentRopstenValidWithDocumentStore, data: null }
+        );
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            reason: {
+              code: 4,
+              codeString: "SKIPPED",
+              message:
+                'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+            },
+            status: "SKIPPED",
           },
-          status: "SKIPPED",
-        },
-      ]);
-    });
-    it("should return a skipped fragment when document does not have issuers", async () => {
-      const fragment = await verify({
-        ...v2documentRopstenValidWithDocumentStore,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        data: { ...v2documentRopstenValidWithDocumentStore.data, issuers: null },
-      });
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        ]);
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return a skipped fragment when document does not have issuers",
+      async (_, verify) => {
+        const fragment = await verify({
+          ...v2documentRopstenValidWithDocumentStore,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-expect-error
+          data: { ...v2documentRopstenValidWithDocumentStore.data, issuers: null },
+        });
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            reason: {
+              code: 4,
+              codeString: "SKIPPED",
+              message:
+                'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+            },
+            status: "SKIPPED",
           },
-          status: "SKIPPED",
-        },
-      ]);
-    });
-    it("should return a skipped fragment when document uses token registry", async () => {
-      const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry);
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message:
-              'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+        ]);
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return a skipped fragment when document uses token registry",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenNotIssuedWithTokenRegistry);
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            reason: {
+              code: 4,
+              codeString: "SKIPPED",
+              message:
+                'Document issuers doesn\'t have "documentStore" or "certificateStore" property or DOCUMENT_STORE method',
+            },
+            status: "SKIPPED",
           },
-          status: "SKIPPED",
-        },
-      ]);
-    });
-    it("should return an invalid fragment when document store is invalid", async () => {
+        ]);
+      }
+    );
+    it.each(verifiers)("on %s, should return an invalid fragment when document store is invalid", async (_, verify) => {
       const fragment = await verify({
         ...documentRopstenRevokedWithDocumentStore,
         data: {
@@ -115,20 +135,22 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
         ]
       `);
     });
-    it("should return an invalid fragment when document store does not exists", async () => {
-      const fragment = await verify({
-        ...documentRopstenRevokedWithDocumentStore,
-        data: {
-          ...documentRopstenRevokedWithDocumentStore.data,
-          issuers: [
-            {
-              ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
-              documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
-            },
-          ],
-        },
-      });
-      expect(fragment).toMatchInlineSnapshot(`
+    it.each(verifiers)(
+      "on %s, should return an invalid fragment when document store does not exists",
+      async (_, verify) => {
+        const fragment = await verify({
+          ...documentRopstenRevokedWithDocumentStore,
+          data: {
+            ...documentRopstenRevokedWithDocumentStore.data,
+            issuers: [
+              {
+                ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
+                documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
+              },
+            ],
+          },
+        });
+        expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Object {
@@ -158,8 +180,9 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           },
         ]
       `);
-    });
-    it("should return an invalid fragment when document was not issued", async () => {
+      }
+    );
+    it.each(verifiers)("on %s, should return an invalid fragment when document was not issued", async (_, verify) => {
       const fragment = await verify(documentRopstenNotIssuedWithCertificateStore);
       expect(fragment).toMatchInlineSnapshot(`
         Array [
@@ -192,9 +215,11 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
         ]
       `);
     });
-    it("should return an invalid fragment when document with document store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevokedWithDocumentStore);
-      expect(fragment).toMatchInlineSnapshot(`
+    it.each(verifiers)(
+      "on %s, should return an invalid fragment when document with document store that has been revoked",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenRevokedWithDocumentStore);
+        expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Object {
@@ -231,10 +256,13 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           },
         ]
       `);
-    });
-    it("should return an invalid fragment when document with certificate store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevokedWithCertificateStore);
-      expect(fragment).toMatchInlineSnapshot(`
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return an invalid fragment when document with certificate store that has been revoked",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenRevokedWithCertificateStore);
+        expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Object {
@@ -271,69 +299,78 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           },
         ]
       `);
-    });
-    it("should return a valid fragment when document with document store that has not been revoked", async () => {
-      const fragment = await verify(v2documentRopstenValidWithDocumentStore);
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return a valid fragment when document with document store that has not been revoked",
+      async (_, verify) => {
+        const fragment = await verify(v2documentRopstenValidWithDocumentStore);
 
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          data: {
-            issuedOnAll: true,
-            revokedOnAny: false,
-            details: {
-              issuance: [
-                {
-                  issued: true,
-                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                },
-              ],
-              revocation: [
-                {
-                  revoked: false,
-                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                },
-              ],
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            data: {
+              issuedOnAll: true,
+              revokedOnAny: false,
+              details: {
+                issuance: [
+                  {
+                    issued: true,
+                    address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
+                ],
+                revocation: [
+                  {
+                    revoked: false,
+                    address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
+                ],
+              },
             },
+            status: "VALID",
           },
-          status: "VALID",
-        },
-      ]);
-    });
-    it("should return a valid fragment when document with certificate store that has not been revoked", async () => {
-      const fragment = await verify(documentRopstenValidWithCertificateStore);
+        ]);
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return a valid fragment when document with certificate store that has not been revoked",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenValidWithCertificateStore);
 
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          data: {
-            issuedOnAll: true,
-            revokedOnAny: false,
-            details: {
-              issuance: [
-                {
-                  issued: true,
-                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                },
-              ],
-              revocation: [
-                {
-                  revoked: false,
-                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                },
-              ],
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            data: {
+              issuedOnAll: true,
+              revokedOnAny: false,
+              details: {
+                issuance: [
+                  {
+                    issued: true,
+                    address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
+                ],
+                revocation: [
+                  {
+                    revoked: false,
+                    address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  },
+                ],
+              },
             },
+            status: "VALID",
           },
-          status: "VALID",
-        },
-      ]);
-    });
-    it("should return an invalid fragment when used with other issuance methods", async () => {
-      const fragment = await verify(documentRopstenMixedIssuance);
+        ]);
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return an invalid fragment when used with other issuance methods",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenMixedIssuance);
 
-      expect(fragment).toMatchInlineSnapshot(`
+        expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": [Error: Document store address not found in issuer DEMO STORE],
@@ -348,12 +385,15 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           },
         ]
       `);
-    });
+      }
+    );
   });
   describe("v3", () => {
-    it("should return an invalid fragment when document with document store that has been revoked", async () => {
-      const fragment = await verify(documentRopstenRevoked);
-      expect(fragment).toMatchInlineSnapshot(`
+    it.each(verifiers)(
+      "on %s, should return an invalid fragment when document with document store that has been revoked",
+      async (_, verify) => {
+        const fragment = await verify(documentRopstenRevoked);
+        expect(fragment).toMatchInlineSnapshot(`
         Array [
           Object {
             "data": Object {
@@ -386,30 +426,34 @@ describe("OpenAttestationEthereumDocumentStoreStatus", () => {
           },
         ]
       `);
-    });
-    it("should return a valid fragment when document with document store that has not been revoked", async () => {
-      const fragment = await verify(v3documentRopstenValidWithDocumentStore);
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumDocumentStoreStatus",
-          type: "DOCUMENT_STATUS",
-          data: {
-            issuedOnAll: true,
-            revokedOnAny: false,
-            details: {
-              issuance: {
-                issued: true,
-                address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              },
-              revocation: {
-                revoked: false,
-                address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+      }
+    );
+    it.each(verifiers)(
+      "on %s, should return a valid fragment when document with document store that has not been revoked",
+      async (_, verify) => {
+        const fragment = await verify(v3documentRopstenValidWithDocumentStore);
+        expect(fragment).toStrictEqual([
+          {
+            name: "OpenAttestationEthereumDocumentStoreStatus",
+            type: "DOCUMENT_STATUS",
+            data: {
+              issuedOnAll: true,
+              revokedOnAny: false,
+              details: {
+                issuance: {
+                  issued: true,
+                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                },
+                revocation: {
+                  revoked: false,
+                  address: "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                },
               },
             },
+            status: "VALID",
           },
-          status: "VALID",
-        },
-      ]);
-    });
+        ]);
+      }
+    );
   });
 });

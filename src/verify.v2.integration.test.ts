@@ -4,6 +4,7 @@
 
 import { rest } from "msw";
 import { setupServer } from "msw/node";
+import { providers } from "ethers";
 import {
   isValid,
   verify,
@@ -33,21 +34,50 @@ import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
 import { INFURA_API_KEY } from "./config";
 
-const verifyHomestead = verify;
-const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
-const verifyRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
+const verifyInfuraHomestead = verify;
+const verifyAlchemyHomestead = verificationBuilder(openAttestationVerifiers, {
+  // this is nebulis personal key, feel free to change to another one :)
+  provider: new providers.AlchemyProvider("mainnet", "SjSh6Bb2zKcXUvzYVJvLW3jDy8ekYys0"),
+});
+
+const verifyInfuraRopsten = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const verifyAlchemyRopsten = verificationBuilder(openAttestationVerifiers, {
+  // this is nebulis personal key, feel free to change to another one :)
+  provider: new providers.AlchemyProvider("ropsten", "zPyvUi9PX4yE_rnUvj6Ue3aP3d7OrENk"),
+});
+const verifyInfuraRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
+const verifyAlchemyRinkeby = verificationBuilder(openAttestationVerifiers, {
+  // this is nebulis personal key, feel free to change to another one :)
+  provider: new providers.AlchemyProvider("rinkeby", "KeS23BR3zjPsLB14XcEk7B7rVdljMKnq"),
+});
+
+type Element = [string, typeof verifyInfuraRopsten];
+const mainnetVerifiers: Element[] = [
+  ["infura", verifyInfuraHomestead],
+  ["alchemy", verifyAlchemyHomestead],
+];
+const ropstenVerifiers: Element[] = [
+  ["infura", verifyInfuraRopsten],
+  ["alchemy", verifyAlchemyRopsten],
+];
+const rinkebyVerifiers: Element[] = [
+  ["infura", verifyInfuraRinkeby],
+  ["alchemy", verifyAlchemyRinkeby],
+];
 
 describe("verify(integration)", () => {
   afterEach(() => {
     delete process.env.ETHEREUM_PROVIDER;
   });
-  it("should skip all verifiers when the document is an empty object", async () => {
-    const fragments = await verifyRopsten(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      {}
-    );
-    expect(fragments).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should skip all verifiers when the document is an empty object",
+    async (_, verifyRopsten) => {
+      const fragments = await verifyRopsten(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        {}
+      );
+      expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
           "name": "OpenAttestationHash",
@@ -111,14 +141,17 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(fragments)).toStrictEqual(false);
-    expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-    expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-    expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
-  });
-  it("should fail for everything when document's hash is invalid and certificate store is invalid", async () => {
-    const results = await verifyHomestead(tamperedDocumentWithCertificateStore);
-    expect(results).toMatchInlineSnapshot(`
+      expect(isValid(fragments)).toStrictEqual(false);
+      expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+      expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+      expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+    }
+  );
+  it.each(mainnetVerifiers)(
+    "on %s, should fail for everything when document's hash is invalid and certificate store is invalid",
+    async (_, verifyHomestead) => {
+      const results = await verifyHomestead(tamperedDocumentWithCertificateStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": false,
@@ -199,13 +232,16 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    }
+  );
 
-  it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreStatus when document's hash is invalid and was not issued", async () => {
-    const results = await verifyRopsten(tamperedDocumentWithInvalidCertificateStore);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreStatus when document's hash is invalid and was not issued",
+    async (_, verifyRopsten) => {
+      const results = await verifyRopsten(tamperedDocumentWithInvalidCertificateStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": false,
@@ -286,17 +322,20 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+    }
+  );
 
-  it("should be valid for all checks for a document with obfuscated fields", async () => {
-    const fragments = await verifyRopsten(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      documentRopstenObfuscated
-    );
-    expect(fragments).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should be valid for all checks for a document with obfuscated fields",
+    async (_, verifyRopsten) => {
+      const fragments = await verifyRopsten(
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
+        documentRopstenObfuscated
+      );
+      expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -371,15 +410,18 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(fragments)).toStrictEqual(true);
-    expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-    expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
-    expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
+      expect(isValid(fragments)).toStrictEqual(true);
+      expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+      expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    }
+  );
 
-  it("should be valid for all checks when document with certificate store is valid on ropsten", async () => {
-    const results = await verifyRopsten(documentRopstenValidWithCertificateStore);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should be valid for all checks when document with certificate store is valid on ropsten",
+    async (_, verifyRopsten) => {
+      const results = await verifyRopsten(documentRopstenValidWithCertificateStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -452,14 +494,17 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
-  });
+      // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+    }
+  );
 
-  it("should be valid for all checks when document with token registry is valid on ropsten", async () => {
-    const results = await verifyRopsten(documentRopstenValidWithToken);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should be valid for all checks when document with token registry is valid on ropsten",
+    async (_, verifyRopsten) => {
+      const results = await verifyRopsten(documentRopstenValidWithToken);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -525,11 +570,14 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(true);
-  });
-  it("should be invalid with a merkle root that is odd-length", async () => {
-    const results = await verifyHomestead(documentMainnetInvalidWithOddLengthMerkleRoot);
-    expect(results).toMatchInlineSnapshot(`
+      expect(isValid(results)).toStrictEqual(true);
+    }
+  );
+  it.each(mainnetVerifiers)(
+    "on %s, should be invalid with a merkle root that is odd-length",
+    async (_, verifyHomestead) => {
+      const results = await verifyHomestead(documentMainnetInvalidWithOddLengthMerkleRoot);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": false,
@@ -612,17 +660,20 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+      expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    }
+  );
 
-  it("should be invalid with a merkle root that is of incorrect length", async () => {
-    // incorrect length means even-length, but not 64 characters as required of merkleRoots
-    const results = await verifyHomestead(documentMainnetInvalidWithIncorrectMerkleRoot);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(mainnetVerifiers)(
+    "on %s, should be invalid with a merkle root that is of incorrect length",
+    async (_, verifyHomestead) => {
+      // incorrect length means even-length, but not 64 characters as required of merkleRoots
+      const results = await verifyHomestead(documentMainnetInvalidWithIncorrectMerkleRoot);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": false,
@@ -705,12 +756,13 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      // Ethers would return INVALID_ARGUMENT, as merkle root is odd-length which we tampered it by removing the last char
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+      expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    }
+  );
 
   describe("Handling HTTP response errors", () => {
     const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
@@ -727,7 +779,7 @@ describe("verify(integration)", () => {
           );
         })
       );
-      const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
+      const results = await verifyInfuraHomestead(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -803,7 +855,7 @@ describe("verify(integration)", () => {
           );
         })
       );
-      const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
+      const results = await verifyInfuraHomestead(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -880,7 +932,7 @@ describe("verify(integration)", () => {
           );
         })
       );
-      const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
+      const results = await verifyInfuraRopsten(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -957,7 +1009,7 @@ describe("verify(integration)", () => {
           );
         })
       );
-      const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
+      const results = await verifyInfuraRopsten(documentMainnetValidWithCertificateStore);
       expect(results).toMatchInlineSnapshot(`
         Array [
           Object {
@@ -1026,9 +1078,11 @@ describe("verify(integration)", () => {
     });
   });
 
-  it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
-    const results = await verifyRopsten(documentRopstenRevokedWithToken);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ",
+    async (_, verifyRopsten) => {
+      const results = await verifyRopsten(documentRopstenRevokedWithToken);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -1104,13 +1158,16 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(false);
+    }
+  );
 
-  it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued then subsequently revoked", async () => {
-    const results = await verifyRopsten(documentRopstenRevokedWithDocumentStore);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(ropstenVerifiers)(
+    "on %s, should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued then subsequently revoked",
+    async (_, verifyRopsten) => {
+      const results = await verifyRopsten(documentRopstenRevokedWithDocumentStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -1205,13 +1262,16 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+    }
+  );
 
-  it("should work when document with document store has been issued to rinkeby network", async () => {
-    const results = await verifyRinkeby(documentRinkebyValidWithDocumentStore);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(rinkebyVerifiers)(
+    "on %s, should work when document with document store has been issued to rinkeby network",
+    async (_, verifyRinkeby) => {
+      const results = await verifyRinkeby(documentRinkebyValidWithDocumentStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -1286,12 +1346,15 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(true);
-  });
+      expect(isValid(results)).toStrictEqual(true);
+    }
+  );
 
-  it("should work when document with document store has been issued and revoked to rinkeby network", async () => {
-    const results = await verifyRinkeby(documentRinkebyRevokedWithDocumentStore);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(rinkebyVerifiers)(
+    "on %s, should work when document with document store has been issued and revoked to rinkeby network",
+    async (_, verifyRinkeby) => {
+      const results = await verifyRinkeby(documentRinkebyRevokedWithDocumentStore);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -1376,15 +1439,18 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results)).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
-  });
+      expect(isValid(results)).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+    }
+  );
 
-  it("should fail with document signed directly with DID (default verifier)", async () => {
-    const results = await verifyRinkeby(documentDidSigned);
-    expect(results).toMatchInlineSnapshot(`
+  it.each(rinkebyVerifiers)(
+    "on %s, should fail with document signed directly with DID (default verifier)",
+    async (_, verifyRinkeby) => {
+      const results = await verifyRinkeby(documentDidSigned);
+      expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
           "data": true,
@@ -1451,11 +1517,12 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-    expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
-    expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
-    expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
-    expect(isValid(results)).toStrictEqual(false);
-  });
+      expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(true);
+      expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+      expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
+      expect(isValid(results)).toStrictEqual(false);
+    }
+  );
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
@@ -1547,7 +1614,7 @@ describe("verify(integration)", () => {
   });
 
   it("should pass with document signed directly with DID and have top level identity as DNS", async () => {
-    const results = await verifyRinkeby(documentDnsDidSigned);
+    const results = await verifyInfuraRinkeby(documentDnsDidSigned);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1624,7 +1691,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail with document incorrectly signed with DID", async () => {
-    const results = await verifyRinkeby(documentDidWrongSignature);
+    const results = await verifyAlchemyRinkeby(documentDidWrongSignature);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1704,7 +1771,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail with document with missing DID signature", async () => {
-    const results = await verifyRinkeby(documentDidMissingProof);
+    const results = await verifyInfuraRinkeby(documentDidMissingProof);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
