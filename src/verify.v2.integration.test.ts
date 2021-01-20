@@ -377,6 +377,86 @@ describe("verify(integration)", () => {
     expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
+  it("should be valid for all checks when document with certificate store is valid on main net", async () => {
+    const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
+    expect(results).toMatchInlineSnapshot(`
+      Array [
+        Object {
+          "data": true,
+          "name": "OpenAttestationHash",
+          "status": "VALID",
+          "type": "DOCUMENT_INTEGRITY",
+        },
+        Object {
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "0x007d40224f6562461633ccfbaffd359ebb2fc9ba",
+                  "revoked": false,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not signed by DID directly",
+          },
+          "status": "SKIPPED",
+          "type": "DOCUMENT_STATUS",
+        },
+        Object {
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "reason": Object {
+            "code": 2,
+            "codeString": "SKIPPED",
+            "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+        Object {
+          "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 0,
+            "codeString": "SKIPPED",
+            "message": "Document was not issued using DNS-DID",
+          },
+          "status": "SKIPPED",
+          "type": "ISSUER_IDENTITY",
+        },
+      ]
+    `);
+    // it's not valid on ISSUER_IDENTITY (skipped) so making sure the rest is valid
+    expect(isValid(results)).toStrictEqual(false);
+    expect(isValid(results, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"])).toStrictEqual(true);
+  });
+
   it("should be valid for all checks when document with certificate store is valid on ropsten", async () => {
     const results = await verifyRopsten(documentRopstenValidWithCertificateStore);
     expect(results).toMatchInlineSnapshot(`
