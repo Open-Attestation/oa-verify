@@ -1,4 +1,4 @@
-import { verifySignature } from "@govtechsg/open-attestation";
+import { verifySignature, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationHashCode } from "../../../types/error";
 
@@ -18,6 +18,7 @@ export const openAttestationHash: Verifier = {
     });
   },
   test: (document) => {
+    if (!utils.isWrappedV2Document(document)) return false;
     return !!document?.signature?.merkleRoot && !!document?.signature?.targetHash && !!document.data;
   },
   verify: async (document) => {

@@ -22,7 +22,7 @@ export type Identity = ValidIdentity | InvalidIdentity;
 // Resolve identity of an issuer, currently supporting only DNS-TXT
 // DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
 const resolveIssuerIdentity = async (
-  issuer: v2.Issuer | v3.Issuer,
+  issuer: v2.Issuer,
   smartContractAddress: string,
   options: VerifierOptions
 ): Promise<Identity> => {
@@ -80,10 +80,7 @@ export const openAttestationDnsTxtIdentityProof: Verifier<
     });
   },
   test: (document) => {
-    if (oaUtils.isWrappedV3Document(document)) {
-      const documentData = getData(document);
-      return documentData.issuer.identityProof.type === v3.IdentityProofType.DNSTxt;
-    } else if (isWrappedV2Document(document)) {
+    if (isWrappedV2Document(document)) {
       const documentData = getData(document);
       // at least one issuer uses DNS-TXT
       return documentData.issuers.some((issuer) => {
@@ -140,15 +137,7 @@ export const openAttestationDnsTxtIdentityProof: Verifier<
           status: "VALID",
         };
       } else {
-        // we have a v3 document
-        const documentData = getData(document);
-        const identity = await resolveIssuerIdentity(documentData.issuer, documentData.proof.value, options);
-
-        return {
-          name,
-          type,
-          ...identity,
-        };
+        throw new Error("TBD");
       }
     },
     {

@@ -43,16 +43,7 @@ export const getTokenRegistry = (
       );
     return issuers[0].tokenRegistry;
   } else {
-    const { proof } = getData(document);
-    if (proof.method !== "TOKEN_REGISTRY")
-      throw new CodedError(
-        "Cannot validate non-token registry documents",
-        OpenAttestationEthereumTokenRegistryStatusCode.INVALID_VALIDATION_METHOD,
-        OpenAttestationEthereumTokenRegistryStatusCode[
-          OpenAttestationEthereumTokenRegistryStatusCode.INVALID_VALIDATION_METHOD
-        ]
-      );
-    return proof.value;
+    throw new Error("TBD");
   }
 };
 
@@ -152,10 +143,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
     });
   },
   test: (document) => {
-    if (utils.isWrappedV3Document(document)) {
-      const documentData = getData(document);
-      return documentData.proof.method === v3.Method.TokenRegistry;
-    } else if (utils.isWrappedV2Document(document)) {
+    if (utils.isWrappedV2Document(document)) {
       const documentData = getData(document);
       return documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
     }
@@ -163,6 +151,7 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
   },
   verify: withCodedErrorHandler(
     async (document, options) => {
+      if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
       const tokenRegistry = getTokenRegistry(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
       const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });

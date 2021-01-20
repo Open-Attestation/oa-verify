@@ -42,11 +42,7 @@ describe("verify(integration)", () => {
     delete process.env.ETHEREUM_PROVIDER;
   });
   it("should skip all verifiers when the document is an empty object", async () => {
-    const fragments = await verifyRopsten(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      {}
-    );
+    const fragments = await verifyRopsten({});
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -291,11 +287,7 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks for a document with obfuscated fields", async () => {
-    const fragments = await verifyRopsten(
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      documentRopstenObfuscated
-    );
+    const fragments = await verifyRopsten(documentRopstenObfuscated);
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {

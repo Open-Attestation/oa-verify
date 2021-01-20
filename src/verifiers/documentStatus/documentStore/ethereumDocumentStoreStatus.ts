@@ -6,6 +6,7 @@ import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
+import { util } from "prettier";
 
 interface ValidIssuanceStatus {
   issued: true;
@@ -62,16 +63,7 @@ export const getIssuersDocumentStores = (
       return documentStoreAddress;
     });
   }
-  const { proof } = getData(document);
-  if (proof.method !== "DOCUMENT_STORE")
-    throw new CodedError(
-      `Document not issued using document store`,
-      OpenAttestationEthereumDocumentStoreStatusCode.INVALID_VALIDATION_METHOD,
-      OpenAttestationEthereumDocumentStoreStatusCode[
-        OpenAttestationEthereumDocumentStoreStatusCode.INVALID_VALIDATION_METHOD
-      ]
-    );
-  return [proof.value];
+  throw new Error("TBD");
 };
 
 export const decodeError = (error: any) => {
@@ -246,10 +238,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
     });
   },
   test: (document) => {
-    if (utils.isWrappedV3Document(document)) {
-      const documentData = getData(document);
-      return documentData.proof.method === v3.Method.DocumentStore;
-    } else if (isWrappedV2Document(document)) {
+    if (isWrappedV2Document(document)) {
       const documentData = getData(document);
       return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
     }
@@ -257,6 +246,7 @@ export const openAttestationEthereumDocumentStoreStatus: Verifier<
   },
   verify: withCodedErrorHandler(
     async (document, options): Promise<VerificationFragment<DocumentStoreStatusFragment>> => {
+      if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
       const documentStores = getIssuersDocumentStores(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
       const { targetHash } = document.signature;
