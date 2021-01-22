@@ -6,7 +6,6 @@ import { Hash, VerificationFragmentType, VerificationFragment, Verifier } from "
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
-import { util } from "prettier";
 
 interface ValidIssuanceStatus {
   issued: true;

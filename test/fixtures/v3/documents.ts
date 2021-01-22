@@ -57,7 +57,7 @@ export const baseDnsDidDocument: v3.OpenAttestationDocument = {
   ],
 };
 
-export const baseDidDocument : v3.OpenAttestationDocument = {
+export const baseDidDocument: v3.OpenAttestationDocument = {
   ...baseDnsDidDocument,
   openAttestationMetadata: {
     ...baseDnsDidDocument.openAttestationMetadata,

@@ -288,7 +288,7 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
     });
   });
   describe("v3", () => {
-    xit("should return an invalid fragment when document with token registry has not been minted", async () => {});
-    xit("should return a valid fragment when document with document store has been minted", async () => {});
+    it.skip("should return an invalid fragment when document with token registry has not been minted", async () => {});
+    it.skip("should return a valid fragment when document with document store has been minted", async () => {});
   });
 });

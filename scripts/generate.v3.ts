@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-empty-function,camelcase */
 import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
-import { baseDidDocument } from "../test/fixtures/v3/documents";
 import { writeFileSync } from "fs";
 import { Wallet, utils } from "ethers";
+import { baseDidDocument } from "../test/fixtures/v3/documents";
 
 // DNS: example.tradetrust.io
 // Addr: 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89

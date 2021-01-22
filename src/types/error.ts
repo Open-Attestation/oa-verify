@@ -40,6 +40,7 @@ export enum OpenAttestationDnsTxtCode {
 }
 export enum OpenAttestationHashCode {
   DOCUMENT_TAMPERED = 0,
+  UNEXPECTED_ERROR = 1,
   SKIPPED = 2,
 }
 export enum OpenAttestationDidSignedDocumentStatusCode {
