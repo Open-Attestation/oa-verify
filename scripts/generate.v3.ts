@@ -2,7 +2,7 @@
 import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
 import { writeFileSync } from "fs";
 import { Wallet, utils } from "ethers";
-import { baseDidDocument } from "../test/fixtures/v3/documents";
+import { baseDidDocument, baseDnsDidDocument, baseDocumentStoreDocument, baseTokenRegistryDocument } from "../test/fixtures/v3/documents";
 
 // DNS: example.tradetrust.io
 // Addr: 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89
@@ -17,8 +17,8 @@ const wallet = new Wallet("0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc
 // Key: 0x416f14debf10172f04bef09f9b774480561ee3f05ee1a6f75df3c71ec0c60666
 
 const generateDnsDid = async () => {
-  writeFileSync("./test/fixtures/v3/dnsdid.json", JSON.stringify(baseDidDocument, null, 2));
-  const wrappedBaseDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDidDocument);
+  writeFileSync("./test/fixtures/v3/dnsdid.json", JSON.stringify(baseDnsDidDocument, null, 2));
+  const wrappedBaseDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDnsDidDocument);
   writeFileSync("./test/fixtures/v3/dnsdid-wrapped.json", JSON.stringify(wrappedBaseDnsDidDocument, null, 2));
   const { merkleRoot } = wrappedBaseDnsDidDocument.proof;
   const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
@@ -50,8 +50,17 @@ const generateDns = async () => {
   writeFileSync("./test/fixtures/v3/did-signed.json", JSON.stringify(signedDidDocument, null, 2));
 };
 
-const generateDocumentStore = async () => {};
-const generateTokenRegistry = async () => {};
+const generateDocumentStore = async () => {
+  writeFileSync("./test/fixtures/v3/documentStore.json", JSON.stringify(baseDocumentStoreDocument, null, 2));
+  const wrappedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDocumentStoreDocument);
+  writeFileSync("./test/fixtures/v3/documentStore-wrapped.json", JSON.stringify(wrappedBaseDocumentStoreDocument, null, 2));
+};
+
+const generateTokenRegistry = async () => {
+  writeFileSync("./test/fixtures/v3/tokenRegistry.json", JSON.stringify(baseTokenRegistryDocument, null, 2));
+  const wrappedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseTokenRegistryDocument);
+  writeFileSync("./test/fixtures/v3/tokenRegistry-wrapped.json", JSON.stringify(wrappedBaseTokenRegistryDocument, null, 2));
+};
 
 const run = async () => {
   await Promise.all([generateDnsDid(), generateDns(), generateDocumentStore(), generateTokenRegistry()]);

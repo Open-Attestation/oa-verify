@@ -1,3 +1,4 @@
+import { v3, WrappedDocument, SignedWrappedDocument } from "@govtechsg/open-attestation";
 import { openAttestationDidSignedDocumentStatus } from "./didSignedDocumentStatus";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
@@ -8,6 +9,15 @@ import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixt
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
 import { getPublicKey } from "../../../did/resolver";
 import { getProvider } from "../../../common/utils";
+import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentStore-wrapped.json";
+import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
+import sampleDidSignedV3 from "../../../../test/fixtures/v3/did-signed.json";
+import sampleDNSDidSignedV3 from "../../../../test/fixtures/v3/dnsdid-signed.json";
+
+const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
+const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
+const didSignedV3 = sampleDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 
 jest.mock("../../../did/resolver");
 
@@ -62,6 +72,19 @@ describe("test", () => {
     });
     it("should return true for documents where any issuer is using the `DNS-DID` identity proof", () => {
       expect(openAttestationDidSignedDocumentStatus.test(documentDnsDidSigned, options)).toBe(true);
+    });
+  });
+
+  describe("v3", () => {
+    it("should return false if it is not signed by DID", () => {
+      expect(openAttestationDidSignedDocumentStatus.test(documentStoreWrapV3, options)).toBe(false);
+      expect(openAttestationDidSignedDocumentStatus.test(tokenRegistryWrapV3, options)).toBe(false);
+    });
+    it("should return true for documents where any issuer is using the `DID` identity proof", () => {
+      expect(openAttestationDidSignedDocumentStatus.test(didSignedV3, options)).toBe(true);
+    });
+    it("should return true for documents where any issuer is using the `DNS-DID` identity proof", () => {
+      expect(openAttestationDidSignedDocumentStatus.test(dnsDidSignedV3, options)).toBe(true);
     });
   });
 });
@@ -157,23 +180,6 @@ describe("verify", () => {
         }
       `);
     });
-    it("should fail when proof is missing", async () => {
-      whenPublicKeyResolvesSuccessfully();
-      const res = await openAttestationDidSignedDocumentStatus.verify(documentDidMissingProof, options);
-      expect(res).toMatchInlineSnapshot(`
-        Object {
-          "data": [Error: Only signed v2 is supported now],
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "reason": Object {
-            "code": 1,
-            "codeString": "UNEXPECTED_ERROR",
-            "message": "Only signed v2 is supported now",
-          },
-          "status": "ERROR",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-    });
     it("should fail when did resolver fails for some reasons", async () => {
       mockGetPublicKey.mockRejectedValue(new Error("Error from DID resolver"));
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
@@ -199,11 +205,129 @@ describe("verify", () => {
           "data": [Error: Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 5,
+            "code": 6,
             "codeString": "CORRESPONDING_PROOF_MISSING",
             "message": "Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           },
           "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    xit("should fail when signature is wrong", () => {});
+  });
+
+  describe("v3", () => {
+    it("should pass for documents using `DID` and is correctly signed", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should fail when revocation block is missing", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const docWithoutRevocationBlock = {
+        ...didSignedV3,
+        openAttestationMetadata: {
+          template: {
+            name: "CUSTOM_TEMPLATE",
+            type: "EMBEDDED_RENDERER",
+            url: "https://localhost:3000/renderer",
+          },
+          proof: {
+            type: "OpenAttestationProofMethod",
+            method: "DID",
+            value: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+          },
+          identityProof: {
+            type: "DID",
+            identifier: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+          },
+        },
+      };
+      const res = await openAttestationDidSignedDocumentStatus.verify(docWithoutRevocationBlock as any, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: revocation block not found for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 2,
+            "codeString": "MISSING_REVOCATION",
+            "message": "revocation block not found for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should fail when signature is wrong", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const documentWithWrongSig = {
+        ...didSignedV3,
+        proof: {
+          ...didSignedV3.proof,
+          signature: dnsDidSignedV3.proof.signature, // Replace with signature from another doc
+        },
+      };
+      const res = await openAttestationDidSignedDocumentStatus.verify(documentWithWrongSig, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "reason": Object {
+                  "code": 7,
+                  "codeString": "WRONG_SIGNATURE",
+                  "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+                },
+                "verified": false,
+              },
+            },
+            "issuedOnAll": false,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
       `);

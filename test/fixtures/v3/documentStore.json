@@ -38,15 +38,12 @@
     },
     "proof": {
       "type": "OpenAttestationProofMethod",
-      "method": "DID",
-      "value": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-      "revocation": {
-        "type": "NONE"
-      }
+      "method": "DOCUMENT_STORE",
+      "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca"
     },
     "identityProof": {
-      "type": "DID",
-      "identifier": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89"
+      "type": "DNS-TXT",
+      "identifier": "example.tradetrust.io"
     }
   },
   "attachments": [

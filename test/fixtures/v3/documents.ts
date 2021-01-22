@@ -45,7 +45,7 @@ export const baseDnsDidDocument: v3.OpenAttestationDocument = {
     },
     identityProof: {
       type: v3.IdentityProofType.DNSDid,
-      location: "example.tradetrust.io",
+      identifier: "example.tradetrust.io",
     },
   },
   attachments: [
@@ -63,7 +63,7 @@ export const baseDidDocument: v3.OpenAttestationDocument = {
     ...baseDnsDidDocument.openAttestationMetadata,
     identityProof: {
       type: v3.IdentityProofType.Did,
-      location: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+      identifier: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
     },
   },
 };
@@ -75,11 +75,11 @@ export const baseDocumentStoreDocument: v3.OpenAttestationDocument = {
     proof: {
       type: v3.ProofType.OpenAttestationProofMethod,
       method: v3.Method.DocumentStore,
-      value: "DOCUMENT_STORE_ADDR",
+      value: "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
     },
     identityProof: {
       type: v3.IdentityProofType.DNSTxt,
-      location: "example.tradetrust.io",
+      identifier: "example.tradetrust.io",
     },
   },
 };
@@ -91,11 +91,11 @@ export const baseTokenRegistryDocument: v3.OpenAttestationDocument = {
     proof: {
       type: v3.ProofType.OpenAttestationProofMethod,
       method: v3.Method.TokenRegistry,
-      value: "TOKEN_REGISTRY_ADDR",
+      value: "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
     },
     identityProof: {
       type: v3.IdentityProofType.DNSTxt,
-      location: "example.tradetrust.io",
+      identifier: "example.tradetrust.io",
     },
   },
 };

@@ -49,6 +49,9 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   MISSING_REVOCATION = 2,
   UNSIGNED = 3,
   INVALID_ISSUERS = 4,
+  MALFORMED_IDENTITY_PROOF = 5,
+  CORRESPONDING_PROOF_MISSING = 6,
+  DID_MISSING = 7,
 }
 export enum OpenAttestationDidCode {
   SKIPPED = 0,
@@ -64,10 +67,8 @@ export enum OpenAttestationDnsDidCode {
 export enum OpenAttestationSignatureCode {
   UNEXPECTED_ERROR = 0,
   KEY_MISSING = 1,
-  MALFORMED_IDENTITY_PROOF = 2,
   DID_MISSING = 3,
   KEY_NOT_IN_DID = 4,
-  CORRESPONDING_PROOF_MISSING = 5,
   UNSUPPORTED_KEY_TYPE = 6,
   WRONG_SIGNATURE = 7,
 }

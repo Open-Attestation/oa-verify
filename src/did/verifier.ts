@@ -65,24 +65,16 @@ export const verifySecp256k1VerificationKey2018 = ({
 };
 
 export const verifySignature = async ({
+  key,
   merkleRoot,
-  identityProof,
-  proof,
+  signature,
   did,
 }: {
+  key: string;
   merkleRoot: string;
-  identityProof?: v2.IdentityProof;
-  proof: v2.Proof[];
-  did?: string;
+  did: string;
+  signature: string;
 }): Promise<DidVerificationStatus> => {
-  if (!identityProof?.key)
-    throw new CodedError(
-      "Key is not present",
-      OpenAttestationSignatureCode.MALFORMED_IDENTITY_PROOF,
-      "MALFORMED_IDENTITY_PROOF"
-    );
-  if (!did) throw new CodedError("DID is not present", OpenAttestationSignatureCode.DID_MISSING, "DID_MISSING");
-  const { key } = identityProof;
   const publicKey = await getPublicKey(did, key);
   if (!publicKey)
     throw new CodedError(
@@ -90,22 +82,13 @@ export const verifySignature = async ({
       OpenAttestationSignatureCode.KEY_NOT_IN_DID,
       "KEY_NOT_IN_DID"
     );
-
-  const correspondingProof = proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
-  if (!correspondingProof)
-    throw new CodedError(
-      `Proof not found for ${key}`,
-      OpenAttestationSignatureCode.CORRESPONDING_PROOF_MISSING,
-      "CORRESPONDING_PROOF_MISSING"
-    );
-
   switch (publicKey.type) {
     case "Secp256k1VerificationKey2018":
       return verifySecp256k1VerificationKey2018({
         did,
         publicKey,
         merkleRoot,
-        signature: correspondingProof.signature,
+        signature,
       });
     default:
       throw new CodedError(
