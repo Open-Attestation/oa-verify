@@ -27,7 +27,7 @@
     "@govtechsg/document-store": "^2.0.0",
     "@govtechsg/open-attestation": "^4.4.0",
     "@govtechsg/token-registry": "^2.0.0",
-    "axios": "^0.20.0",
+    "axios": "^0.21.1",
     "debug": "^4.1.1",
     "did-resolver": "^2.1.1",
     "ethers": "^5.0.4",
@@ -56,7 +56,7 @@
     "jest": "^26.1.0",
     "msw": "^0.20.5",
     "prettier": "^2.0.5",
-    "semantic-release": "^17.1.1",
+    "semantic-release": "^17.3.7",
     "ts-jest": "^26.1.1",
     "typescript": "^3.9.6"
   },
