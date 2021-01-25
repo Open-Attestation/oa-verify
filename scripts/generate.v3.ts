@@ -27,7 +27,7 @@ const ethereumDocumentConfig = {
     address: "0x1245e5B64D785b25057f7438F715f4aA5D965733",
     key: "0x416f14debf10172f04bef09f9b774480561ee3f05ee1a6f75df3c71ec0c60666",
   },
-  timeout: 5 * 60 * 1000, // 1 min timeout for contract to execute
+  timeout: 5 * 60 * 1000, // 5 min timeout for contract to execute
 };
 
 const generateDnsDid = async () => {
