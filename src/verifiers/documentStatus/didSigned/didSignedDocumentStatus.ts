@@ -123,50 +123,58 @@ const verifyV2 = async (document: SignedWrappedDocument<v2.OpenAttestationDocume
   };
 };
 
+const verifyV3 = async (document: SignedWrappedDocument<v3.OpenAttestationDocument>): Promise<VerificationFragment> => {
+  const merkleRoot = `0x${document.proof.merkleRoot}`;
+  const metaData = document.openAttestationMetadata;
+
+  const verificationResult = await verifySignature({
+    key: document.proof.key,
+    did: metaData.proof.value,
+    merkleRoot,
+    signature: document.proof.signature,
+  });
+
+  if (!metaData.proof.revocation?.type) {
+    throw new CodedError(
+      "revocation block not found for an issuer",
+      OpenAttestationDidSignedDocumentStatusCode.MISSING_REVOCATION,
+      "MISSING_REVOCATION"
+    );
+  }
+
+  const issuedOnAll = verificationResult.verified;
+  const revokedOnAny = !(metaData.proof.revocation?.type === "NONE");
+  const status = issuedOnAll && !revokedOnAny;
+
+  return {
+    name,
+    type,
+    data: {
+      issuedOnAll,
+      revokedOnAny,
+      details: {
+        issuance: verificationResult,
+      },
+    },
+    status: status ? "VALID" : "INVALID",
+  };
+};
+
 const verify: VerifierType["verify"] = withCodedErrorHandler(
   async (document) => {
     if (utils.isSignedWrappedV2Document(document)) {
-      return await verifyV2(document);
+      return verifyV2(document);
     }
 
     if (utils.isSignedWrappedV3Document(document)) {
-      const merkleRoot = `0x${document.proof.merkleRoot}`;
-      const metaData = document.openAttestationMetadata;
-
-      const verificationResult = await verifySignature({
-        key: document.proof.key,
-        did: metaData.proof.value,
-        merkleRoot,
-        signature: document.proof.signature,
-      });
-
-      if (!metaData.proof.revocation?.type) {
-        throw new CodedError(
-          "revocation block not found for an issuer",
-          OpenAttestationDidSignedDocumentStatusCode.MISSING_REVOCATION,
-          "MISSING_REVOCATION"
-        );
-      }
-
-      const issuedOnAll = verificationResult.verified;
-      const revokedOnAny = !(metaData.proof.revocation?.type === "NONE");
-      const status = issuedOnAll && !revokedOnAny;
-
-      return {
-        name,
-        type,
-        data: {
-          issuedOnAll,
-          revokedOnAny,
-          details: {
-            issuance: verificationResult,
-          },
-        },
-        status: status ? "VALID" : "INVALID",
-      };
+      return verifyV3(document);
     }
 
-    throw new Error("Document is neither v2 nor v3");
+    throw new CodedError(
+      `Unrecognized document version`,
+      OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT,
+      OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT]
+    );
   },
   {
     name,

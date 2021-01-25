@@ -4,7 +4,6 @@ import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
 import { documentDidCustomRevocation } from "../../../../test/fixtures/v2/documentDidCustomRevocation";
-import { documentDidMissingProof } from "../../../../test/fixtures/v2/documentDidMissingProof";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
 import { getPublicKey } from "../../../did/resolver";
@@ -214,7 +213,35 @@ describe("verify", () => {
         }
       `);
     });
-    xit("should fail when signature is wrong", () => {});
+    it("should fail when signature is wrong", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const incorrectSignatureDocument = { ...documentDnsDidSigned, proof: documentDidSigned.proof };
+      const res = await openAttestationDidSignedDocumentStatus.verify(incorrectSignatureDocument, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": false,
+                  "reason": Object {
+                    "code": 7,
+                    "codeString": "WRONG_SIGNATURE",
+                    "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+                  },
+                },
+              ],
+            },
+            "issuedOnAll": false,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
   });
 
   describe("v3", () => {
@@ -294,6 +321,42 @@ describe("verify", () => {
             "message": "revocation block not found for an issuer",
           },
           "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should fail when revocation is not set to NONE (for now)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const docWithIncorrectRevocation = {
+        ...didSignedV3,
+        openAttestationMetadata: {
+          ...didSignedV3.openAttestationMetadata,
+          proof: {
+            type: "OpenAttestationProofMethod",
+            method: "DID",
+            value: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+            revocation: {
+              type: "SOMETHING-ELSE",
+            },
+          },
+        },
+      };
+      const res = await openAttestationDidSignedDocumentStatus.verify(docWithIncorrectRevocation as any, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
       `);

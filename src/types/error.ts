@@ -52,6 +52,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   MALFORMED_IDENTITY_PROOF = 5,
   CORRESPONDING_PROOF_MISSING = 6,
   DID_MISSING = 7,
+  UNRECOGNIZED_DOCUMENT = 8,
 }
 export enum OpenAttestationDidCode {
   SKIPPED = 0,

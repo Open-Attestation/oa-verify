@@ -2,7 +2,12 @@
 import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
 import { writeFileSync } from "fs";
 import { Wallet, utils } from "ethers";
-import { baseDidDocument, baseDnsDidDocument, baseDocumentStoreDocument, baseTokenRegistryDocument } from "../test/fixtures/v3/documents";
+import {
+  baseDidDocument,
+  baseDnsDidDocument,
+  baseDocumentStoreDocument,
+  baseTokenRegistryDocument,
+} from "../test/fixtures/v3/documents";
 
 // DNS: example.tradetrust.io
 // Addr: 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89
@@ -52,14 +57,24 @@ const generateDns = async () => {
 
 const generateDocumentStore = async () => {
   writeFileSync("./test/fixtures/v3/documentStore.json", JSON.stringify(baseDocumentStoreDocument, null, 2));
-  const wrappedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDocumentStoreDocument);
-  writeFileSync("./test/fixtures/v3/documentStore-wrapped.json", JSON.stringify(wrappedBaseDocumentStoreDocument, null, 2));
+  const wrappedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    baseDocumentStoreDocument
+  );
+  writeFileSync(
+    "./test/fixtures/v3/documentStore-wrapped.json",
+    JSON.stringify(wrappedBaseDocumentStoreDocument, null, 2)
+  );
 };
 
 const generateTokenRegistry = async () => {
   writeFileSync("./test/fixtures/v3/tokenRegistry.json", JSON.stringify(baseTokenRegistryDocument, null, 2));
-  const wrappedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseTokenRegistryDocument);
-  writeFileSync("./test/fixtures/v3/tokenRegistry-wrapped.json", JSON.stringify(wrappedBaseTokenRegistryDocument, null, 2));
+  const wrappedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    baseTokenRegistryDocument
+  );
+  writeFileSync(
+    "./test/fixtures/v3/tokenRegistry-wrapped.json",
+    JSON.stringify(wrappedBaseTokenRegistryDocument, null, 2)
+  );
 };
 
 const run = async () => {
