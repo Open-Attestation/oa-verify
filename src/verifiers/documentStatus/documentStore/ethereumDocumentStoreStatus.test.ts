@@ -1,3 +1,4 @@
+import { v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { openAttestationEthereumDocumentStoreStatus } from "./ethereumDocumentStoreStatus";
 import { documentRopstenRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
 import { documentRopstenRevokedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
@@ -7,6 +8,19 @@ import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixt
 import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { getProvider } from "../../../common/utils";
+
+// v3 documents
+import v3DocumentStoreWrappedRaw from "../../../../test/fixtures/v3/documentStore-wrapped.json";
+import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
+import v3DocumentStoreRevokedRaw from "../../../../test/fixtures/v3/documentStore-revoked.json";
+import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
+import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
+
+const v3DocumentStoreWrapped = v3DocumentStoreWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+const v3DidSigned = v3DidSignedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+const v3DocumentStoreRevoked = v3DocumentStoreRevokedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
 const options = { provider: getProvider({ network: "ropsten" }) };
 
@@ -42,6 +56,24 @@ describe("test", () => {
         options
       );
       expect(shouldVerify).toBe(true);
+    });
+  });
+  describe("v3", () => {
+    it("should return true for documents not yet issued via document store", async () => {
+      const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(v3DocumentStoreWrapped, options);
+      expect(shouldVerify).toBe(true);
+    });
+    it("should return true for documents issued via document store", async () => {
+      const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(v3DocumentStoreIssued, options);
+      expect(shouldVerify).toBe(true);
+    });
+    it("should return false for documents issued via token registry", async () => {
+      const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(v3TokenRegistryIssued, options);
+      expect(shouldVerify).toBe(false);
+    });
+    it("should return false for documents issued via did signing", async () => {
+      const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(v3DidSigned, options);
+      expect(shouldVerify).toBe(false);
     });
   });
 });
@@ -331,6 +363,90 @@ describe("verify", () => {
             "message": "Document store address not found in issuer DEMO STORE",
           },
           "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+  });
+  describe("v3", () => {
+    it("should return valid fragment for document issued correctly on a document store", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(v3DocumentStoreIssued, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "issued": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "revoked": false,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should return an invalid fragment for document not issued on a document store", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(v3DocumentStoreWrapped, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "issued": false,
+                "reason": Object {
+                  "code": 1,
+                  "codeString": "DOCUMENT_NOT_ISSUED",
+                  "message": "Document 0x6e3b3b131db956263d142f42a840962d31359fff61c28937d9d1add0ca04c89e has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                },
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "revoked": false,
+              },
+            },
+            "issuedOnAll": false,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should return an invalid fragment for document issued but revoked on a document store", async () => {
+      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(v3DocumentStoreRevoked, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "issued": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "reason": Object {
+                  "code": 5,
+                  "codeString": "DOCUMENT_REVOKED",
+                  "message": "Document 0xa9e9f0c9adc106908b9ee40325f5ca583912853751cf697f540cf647479a2cd8 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                },
+                "revoked": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
       `);

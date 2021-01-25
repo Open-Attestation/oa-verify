@@ -18,7 +18,8 @@
     "lint": "eslint . --ext .ts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "generate:v3": "DEBUG=oa-verify* ts-node scripts/generate.v3.ts"
   },
   "author": "",
   "license": "Apache-2.0",

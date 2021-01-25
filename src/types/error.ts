@@ -11,6 +11,7 @@ export enum OpenAttestationEthereumDocumentStoreStatusCode {
   CONTRACT_NOT_FOUND = 404,
   INVALID_ISSUERS = 7,
   INVALID_VALIDATION_METHOD = 8,
+  UNRECOGNIZED_DOCUMENT = 9,
   SERVER_ERROR = 500,
 }
 export enum OpenAttestationDocumentSignedCode {
