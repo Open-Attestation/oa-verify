@@ -150,7 +150,7 @@ describe("OpenAttestationHash", () => {
         },
       };
       const fragment = await verify(tamperedDocument as any);
-      expect(fragment[0].status).toBe("ERROR");
+      expect(fragment[0].status).toBe("INVALID");
     });
     it("should fail if the merkle root is empty", async () => {
       const tamperedDocument = {

@@ -2,6 +2,7 @@ import { verifySignature, utils } from "@govtechsg/open-attestation";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationHashCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
+import { doc } from "prettier";
 
 const name = "OpenAttestationHash";
 const type: VerificationFragmentType = "DOCUMENT_INTEGRITY";

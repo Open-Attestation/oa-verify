@@ -1,6 +1,5 @@
 import { PublicKey } from "did-resolver";
 import { utils } from "ethers";
-import { v2 } from "@govtechsg/open-attestation";
 import { getPublicKey } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
 import { CodedError } from "../common/error";

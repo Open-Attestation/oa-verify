@@ -3,6 +3,7 @@ import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDidCode } from "../../../types/error";
 import { verifySignature } from "../../../did/verifier";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
+import { CodedError } from "../../../common/error";
 
 const name = "OpenAttestationDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
@@ -39,23 +40,31 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     const merkleRoot = `0x${document.signature.merkleRoot}`;
     const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(async (issuer) => {
       if (issuer.identityProof?.type === "DID") {
-        if (!document.proof) return { status: "INVALID", reason: "`proof` is missing from the document" };
-        const { did, verified } = await verifySignature({
+        const did = issuer.id;
+        if (!did) throw new CodedError("id is missing in issuer", OpenAttestationDidCode.DID_MISSING, "DID_MISSING");
+        const key = issuer.identityProof?.key;
+        if (!key)
+          throw new CodedError(
+            "Key is not present",
+            OpenAttestationDidCode.MALFORMED_IDENTITY_PROOF,
+            "MALFORMED_IDENTITY_PROOF"
+          );
+        const correspondingProof = document.proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
+        if (!correspondingProof) return { status: "INVALID", reason: "`id` is missing from issuer" };
+
+        const { verified } = await verifySignature({
           merkleRoot,
-          identityProof: issuer.identityProof,
-          proof: document.proof,
-          did: issuer.id,
+          key,
+          signature: correspondingProof.signature,
+          did,
         });
         return { did, status: verified ? "VALID" : "INVALID" };
       }
-      return {
-        status: "INVALID",
-        reason: {
-          message: "Issuer is not using DID identityProof type",
-          code: OpenAttestationDidCode.INVALID_ISSUERS,
-          codeString: OpenAttestationDidCode[OpenAttestationDidCode.INVALID_ISSUERS],
-        },
-      };
+      throw new CodedError(
+        "Issuer is not using DID identityProof type",
+        OpenAttestationDidCode.INVALID_ISSUERS,
+        OpenAttestationDidCode[OpenAttestationDidCode.INVALID_ISSUERS]
+      );
     });
     const signatureVerifications = await Promise.all(signatureVerificationDeferred);
     const signedOnAll =

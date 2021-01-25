@@ -57,6 +57,8 @@ export enum OpenAttestationDidCode {
   SKIPPED = 0,
   UNEXPECTED_ERROR = 1,
   INVALID_ISSUERS = 2,
+  MALFORMED_IDENTITY_PROOF = 3,
+  DID_MISSING = 4,
 }
 export enum OpenAttestationDnsDidCode {
   SKIPPED = 0,
