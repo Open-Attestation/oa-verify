@@ -1,10 +1,20 @@
+import { v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { openAttestationEthereumTokenRegistryStatus } from "./ethereumTokenRegistryStatus";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
 import { documentRopstenNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
+import { documentDidSigned} from "../../../../test/fixtures/v2/documentDidSigned"
+
+
+import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
+
+const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+
 import { getProvider } from "../../../common/utils";
+
+
 
 const options = { provider: getProvider({ network: "ropsten" }) };
 
@@ -41,19 +51,57 @@ describe("test", () => {
       expect(shouldVerify).toBe(false);
     });
 
-    xit("should return false when document uses did signing", async () => {});
+    it("should return false when document uses did signing", async () => {
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentDidSigned,
+        options
+      );
+
+      expect(shouldVerify).toBe(false);
+    });
   });
 
   describe("v3", () => {
-    xit("should return false when document does not have data", async () => {});
+    it("should return false when document does not have OpenAttestationMetadata", async () => {
+      const documentWithoutOpenAttestationMetadata:any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: null
+      }
 
-    xit("should return false when document does not have issuers", async () => {});
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentWithoutOpenAttestationMetadata,
+        options
+      );
+
+      expect(shouldVerify).toBe(false);
+    });
+
+    it("should return false when document does not have issuers", async () => {
+      const documentWithoutOpenAttestationMetadata:any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: null
+      }
+
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentWithoutOpenAttestationMetadata,
+        options
+      );
+
+      expect(shouldVerify).toBe(false);
+    });
 
     xit("should return false when document uses certificate store", async () => {});
 
     xit("should return false when document uses document store", async () => {});
 
-    xit("should return false when document uses did signing", async () => {});
+    it("should return false when document uses did signing", async () => {
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentDidSigned,
+        options
+      );
+
+      expect(shouldVerify).toBe(false);
+    });
   });
 });
 
@@ -203,41 +251,6 @@ describe("verify", () => {
           },
           "name": "OpenAttestationEthereumTokenRegistryStatus",
           "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-    });
-
-    it("should return an error fragment when document uses 2 different verification method", async () => {
-      const documentWithTwoDiffVerification = {
-        ...documentRopstenValidWithToken,
-        data: {
-          ...documentRopstenValidWithToken.data,
-          issuers: [
-            documentRopstenValidWithToken.data.issuers[0],
-            {
-              identityProof: documentRopstenValidWithToken.data.issuers[0].identityProof,
-              name: "Second Issuer",
-            },
-          ],
-        },
-      };
-
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
-        documentWithTwoDiffVerification,
-        options
-      );
-
-      expect(fragment).toMatchInlineSnapshot(`
-        Object {
-          "data": [Error: Only one issuer is allowed for tokens],
-          "name": "OpenAttestationEthereumTokenRegistryStatus",
-          "reason": Object {
-            "code": 5,
-            "codeString": "INVALID_ISSUERS",
-            "message": "Only one issuer is allowed for tokens",
-          },
-          "status": "ERROR",
           "type": "DOCUMENT_STATUS",
         }
       `);
