@@ -40,6 +40,8 @@ describe("test", () => {
       );
       expect(shouldVerify).toBe(false);
     });
+
+    xit("should return false when document uses did signing", async () => {});
   });
 
   describe("v3", () => {
@@ -50,6 +52,8 @@ describe("test", () => {
     xit("should return false when document uses certificate store", async () => {});
 
     xit("should return false when document uses document store", async () => {});
+
+    xit("should return false when document uses did signing", async () => {});
   });
 });
 
@@ -183,7 +187,6 @@ describe("verify", () => {
       `);
     });
 
-    // this
     it("should return a valid fragment when document with token registry has been minted", async () => {
       const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentRopstenValidWithToken, options);
 
@@ -205,7 +208,6 @@ describe("verify", () => {
       `);
     });
 
-    // need explanation
     it("should return an error fragment when document uses 2 different verification method", async () => {
       const documentWithTwoDiffVerification = {
         ...documentRopstenValidWithToken,
@@ -241,7 +243,6 @@ describe("verify", () => {
       `);
     });
 
-    // need explanation ( what is the difference between this and the top check)
     it("should return an error fragment when document has 2 issuers with token registry", async () => {
       const documentHasTwoIssuersWithTokenRegistry: any = {
         ...documentRopstenValidWithToken,
@@ -271,8 +272,7 @@ describe("verify", () => {
       `);
     });
 
-    // the fragment is returning error fragment instead of invalid fragment
-    it("should return an invalid fragment when used with other issuance methods", async () => {
+    it("should return an error fragment when used with other issuance methods", async () => {
       const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentRopstenMixedIssuance, options);
 
       expect(fragment).toMatchInlineSnapshot(`
@@ -299,19 +299,6 @@ describe("verify", () => {
     xit("should return an invalid fragment when document with token registry has not been minted", async () => {});
 
     xit("should return a valid fragment when document with token registry has been minted", async () => {});
-
-    xit("should return an error fragment when document uses 2 different verification method", async () => {});
-
-    xit("should return an error fragment when document has 2 issuers with token registry", async () => {});
-
-    xit("should return an invalid fragment when used with other issuance methods", async () => {});
-
-    // added extra below
-    xit("should return invalid fragment for document not issued", async () => {});
-
-    xit("should return valid fragment for document issued correctly", async () => {});
-
-    xit("should return an valid fragment for document issued but surrendered", async () => {});
   });
 });
 
