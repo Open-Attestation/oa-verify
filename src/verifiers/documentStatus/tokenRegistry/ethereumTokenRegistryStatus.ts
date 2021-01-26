@@ -1,7 +1,7 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
 import { constants, errors, providers } from "ethers";
-import { VerificationFragmentType, VerificationFragment, Verifier, VerifierOptions } from "../../../types/core";
+import { VerificationFragmentType, VerificationFragment, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../../types/error";
 
 import { withCodedErrorHandler } from "../../../common/errorHandler";
@@ -146,6 +146,9 @@ const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
     return !!documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
+  }
+  if (utils.isWrappedV3Document(document)) {
+    return document?.openAttestationMetadata?.proof.method === v3.Method.TokenRegistry;
   }
   return false;
 };
