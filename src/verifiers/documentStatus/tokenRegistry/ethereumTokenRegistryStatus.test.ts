@@ -4,83 +4,54 @@ import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/docu
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
 import { documentRopstenNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
-import { verificationBuilder } from "../../verificationBuilder";
 
+// TODO Remove
+import { verificationBuilder } from "../../verificationBuilder";
+import { getProvider } from "../../../common/utils";
+
+// TODO Remove
 const verify = verificationBuilder([openAttestationEthereumTokenRegistryStatus], { network: "ropsten" });
 
-describe("openAttestationEthereumTokenRegistryStatus", () => {
+const options = { provider: getProvider({ network: "ropsten" }) };
+
+describe("test", () => {
   describe("v2", () => {
-    it("should return a skipped fragment when document does not have data", async () => {
-      const fragment = await verify(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        { ...documentRopstenValidWithToken, data: null }
-      );
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
-          },
-          status: "SKIPPED",
-          type: "DOCUMENT_STATUS",
-        },
-      ]);
+    it("should return false when document does not have data", async () => {
+      const documentWithoutData: any = { ...documentRopstenValidWithToken, data: null };
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutData, options);
+      expect(shouldVerify).toBe(false);
     });
-    it("should return a skipped fragment when document does not have issuers", async () => {
-      const fragment = await verify({
+
+    it("should return false when document does not have issuers", async () => {
+      const documentWithoutIssuer: any = {
         ...documentRopstenValidWithToken,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
         data: { ...documentRopstenValidWithToken.data, issuers: null },
-      });
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
-          },
-          status: "SKIPPED",
-          type: "DOCUMENT_STATUS",
-        },
-      ]);
+      };
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutIssuer, options);
+      expect(shouldVerify).toBe(false);
     });
-    it("should return a skipped fragment when document uses certificate store", async () => {
-      const fragment = await verify(documentRopstenNotIssuedWithCertificateStore);
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
-          },
-          status: "SKIPPED",
-          type: "DOCUMENT_STATUS",
-        },
-      ]);
+
+    it("should return false when document uses certificate store", async () => {
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentRopstenNotIssuedWithCertificateStore,
+        options
+      );
+      expect(shouldVerify).toBe(false);
     });
-    it("should return a skipped fragment when document uses document store", async () => {
-      const fragment = await verify(documentRopstenNotIssuedWithDocumentStore);
-      expect(fragment).toStrictEqual([
-        {
-          name: "OpenAttestationEthereumTokenRegistryStatus",
-          reason: {
-            code: 4,
-            codeString: "SKIPPED",
-            message: 'Document issuers doesn\'t have "tokenRegistry" property or TOKEN_REGISTRY method',
-          },
-          status: "SKIPPED",
-          type: "DOCUMENT_STATUS",
-        },
-      ]);
+
+    it("should return false when document uses document store", async () => {
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
+        documentRopstenNotIssuedWithDocumentStore,
+        options
+      );
+      expect(shouldVerify).toBe(false);
     });
+  });
+});
+describe("verify", () => {
+  describe("v2", () => {
     it("should return an invalid fragment when token registry is invalid", async () => {
-      const fragment = await verify({
+      const documentWithInvalidTokenRegistry: any = {
         ...documentRopstenNotIssuedWithTokenRegistry,
         data: {
           ...documentRopstenNotIssuedWithTokenRegistry.data,
@@ -91,36 +62,68 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
             },
           ],
         },
-      });
+      };
+
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+        documentWithInvalidTokenRegistry,
+        options
+      );
+
       expect(fragment).toMatchInlineSnapshot(`
-        Array [
-          Object {
-            "data": Object {
-              "details": Array [
-                Object {
-                  "address": "0xabcd",
-                  "minted": false,
-                  "reason": Object {
-                    "code": 1,
-                    "codeString": "DOCUMENT_NOT_MINTED",
-                    "message": "Invalid token registry address",
-                  },
+        Object {
+          "data": Object {
+            "details": Array [
+              Object {
+                "address": "0xabcd",
+                "minted": false,
+                "reason": Object {
+                  "code": 1,
+                  "codeString": "DOCUMENT_NOT_MINTED",
+                  "message": "Invalid token registry address",
                 },
-              ],
-              "mintedOnAll": false,
-            },
-            "name": "OpenAttestationEthereumTokenRegistryStatus",
-            "reason": Object {
-              "code": 1,
-              "codeString": "DOCUMENT_NOT_MINTED",
-              "message": "Invalid token registry address",
-            },
-            "status": "INVALID",
-            "type": "DOCUMENT_STATUS",
+              },
+            ],
+            "mintedOnAll": false,
           },
-        ]
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_MINTED",
+            "message": "Invalid token registry address",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
       `);
     });
+  });
+  describe("v3", () => {
+    xit("TBD", () => {})
+  })
+});
+describe("skip", () => {
+  it("should return the skip fragment", async () => {
+    const fragment = await openAttestationEthereumTokenRegistryStatus.skip(
+      documentRopstenNotIssuedWithTokenRegistry,
+      options
+    );
+    expect(fragment).toMatchInlineSnapshot(`
+      Object {
+        "name": "OpenAttestationEthereumTokenRegistryStatus",
+        "reason": Object {
+          "code": 4,
+          "codeString": "SKIPPED",
+          "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+        },
+        "status": "SKIPPED",
+        "type": "DOCUMENT_STATUS",
+      }
+    `);
+  });
+});
+
+describe("openAttestationEthereumTokenRegistryStatus", () => {
+  describe("v2", () => {
     it("should return an invalid fragment when token registry does not exist", async () => {
       const fragment = await verify({
         ...documentRopstenNotIssuedWithTokenRegistry,
@@ -286,9 +289,5 @@ describe("openAttestationEthereumTokenRegistryStatus", () => {
         ]
       `);
     });
-  });
-  describe("v3", () => {
-    it.skip("should return an invalid fragment when document with token registry has not been minted", async () => {});
-    it.skip("should return a valid fragment when document with document store has been minted", async () => {});
   });
 });

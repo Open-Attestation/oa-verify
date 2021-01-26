@@ -145,7 +145,7 @@ const skip: VerifierType["skip"] = async () => {
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
-    return documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
+    return !!(documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer));
   }
   return false;
 };
