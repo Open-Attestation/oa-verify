@@ -1,8 +1,9 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
 import { constants, errors, providers } from "ethers";
-import { VerificationFragmentType, Verifier } from "../../../types/core";
+import { VerificationFragmentType, VerificationFragment, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode, Reason } from "../../../types/error";
+
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
 
@@ -18,6 +19,7 @@ interface InvalidMintedStatus {
 }
 
 type MintedStatus = ValidMintedStatus | InvalidMintedStatus;
+type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
 
 const name = "OpenAttestationEthereumTokenRegistryStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -126,31 +128,30 @@ export const isTokenMintedOnRegistry = async ({
   }
 };
 
-export const openAttestationEthereumTokenRegistryStatus: Verifier<
-  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
-> = {
-  skip: () => {
-    return Promise.resolve({
-      status: "SKIPPED",
-      type,
-      name,
-      reason: {
-        code: OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED,
-        codeString:
-          OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED],
-        message: `Document issuers doesn't have "tokenRegistry" property or ${v3.Method.TokenRegistry} method`,
-      },
-    });
-  },
-  test: (document) => {
-    if (utils.isWrappedV2Document(document)) {
-      const documentData = getData(document);
-      return documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
-    }
-    return false;
-  },
-  verify: withCodedErrorHandler(
-    async (document, options) => {
+const skip: VerifierType["skip"] = async () => {
+  return {
+    status: "SKIPPED",
+    type,
+    name,
+    reason: {
+      code: OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED,
+      codeString:
+        OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.SKIPPED],
+      message: `Document issuers doesn't have "tokenRegistry" property or ${v3.Method.TokenRegistry} method`,
+    },
+  };
+};
+
+const test: VerifierType["test"] = (document) => {
+  if (utils.isWrappedV2Document(document)) {
+    const documentData = getData(document);
+    return documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
+  }
+  return false;
+};
+
+const verify: VerifierType["verify"] = withCodedErrorHandler(
+    async (document, options) :Promise<VerificationFragment> => {
       if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
       const tokenRegistry = getTokenRegistry(document);
       const merkleRoot = `0x${document.signature.merkleRoot}`;
@@ -189,5 +190,12 @@ export const openAttestationEthereumTokenRegistryStatus: Verifier<
       unexpectedErrorString:
         OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
     }
-  ),
+  );
+
+export const openAttestationEthereumTokenRegistryStatus: Verifier<
+  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
+> = {
+  skip,
+  test,
+  verify
 };
