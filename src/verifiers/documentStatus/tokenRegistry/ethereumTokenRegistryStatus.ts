@@ -145,57 +145,57 @@ const skip: VerifierType["skip"] = async () => {
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
-    return !!(documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer));
+    return !!documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
   }
   return false;
 };
 
 const verify: VerifierType["verify"] = withCodedErrorHandler(
-    async (document, options) :Promise<VerificationFragment> => {
-      if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
-      const tokenRegistry = getTokenRegistry(document);
-      const merkleRoot = `0x${document.signature.merkleRoot}`;
-      const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
+  async (document, options): Promise<VerificationFragment> => {
+    if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
+    const tokenRegistry = getTokenRegistry(document);
+    const merkleRoot = `0x${document.signature.merkleRoot}`;
+    const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
 
-      const status: MintedStatus = mintStatus.minted
-        ? {
-            minted: true,
-            address: tokenRegistry,
-          }
-        : {
-            minted: false,
-            address: tokenRegistry,
-            reason: mintStatus.reason,
-          };
+    const status: MintedStatus = mintStatus.minted
+      ? {
+          minted: true,
+          address: tokenRegistry,
+        }
+      : {
+          minted: false,
+          address: tokenRegistry,
+          reason: mintStatus.reason,
+        };
 
-      return mintStatus.minted
-        ? {
-            name,
-            type,
-            data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? status : [status] },
-            status: "VALID",
-          }
-        : {
-            name,
-            type,
-            data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? status : [status] },
-            reason: mintStatus.reason,
-            status: "INVALID",
-          };
-    },
-    {
-      name,
-      type,
-      unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
-      unexpectedErrorString:
-        OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
-    }
-  );
+    return mintStatus.minted
+      ? {
+          name,
+          type,
+          data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? status : [status] },
+          status: "VALID",
+        }
+      : {
+          name,
+          type,
+          data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? status : [status] },
+          reason: mintStatus.reason,
+          status: "INVALID",
+        };
+  },
+  {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
+    unexpectedErrorString:
+      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
+  }
+);
 
 export const openAttestationEthereumTokenRegistryStatus: Verifier<
   WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 > = {
   skip,
   test,
-  verify
+  verify,
 };
