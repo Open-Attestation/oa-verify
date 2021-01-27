@@ -69,6 +69,7 @@ export enum OpenAttestationDnsDidCode {
   UNEXPECTED_ERROR = 1,
   MALFORMED_IDENTITY_PROOF = 2,
   INVALID_ISSUERS = 3,
+  UNSIGNED = 4,
 }
 export enum OpenAttestationSignatureCode {
   UNEXPECTED_ERROR = 0,

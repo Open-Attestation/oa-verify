@@ -1,3 +1,4 @@
+import { v3 } from "@govtechsg/open-attestation";
 import { openAttestationDidIdentityProof } from "./didIdentityProof";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
@@ -10,7 +11,6 @@ import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
 import v3DnsDidSignedRaw from "../../../../test/fixtures/v3/dnsdid-signed.json";
 import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
-import { v3 } from "@govtechsg/open-attestation";
 
 const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
 const v3DidWrapped = v3DidWrappedRaw as v3.WrappedDocument;
