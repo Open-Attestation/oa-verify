@@ -4,10 +4,7 @@ import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidNoDnsTxt } from "../../../../test/fixtures/v2/documentDnsDidNoDnsTxt";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import {
-  documentDnsDidMixedTokenRegistryValid,
-  documentDnsDidMixedTokenRegistryInvalid,
-} from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
+import { documentDnsDidMixedTokenRegistryValid } from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
 import { getProvider } from "../../../common/utils";
 
 import v3DnsDidWrappedRaw from "../../../../test/fixtures/v3/dnsdid-wrapped.json";
@@ -107,57 +104,18 @@ describe("verify", () => {
         }
       `);
     });
-    it("should fail if document has issuers not using DNS-DID", async () => {
-      const validFragment = await openAttestationDnsDidIdentityProof.verify(
-        documentDnsDidMixedTokenRegistryValid,
-        options
-      );
-      expect(validFragment).toMatchInlineSnapshot(`
+    it("should error if document has issuers not using DNS-DID", async () => {
+      const fragment = await openAttestationDnsDidIdentityProof.verify(documentDnsDidMixedTokenRegistryValid, options);
+      expect(fragment).toMatchInlineSnapshot(`
         Object {
-          "data": Array [
-            Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-              "location": "example.tradetrust.io",
-              "status": "VALID",
-            },
-            Object {
-              "reason": Object {
-                "code": 3,
-                "codeString": "INVALID_ISSUERS",
-                "message": "Issuer is not using DID-DNS identityProof type",
-              },
-              "status": "INVALID",
-            },
-          ],
+          "data": [Error: Issuer is not using DID-DNS identityProof type],
           "name": "OpenAttestationDnsDidIdentityProof",
-          "status": "INVALID",
-          "type": "ISSUER_IDENTITY",
-        }
-      `);
-
-      const invalidFragment = await openAttestationDnsDidIdentityProof.verify(
-        documentDnsDidMixedTokenRegistryInvalid,
-        options
-      );
-      expect(invalidFragment).toMatchInlineSnapshot(`
-        Object {
-          "data": Array [
-            Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-              "location": "example.com",
-              "status": "INVALID",
-            },
-            Object {
-              "reason": Object {
-                "code": 3,
-                "codeString": "INVALID_ISSUERS",
-                "message": "Issuer is not using DID-DNS identityProof type",
-              },
-              "status": "INVALID",
-            },
-          ],
-          "name": "OpenAttestationDnsDidIdentityProof",
-          "status": "INVALID",
+          "reason": Object {
+            "code": 3,
+            "codeString": "INVALID_ISSUERS",
+            "message": "Issuer is not using DID-DNS identityProof type",
+          },
+          "status": "ERROR",
           "type": "ISSUER_IDENTITY",
         }
       `);
@@ -179,7 +137,7 @@ describe("verify", () => {
         }
       `);
     });
-    it("should return invalid fragment for document without dns binding to did", async () => {
+    it("should return valid fragment for document without dns binding to did", async () => {
       const documentWithoutDnsBinding = {
         ...v3DnsDidSigned,
         openAttestationMetadata: {

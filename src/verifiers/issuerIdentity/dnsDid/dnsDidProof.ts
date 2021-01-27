@@ -37,15 +37,8 @@ const test: VerifierType["test"] = (document) => {
   }
   return false;
 };
-
-interface IdentityProof {
-  type: string;
-  key?: string;
-  location?: string;
-}
-
 interface DnsVerificationFragment {
-  status: "VALID" | "SKIPPED" | "INVALID";
+  status: VerificationFragmentStatus;
   location?: string;
   key?: string;
 }
@@ -54,21 +47,9 @@ const verifyIssuerDnsDid = async ({
   key,
   location,
 }: {
-  key?: string;
-  location?: string;
+  key: string;
+  location: string;
 }): Promise<DnsVerificationFragment> => {
-  if (!location)
-    throw new CodedError(
-      "location is not present in identity proof",
-      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
-      "MALFORMED_IDENTITY_PROOF"
-    );
-  if (!key)
-    throw new CodedError(
-      "key is not present in identity proof",
-      OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
-      "MALFORMED_IDENTITY_PROOF"
-    );
   const records = await getDnsDidRecords(location);
   return {
     location,
@@ -86,16 +67,33 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
     );
   const documentData = getData(document);
   const deferredVerificationStatus: Promise<DnsVerificationFragment>[] = documentData.issuers.map((issuer) => {
-    if (issuer.identityProof?.type === "DNS-DID")
-      return verifyIssuerDnsDid({ key: issuer.identityProof.key, location: issuer.identityProof.location });
-    return Promise.resolve({
-      status: "INVALID",
-      reason: {
-        message: "Issuer is not using DID-DNS identityProof type",
-        code: OpenAttestationDnsDidCode.INVALID_ISSUERS,
-        codeString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.INVALID_ISSUERS],
-      },
-    });
+    const { identityProof } = issuer;
+    if (!identityProof)
+      throw new CodedError(
+        "Identity proof missing",
+        OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+        OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
+      );
+    const { key, location, type } = identityProof;
+    if (type !== v2.IdentityProofType.DNSDid)
+      throw new CodedError(
+        "Issuer is not using DID-DNS identityProof type",
+        OpenAttestationDnsDidCode.INVALID_ISSUERS,
+        OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.INVALID_ISSUERS]
+      );
+    if (!location)
+      throw new CodedError(
+        "location is not present in identity proof",
+        OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+        OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
+      );
+    if (!key)
+      throw new CodedError(
+        "key is not present in identity proof",
+        OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
+        OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
+      );
+    return verifyIssuerDnsDid({ key, location });
   });
   const verificationStatus = await Promise.all(deferredVerificationStatus);
   const overallStatus =
