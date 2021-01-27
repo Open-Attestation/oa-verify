@@ -137,7 +137,7 @@ describe("verify", () => {
         }
       `);
     });
-    it("should return valid fragment for document without dns binding to did", async () => {
+    it("should return invalid fragment for document without dns binding to did", async () => {
       const documentWithoutDnsBinding = {
         ...v3DnsDidSigned,
         openAttestationMetadata: {
