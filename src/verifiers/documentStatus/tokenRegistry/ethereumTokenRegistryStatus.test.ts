@@ -5,16 +5,13 @@ import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/docu
 import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
 import { documentRopstenNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
-import { documentDidSigned} from "../../../../test/fixtures/v2/documentDidSigned"
-
+import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 
 import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
 import { getProvider } from "../../../common/utils";
-
-
 
 const options = { provider: getProvider({ network: "ropsten" }) };
 
@@ -52,10 +49,7 @@ describe("test", () => {
     });
 
     it("should return false when document uses did signing", async () => {
-      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
-        documentDidSigned,
-        options
-      );
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentDidSigned, options);
 
       expect(shouldVerify).toBe(false);
     });
@@ -63,10 +57,10 @@ describe("test", () => {
 
   describe("v3", () => {
     it("should return false when document does not have OpenAttestationMetadata", async () => {
-      const documentWithoutOpenAttestationMetadata:any = {
+      const documentWithoutOpenAttestationMetadata: any = {
         ...v3TokenRegistryWrapped,
-        openAttestationMetadata: null
-      }
+        openAttestationMetadata: null,
+      };
 
       const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
         documentWithoutOpenAttestationMetadata,
@@ -76,29 +70,70 @@ describe("test", () => {
       expect(shouldVerify).toBe(false);
     });
 
-    it("should return false when document does not have issuers", async () => {
-      const documentWithoutOpenAttestationMetadata:any = {
+    it("should return false when document does not have identityProof", async () => {
+      const documentWithoutIdentityProof: any = {
         ...v3TokenRegistryWrapped,
-        openAttestationMetadata: null
-      }
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          identityProof: null,
+        },
+      };
 
-      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
-        documentWithoutOpenAttestationMetadata,
-        options
-      );
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutIdentityProof, options);
 
       expect(shouldVerify).toBe(false);
     });
 
+    it("should return false when document does not have proof", async () => {
+      const documentWithoutProof: any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          proof: null,
+        },
+      };
+
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutProof, options);
+
+      expect(shouldVerify).toBe(false);
+    });
+
+    it("should return false when document does not have template", async () => {
+      const documentWithoutTemplate: any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          template: null,
+        },
+      };
+
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutTemplate, options);
+
+      expect(shouldVerify).toBe(false);
+    });
+
+    // Don't find certificate store in v3 schema
     xit("should return false when document uses certificate store", async () => {});
 
-    xit("should return false when document uses document store", async () => {});
+    it("should return false when document uses document store", async () => {
+      const documentUsesDocumentStore: any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          proof: {
+            ...v3TokenRegistryWrapped.openAttestationMetadata.proof,
+            method: "DOCUMENT_STORE",
+          },
+        },
+      };
+
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentUsesDocumentStore, options);
+
+      expect(shouldVerify).toBe(false);
+    });
 
     it("should return false when document uses did signing", async () => {
-      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
-        documentDidSigned,
-        options
-      );
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentDidSigned, options);
 
       expect(shouldVerify).toBe(false);
     });
@@ -305,7 +340,49 @@ describe("verify", () => {
   });
 
   describe("v3", () => {
-    xit("should return an invalid fragment when token registry is invalid", async () => {});
+    it("should return an invalid fragment when token registry is invalid", async () => {
+      const documentWithInvalidTokenRegistry: any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          proof: {
+            ...v3TokenRegistryWrapped.openAttestationMetadata.proof,
+            value: "0xabcd",
+          },
+        },
+      };
+
+      console.log(documentWithInvalidTokenRegistry);
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+        documentWithInvalidTokenRegistry,
+        options
+      );
+
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "address": "0xabcd",
+              "minted": false,
+              "reason": Object {
+                "code": 1,
+                "codeString": "DOCUMENT_NOT_MINTED",
+                "message": "Invalid token registry address",
+              },
+            },
+            "mintedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_MINTED",
+            "message": "Invalid token registry address",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
 
     xit("should return an invalid fragment when token registry does not exist", async () => {});
 

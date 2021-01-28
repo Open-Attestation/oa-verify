@@ -44,9 +44,21 @@ export const getTokenRegistry = (
         ]
       );
     return issuers[0].tokenRegistry;
-  } else {
-    throw new Error("TBD");
   }
+
+  if (utils.isWrappedV3Document(document)) {
+    if (!document.openAttestationMetadata.proof.value)
+      throw new CodedError(
+        "Token registry is undefined",
+        OpenAttestationEthereumTokenRegistryStatusCode.UNDEFINED_TOKEN_REGISTRY,
+        OpenAttestationEthereumTokenRegistryStatusCode[
+          OpenAttestationEthereumTokenRegistryStatusCode.UNDEFINED_TOKEN_REGISTRY
+        ]
+      );
+    return document.openAttestationMetadata.proof.value;
+  }
+
+  throw new Error("TBD");
 };
 
 const isNonExistentToken = (error: any) => {
@@ -148,16 +160,33 @@ const test: VerifierType["test"] = (document) => {
     return !!documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
   }
   if (utils.isWrappedV3Document(document)) {
-    return document?.openAttestationMetadata?.proof.method === v3.Method.TokenRegistry;
+    if (!!document?.openAttestationMetadata) return false;
+
+    const documentData = document?.openAttestationMetadata;
+    if (!!documentData?.proof && !!documentData?.identityProof && !!documentData?.template)
+      return document?.openAttestationMetadata?.proof?.method === v3.Method.TokenRegistry;
   }
   return false;
 };
 
 const verify: VerifierType["verify"] = withCodedErrorHandler(
   async (document, options): Promise<VerificationFragment> => {
-    if (!utils.isWrappedV2Document(document)) throw new Error("TBD");
+    if (
+      !(utils.isWrappedV2Document(document)
+        ? !utils.isWrappedV3Document(document)
+        : utils.isWrappedV3Document(document))
+    )
+      throw new Error("TBD");
+
     const tokenRegistry = getTokenRegistry(document);
-    const merkleRoot = `0x${document.signature.merkleRoot}`;
+
+    let merkleRoot = "";
+    if (utils.isWrappedV2Document(document)) {
+      merkleRoot = `0x${document.signature.merkleRoot}`;
+    } else {
+      merkleRoot = `0x${document.proof.merkleRoot}`;
+    }
+
     const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
 
     const status: MintedStatus = mintStatus.minted
