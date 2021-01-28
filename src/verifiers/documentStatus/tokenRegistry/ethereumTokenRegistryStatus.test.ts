@@ -10,10 +10,10 @@ import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigne
 import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
 
+import { getProvider } from "../../../common/utils";
+
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
-
-import { getProvider } from "../../../common/utils";
 
 const options = { provider: getProvider({ network: "ropsten" }) };
 
@@ -113,9 +113,6 @@ describe("test", () => {
 
       expect(shouldVerify).toBe(false);
     });
-
-    // Don't find certificate store in v3 schema
-    xit("should return false when document uses certificate store", async () => {});
 
     it("should return false when document uses document store", async () => {
       const documentUsesDocumentStore: any = {
