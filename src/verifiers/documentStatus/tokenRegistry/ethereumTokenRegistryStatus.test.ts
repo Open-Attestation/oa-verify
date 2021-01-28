@@ -8,8 +8,10 @@ import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/docum
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 
 import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
+import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
 
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
+const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
 import { getProvider } from "../../../common/utils";
 
@@ -352,7 +354,6 @@ describe("verify", () => {
         },
       };
 
-      console.log(documentWithInvalidTokenRegistry);
       const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
         documentWithInvalidTokenRegistry,
         options
@@ -384,11 +385,96 @@ describe("verify", () => {
       `);
     });
 
-    xit("should return an invalid fragment when token registry does not exist", async () => {});
+    it("should return an invalid fragment when token registry does not exist", async () => {
+      const documentWithMissingTokenRegistry: any = {
+        ...v3TokenRegistryWrapped,
+        openAttestationMetadata: {
+          ...v3TokenRegistryWrapped.openAttestationMetadata,
+          proof: {
+            ...v3TokenRegistryWrapped.openAttestationMetadata.proof,
+            value: "0x0000000000000000000000000000000000000000",
+          },
+        },
+      };
 
-    xit("should return an invalid fragment when document with token registry has not been minted", async () => {});
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
+        documentWithMissingTokenRegistry,
+        options
+      );
 
-    xit("should return a valid fragment when document with token registry has been minted", async () => {});
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "address": "0x0000000000000000000000000000000000000000",
+              "minted": false,
+              "reason": Object {
+                "code": 1,
+                "codeString": "DOCUMENT_NOT_MINTED",
+                "message": "Token registry is not found",
+              },
+            },
+            "mintedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_MINTED",
+            "message": "Token registry is not found",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should return an invalid fragment when document with token registry has not been minted", async () => {
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(v3TokenRegistryWrapped, options);
+
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "address": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+              "minted": false,
+              "reason": Object {
+                "code": 1,
+                "codeString": "DOCUMENT_NOT_MINTED",
+                "message": "Document has not been issued under token registry",
+              },
+            },
+            "mintedOnAll": false,
+          },
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "reason": Object {
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_MINTED",
+            "message": "Document has not been issued under token registry",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should return a valid fragment when document with token registry has been minted", async () => {
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(v3TokenRegistryIssued, options);
+
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "address": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+              "minted": true,
+            },
+            "mintedOnAll": true,
+          },
+          "name": "OpenAttestationEthereumTokenRegistryStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
   });
 });
 
