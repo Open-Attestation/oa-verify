@@ -58,7 +58,23 @@ export const getTokenRegistry = (
     return document.openAttestationMetadata.proof.value;
   }
 
-  throw new Error("TBD");
+  throw new CodedError(
+    `Unrecognized document version`,
+    OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
+  );
+};
+
+const getMerkleRoot = (
+  document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
+): string => {
+  if (utils.isWrappedV2Document(document)) return `0x${document.signature.merkleRoot}`;
+  if (utils.isWrappedV3Document(document)) return `0x${document.proof.merkleRoot}`;
+  throw new CodedError(
+    `Unrecognized document version`,
+    OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
+    OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
+  );
 };
 
 const isNonExistentToken = (error: any) => {
@@ -171,46 +187,30 @@ const test: VerifierType["test"] = (document) => {
 
 const verify: VerifierType["verify"] = withCodedErrorHandler(
   async (document, options): Promise<VerificationFragment> => {
-    if (
-      !(utils.isWrappedV2Document(document)
-        ? !utils.isWrappedV3Document(document)
-        : utils.isWrappedV3Document(document))
-    )
-      throw new Error("TBD");
+    if (!utils.isWrappedV3Document(document) && !utils.isWrappedV2Document(document))
+      throw new CodedError(
+        `Unrecognized document version`,
+        OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
+        OpenAttestationEthereumTokenRegistryStatusCode[
+          OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT
+        ]
+      );
 
     const tokenRegistry = getTokenRegistry(document);
-
-    let merkleRoot = "";
-    if (utils.isWrappedV2Document(document)) {
-      merkleRoot = `0x${document.signature.merkleRoot}`;
-    } else {
-      merkleRoot = `0x${document.proof.merkleRoot}`;
-    }
-
+    const merkleRoot = getMerkleRoot(document);
     const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
-
-    const status: MintedStatus = mintStatus.minted
-      ? {
-          minted: true,
-          address: tokenRegistry,
-        }
-      : {
-          minted: false,
-          address: tokenRegistry,
-          reason: mintStatus.reason,
-        };
 
     return mintStatus.minted
       ? {
           name,
           type,
-          data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? status : [status] },
+          data: { mintedOnAll: true, details: utils.isWrappedV3Document(document) ? mintStatus : [mintStatus] },
           status: "VALID",
         }
       : {
           name,
           type,
-          data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? status : [status] },
+          data: { mintedOnAll: false, details: utils.isWrappedV3Document(document) ? mintStatus : [mintStatus] },
           reason: mintStatus.reason,
           status: "INVALID",
         };

@@ -30,6 +30,7 @@ export enum OpenAttestationEthereumTokenRegistryStatusCode {
   INVALID_ARGUMENT = 6,
   UNDEFINED_TOKEN_REGISTRY = 7,
   INVALID_VALIDATION_METHOD = 8,
+  UNRECOGNIZED_DOCUMENT = 9,
   SERVER_ERROR = 500,
 }
 export enum OpenAttestationDnsTxtCode {
