@@ -1,7 +1,19 @@
+import { v3, v2 } from "@govtechsg/open-attestation";
+
 import { openAttestationDnsTxtIdentityProof } from "./openAttestationDnsTxt";
 import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { getProvider } from "../../../common/utils";
+
+import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
+import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
+import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
+import v3DnsDidSignedRaw from "../../../../test/fixtures/v3/dnsdid-signed.json";
+
+const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
+const v3DnsDidSigned = v3DnsDidSignedRaw as v3.SignedWrappedDocument;
+const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
+const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
   provider: getProvider({ network: "ropsten" }),
@@ -108,8 +120,18 @@ describe("test", () => {
     });
   });
   describe("v3", () => {
-    it("should return true when document uses DNS-TXT as identity proof", () => {});
-    it("should return false when document does not uses DNS-TXT as identity proof", () => {});
+    it("should return true when document uses DNS-TXT as identity proof", async () => {
+      const toVerifyDocumentStore = await openAttestationDnsTxtIdentityProof.test(v3DocumentStoreIssued, options);
+      expect(toVerifyDocumentStore).toBe(true);
+      const toVerifyTokenRegistry = await openAttestationDnsTxtIdentityProof.test(v3TokenRegistryIssued, options);
+      expect(toVerifyTokenRegistry).toBe(true);
+    });
+    it("should return false when document does not uses DNS-TXT as identity proof", async () => {
+      const toVerifyDid = await openAttestationDnsTxtIdentityProof.test(v3DidSigned, options);
+      expect(toVerifyDid).toBe(false);
+      const toVerifyDnsDid = await openAttestationDnsTxtIdentityProof.test(v3DnsDidSigned, options);
+      expect(toVerifyDnsDid).toBe(false);
+    });
   });
 });
 
@@ -241,12 +263,12 @@ describe("verify", () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(documentWithoutIdentityLocation, options);
       expect(fragment).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Location is missing],
+          "data": [Error: Location not found in identity proof],
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
-            "code": 0,
-            "codeString": "UNEXPECTED_ERROR",
-            "message": "Location is missing",
+            "code": 3,
+            "codeString": "INVALID_ISSUERS",
+            "message": "Location not found in identity proof",
           },
           "status": "ERROR",
           "type": "ISSUER_IDENTITY",
@@ -457,9 +479,91 @@ describe("verify", () => {
     });
   });
   describe("v3", () => {
-    it("should return valid fragment for valid document using document store with corresponding DNS-TXT", () => {});
-    it("should return valid fragment for valid document using token registry with corresponding DNS-TXT", () => {});
-    it("should return invalid fragment for valid document using document store without corresponding DNS-TXT", () => {});
-    it("should return invalid fragment for valid document using token registry without corresponding DNS-TXT", () => {});
+    it("should return valid fragment for valid document using document store with corresponding DNS-TXT", async () => {
+      const fragment = await openAttestationDnsTxtIdentityProof.verify(v3DocumentStoreIssued, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "identifier": "example.tradetrust.io",
+            "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
+    });
+    it("should return valid fragment for valid document using token registry with corresponding DNS-TXT", async () => {
+      const fragment = await openAttestationDnsTxtIdentityProof.verify(v3TokenRegistryIssued, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "identifier": "example.tradetrust.io",
+            "value": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+          },
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
+    });
+    it("should return invalid fragment for valid document using document store without corresponding DNS-TXT", async () => {
+      const documentWithoutDnsTxt = {
+        ...v3DocumentStoreIssued,
+        openAttestationMetadata: {
+          ...v3DocumentStoreIssued.openAttestationMetadata,
+          identityProof: {
+            type: v2.IdentityProofType.DNSTxt,
+            identifier: "nonexistent.example.com",
+          },
+        },
+      };
+      const fragment = await openAttestationDnsTxtIdentityProof.verify(documentWithoutDnsTxt, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "identifier": "nonexistent.example.com",
+            "reason": Object {
+              "code": 4,
+              "codeString": "MATCHING_RECORD_NOT_FOUND",
+              "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+            },
+            "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
+    });
+    it("should return invalid fragment for valid document using token registry without corresponding DNS-TXT", async () => {
+      const documentWithoutDnsTxt = {
+        ...v3TokenRegistryIssued,
+        openAttestationMetadata: {
+          ...v3TokenRegistryIssued.openAttestationMetadata,
+          identityProof: {
+            type: v2.IdentityProofType.DNSTxt,
+            identifier: "nonexistent.example.com",
+          },
+        },
+      };
+      const fragment = await openAttestationDnsTxtIdentityProof.verify(documentWithoutDnsTxt, options);
+      expect(fragment).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "identifier": "nonexistent.example.com",
+            "reason": Object {
+              "code": 4,
+              "codeString": "MATCHING_RECORD_NOT_FOUND",
+              "message": "Matching DNS record not found for 0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+            },
+            "value": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+          },
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "INVALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
+    });
   });
 });

@@ -39,6 +39,8 @@ export enum OpenAttestationDnsTxtCode {
   SKIPPED = 2,
   INVALID_ISSUERS = 3,
   MATCHING_RECORD_NOT_FOUND = 4,
+  UNRECOGNIZED_DOCUMENT = 5,
+  UNSUPPORTED = 6,
 }
 export enum OpenAttestationHashCode {
   DOCUMENT_TAMPERED = 0,
@@ -71,6 +73,7 @@ export enum OpenAttestationDnsDidCode {
   MALFORMED_IDENTITY_PROOF = 2,
   INVALID_ISSUERS = 3,
   UNSIGNED = 4,
+  UNRECOGNIZED_DOCUMENT = 5,
 }
 export enum OpenAttestationSignatureCode {
   UNEXPECTED_ERROR = 0,
