@@ -107,6 +107,10 @@ describe("test", () => {
       expect(toVerify).toBe(false);
     });
   });
+  describe("v3", () => {
+    it("should return true when document uses DNS-TXT as identity proof", () => {});
+    it("should return false when document does not uses DNS-TXT as identity proof", () => {});
+  });
 });
 
 describe("verify", () => {
@@ -451,5 +455,11 @@ describe("verify", () => {
         }
       `);
     });
+  });
+  describe("v3", () => {
+    it("should return valid fragment for valid document using document store with corresponding DNS-TXT", () => {});
+    it("should return valid fragment for valid document using token registry with corresponding DNS-TXT", () => {});
+    it("should return invalid fragment for valid document using document store without corresponding DNS-TXT", () => {});
+    it("should return invalid fragment for valid document using token registry without corresponding DNS-TXT", () => {});
   });
 });
