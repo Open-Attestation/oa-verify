@@ -74,8 +74,8 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
         OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
         OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
       );
-    const { key, location, type } = identityProof;
-    if (type !== v2.IdentityProofType.DNSDid)
+    const { key, location, type: identityProofType } = identityProof;
+    if (identityProofType !== v2.IdentityProofType.DNSDid)
       throw new CodedError(
         "Issuer is not using DID-DNS identityProof type",
         OpenAttestationDnsDidCode.INVALID_ISSUERS,

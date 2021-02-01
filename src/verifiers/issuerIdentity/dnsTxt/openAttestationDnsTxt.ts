@@ -94,7 +94,7 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
   const identities = await Promise.all(
     documentData.issuers.map((issuer) => {
       if (issuer.identityProof?.type === v2.IdentityProofType.DNSTxt) {
-        const location = issuer.identityProof.location;
+        const { location } = issuer.identityProof;
         const smartContractAddress = issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore;
 
         if (!location)
