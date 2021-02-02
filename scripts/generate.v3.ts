@@ -59,13 +59,13 @@ const generateDnsDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signature2 = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
+  const signatureForInvalidDocument = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
       ...wrappedInvalidDnsDidDocument.proof,
       key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-      signature: signature2,
+      signature: signatureForInvalidDocument,
     },
   };
   writeFileSync("./test/fixtures/v3/dnsdid-invalid-signed.json", JSON.stringify(signedInvalidDnsDidDocument, null, 2));
@@ -100,13 +100,13 @@ const generateDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signature2 = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
+  const signatureForInvalidDocument = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
       ...wrappedInvalidDnsDidDocument.proof,
       key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-      signature: signature2,
+      signature: signatureForInvalidDocument,
     },
   };
   writeFileSync("./test/fixtures/v3/did-invalid-signed.json", JSON.stringify(signedInvalidDnsDidDocument, null, 2));
