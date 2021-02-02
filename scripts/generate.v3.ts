@@ -59,7 +59,9 @@ const generateDnsDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signatureForInvalidDocument = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
@@ -100,7 +102,9 @@ const generateDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signatureForInvalidDocument = await wallet.signMessage(utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`));
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
