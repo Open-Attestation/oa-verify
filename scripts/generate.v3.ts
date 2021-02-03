@@ -46,6 +46,31 @@ const generateDnsDid = async () => {
     },
   };
   writeFileSync("./test/fixtures/v3/dnsdid-signed.json", JSON.stringify(signedDnsDidDocument, null, 2));
+  const validSignatureWithoutDnsTxt = {
+    ...baseDnsDidDocument,
+    openAttestationMetadata: {
+      ...baseDnsDidDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSDid,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  };
+  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    validSignatureWithoutDnsTxt
+  );
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
+  const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedInvalidDnsDidDocument,
+    proof: {
+      ...wrappedInvalidDnsDidDocument.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureForInvalidDocument,
+    },
+  };
+  writeFileSync("./test/fixtures/v3/dnsdid-invalid-signed.json", JSON.stringify(signedInvalidDnsDidDocument, null, 2));
 };
 
 const generateDid = async () => {
@@ -64,6 +89,31 @@ const generateDid = async () => {
     },
   };
   writeFileSync("./test/fixtures/v3/did-signed.json", JSON.stringify(signedDidDocument, null, 2));
+  const validSignatureWithoutDnsTxt = {
+    ...baseDidDocument,
+    openAttestationMetadata: {
+      ...baseDidDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSDid,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  };
+  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    validSignatureWithoutDnsTxt
+  );
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
+  const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedInvalidDnsDidDocument,
+    proof: {
+      ...wrappedInvalidDnsDidDocument.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureForInvalidDocument,
+    },
+  };
+  writeFileSync("./test/fixtures/v3/did-invalid-signed.json", JSON.stringify(signedInvalidDnsDidDocument, null, 2));
 };
 
 const generateDocumentStore = async () => {
@@ -90,12 +140,29 @@ const generateDocumentStore = async () => {
     "./test/fixtures/v3/documentStore-revoked.json",
     JSON.stringify(revokedBaseDocumentStoreDocument, null, 2)
   );
-  info("Issuing document(1/2)...");
+  const invalidDnsDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument({
+    ...baseDocumentStoreDocument,
+    openAttestationMetadata: {
+      ...baseDocumentStoreDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSTxt,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  });
+  writeFileSync(
+    "./test/fixtures/v3/documentStore-invalid-issued.json",
+    JSON.stringify(invalidDnsDocumentStoreDocument, null, 2)
+  );
+  info("Issuing document(1/3)...");
   const cmdIssue1 = `oa document-store issue -h 0x${issuedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue1, { timeout: ethereumDocumentConfig.timeout });
-  info("Issuing document(2/2)...");
+  info("Issuing document(2/3)...");
   const cmdIssue2 = `oa document-store issue -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue2, { timeout: ethereumDocumentConfig.timeout });
+  info("Issuing document(3/3)...");
+  const cmdIssue3 = `oa document-store issue -h 0x${invalidDnsDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdIssue3, { timeout: ethereumDocumentConfig.timeout });
   info("Revoking document...");
   const cmdRevoke = `oa document-store revoke -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
@@ -118,9 +185,26 @@ const generateTokenRegistry = async () => {
     "./test/fixtures/v3/tokenRegistry-issued.json",
     JSON.stringify(issuedBaseTokenRegistryDocument, null, 2)
   );
-  const cmd = `oa token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${issuedBaseTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
-  info("Issuing document...");
-  execSync(cmd);
+  const invalidDnsTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument({
+    ...baseTokenRegistryDocument,
+    openAttestationMetadata: {
+      ...baseTokenRegistryDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSTxt,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  });
+  writeFileSync(
+    "./test/fixtures/v3/tokenRegistry-invalid-issued.json",
+    JSON.stringify(invalidDnsTokenRegistryDocument, null, 2)
+  );
+  const cmdIssue1 = `oa token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${issuedBaseTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  info("Issuing document(1/2)...");
+  execSync(cmdIssue1, { timeout: ethereumDocumentConfig.timeout });
+  info("Issuing document(2/2)...");
+  const cmdIssue2 = `oa token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${invalidDnsTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdIssue2, { timeout: ethereumDocumentConfig.timeout });
 };
 
 const run = async () => {

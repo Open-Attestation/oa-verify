@@ -74,8 +74,8 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
         OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
         OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
       );
-    const { key, location, type } = identityProof;
-    if (type !== v2.IdentityProofType.DNSDid)
+    const { key, location, type: identityProofType } = identityProof;
+    if (identityProofType !== v2.IdentityProofType.DNSDid)
       throw new CodedError(
         "Issuer is not using DID-DNS identityProof type",
         OpenAttestationDnsDidCode.INVALID_ISSUERS,
@@ -132,7 +132,11 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
   async (document) => {
     if (utils.isWrappedV2Document(document)) return verifyV2(document);
     if (utils.isWrappedV3Document(document)) return verifyV3(document);
-    throw new Error("");
+    throw new CodedError(
+      "Unrecognized document",
+      OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
+      OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
+    );
   },
   {
     name,

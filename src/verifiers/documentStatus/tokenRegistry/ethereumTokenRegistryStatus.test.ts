@@ -58,6 +58,11 @@ describe("test", () => {
   });
 
   describe("v3", () => {
+    it("should return true for documents using token registry", async () => {
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(v3TokenRegistryIssued, options);
+
+      expect(shouldVerify).toBe(true);
+    });
     it("should return false when document does not have OpenAttestationMetadata", async () => {
       const documentWithoutOpenAttestationMetadata: any = {
         ...v3TokenRegistryWrapped,
