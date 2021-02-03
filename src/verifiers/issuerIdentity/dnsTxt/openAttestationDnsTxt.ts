@@ -162,8 +162,8 @@ const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions):
     data: {
       identifier: issuerIdentity.location,
       value: issuerIdentity.value,
-      ...(issuerIdentity.status === "INVALID" ? { reason: issuerIdentity.reason } : {}),
     },
+    ...(issuerIdentity.status === "INVALID" ? { reason: issuerIdentity.reason } : {}),
     status: issuerIdentity.status,
   };
 };

@@ -176,8 +176,6 @@ const test: VerifierType["test"] = (document) => {
     return !!documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
   }
   if (utils.isWrappedV3Document(document)) {
-    if (document?.openAttestationMetadata) return false;
-
     const documentData = document?.openAttestationMetadata;
     if (!!documentData?.proof && !!documentData?.identityProof && !!documentData?.template)
       return document?.openAttestationMetadata?.proof?.method === v3.Method.TokenRegistry;
