@@ -550,14 +550,14 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "identifier": "notinuse.tradetrust.io",
-                "reason": Object {
-                  "code": 4,
-                  "codeString": "MATCHING_RECORD_NOT_FOUND",
-                  "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
-                },
                 "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
               },
               "name": "OpenAttestationDnsTxtIdentityProof",
+              "reason": Object {
+                "code": 4,
+                "codeString": "MATCHING_RECORD_NOT_FOUND",
+                "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
             },
@@ -636,14 +636,14 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "identifier": "notinuse.tradetrust.io",
-                "reason": Object {
-                  "code": 4,
-                  "codeString": "MATCHING_RECORD_NOT_FOUND",
-                  "message": "Matching DNS record not found for 0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
-                },
                 "value": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
               },
               "name": "OpenAttestationDnsTxtIdentityProof",
+              "reason": Object {
+                "code": 4,
+                "codeString": "MATCHING_RECORD_NOT_FOUND",
+                "message": "Matching DNS record not found for 0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+              },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
             },
