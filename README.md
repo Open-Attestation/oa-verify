@@ -160,6 +160,10 @@ isValid(fragments); // display false because ISSUER_IDENTITY is INVALID
 isValid(fragments, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"]); // display true because those types are VALID
 ```
 
+## Development
+
+For generating of test documents (for v3) you may use the script at `scripts/generate.v3.ts` by running `npm run generate:v3`.
+
 ## License
 
 [GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
