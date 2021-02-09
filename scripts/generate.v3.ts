@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function,camelcase */
 import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
 import { writeFileSync } from "fs";
-import { Wallet, utils } from "ethers";
 import { execSync } from "child_process";
 import {
   baseDidDocument,
@@ -10,13 +9,19 @@ import {
   baseTokenRegistryDocument,
 } from "../test/fixtures/v3/documents";
 import { getLogger } from "../src/common/logger";
+import { sign } from "@govtechsg/oa-did-sign";
 
 const { info } = getLogger("generate.v3");
 
 // DNS: example.tradetrust.io
 // Addr: 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89
 // Key: 0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655
-const wallet = new Wallet("0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655");
+
+const key = {
+  public: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+  private: "0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655",
+};
+const signMerkleRoot = async (merkleRoot: string) => sign("Secp256k1VerificationKey2018", merkleRoot, key);
 
 const ethereumDocumentConfig = {
   network: "ropsten",
@@ -36,7 +41,7 @@ const generateDnsDid = async () => {
   const wrappedBaseDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDnsDidDocument);
   writeFileSync("./test/fixtures/v3/dnsdid-wrapped.json", JSON.stringify(wrappedBaseDnsDidDocument, null, 2));
   const { merkleRoot } = wrappedBaseDnsDidDocument.proof;
-  const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
+  const signature = await signMerkleRoot(`0x${merkleRoot}`);
   const signedDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedBaseDnsDidDocument,
     proof: {
@@ -79,7 +84,7 @@ const generateDid = async () => {
   const wrappedBaseDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDidDocument);
   writeFileSync("./test/fixtures/v3/did-wrapped.json", JSON.stringify(wrappedBaseDidDocument, null, 2));
   const { merkleRoot } = wrappedBaseDidDocument.proof;
-  const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
+  const signature = await signMerkleRoot(`0x${merkleRoot}`);
   const signedDidDocument: v3.SignedWrappedDocument = {
     ...wrappedBaseDidDocument,
     proof: {
@@ -210,8 +215,8 @@ const generateTokenRegistry = async () => {
 const run = async () => {
   await generateDid();
   await generateDnsDid();
-  await generateDocumentStore();
-  await generateTokenRegistry();
+  // await generateDocumentStore();
+  // await generateTokenRegistry();
 };
 
 run();
