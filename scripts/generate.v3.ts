@@ -30,6 +30,219 @@ const ethereumDocumentConfig = {
   timeout: 5 * 60 * 1000, // 5 min timeout for contract to execute
 };
 
+interface OutLocations {
+  raw: string;
+  wrapped: string;
+  signed: string;
+  invalidSigned: string;
+}
+interface GenerateRevocationStoreArgs {
+  logMessage: string;
+  document: v3.OpenAttestationDocument;
+  outLocations: OutLocations;
+}
+
+// generalised function for later
+/**
+const generateRevocationStore = async ({
+  logMessage,
+  document,
+  outLocations
+}: GenerateRevocationStoreArgs) => {
+  info(`${logMessage}`)
+  const mainPath = "./test/fixtures/v3"
+  writeFileSync(`${mainPath}/${outLocations.raw}`, JSON.stringify(document, null, 2))
+  const wrapped = await __unsafe__use__it__at__your__own__risks__wrapDocument(document)
+  writeFileSync(`${mainPath}/${outLocations.wrapped}`, JSON.stringify(wrapped, null, 2))
+  const { merkleRoot } = wrapped.proof;
+  const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
+  const signed : v3.SignedWrappedDocument = {
+    ...wrapped,
+    proof: {
+      ...wrapped.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature,
+    }
+  }
+  writeFileSync(`${mainPath}/${outLocations.signed}`, JSON.stringify(signed, null, 2))
+
+  const validSignatureWithoutDnsTxt = {
+    ...document,
+    openAttestationMetadata: {
+      ...document.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSDid,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  };
+  const wrappedInvalidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    validSignatureWithoutDnsTxt
+  );
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDocument.proof.merkleRoot}`)
+  );
+  const signedInvalidDocument: v3.SignedWrappedDocument = {
+    ...wrappedInvalidDocument,
+    proof: {
+      ...wrappedInvalidDocument.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureForInvalidDocument,
+    },
+  };
+  writeFileSync(
+    `${mainPath}/${outLocations.invalidSigned}`,
+    JSON.stringify(signedInvalidDocument, null, 2)
+  );
+
+  info("Revoking document...");
+  const cmdRevoke = `oa document-store revoke -h 0x${signed.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
+}
+
+const generateDnsDidRevocationStore = async () => {
+  info("Generating DNS-DID-Revocation-Store files");
+  const baseDnsDidDocumentRevocationStore = {
+    ...baseDnsDidDocument,
+    openAttestationMetadata: {
+      ...baseDnsDidDocument.openAttestationMetadata,
+      revocation: {
+        type: v3.RevocationType.RevocationStore,
+        address: ethereumDocumentConfig.documentStore,
+      },
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/dnsdid-revocation-store.json",
+    JSON.stringify(baseDnsDidDocumentRevocationStore, null, 2)
+  );
+  const wrappedBaseDnsDidDocumentRevocationStore = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    baseDnsDidDocumentRevocationStore
+  );
+  writeFileSync(
+    "./test/fixtures/v3/dnsdid-revocation-store-wrapped.json",
+    JSON.stringify(wrappedBaseDnsDidDocumentRevocationStore, null, 2)
+  );
+  const { merkleRoot } = wrappedBaseDnsDidDocumentRevocationStore.proof;
+  const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
+  const signedDnsDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedBaseDnsDidDocumentRevocationStore,
+    proof: {
+      ...wrappedBaseDnsDidDocumentRevocationStore.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature,
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/dnsdid-revocation-store-signed.json",
+    JSON.stringify(signedDnsDidDocument, null, 2)
+  );
+  const validSignatureWithoutDnsTxt = {
+    ...baseDnsDidDocument,
+    openAttestationMetadata: {
+      ...baseDnsDidDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSDid,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  };
+  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    validSignatureWithoutDnsTxt
+  );
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
+  const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedInvalidDnsDidDocument,
+    proof: {
+      ...wrappedInvalidDnsDidDocument.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureForInvalidDocument,
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/dnsdid-revocation-store-invalid-signed.json",
+    JSON.stringify(signedInvalidDnsDidDocument, null, 2)
+  );
+
+  info("Revoking document...");
+  const cmdRevoke = `oa document-store revoke -h 0x${signedDnsDidDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
+};
+**/
+
+const generateDidRevocationStore = async () => {
+  info("Generating DID-Revocation-Store files");
+  const baseDidDocumentRevocationStore = {
+    ...baseDidDocument,
+    openAttestationMetadata: {
+      ...baseDidDocument.openAttestationMetadata,
+      revocation: {
+        type: v3.RevocationType.RevocationStore,
+        address: ethereumDocumentConfig.documentStore,
+      },
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/did-revocation-store.json",
+    JSON.stringify(baseDidDocumentRevocationStore, null, 2)
+  );
+  const wrappedBaseDidDocumentRevocationStore = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    baseDidDocumentRevocationStore
+  );
+  writeFileSync(
+    "./test/fixtures/v3/did-revocation-store-wrapped.json",
+    JSON.stringify(wrappedBaseDidDocumentRevocationStore, null, 2)
+  );
+  const { merkleRoot } = wrappedBaseDidDocumentRevocationStore.proof;
+  const signature = await wallet.signMessage(utils.arrayify(`0x${merkleRoot}`));
+  const signedDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedBaseDidDocumentRevocationStore,
+    proof: {
+      ...wrappedBaseDidDocumentRevocationStore.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature,
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/did-revocation-store-signed.json",
+    JSON.stringify(signedDidDocument, null, 2)
+  );
+  const validSignatureWithoutDnsTxt = {
+    ...baseDidDocument,
+    openAttestationMetadata: {
+      ...baseDidDocument.openAttestationMetadata,
+      identityProof: {
+        type: v3.IdentityProofType.DNSDid,
+        identifier: "notinuse.tradetrust.io",
+      },
+    },
+  };
+  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
+    validSignatureWithoutDnsTxt
+  );
+  const signatureForInvalidDocument = await wallet.signMessage(
+    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
+  );
+  const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
+    ...wrappedInvalidDnsDidDocument,
+    proof: {
+      ...wrappedInvalidDnsDidDocument.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureForInvalidDocument,
+    },
+  };
+  writeFileSync(
+    "./test/fixtures/v3/did-revocation-store-invalid-signed.json",
+    JSON.stringify(signedInvalidDnsDidDocument, null, 2)
+  );
+
+  info("Revoking document...");
+  const cmdRevoke = `oa document-store revoke -h 0x${signedDidDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
+};
+
 const generateDnsDid = async () => {
   info("Generating DNS-DID files");
   writeFileSync("./test/fixtures/v3/dnsdid.json", JSON.stringify(baseDnsDidDocument, null, 2));
