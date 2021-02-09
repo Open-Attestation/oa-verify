@@ -2,6 +2,7 @@
 import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
 import { writeFileSync } from "fs";
 import { execSync } from "child_process";
+import { sign } from "@govtechsg/oa-did-sign";
 import {
   baseDidDocument,
   baseDnsDidDocument,
@@ -9,7 +10,6 @@ import {
   baseTokenRegistryDocument,
 } from "../test/fixtures/v3/documents";
 import { getLogger } from "../src/common/logger";
-import { sign } from "@govtechsg/oa-did-sign";
 
 const { info } = getLogger("generate.v3");
 
@@ -215,8 +215,8 @@ const generateTokenRegistry = async () => {
 const run = async () => {
   await generateDid();
   await generateDnsDid();
-  // await generateDocumentStore();
-  // await generateTokenRegistry();
+  await generateDocumentStore();
+  await generateTokenRegistry();
 };
 
 run();
