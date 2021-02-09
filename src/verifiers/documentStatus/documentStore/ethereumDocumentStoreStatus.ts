@@ -47,23 +47,18 @@ const type: VerificationFragmentType = "DOCUMENT_STATUS";
 type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
 
 // Returns list of all document stores, throws when not all issuers are using document store
-export const getIssuersDocumentStores = (
-  document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
-): string[] => {
-  if (utils.isWrappedV2Document(document)) {
-    const data = getData(document);
-    return data.issuers.map((issuer) => {
-      const documentStoreAddress = issuer.documentStore || issuer.certificateStore;
-      if (!documentStoreAddress)
-        throw new CodedError(
-          `Document store address not found in issuer ${issuer.name}`,
-          OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ISSUERS,
-          OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ISSUERS]
-        );
-      return documentStoreAddress;
-    });
-  }
-  throw new Error("TBD");
+export const getIssuersDocumentStores = (document: WrappedDocument<v2.OpenAttestationDocument>): string[] => {
+  const data = getData(document);
+  return data.issuers.map((issuer) => {
+    const documentStoreAddress = issuer.documentStore || issuer.certificateStore;
+    if (!documentStoreAddress)
+      throw new CodedError(
+        `Document store address not found in issuer ${issuer.name}`,
+        OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ISSUERS,
+        OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.INVALID_ISSUERS]
+      );
+    return documentStoreAddress;
+  });
 };
 
 export const decodeError = (error: any) => {
