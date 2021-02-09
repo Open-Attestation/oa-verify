@@ -18,14 +18,16 @@
     "lint": "eslint . --ext .ts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
     "snyk-protect": "snyk protect",
-    "prepare": "npm run snyk-protect"
+    "prepare": "npm run snyk-protect",
+    "generate:v3": "DEBUG=oa-verify* ts-node scripts/generate.v3.ts"
   },
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.0.9",
     "@govtechsg/document-store": "^2.0.0",
-    "@govtechsg/open-attestation": "^4.0.0",
+    "@govtechsg/oa-did-sign": "^2.1.0",
+    "@govtechsg/open-attestation": "^4.4.0",
     "@govtechsg/token-registry": "^2.0.0",
     "axios": "^0.21.1",
     "debug": "^4.1.1",
@@ -56,7 +58,7 @@
     "jest": "^26.1.0",
     "msw": "^0.20.5",
     "prettier": "^2.0.5",
-    "semantic-release": "^17.1.1",
+    "semantic-release": "^17.3.7",
     "ts-jest": "^26.1.1",
     "typescript": "^3.9.6"
   },

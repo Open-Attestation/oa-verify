@@ -2,10 +2,6 @@ import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-
 import { providers } from "ethers";
 import { Reason } from "./error";
 
-type DeepPartial<T> = {
-  [P in keyof T]?: DeepPartial<T[P]>;
-};
-
 /**
  * Callback function that will provide back the promises resolving to the verification fragment. It will be called before the promises are all resolved and thus give the possibility to consumers to perform their own extra checks.
  */
@@ -69,7 +65,7 @@ export interface Verifier<
   Data = any
 > {
   skip: (document: Document, options: Options) => Promise<SkippedVerificationFragment>;
-  test: (document: DeepPartial<Document>, options: Options) => boolean;
+  test: (document: Document, options: Options) => boolean;
   verify: (document: Document, options: Options) => Promise<VerificationFragment<Data>>;
 }
 export type Hash = string;
