@@ -336,7 +336,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
     if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
     throw new CodedError(
-      `Unrecognized document version`,
+      `Document does not match either v2 or v3 formats`,
       OpenAttestationEthereumDocumentStoreStatusCode.UNRECOGNIZED_DOCUMENT,
       OpenAttestationEthereumDocumentStoreStatusCode[
         OpenAttestationEthereumDocumentStoreStatusCode.UNRECOGNIZED_DOCUMENT

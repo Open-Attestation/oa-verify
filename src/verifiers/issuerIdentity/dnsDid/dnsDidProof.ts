@@ -133,7 +133,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     if (utils.isWrappedV2Document(document)) return verifyV2(document);
     if (utils.isWrappedV3Document(document)) return verifyV3(document);
     throw new CodedError(
-      "Unrecognized document",
+      "Document does not match either v2 or v3 formats",
       OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
       OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
     );

@@ -112,7 +112,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     if (utils.isWrappedV2Document(document)) return verifyV2(document);
     if (utils.isWrappedV3Document(document)) return verifyV3(document);
     throw new CodedError(
-      "Unrecognized document format",
+      "Document does not match either v2 or v3 formats",
       OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT,
       OpenAttestationDidCode[OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT]
     );

@@ -59,7 +59,7 @@ export const getTokenRegistry = (
   }
 
   throw new CodedError(
-    `Unrecognized document version`,
+    `Document does not match either v2 or v3 formats`,
     OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
   );
@@ -71,7 +71,7 @@ const getMerkleRoot = (
   if (utils.isWrappedV2Document(document)) return `0x${document.signature.merkleRoot}`;
   if (utils.isWrappedV3Document(document)) return `0x${document.proof.merkleRoot}`;
   throw new CodedError(
-    `Unrecognized document version`,
+    `Document does not match either v2 or v3 formats`,
     OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
   );
@@ -187,7 +187,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
   async (document, options): Promise<VerificationFragment> => {
     if (!utils.isWrappedV3Document(document) && !utils.isWrappedV2Document(document))
       throw new CodedError(
-        `Unrecognized document version`,
+        `Document does not match either v2 or v3 formats`,
         OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
         OpenAttestationEthereumTokenRegistryStatusCode[
           OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT

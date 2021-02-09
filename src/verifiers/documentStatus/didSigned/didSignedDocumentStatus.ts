@@ -171,7 +171,7 @@ const verify: VerifierType["verify"] = withCodedErrorHandler(
     }
 
     throw new CodedError(
-      `Unrecognized document version`,
+      `Document does not match either v2 or v3 formats`,
       OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT,
       OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT]
     );
