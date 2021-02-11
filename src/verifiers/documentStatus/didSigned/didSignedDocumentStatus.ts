@@ -60,11 +60,11 @@ const verifyV2 = async (
       "MISSING_REVOCATION"
     );
 
-  const revocationStatusCallback = (r: v2.Revocation) => {
-    switch (r.type) {
+  const revocationStatusCallback = (revocationItem: v2.Revocation) => {
+    switch (revocationItem.type) {
       case v2.RevocationType.RevocationStore:
         return isRevokedOnDocumentStore({
-          documentStore: r.location ?? "",
+          documentStore: revocationItem.location ?? "",
           merkleRoot,
           provider: options.provider,
           targetHash,
@@ -182,8 +182,8 @@ const verifyV3 = async (
 
   const issuedOnAll = verificationResult.verified;
 
-  const getRevocationStatus = async (type: v3.RevocationType, location: string) => {
-    switch (type) {
+  const getRevocationStatus = async (docType: v3.RevocationType, location: string) => {
+    switch (docType) {
       case v3.RevocationType.RevocationStore:
         return isRevokedOnDocumentStore({
           documentStore: location,

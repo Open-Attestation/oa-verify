@@ -1,11 +1,11 @@
-import { Hash } from "../../types/core";
 import { utils } from "@govtechsg/open-attestation";
 import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
-import { OpenAttestationEthereumDocumentStoreStatusCode  } from "../../types/error";
-import { CodedError } from "../../common/error";
 import { errors, providers } from "ethers";
-import { RevocationStatus } from "./types"
 import { DocumentStoreFactory } from "@govtechsg/document-store";
+import { Hash } from "../../types/core";
+import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
+import { CodedError } from "../../common/error";
+import { RevocationStatus } from "./types";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -18,8 +18,43 @@ export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => 
 };
 
 /**
+ * Try to decode the error to see if we can deterministically tell if the document has NOT been issued or revoked.
+ *
+ * In case where we cannot tell, we throw an error
+ * */
+export const decodeError = (error: any) => {
+  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  switch (true) {
+    case !error.reason &&
+      (error.method?.toLowerCase() === "isRevoked(bytes32)".toLowerCase() ||
+        error.method?.toLowerCase() === "isIssued(bytes32)".toLowerCase()) &&
+      error.code === errors.CALL_EXCEPTION:
+      return "Contract is not found";
+    case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
+      error.code === errors.UNSUPPORTED_OPERATION:
+      return "ENS name is not configured";
+    case reason.toLowerCase() === "bad address checksum".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+      return "Bad document store address checksum";
+    case error.message?.toLowerCase() === "name not found".toLowerCase():
+      return "ENS name is not found";
+    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+      return "Invalid document store address";
+    case error.code === errors.INVALID_ARGUMENT:
+      return "Invalid call arguments";
+    case error.code === errors.SERVER_ERROR:
+      throw new CodedError(
+        "Unable to connect to the Ethereum network, please try again later",
+        OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
+        OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR]
+      );
+    default:
+      throw error;
+  }
+};
+
+/**
  * Given a list of hashes, check against one smart contract if any of the hash has been revoked
- **/
+ * */
 export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediateHashes: Hash[]) => {
   const revokedStatusDeferred = intermediateHashes.map((hash) =>
     smartContract.isRevoked(hash).then((status) => (status ? hash : undefined))
@@ -78,40 +113,5 @@ export const isRevokedOnDocumentStore = async ({
           ],
       },
     };
-  }
-};
-
-/**
- * Try to decode the error to see if we can deterministically tell if the document has NOT been issued or revoked.
- * 
- * In case where we cannot tell, we throw an error
-**/
-export const decodeError = (error: any) => {
-  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
-  switch (true) {
-    case !error.reason &&
-      (error.method?.toLowerCase() === "isRevoked(bytes32)".toLowerCase() ||
-        error.method?.toLowerCase() === "isIssued(bytes32)".toLowerCase()) &&
-      error.code === errors.CALL_EXCEPTION:
-      return "Contract is not found";
-    case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-      error.code === errors.UNSUPPORTED_OPERATION:
-      return "ENS name is not configured";
-    case reason.toLowerCase() === "bad address checksum".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
-      return "Bad document store address checksum";
-    case error.message?.toLowerCase() === "name not found".toLowerCase():
-      return "ENS name is not found";
-    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
-      return "Invalid document store address";
-    case error.code === errors.INVALID_ARGUMENT:
-      return "Invalid call arguments";
-    case error.code === errors.SERVER_ERROR:
-      throw new CodedError(
-        "Unable to connect to the Ethereum network, please try again later",
-        OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
-        OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR]
-      );
-    default:
-      throw error;
   }
 };

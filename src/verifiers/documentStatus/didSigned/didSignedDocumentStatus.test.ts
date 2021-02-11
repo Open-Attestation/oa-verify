@@ -12,15 +12,15 @@ import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentS
 import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 import sampleDidSignedV3 from "../../../../test/fixtures/v3/did-signed.json";
 import sampleDNSDidSignedV3 from "../../../../test/fixtures/v3/dnsdid-signed.json";
-import sampleDidSignedRevocationStoreNotRevokedV3 from "../../.././../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
-import sampleDidSignedRevocationStoreButRevokedV3 from "../../.././../test/fixtures/v3/did-revocation-store-signed-revoked.json";
-import sampleDnsDidSignedRevocationStoreNotRevokedV3 from "../../.././../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
-import sampleDnsDidSignedRevocationStoreButRevokedV3 from "../../.././../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
+import sampleDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-revoked.json";
+import sampleDnsDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
+import sampleDnsDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
 
-import sampleDidSignedRevocationStoreNotRevokedV2 from "../../.././../test/fixtures/v2/did-revocation-store-signed-not-revoked.json";
-import sampleDidSignedRevocationStoreButRevokedV2 from "../../.././../test/fixtures/v2/did-revocation-store-signed-revoked.json";
-import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../.././../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
-import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../.././../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-not-revoked.json";
+import sampleDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-revoked.json";
+import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
+import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 
 const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
   v2.OpenAttestationDocument
