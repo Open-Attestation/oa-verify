@@ -58,6 +58,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   DID_MISSING = 7,
   UNRECOGNIZED_DOCUMENT = 8,
   UNRECOGNIZED_REVOCATION_TYPE = 9,
+  REVOCATION_LOCATION_MISSING = 10,
 }
 export enum OpenAttestationDidCode {
   SKIPPED = 0,

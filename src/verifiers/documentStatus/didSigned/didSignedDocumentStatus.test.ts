@@ -14,11 +14,13 @@ import sampleDidSignedV3 from "../../../../test/fixtures/v3/did-signed.json";
 import sampleDNSDidSignedV3 from "../../../../test/fixtures/v3/dnsdid-signed.json";
 import sampleDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
 import sampleDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreButNoLocationV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-no-location.json";
 import sampleDnsDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
 
 import sampleDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-not-revoked.json";
 import sampleDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreButNoLocationV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-no-location.json";
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 
@@ -26,6 +28,9 @@ const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRe
   v2.OpenAttestationDocument
 >;
 const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<
   v2.OpenAttestationDocument
 >;
 const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
@@ -42,6 +47,9 @@ const didSignedRevocationStoreNotRevokedV3 = sampleDidSignedRevocationStoreNotRe
   v3.OpenAttestationDocument
 >;
 const didSignedRevocationStoreButRevokedV3 = sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<
   v3.OpenAttestationDocument
 >;
 const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
@@ -258,7 +266,7 @@ describe("verify", () => {
         }
       `);
     });
-    it("should throw an unrecognized revocation type error when revocation is not set to NONE || REVOCATION_STORE (for now)", async () => {
+    it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
       expect(res).toMatchInlineSnapshot(`
@@ -269,6 +277,23 @@ describe("verify", () => {
             "code": 9,
             "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
             "message": "unrecognized revocation type for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should throw an missing revocation location type error when revocation location is missing when revocation type is REVOCATION_STORE", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButNoLocationV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: missing revocation location for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 10,
+            "codeString": "REVOCATION_LOCATION_MISSING",
+            "message": "missing revocation location for an issuer",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
@@ -448,6 +473,23 @@ describe("verify", () => {
         }
       `);
     });
+    it("should throw an missing revocation location type error when revocation location is missing when revocation type is REVOCATION_STORE", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButNoLocationV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: missing revocation location for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 10,
+            "codeString": "REVOCATION_LOCATION_MISSING",
+            "message": "missing revocation location for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
 
     it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
       whenPublicKeyResolvesSuccessfully();
@@ -563,7 +605,7 @@ describe("verify", () => {
       `);
     });
 
-    it("should throw an unrecognized revocation type error when revocation is not set to NONE || REVOCATION_STORE (for now)", async () => {
+    it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
       whenPublicKeyResolvesSuccessfully();
       const docWithIncorrectRevocation = {
         ...didSignedV3,

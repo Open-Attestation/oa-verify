@@ -40,7 +40,7 @@ const verifyV2 = async (
 ): Promise<VerificationFragment> => {
   const data = getData(document);
   const merkleRoot = `0x${document.signature.merkleRoot}`;
-  const { targetHash } = document.signature;
+  const { targetHash, proof: proofs } = document.signature;
   data.issuers.forEach((issuer) => {
     if (!(issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"))
       throw new CodedError(
@@ -51,7 +51,6 @@ const verifyV2 = async (
   });
   const { issuers } = data;
 
-  // If revocation block does not exist, throw error to prevent case where revocation method is revoked
   const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
   if (revocation.some((r) => typeof r?.type === "undefined"))
     throw new CodedError(
@@ -63,12 +62,20 @@ const verifyV2 = async (
   const revocationStatusCallback = (revocationItem: v2.Revocation) => {
     switch (revocationItem.type) {
       case v2.RevocationType.RevocationStore:
-        return isRevokedOnDocumentStore({
-          documentStore: revocationItem.location ?? "",
-          merkleRoot,
-          provider: options.provider,
-          targetHash,
-        });
+        if (typeof revocationItem.location === "string") {
+          return isRevokedOnDocumentStore({
+            documentStore: revocationItem.location,
+            merkleRoot,
+            provider: options.provider,
+            targetHash,
+            proofs,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
       case v2.RevocationType.None:
         return Promise.resolve({ revoked: false });
       default:
@@ -182,16 +189,23 @@ const verifyV3 = async (
 
   const issuedOnAll = verificationResult.verified;
 
-  const getRevocationStatus = async (docType: v3.RevocationType, location: string) => {
+  const getRevocationStatus = async (docType: v3.RevocationType, location: string | undefined) => {
     switch (docType) {
       case v3.RevocationType.RevocationStore:
-        return isRevokedOnDocumentStore({
-          documentStore: location,
-          merkleRoot,
-          targetHash,
-          proofs,
-          provider: options.provider,
-        });
+        if (typeof location === "string") {
+          return isRevokedOnDocumentStore({
+            documentStore: location,
+            merkleRoot,
+            targetHash,
+            proofs,
+            provider: options.provider,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
       case v3.RevocationType.None:
         return Promise.resolve({ revoked: false });
       default:
@@ -205,7 +219,7 @@ const verifyV3 = async (
 
   const revocationStatus = await getRevocationStatus(
     metaData.proof.revocation.type,
-    metaData.proof.revocation.location ?? ""
+    metaData.proof.revocation.location
   );
 
   const revokedOnAny = revocationStatus.revoked;
