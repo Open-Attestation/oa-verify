@@ -35,6 +35,80 @@ const ethereumDocumentConfig = {
   timeout: 5 * 60 * 1000, // 5 min timeout for contract to execute
 };
 
+interface OutLocations {
+  revoked: string;
+  notRevoked: string;
+}
+interface GenerateRevocationStoreArgs {
+  logMessage: string;
+  document: v3.OpenAttestationDocument;
+  outLocations: OutLocations;
+}
+
+const baseDnsDidDocumentRevocationStore = {
+  ...baseDnsDidDocument,
+  openAttestationMetadata: {
+    ...baseDnsDidDocument.openAttestationMetadata,
+    proof: {
+      ...baseDnsDidDocument.openAttestationMetadata.proof,
+      revocation: {
+        type: v3.RevocationType.RevocationStore,
+        location: ethereumDocumentConfig.documentStore,
+      },
+    },
+  },
+};
+const baseDidDocumentRevocationStore = {
+  ...baseDidDocument,
+  openAttestationMetadata: {
+    ...baseDidDocument.openAttestationMetadata,
+    proof: {
+      ...baseDidDocument.openAttestationMetadata.proof,
+      revocation: {
+        type: v3.RevocationType.RevocationStore,
+        location: ethereumDocumentConfig.documentStore,
+      },
+    },
+  },
+};
+
+const generateRevocationStore = async ({ logMessage, document, outLocations }: GenerateRevocationStoreArgs) => {
+  info(`${logMessage}`);
+  const mainPath = "./test/fixtures/v3";
+  const rawAnother = {
+    ...document,
+    type: ["VerifiableCredential", "DrivingLicenceCredential", "DivingLicenceCredential"],
+  };
+  const wrapped = await __unsafe__use__it__at__your__own__risks__wrapDocument(document);
+  const wrappedAnother = await __unsafe__use__it__at__your__own__risks__wrapDocument(rawAnother);
+  const { merkleRoot } = wrapped.proof;
+  const { merkleRoot: merkleRootAnother } = wrappedAnother.proof;
+  const signature = await signMerkleRoot(`0x${merkleRoot}`);
+  const signatureAnother = await signMerkleRoot(`0x${merkleRootAnother}`);
+  const signed: v3.SignedWrappedDocument = {
+    ...wrapped,
+    proof: {
+      ...wrapped.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature,
+    },
+  };
+  const signedAnother: v3.SignedWrappedDocument = {
+    ...wrappedAnother,
+    proof: {
+      ...wrappedAnother.proof,
+      key: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      signature: signatureAnother,
+    },
+  };
+  writeFileSync(`${mainPath}/${outLocations.revoked}`, JSON.stringify(signed, null, 2));
+  writeFileSync(`${mainPath}/${outLocations.notRevoked}`, JSON.stringify(signedAnother, null, 2));
+
+  info("Revoking document...");
+  const cmdRevoke = `oa document-store revoke -h 0x${signed.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
+};
+
 const generateDnsDid = async () => {
   info("Generating DNS-DID files");
   writeFileSync("./test/fixtures/v3/dnsdid.json", JSON.stringify(baseDnsDidDocument, null, 2));
@@ -64,9 +138,7 @@ const generateDnsDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signatureForInvalidDocument = await wallet.signMessage(
-    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
-  );
+  const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
@@ -107,9 +179,7 @@ const generateDid = async () => {
   const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
     validSignatureWithoutDnsTxt
   );
-  const signatureForInvalidDocument = await wallet.signMessage(
-    utils.arrayify(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`)
-  );
+  const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
     proof: {
@@ -214,7 +284,23 @@ const generateTokenRegistry = async () => {
 
 const run = async () => {
   await generateDid();
+  await generateRevocationStore({
+    logMessage: "Generating DID-Revocation-Store files",
+    document: baseDidDocumentRevocationStore,
+    outLocations: {
+      revoked: "did-revocation-store-signed-revoked.json",
+      notRevoked: "did-revocation-store-signed-not-revoked.json",
+    },
+  });
   await generateDnsDid();
+  await generateRevocationStore({
+    logMessage: "Generating DNS-DID-Revocation-Store files",
+    document: baseDnsDidDocumentRevocationStore,
+    outLocations: {
+      revoked: "dnsdid-revocation-store-signed-revoked.json",
+      notRevoked: "dnsdid-revocation-store-signed-not-revoked.json",
+    },
+  });
   await generateDocumentStore();
   await generateTokenRegistry();
 };

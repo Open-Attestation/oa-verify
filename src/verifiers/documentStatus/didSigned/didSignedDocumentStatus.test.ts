@@ -1,4 +1,4 @@
-import { v3, WrappedDocument, SignedWrappedDocument } from "@govtechsg/open-attestation";
+import { v2, v3, WrappedDocument, SignedWrappedDocument } from "@govtechsg/open-attestation";
 import { openAttestationDidSignedDocumentStatus } from "./didSignedDocumentStatus";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
@@ -12,11 +12,53 @@ import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentS
 import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 import sampleDidSignedV3 from "../../../../test/fixtures/v3/did-signed.json";
 import sampleDNSDidSignedV3 from "../../../../test/fixtures/v3/dnsdid-signed.json";
+import sampleDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
+import sampleDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreButNoLocationV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-no-location.json";
+import sampleDnsDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
+import sampleDnsDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
+
+import sampleDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-not-revoked.json";
+import sampleDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-revoked.json";
+import sampleDidSignedRevocationStoreButNoLocationV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-no-location.json";
+import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
+import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
+
+const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
+const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
+const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<
+  v2.OpenAttestationDocument
+>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const didSignedV3 = sampleDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreNotRevokedV3 = sampleDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButRevokedV3 = sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
+const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
 const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreNotRevokedV3 = sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
+const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<
+  v3.OpenAttestationDocument
+>;
 
 jest.mock("../../../did/resolver");
 
@@ -106,6 +148,40 @@ describe("verify", () => {
                   "issued": true,
                 },
               ],
+              "revocation": Array [
+                Object {
+                  "revoked": false,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreNotRevokedV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "revoked": false,
+                },
+              ],
             },
             "issuedOnAll": true,
             "revokedOnAny": false,
@@ -127,6 +203,40 @@ describe("verify", () => {
                 Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "revoked": false,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should pass for documents using `DID-DNS` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreNotRevokedV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "revoked": false,
                 },
               ],
             },
@@ -156,25 +266,36 @@ describe("verify", () => {
         }
       `);
     });
-    it("should fail when revocation is not set to NONE (for now)", async () => {
+    it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "issued": true,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": true,
-          },
+          "data": [Error: unrecognized revocation type for an issuer],
           "name": "OpenAttestationDidSignedDocumentStatus",
-          "status": "INVALID",
+          "reason": Object {
+            "code": 9,
+            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
+            "message": "unrecognized revocation type for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should throw an missing revocation location type error when revocation location is missing when revocation type is REVOCATION_STORE", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButNoLocationV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: missing revocation location for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 10,
+            "codeString": "REVOCATION_LOCATION_MISSING",
+            "message": "missing revocation location for an issuer",
+          },
+          "status": "ERROR",
           "type": "DOCUMENT_STATUS",
         }
       `);
@@ -232,11 +353,94 @@ describe("verify", () => {
                   },
                 },
               ],
+              "revocation": Array [
+                Object {
+                  "revoked": false,
+                },
+              ],
             },
             "issuedOnAll": false,
             "revokedOnAny": false,
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should fail for documents using `DID` and is correctly signed, and is revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButRevokedV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "reason": Object {
+                    "code": 5,
+                    "codeString": "DOCUMENT_REVOKED",
+                    "message": "Document 0x65f1e3c2a042dc9648f26f08257fd47a3739e40606d2dc887fe7566c8290144c has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  },
+                  "revoked": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 5,
+            "codeString": "DOCUMENT_REVOKED",
+            "message": "Document 0x65f1e3c2a042dc9648f26f08257fd47a3739e40606d2dc887fe7566c8290144c has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should fail for documents using `DID-DNS` and is correctly signed, and is revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreButRevokedV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "reason": Object {
+                    "code": 5,
+                    "codeString": "DOCUMENT_REVOKED",
+                    "message": "Document 0x18dd9adb48fd72f54e954cd661e8778520d3676d4ab470384946791cd7aaf809 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  },
+                  "revoked": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 5,
+            "codeString": "DOCUMENT_REVOKED",
+            "message": "Document 0x18dd9adb48fd72f54e954cd661e8778520d3676d4ab470384946791cd7aaf809 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
@@ -255,6 +459,52 @@ describe("verify", () => {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                 "verified": true,
+              },
+              "revocation": Object {
+                "revoked": false,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+    it("should throw an missing revocation location type error when revocation location is missing when revocation type is REVOCATION_STORE", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButNoLocationV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: missing revocation location for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 10,
+            "codeString": "REVOCATION_LOCATION_MISSING",
+            "message": "missing revocation location for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreNotRevokedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "revoked": false,
               },
             },
             "issuedOnAll": true,
@@ -277,6 +527,35 @@ describe("verify", () => {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                 "verified": true,
+              },
+              "revocation": Object {
+                "revoked": false,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should pass for documents using `DID-DNS` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreNotRevokedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "revoked": false,
               },
             },
             "issuedOnAll": true,
@@ -326,7 +605,7 @@ describe("verify", () => {
       `);
     });
 
-    it("should fail when revocation is not set to NONE (for now)", async () => {
+    it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
       whenPublicKeyResolvesSuccessfully();
       const docWithIncorrectRevocation = {
         ...didSignedV3,
@@ -345,11 +624,69 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(docWithIncorrectRevocation as any, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
+          "data": [Error: revocation type not found for an issuer],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 9,
+            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
+            "message": "revocation type not found for an issuer",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should fail for documents using `DID` and is correctly signed, and is revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButRevokedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
           "data": Object {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                 "verified": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "reason": Object {
+                  "code": 5,
+                  "codeString": "DOCUMENT_REVOKED",
+                  "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                },
+                "revoked": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+    });
+
+    it("should fail for documents using `DID-DNS` and is correctly signed, and is revoked on a document store (if specified)", async () => {
+      whenPublicKeyResolvesSuccessfully();
+      const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreButRevokedV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "verified": true,
+              },
+              "revocation": Object {
+                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "reason": Object {
+                  "code": 5,
+                  "codeString": "DOCUMENT_REVOKED",
+                  "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                },
+                "revoked": true,
               },
             },
             "issuedOnAll": true,
@@ -384,6 +721,9 @@ describe("verify", () => {
                   "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
                 },
                 "verified": false,
+              },
+              "revocation": Object {
+                "revoked": false,
               },
             },
             "issuedOnAll": false,

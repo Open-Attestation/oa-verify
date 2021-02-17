@@ -5,10 +5,14 @@ import { getFailingFragments } from "../test/utils";
 import v3DidWrappedRaw from "../test/fixtures/v3/did-wrapped.json";
 import v3DidSignedRaw from "../test/fixtures/v3/did-signed.json";
 import v3DidInvalidSignedRaw from "../test/fixtures/v3/did-invalid-signed.json";
+import v3DidSignedRevocationStoreNotRevokedRaw from "../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
+import v3DidSignedRevocationStoreButRevokedRaw from "../test/fixtures/v3/did-revocation-store-signed-revoked.json";
 
 import v3DnsDidWrappedRaw from "../test/fixtures/v3/dnsdid-wrapped.json";
 import v3DnsDidSignedRaw from "../test/fixtures/v3/dnsdid-signed.json";
 import v3DnsDidInvalidSignedRaw from "../test/fixtures/v3/dnsdid-invalid-signed.json";
+import v3DnsDidSignedRevocationStoreNotRevokedRaw from "../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
+import v3DnsDidSignedRevocationStoreButRevokedRaw from "../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
 
 import v3DocumentStoreIssuedRaw from "../test/fixtures/v3/documentStore-issued.json";
 import v3DocumentStoreRevokedRaw from "../test/fixtures/v3/documentStore-revoked.json";
@@ -22,10 +26,14 @@ import v3TokenRegistryInvalidIssuedRaw from "../test/fixtures/v3/tokenRegistry-i
 const v3DidWrapped = v3DidWrappedRaw as v3.WrappedDocument;
 const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
 const v3DidInvalidSigned = v3DidInvalidSignedRaw as v3.SignedWrappedDocument;
+const v3DidSignedRevocationStoreNotRevoked = v3DidSignedRevocationStoreNotRevokedRaw as v3.SignedWrappedDocument;
+const v3DidSignedRevocationStoreButRevoked = v3DidSignedRevocationStoreButRevokedRaw as v3.SignedWrappedDocument;
 
 const v3DnsDidWrapped = v3DnsDidWrappedRaw as v3.WrappedDocument;
 const v3DnsDidSigned = v3DnsDidSignedRaw as v3.SignedWrappedDocument;
 const v3DnsDidInvalidSigned = v3DnsDidInvalidSignedRaw as v3.SignedWrappedDocument;
+const v3DnsDidSignedRevocationStoreNotRevoked = v3DnsDidSignedRevocationStoreNotRevokedRaw as v3.SignedWrappedDocument;
+const v3DnsDidSignedRevocationStoreButRevoked = v3DnsDidSignedRevocationStoreButRevokedRaw as v3.SignedWrappedDocument;
 
 const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 const v3DocumentStoreWrapped = v3DocumentStoreWrappedRaw as v3.WrappedDocument;
@@ -79,6 +87,92 @@ describe("verify v3(integration)", () => {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "verified": true,
+                },
+                "revocation": Object {
+                  "revoked": false,
+                },
+              },
+              "issuedOnAll": true,
+              "revokedOnAny": false,
+            },
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "status": "VALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document was not issued using DNS-DID",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "data": Object {
+              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "verified": true,
+            },
+            "name": "OpenAttestationDidIdentityProof",
+            "status": "VALID",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
+      expect(valid).toBe(true);
+    });
+    it("should return valid fragments for document issued correctly with DID & using DID identity proof, but not revoked on a document store", async () => {
+      const fragments = await verifyRopsten(v3DidSignedRevocationStoreNotRevoked);
+      const valid = isValid(fragments);
+      expect(fragments).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "verified": true,
+                },
+                "revocation": Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "revoked": false,
                 },
               },
               "issuedOnAll": true,
@@ -158,6 +252,93 @@ describe("verify v3(integration)", () => {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "verified": true,
+                },
+                "revocation": Object {
+                  "revoked": false,
+                },
+              },
+              "issuedOnAll": true,
+              "revokedOnAny": false,
+            },
+            "name": "OpenAttestationDidSignedDocumentStatus",
+            "status": "VALID",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationDnsTxtIdentityProof",
+            "reason": Object {
+              "code": 2,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" / \\"tokenRegistry\\" property or doesn't use DNS-TXT type",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "data": Object {
+              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+              "location": "example.tradetrust.io",
+              "status": "VALID",
+            },
+            "name": "OpenAttestationDnsDidIdentityProof",
+            "status": "VALID",
+            "type": "ISSUER_IDENTITY",
+          },
+          Object {
+            "name": "OpenAttestationDidIdentityProof",
+            "reason": Object {
+              "code": 0,
+              "codeString": "SKIPPED",
+              "message": "Document is not using DID as top level identifier or has not been wrapped",
+            },
+            "status": "SKIPPED",
+            "type": "ISSUER_IDENTITY",
+          },
+        ]
+      `);
+      expect(valid).toBe(true);
+    });
+    it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof, but not revoked  on a document store", async () => {
+      const fragments = await verifyRopsten(v3DnsDidSignedRevocationStoreNotRevoked);
+      const valid = isValid(fragments);
+      expect(fragments).toMatchInlineSnapshot(`
+        Array [
+          Object {
+            "data": true,
+            "name": "OpenAttestationHash",
+            "status": "VALID",
+            "type": "DOCUMENT_INTEGRITY",
+          },
+          Object {
+            "name": "OpenAttestationEthereumTokenRegistryStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"tokenRegistry\\" property or TOKEN_REGISTRY method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "name": "OpenAttestationEthereumDocumentStoreStatus",
+            "reason": Object {
+              "code": 4,
+              "codeString": "SKIPPED",
+              "message": "Document issuers doesn't have \\"documentStore\\" or \\"certificateStore\\" property or DOCUMENT_STORE method",
+            },
+            "status": "SKIPPED",
+            "type": "DOCUMENT_STATUS",
+          },
+          Object {
+            "data": Object {
+              "details": Object {
+                "issuance": Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "verified": true,
+                },
+                "revocation": Object {
+                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "revoked": false,
                 },
               },
               "issuedOnAll": true,
@@ -399,6 +580,9 @@ describe("verify v3(integration)", () => {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
                   "verified": true,
+                },
+                "revocation": Object {
+                  "revoked": false,
                 },
               },
               "issuedOnAll": true,
@@ -743,6 +927,40 @@ describe("verify v3(integration)", () => {
           ]
         `);
       });
+      it("should return invalid fragments for documents that have been revoked", async () => {
+        const fragments = await verifyRopsten(v3DnsDidSignedRevocationStoreButRevoked);
+        expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+        expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+        expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+        expect(getFailingFragments(fragments)).toMatchInlineSnapshot(`
+          Array [
+            Object {
+              "data": Object {
+                "details": Object {
+                  "issuance": Object {
+                    "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                    "verified": true,
+                  },
+                  "revocation": Object {
+                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "reason": Object {
+                      "code": 5,
+                      "codeString": "DOCUMENT_REVOKED",
+                      "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    },
+                    "revoked": true,
+                  },
+                },
+                "issuedOnAll": true,
+                "revokedOnAny": true,
+              },
+              "name": "OpenAttestationDidSignedDocumentStatus",
+              "status": "INVALID",
+              "type": "DOCUMENT_STATUS",
+            },
+          ]
+        `);
+      });
     });
     describe("did (DID)", () => {
       it("should return invalid fragments for documents that has been tampered", async () => {
@@ -832,6 +1050,40 @@ describe("verify v3(integration)", () => {
               "name": "OpenAttestationDnsDidIdentityProof",
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
+            },
+          ]
+        `);
+      });
+      it("should return invalid fragments for documents that have been revoked", async () => {
+        const fragments = await verifyRopsten(v3DidSignedRevocationStoreButRevoked);
+        expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
+        expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
+        expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
+        expect(getFailingFragments(fragments)).toMatchInlineSnapshot(`
+          Array [
+            Object {
+              "data": Object {
+                "details": Object {
+                  "issuance": Object {
+                    "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                    "verified": true,
+                  },
+                  "revocation": Object {
+                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "reason": Object {
+                      "code": 5,
+                      "codeString": "DOCUMENT_REVOKED",
+                      "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    },
+                    "revoked": true,
+                  },
+                },
+                "issuedOnAll": true,
+                "revokedOnAny": true,
+              },
+              "name": "OpenAttestationDidSignedDocumentStatus",
+              "status": "INVALID",
+              "type": "DOCUMENT_STATUS",
             },
           ]
         `);
