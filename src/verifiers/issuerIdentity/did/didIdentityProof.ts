@@ -33,7 +33,7 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
-interface SignatureVerificationFragment {
+export interface SignatureVerificationFragment {
   status: string;
   did?: string;
 }

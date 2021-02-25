@@ -37,7 +37,7 @@ const test: VerifierType["test"] = (document) => {
   }
   return false;
 };
-interface DnsVerificationFragment {
+export interface DnsVerificationFragment {
   status: VerificationFragmentStatus;
   location?: string;
   key?: string;
