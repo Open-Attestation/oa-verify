@@ -1,4 +1,4 @@
-import { PublicKey } from "did-resolver";
+import { PublicKey, Resolver } from "did-resolver";
 import { utils } from "ethers";
 import { getPublicKey } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
@@ -68,13 +68,15 @@ export const verifySignature = async ({
   merkleRoot,
   signature,
   did,
+  resolver,
 }: {
   key: string;
   merkleRoot: string;
   did: string;
   signature: string;
+  resolver?: Resolver;
 }): Promise<DidVerificationStatus> => {
-  const publicKey = await getPublicKey(did, key);
+  const publicKey = await getPublicKey(did, key, resolver);
   if (!publicKey)
     throw new CodedError(
       `No public key found on DID document for the DID ${did} and key ${key}`,
