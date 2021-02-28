@@ -1,4 +1,4 @@
-import { Resolver, DIDDocument } from "did-resolver";
+import { Resolver, DIDDocument, PublicKey } from "did-resolver";
 import { getResolver as ethrGetResolver } from "ethr-did-resolver";
 import { getResolver as webGetResolver } from "web-did-resolver";
 import NodeCache from "node-cache";
@@ -32,7 +32,7 @@ export const resolve = async (didUrl: string, resolver?: Resolver): Promise<DIDD
   return did;
 };
 
-export const getPublicKey = async (did: string, key: string, resolver?: Resolver) => {
+export const getPublicKey = async (did: string, key: string, resolver?: Resolver): Promise<PublicKey | undefined> => {
   const { publicKey } = await resolve(did, resolver);
   return publicKey.find((k) => k.id.toLowerCase() === key.toLowerCase());
 };
