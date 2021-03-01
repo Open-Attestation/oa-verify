@@ -20,8 +20,10 @@ const didResolutionCache = new NodeCache({ stdTTL: 5 * 60 }); // 5 min
 
 const defaultResolver = new Resolver({ ...ethrGetResolver(providerConfig), ...webGetResolver() });
 
-export const createResolver = (ethrResolverConfig: EthrResolverConfig): Resolver => {
-  return new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() });
+export const createResolver = (ethrResolverConfig?: EthrResolverConfig): Resolver => {
+  return ethrResolverConfig
+    ? new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() })
+    : defaultResolver;
 };
 
 export const resolve = async (didUrl: string, resolver?: Resolver): Promise<DIDDocument> => {
