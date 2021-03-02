@@ -62,14 +62,15 @@ const getDidIdentifierProof = (
   };
 };
 
-export const getIdentityProofFragment = (fragments: VerificationFragment[]) => {
+const getIdentityProofFragment = (fragments: VerificationFragment[]) => {
   if (fragments.length < 1) {
     throw new Error("Please provide at least one verification fragment");
   }
   return fragments.find((status) => status.type === "ISSUER_IDENTITY" && status.status === "VALID");
 };
 
-export const getIdentifier = (fragment: ReturnType<typeof getIdentityProofFragment>) => {
+export const getIdentifier = (fragments: VerificationFragment[]) => {
+  const fragment = getIdentityProofFragment(fragments);
   if (!fragment) {
     throw new Error("Did not find any Issuer Identity fragment that is valid");
   }

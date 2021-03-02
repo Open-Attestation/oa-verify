@@ -1,5 +1,5 @@
 import { v3 } from "@govtechsg/open-attestation";
-import { getIdentityProofFragment, getIdentifier } from "./getIdentifier";
+import { getIdentifier } from "./getIdentifier";
 import { VerificationFragment } from "./types/core";
 import {
   openAttestationDnsTxtIdentityProof,
@@ -65,12 +65,18 @@ const verificationFragment4: VerificationFragment = {
   ],
   status: "VALID",
 };
+/**
+ * this fragment is malformed because the fragment's name is Unknown
+ */
 const malformedVerificationFragment1: VerificationFragment = {
   name: "Unknown",
   type: "ISSUER_IDENTITY",
   data: [],
   status: "VALID",
 };
+/**
+ * this fragment is malformed because the fragment's data is undefined
+ */
 const malformedVerificationFragment2: VerificationFragment = {
   name: "OpenAttestationDnsDidIdentityProof",
   type: "ISSUER_IDENTITY",
@@ -78,21 +84,14 @@ const malformedVerificationFragment2: VerificationFragment = {
   status: "VALID",
 };
 
-describe("getIdentityProofFragment", () => {
-  it("should throw an error when no fragments are provided", () => {
-    expect(() => getIdentityProofFragment([])).toThrowError("Please provide at least one verification fragment");
-  });
-});
 
 describe("getIdentifier", () => {
-  it("should throw an error when undefined is passed as a fragment", () => {
-    expect(() => getIdentifier(getIdentityProofFragment([verificationFragment1]))).toThrowError(
-      "Did not find any Issuer Identity fragment that is valid"
-    );
+  it("should throw an error when no fragments are provided", () => {
+    expect(() => getIdentifier([])).toThrowError("Please provide at least one verification fragment");
   });
   it("should return an unknown identity proof, when fragment.name is out of specification", () => {
     expect(
-      getIdentifier(getIdentityProofFragment([verificationFragment1, malformedVerificationFragment1]))
+      getIdentifier([verificationFragment1, malformedVerificationFragment1])
     ).toStrictEqual({
       identifier: "Unknown",
       type: "Unknown",
@@ -100,25 +99,25 @@ describe("getIdentifier", () => {
   });
   it("should throw an error when fragment.data cannot be handled", () => {
     expect(() =>
-      getIdentifier(getIdentityProofFragment([verificationFragment1, malformedVerificationFragment2]))
-    ).toThrowError("No data property found in fragment, malformed fragment");
+      getIdentifier([verificationFragment1, malformedVerificationFragment2]))
+    .toThrowError("No data property found in fragment, malformed fragment");
   });
 
   describe("v2", () => {
     it("should return a DNS identity proof if issuer fragment is of type OpenAttestationDnsTxtIdentityProof", () => {
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, verificationFragment2]))).toContainEqual({
+      expect(getIdentifier([verificationFragment1, verificationFragment2])).toContainEqual({
         identifier: "example.openattestation.com",
         type: "DNS",
       });
     });
     it("should return a DNS-DID identity proof if issuer fragment is of type OpenAttestationDnsDidIdentityProof", () => {
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, verificationFragment3]))).toContainEqual({
+      expect(getIdentifier([verificationFragment1, verificationFragment3])).toContainEqual({
         identifier: "example.tradetrust.io",
         type: "DNS-DID",
       });
     });
     it("should return a DID identity proof if issuer fragment is of type OpenAttestationDidIdentityProof", () => {
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, verificationFragment4]))).toContainEqual({
+      expect(getIdentifier([verificationFragment1, verificationFragment4])).toContainEqual({
         identifier: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
         type: "DID",
       });
@@ -128,21 +127,21 @@ describe("getIdentifier", () => {
   describe("v3", () => {
     it("should return a DNS identity proof if issuer fragment is of type OpenAttestationDnsTxtIdentityProof", async () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(v3DocumentStoreIssued, options);
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, fragment]))).toStrictEqual({
+      expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
         identifier: "example.tradetrust.io",
         type: "DNS",
       });
     });
     it("should return a DNS-DID identity proof if issuer fragment is of type OpenAttestationDnsDidIdentityProof", async () => {
       const fragment = await openAttestationDnsDidIdentityProof.verify(v3DnsDidSigned, options);
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, fragment]))).toStrictEqual({
+      expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
         identifier: "example.tradetrust.io",
         type: "DNS-DID",
       });
     });
     it("should return a DID identity proof if issuer fragment is of type OpenAttestationDidIdentityProof", async () => {
       const fragment = await openAttestationDidIdentityProof.verify(v3DidSigned, options);
-      expect(getIdentifier(getIdentityProofFragment([verificationFragment1, fragment]))).toStrictEqual({
+      expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
         identifier: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
         type: "DID",
       });
