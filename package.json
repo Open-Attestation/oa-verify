@@ -35,6 +35,7 @@
     "ethers": "^5.0.4",
     "ethr-did-resolver": "^3.0.0",
     "node-cache": "^5.1.2",
+    "runtypes": "^5.0.1",
     "snyk": "^1.364.2",
     "web-did-resolver": "^1.3.3"
   },

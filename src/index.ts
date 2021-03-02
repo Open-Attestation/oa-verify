@@ -10,6 +10,7 @@ import { Identity, openAttestationDnsTxtIdentityProof } from "./verifiers/issuer
 import { openAttestationDidIdentityProof } from "./verifiers/issuerIdentity/did";
 import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/dnsDid";
 import { createResolver } from "./did/resolver";
+import { getIdentifier } from "./getIdentifier";
 
 const openAttestationVerifiers: Verifiers[] = [
   openAttestationHash,
@@ -48,4 +49,5 @@ export {
   openAttestationDnsDidIdentityProof,
   openAttestationDidIdentityProof,
   createResolver,
+  getIdentifier,
 };
