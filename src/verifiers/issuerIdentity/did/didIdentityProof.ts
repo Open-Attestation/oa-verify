@@ -1,5 +1,5 @@
 import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
-import { VerificationFragmentType, Verifier, VerificationFragment } from "../../../types/core";
+import { VerificationFragmentType, Verifier, VerificationFragment, VerifierOptions } from "../../../types/core";
 import { OpenAttestationDidCode } from "../../../types/error";
 import { verifySignature } from "../../../did/verifier";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
@@ -38,7 +38,7 @@ export interface SignatureVerificationFragment {
   did?: string;
 }
 
-const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragment> => {
+const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
   if (!utils.isSignedWrappedV2Document(document))
     throw new CodedError("Document is not signed", OpenAttestationDidCode.UNSIGNED, "UNSIGNED");
   const data = getData(document);
@@ -62,6 +62,7 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
         key,
         signature: correspondingProof.signature,
         did,
+        resolver: options.resolver,
       });
       return { did, status: verified ? "VALID" : "INVALID" };
     }
@@ -84,7 +85,7 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
   };
 };
 
-const verifyV3 = async (document: v3.WrappedDocument): Promise<VerificationFragment> => {
+const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
   if (!utils.isSignedWrappedV3Document(document))
     throw new CodedError("Document is not signed", OpenAttestationDidCode.UNSIGNED, "UNSIGNED");
 
@@ -97,6 +98,7 @@ const verifyV3 = async (document: v3.WrappedDocument): Promise<VerificationFragm
     merkleRoot,
     key,
     signature,
+    resolver: options.resolver,
   });
 
   return {
@@ -108,9 +110,9 @@ const verifyV3 = async (document: v3.WrappedDocument): Promise<VerificationFragm
 };
 
 const verify: VerifierType["verify"] = withCodedErrorHandler(
-  async (document) => {
-    if (utils.isWrappedV2Document(document)) return verifyV2(document);
-    if (utils.isWrappedV3Document(document)) return verifyV3(document);
+  async (document, options) => {
+    if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
+    if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
     throw new CodedError(
       "Document does not match either v2 or v3 formats",
       OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT,

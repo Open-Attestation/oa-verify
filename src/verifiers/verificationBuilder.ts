@@ -18,6 +18,7 @@ export const verificationBuilder = <Document>(
 ) => (document: Document, promisesCallback?: PromiseCallback): Promise<VerificationFragment[]> => {
   const verifierOptions: VerifierOptions = {
     provider: getProvider(builderOptions),
+    resolver: builderOptions.resolver,
   };
   const promises: Promise<VerificationFragment>[] = verifiers.map((verifier) => {
     if (verifier.test(document, verifierOptions)) {

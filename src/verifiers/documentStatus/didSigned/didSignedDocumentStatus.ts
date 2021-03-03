@@ -129,6 +129,7 @@ const verifyV2 = async (
       key,
       signature: correspondingProof.signature,
       did,
+      resolver: options.resolver,
     });
   });
 
@@ -177,6 +178,7 @@ const verifyV3 = async (
     did: metaData.proof.value,
     merkleRoot,
     signature: document.proof.signature,
+    resolver: options.resolver,
   });
 
   if (!metaData.proof.revocation?.type) {

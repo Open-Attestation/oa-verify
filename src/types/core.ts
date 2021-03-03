@@ -1,4 +1,5 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { Resolver } from "did-resolver";
 import { providers } from "ethers";
 import { Reason } from "./error";
 
@@ -9,16 +10,19 @@ export type PromiseCallback = (promises: Promise<VerificationFragment>[]) => voi
 
 export interface VerificationBuilderOptionsWithProvider {
   provider: providers.Provider;
+  resolver?: Resolver;
 }
 
 export interface VerificationBuilderOptionsWithNetwork {
   network: string;
+  resolver?: Resolver;
 }
 
 export type VerificationBuilderOptions = VerificationBuilderOptionsWithProvider | VerificationBuilderOptionsWithNetwork;
 
 export interface VerifierOptions {
   provider: providers.Provider;
+  resolver?: Resolver;
 }
 
 /**

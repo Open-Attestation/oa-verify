@@ -9,6 +9,7 @@ import { openAttestationDidSignedDocumentStatus } from "./verifiers/documentStat
 import { Identity, openAttestationDnsTxtIdentityProof } from "./verifiers/issuerIdentity/dnsTxt";
 import { openAttestationDidIdentityProof } from "./verifiers/issuerIdentity/did";
 import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/dnsDid";
+import { createResolver } from "./did/resolver";
 import { getIdentifier } from "./getIdentifier";
 
 const openAttestationVerifiers: Verifiers[] = [
@@ -47,5 +48,6 @@ export {
   openAttestationDnsTxtIdentityProof,
   openAttestationDnsDidIdentityProof,
   openAttestationDidIdentityProof,
+  createResolver,
   getIdentifier,
 };
