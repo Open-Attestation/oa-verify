@@ -85,7 +85,7 @@ describe("custom resolver", () => {
   it("should resolve did using resolver", async () => {
     const did = await resolve(
       "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      createResolver(customConfig)
+      createResolver({ ethrResolverConfig: customConfig })
     );
     expect(did).toEqual(didDoc);
   });
@@ -93,7 +93,7 @@ describe("custom resolver", () => {
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
       provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
-      resolver: createResolver(customConfig),
+      resolver: createResolver({ ethrResolverConfig: customConfig }),
     });
     const fragment = await verify(v3DidSigned);
     expect(fragment[0]).toMatchInlineSnapshot(`
