@@ -145,7 +145,8 @@ const verifyV2 = async (
           reason: status.reason,
         };
   });
-  const issuedOnAll = issuance.every((i) => i.issued);
+  // length might be checked above, but just in case, let's make sure there is at least one element (every returns true for empty array)
+  const issuedOnAll = issuance.length > 0 && issuance.every((i) => i.issued);
 
   return {
     name,
