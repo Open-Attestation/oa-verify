@@ -11,27 +11,34 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
   return "provider" in options ? options.provider : getDefaultProvider(options);
 };
 
-interface Obfuscated {
-  isOfuscated: boolean;
-  obfuscated?: string[];
-}
-
-export const getObfuscated = (
+export const isObfuscated = (
   document: WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>
-): Obfuscated => {
+): boolean => {
   if (utils.isWrappedV3Document(document)) {
-    return {
-      isOfuscated: !!document.proof.privacy?.obfuscated?.length,
-      obfuscated: document.proof.privacy?.obfuscated,
-    };
+    return !!document.proof.privacy?.obfuscated?.length;
   }
 
   if (utils.isWrappedV2Document(document)) {
-    return {
-      isOfuscated: !!document.privacy?.obfuscatedData?.length,
-      obfuscated: document.privacy?.obfuscatedData,
-    };
+    return !!document.privacy?.obfuscatedData?.length;
   }
 
-  return { isOfuscated: false, obfuscated: undefined };
+  throw new Error(
+    "Unsupported document type: Only can retrieve isObfuscated from wrapped OpenAttestation v2 & v3 documents."
+  );
+};
+
+export const getObfuscatedData = (
+  document: WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>
+): string[] | undefined => {
+  if (utils.isWrappedV3Document(document)) {
+    return document.proof.privacy?.obfuscated;
+  }
+
+  if (utils.isWrappedV2Document(document)) {
+    return document.privacy?.obfuscatedData;
+  }
+
+  throw new Error(
+    "Unsupported document type: Only can retrieve obfuscated data from wrapped OpenAttestation v2 & v3 documents."
+  );
 };

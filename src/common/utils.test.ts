@@ -1,5 +1,5 @@
 import { v2, SchemaId, WrappedDocument } from "@govtechsg/open-attestation";
-import { getObfuscated } from "./utils";
+import { isObfuscated, getObfuscatedData } from "./utils";
 
 const documentRopstenNotObfuscated: WrappedDocument<v2.OpenAttestationDocument> = {
   version: SchemaId.v2,
@@ -64,15 +64,20 @@ const documentRopstenObfuscated: WrappedDocument<v2.OpenAttestationDocument> = {
 
 describe("getObfuscated", () => {
   it("should return false when there is no obfuscated data in v2 document", () => {
-    const { isOfuscated, obfuscated } = getObfuscated(documentRopstenNotObfuscated);
-    expect(isOfuscated).toBe(false);
-    expect(obfuscated).toBe(undefined);
+    expect(isObfuscated(documentRopstenNotObfuscated)).toBe(false);
   });
 
   it("should return true where there is obfuscated data in v2 document", () => {
-    const { isOfuscated, obfuscated } = getObfuscated(documentRopstenObfuscated);
-    expect(isOfuscated).toBe(true);
-    expect(obfuscated?.length).toBe(1);
-    expect(obfuscated?.[0]).toBe("45c49a0e6efbde83c602cf6bbe4aa356d495feaf78a9a309cc1bad101f5c52f4");
+    expect(isObfuscated(documentRopstenObfuscated)).toBe(true);
+  });
+
+  it("should return undefined when there is no obfuscated data in v2 document", () => {
+    expect(getObfuscatedData(documentRopstenNotObfuscated)).toBe(undefined);
+  });
+
+  it("should return array of hashes when there is obfuscated data in v2 document", () => {
+    const obfuscatedData = getObfuscatedData(documentRopstenObfuscated);
+    expect(obfuscatedData?.length).toBe(1);
+    expect(obfuscatedData?.[0]).toBe("45c49a0e6efbde83c602cf6bbe4aa356d495feaf78a9a309cc1bad101f5c52f4");
   });
 });
