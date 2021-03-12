@@ -23,22 +23,22 @@ export const isObfuscated = (
   }
 
   throw new Error(
-    "Unsupported document type: Only can retrieve isObfuscated from wrapped OpenAttestation v2 & v3 documents."
+    "Unsupported document type: Can only check if there are obfuscated data from wrapped OpenAttestation v2 & v3 documents."
   );
 };
 
 export const getObfuscatedData = (
   document: WrappedDocument<v3.OpenAttestationDocument> | WrappedDocument<v2.OpenAttestationDocument>
-): string[] | undefined => {
+): string[] => {
   if (utils.isWrappedV3Document(document)) {
     return document.proof.privacy?.obfuscated;
   }
 
   if (utils.isWrappedV2Document(document)) {
-    return document.privacy?.obfuscatedData;
+    return document.privacy?.obfuscatedData || [];
   }
 
   throw new Error(
-    "Unsupported document type: Only can retrieve obfuscated data from wrapped OpenAttestation v2 & v3 documents."
+    "Unsupported document type: Can only retrieve obfuscated data from wrapped OpenAttestation v2 & v3 documents."
   );
 };
