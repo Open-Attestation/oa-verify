@@ -110,7 +110,7 @@ const documentObfuscatedV3 = {
 } as WrappedDocument<v3.OpenAttestationDocument>;
 
 const documentNotObfuscatedV3 = {
-  version: "https://schema.openattestation.com/3.0/schema.json",
+  version: SchemaId.v3,
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
     "https://schemata.openattestation.com/com/openattestation/1.0/DrivingLicenceCredential.json",
