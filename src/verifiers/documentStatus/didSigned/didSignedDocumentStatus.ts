@@ -1,15 +1,24 @@
-import { v2, v3, WrappedDocument, SignedWrappedDocument, getData, utils } from "@govtechsg/open-attestation";
-import { VerificationFragmentType, Verifier, VerificationFragment, VerifierOptions } from "../../../types/core";
-import { OpenAttestationDidSignedDocumentStatusCode } from "../../../types/error";
-import { verifySignature, DidVerificationStatus } from "../../../did/verifier";
+import { getData, SignedWrappedDocument, utils, v2, v3 } from "@govtechsg/open-attestation";
+import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
+import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../types/error";
+import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { isRevokedOnDocumentStore } from "../utils";
-import { RevocationStatus, InvalidRevocationStatus } from "../types";
+import { InvalidRevocationStatus, RevocationStatus, ValidRevocationStatus } from "../revocation.types";
+import {
+  DidSignedIssuanceStatus,
+  InvalidDidSignedIssuanceStatus,
+  OpenAttestationDidSignedDocumentStatusInvalidFragmentV3,
+  OpenAttestationDidSignedDocumentStatusValidFragmentV3,
+  OpenAttestationDidSignedDocumentStatusVerificationFragment,
+  ValidDidSignedDataV2,
+  ValidDidSignedIssuanceStatus,
+} from "./didSignedDocumentStatus.type";
 
 const name = "OpenAttestationDidSignedDocumentStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
-type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
+type VerifierType = Verifier<OpenAttestationDidSignedDocumentStatusVerificationFragment>;
 
 const skip: VerifierType["skip"] = async () => {
   return {
@@ -34,14 +43,27 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
+const transformToDidSignedIssuanceStatus = (status: DidVerificationStatus): DidSignedIssuanceStatus => {
+  return ValidDidVerificationStatus.guard(status)
+    ? {
+        issued: true,
+        did: status.did,
+      }
+    : {
+        issued: false,
+        did: status.did,
+        reason: status.reason,
+      };
+};
+
 const verifyV2 = async (
   document: SignedWrappedDocument<v2.OpenAttestationDocument>,
   options: VerifierOptions
-): Promise<VerificationFragment> => {
-  const data = getData(document);
+): Promise<OpenAttestationDidSignedDocumentStatusVerificationFragment> => {
+  const documentData = getData(document);
   const merkleRoot = `0x${document.signature.merkleRoot}`;
   const { targetHash, proof: proofs } = document.signature;
-  data.issuers.forEach((issuer) => {
+  documentData.issuers.forEach((issuer) => {
     if (!(issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"))
       throw new CodedError(
         "All issuers must use DID or DNS-DID identityProof type.",
@@ -49,7 +71,7 @@ const verifyV2 = async (
         OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.INVALID_ISSUERS]
       );
   });
-  const { issuers } = data;
+  const { issuers } = documentData;
 
   const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
   if (revocation.some((r) => typeof r?.type === "undefined"))
@@ -59,7 +81,7 @@ const verifyV2 = async (
       "MISSING_REVOCATION"
     );
 
-  const revocationStatusCallback = (revocationItem: v2.Revocation) => {
+  const revocationStatusCallback = (revocationItem: v2.Revocation): Promise<RevocationStatus> => {
     switch (revocationItem.type) {
       case v2.RevocationType.RevocationStore:
         if (typeof revocationItem.location === "string") {
@@ -87,12 +109,7 @@ const verifyV2 = async (
     }
   };
 
-  const revocationStatuses: RevocationStatus[] = await Promise.all(
-    (revocation as v2.Revocation[]).map(revocationStatusCallback)
-  );
-
-  const revoked = revocationStatuses.find((status): status is InvalidRevocationStatus => status.revoked);
-  const revokedOnAny = !!revoked;
+  const revocationStatuses = await Promise.all((revocation as v2.Revocation[]).map(revocationStatusCallback));
 
   // Check that all the issuers have signed on the document
   if (!document.proof)
@@ -102,7 +119,7 @@ const verifyV2 = async (
       "UNSIGNED"
     );
 
-  const signatureVerificationDeferred: Promise<DidVerificationStatus>[] = issuers.map(async (issuer) => {
+  const signatureVerificationDeferred = issuers.map(async (issuer) => {
     const key = issuer.identityProof?.key;
     const did = issuer.id;
     if (!did)
@@ -133,54 +150,70 @@ const verifyV2 = async (
     });
   });
 
-  const issuance = await (await Promise.all(signatureVerificationDeferred)).map((status) => {
-    return status.verified
-      ? {
-          issued: true,
-          did: status.did,
-        }
-      : {
-          issued: false,
-          did: status.did,
-          reason: status.reason,
-        };
-  });
-  // length might be checked above, but just in case, let's make sure there is at least one element (every returns true for empty array)
-  const issuedOnAll = issuance.length > 0 && issuance.every((i) => i.issued);
+  const issuance = await (await Promise.all(signatureVerificationDeferred)).map(transformToDidSignedIssuanceStatus);
+  const notIssued = issuance.find(InvalidDidSignedIssuanceStatus.guard);
+  const revoked = revocationStatuses.find(InvalidRevocationStatus.guard);
 
+  const data = {
+    issuedOnAll: !notIssued,
+    revokedOnAny: !!revoked,
+    details: {
+      issuance,
+      revocation: revocationStatuses,
+    },
+  };
+
+  if (ValidDidSignedDataV2.guard(data)) {
+    return {
+      name,
+      type,
+      data,
+      status: "VALID",
+    };
+  }
+
+  let reason: Reason | undefined;
+
+  if (InvalidDidSignedIssuanceStatus.guard(notIssued)) {
+    reason = notIssued.reason;
+  } else if (InvalidRevocationStatus.guard(revoked)) {
+    reason = revoked.reason;
+  }
+  if (!reason) {
+    throw new CodedError(
+      "Unable to retrieve the reason of the failure",
+      OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
+      "UNEXPECTED_ERROR"
+    );
+  }
   return {
     name,
     type,
-    data: {
-      issuedOnAll,
-      revokedOnAny,
-      details: {
-        issuance,
-        revocation: revocationStatuses,
-      },
-    },
-    ...(revoked && {
-      reason: revoked.reason,
-    }),
-    status: issuedOnAll && !revokedOnAny ? "VALID" : "INVALID",
+    data,
+    status: "INVALID",
+    reason,
   };
 };
 
 const verifyV3 = async (
   document: SignedWrappedDocument<v3.OpenAttestationDocument>,
   options: VerifierOptions
-): Promise<VerificationFragment> => {
+): Promise<
+  OpenAttestationDidSignedDocumentStatusValidFragmentV3 | OpenAttestationDidSignedDocumentStatusInvalidFragmentV3
+> => {
   const { merkleRoot: merkleRootRaw, targetHash, proofs } = document.proof;
   const merkleRoot = `0x${merkleRootRaw}`;
   const metaData = document.openAttestationMetadata;
 
-  const verificationResult = await verifySignature({
-    key: document.proof.key,
-    did: metaData.proof.value,
-    merkleRoot,
-    signature: document.proof.signature,
-    resolver: options.resolver,
-  });
+  const verificationResult = transformToDidSignedIssuanceStatus(
+    await verifySignature({
+      key: document.proof.key,
+      did: metaData.proof.value,
+      merkleRoot,
+      signature: document.proof.signature,
+      resolver: options.resolver,
+    })
+  );
 
   if (!metaData.proof.revocation?.type) {
     throw new CodedError(
@@ -190,9 +223,12 @@ const verifyV3 = async (
     );
   }
 
-  const issuedOnAll = verificationResult.verified;
+  const issuedOnAll = verificationResult.issued;
 
-  const getRevocationStatus = async (docType: v3.RevocationType, location: string | undefined) => {
+  const getRevocationStatus = async (
+    docType: v3.RevocationType,
+    location: string | undefined
+  ): Promise<RevocationStatus> => {
     switch (docType) {
       case v3.RevocationType.RevocationStore:
         if (typeof location === "string") {
@@ -210,7 +246,7 @@ const verifyV3 = async (
           "REVOCATION_LOCATION_MISSING"
         );
       case v3.RevocationType.None:
-        return Promise.resolve({ revoked: false });
+        return { revoked: false };
       default:
         throw new CodedError(
           "revocation type not found for an issuer",
@@ -227,8 +263,35 @@ const verifyV3 = async (
 
   const revokedOnAny = revocationStatus.revoked;
 
-  const status = issuedOnAll && !revokedOnAny;
+  if (ValidDidSignedIssuanceStatus.guard(verificationResult) && ValidRevocationStatus.guard(revocationStatus)) {
+    return {
+      name,
+      type,
+      data: {
+        issuedOnAll: true,
+        revokedOnAny: false,
+        details: {
+          issuance: verificationResult,
+          revocation: revocationStatus,
+        },
+      },
+      status: "VALID",
+    };
+  }
 
+  // eslint-disable-next-line no-nested-ternary
+  const reason = InvalidDidSignedIssuanceStatus.guard(verificationResult)
+    ? verificationResult.reason
+    : InvalidRevocationStatus.guard(revocationStatus)
+    ? revocationStatus.reason
+    : undefined;
+  if (!reason) {
+    throw new CodedError(
+      "Unable to retrieve the reason of the failure",
+      OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
+      "UNEXPECTED_ERROR"
+    );
+  }
   return {
     name,
     type,
@@ -240,37 +303,33 @@ const verifyV3 = async (
         revocation: revocationStatus,
       },
     },
-    status: status ? "VALID" : "INVALID",
+    status: "INVALID",
+    reason,
   };
 };
 
-const verify: VerifierType["verify"] = withCodedErrorHandler(
-  async (document, options) => {
-    if (utils.isSignedWrappedV2Document(document)) {
-      return verifyV2(document, options);
-    }
+const verify: VerifierType["verify"] = async (document, options) => {
+  if (utils.isSignedWrappedV2Document(document)) {
+    return verifyV2(document, options);
+  } else if (utils.isSignedWrappedV3Document(document)) {
+    return verifyV3(document, options);
+  }
 
-    if (utils.isSignedWrappedV3Document(document)) {
-      return verifyV3(document, options);
-    }
+  throw new CodedError(
+    `Document does not match either v2 or v3 formats`,
+    OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT,
+    OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT]
+  );
+};
 
-    throw new CodedError(
-      `Document does not match either v2 or v3 formats`,
-      OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT,
-      OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT]
-    );
-  },
-  {
+export const openAttestationDidSignedDocumentStatus: VerifierType = {
+  skip,
+  test,
+  verify: withCodedErrorHandler(verify, {
     name,
     type,
     unexpectedErrorCode: OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR,
     unexpectedErrorString:
       OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNEXPECTED_ERROR],
-  }
-);
-
-export const openAttestationDidSignedDocumentStatus: VerifierType = {
-  skip,
-  test,
-  verify,
+  }),
 };

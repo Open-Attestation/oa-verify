@@ -1,18 +1,19 @@
-import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
 import { getDnsDidRecords } from "@govtechsg/dnsprove";
-import {
-  VerificationFragmentType,
-  Verifier,
-  VerificationFragment,
-  VerificationFragmentStatus,
-} from "../../../types/core";
+import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
+import {
+  DnsDidVerificationStatus,
+  OpenAttestationDnsDidIdentityProofVerificationFragment,
+  ValidDnsDidVerificationStatus,
+  ValidDnsDidVerificationStatusArray,
+} from "./dnsDidProof.type";
 
 const name = "OpenAttestationDnsDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
-type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
+type VerifierType = Verifier<OpenAttestationDnsDidIdentityProofVerificationFragment>;
 
 const skip: VerifierType["skip"] = async () => {
   return {
@@ -37,11 +38,6 @@ const test: VerifierType["test"] = (document) => {
   }
   return false;
 };
-export interface DnsVerificationFragment {
-  status: VerificationFragmentStatus;
-  location?: string;
-  key?: string;
-}
 
 const verifyIssuerDnsDid = async ({
   key,
@@ -49,7 +45,7 @@ const verifyIssuerDnsDid = async ({
 }: {
   key: string;
   location: string;
-}): Promise<DnsVerificationFragment> => {
+}): Promise<DnsDidVerificationStatus> => {
   const records = await getDnsDidRecords(location);
   return {
     location,
@@ -58,7 +54,9 @@ const verifyIssuerDnsDid = async ({
   };
 };
 
-const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragment> => {
+const verifyV2 = async (
+  document: v2.WrappedDocument
+): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV2Document(document))
     throw new CodedError(
       "document is not signed",
@@ -66,7 +64,7 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
       OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNSIGNED]
     );
   const documentData = getData(document);
-  const deferredVerificationStatus: Promise<DnsVerificationFragment>[] = documentData.issuers.map((issuer) => {
+  const deferredVerificationStatus: Promise<DnsDidVerificationStatus>[] = documentData.issuers.map((issuer) => {
     const { identityProof } = issuer;
     if (!identityProof)
       throw new CodedError(
@@ -96,20 +94,32 @@ const verifyV2 = async (document: v2.WrappedDocument): Promise<VerificationFragm
     return verifyIssuerDnsDid({ key, location });
   });
   const verificationStatus = await Promise.all(deferredVerificationStatus);
-  const overallStatus =
-    verificationStatus.some((status) => status.status === "VALID") &&
-    verificationStatus.every((status) => status.status === "VALID")
-      ? "VALID"
-      : "INVALID";
+
+  if (ValidDnsDidVerificationStatusArray.guard(verificationStatus)) {
+    return {
+      name,
+      type,
+      data: verificationStatus,
+      status: "VALID",
+    };
+  }
+
   return {
     name,
     type,
     data: verificationStatus,
-    status: overallStatus,
+    reason: {
+      message: "Could not find identity at location",
+      code: OpenAttestationDnsDidCode.INVALID_IDENTITY,
+      codeString: "INVALID_IDENTITY",
+    },
+    status: "INVALID",
   };
 };
 
-const verifyV3 = async (document: v3.WrappedDocument): Promise<VerificationFragment> => {
+const verifyV3 = async (
+  document: v3.WrappedDocument
+): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV3Document(document))
     throw new CodedError(
       "document is not signed",
@@ -120,34 +130,44 @@ const verifyV3 = async (document: v3.WrappedDocument): Promise<VerificationFragm
   const { key } = document.proof;
   const verificationStatus = await verifyIssuerDnsDid({ key, location });
 
+  if (ValidDnsDidVerificationStatus.guard(verificationStatus)) {
+    return {
+      name,
+      type,
+      data: verificationStatus,
+      status: "VALID",
+    };
+  }
   return {
     name,
     type,
     data: verificationStatus,
-    status: verificationStatus.status,
+    status: "INVALID",
+    reason: {
+      message: "Could not find identity at location",
+      code: OpenAttestationDnsDidCode.INVALID_IDENTITY,
+      codeString: "INVALID_IDENTITY",
+    },
   };
 };
 
-const verify: VerifierType["verify"] = withCodedErrorHandler(
-  async (document) => {
-    if (utils.isWrappedV2Document(document)) return verifyV2(document);
-    if (utils.isWrappedV3Document(document)) return verifyV3(document);
-    throw new CodedError(
-      "Document does not match either v2 or v3 formats",
-      OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
-      OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
-    );
-  },
-  {
-    name,
-    type,
-    unexpectedErrorCode: OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
-    unexpectedErrorString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
-  }
-);
+const verify: VerifierType["verify"] = async (document) => {
+  if (utils.isWrappedV2Document(document)) return verifyV2(document);
+  if (utils.isWrappedV3Document(document)) return verifyV3(document);
+  throw new CodedError(
+    "Document does not match either v2 or v3 formats",
+    OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
+    OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
+  );
+};
 
 export const openAttestationDnsDidIdentityProof: VerifierType = {
   skip,
   test,
-  verify,
+  verify: withCodedErrorHandler(verify, {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationDnsDidCode.UNEXPECTED_ERROR,
+    unexpectedErrorString: OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNEXPECTED_ERROR],
+  }),
 };

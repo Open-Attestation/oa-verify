@@ -16,6 +16,8 @@ describe("OpenAttestationHash", () => {
         ...tamperedDocumentWithCertificateStore,
         signature: { ...tamperedDocumentWithCertificateStore.signature },
       };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error I really want to delete this :)
       delete newDocument.signature.targetHash;
       const fragment = await verify(newDocument);
       expect(fragment).toStrictEqual([
@@ -36,6 +38,8 @@ describe("OpenAttestationHash", () => {
         ...tamperedDocumentWithCertificateStore,
         signature: { ...tamperedDocumentWithCertificateStore.signature },
       };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error I really want to delete this :)
       delete newDocument.signature.merkleRoot;
       const fragment = await verify(newDocument);
       expect(fragment).toStrictEqual([
@@ -56,6 +60,8 @@ describe("OpenAttestationHash", () => {
         ...tamperedDocumentWithCertificateStore,
         data: { ...tamperedDocumentWithCertificateStore.data },
       };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error I really want to delete this :)
       delete newDocument.data;
       const fragment = await verify(newDocument);
       expect(fragment).toStrictEqual([

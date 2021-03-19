@@ -363,6 +363,11 @@ describe("verify", () => {
             "revokedOnAny": false,
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 7,
+            "codeString": "WRONG_SIGNATURE",
+            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
@@ -458,7 +463,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "revoked": false,
@@ -500,7 +505,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -526,7 +531,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "revoked": false,
@@ -551,7 +556,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -646,7 +651,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -662,6 +667,11 @@ describe("verify", () => {
             "revokedOnAny": true,
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 5,
+            "codeString": "DOCUMENT_REVOKED",
+            "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
@@ -677,7 +687,7 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                "verified": true,
+                "issued": true,
               },
               "revocation": Object {
                 "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -693,6 +703,11 @@ describe("verify", () => {
             "revokedOnAny": true,
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 5,
+            "codeString": "DOCUMENT_REVOKED",
+            "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
@@ -715,12 +730,12 @@ describe("verify", () => {
             "details": Object {
               "issuance": Object {
                 "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                "issued": false,
                 "reason": Object {
                   "code": 7,
                   "codeString": "WRONG_SIGNATURE",
                   "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
                 },
-                "verified": false,
               },
               "revocation": Object {
                 "revoked": false,
@@ -730,6 +745,11 @@ describe("verify", () => {
             "revokedOnAny": false,
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 7,
+            "codeString": "WRONG_SIGNATURE",
+            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }

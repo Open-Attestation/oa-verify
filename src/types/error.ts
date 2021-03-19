@@ -1,5 +1,7 @@
 // NEVER EVER REPLACE OR CHANGE A VALUE :)
 // code for errors and invalid fragment
+import { Number, Record, Static, String } from "runtypes";
+
 export enum OpenAttestationEthereumDocumentStoreStatusCode {
   UNEXPECTED_ERROR = 0,
   DOCUMENT_NOT_ISSUED = 1,
@@ -76,6 +78,7 @@ export enum OpenAttestationDnsDidCode {
   INVALID_ISSUERS = 3,
   UNSIGNED = 4,
   UNRECOGNIZED_DOCUMENT = 5,
+  INVALID_IDENTITY = 6,
 }
 export enum OpenAttestationSignatureCode {
   UNEXPECTED_ERROR = 0,
@@ -92,8 +95,9 @@ export interface EthersError extends Error {
   method?: string;
 }
 
-export interface Reason {
-  code: number;
-  codeString: string;
-  message: string;
-}
+export const Reason = Record({
+  code: Number,
+  codeString: String,
+  message: String,
+});
+export type Reason = Static<typeof Reason>;

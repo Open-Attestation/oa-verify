@@ -5,7 +5,7 @@ import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
 import { CodedError } from "../../common/error";
-import { RevocationStatus } from "./types";
+import { RevocationStatus } from "./revocation.types";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];

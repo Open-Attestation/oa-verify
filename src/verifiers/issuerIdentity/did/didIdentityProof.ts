@@ -1,13 +1,21 @@
-import { v2, v3, WrappedDocument, getData, utils } from "@govtechsg/open-attestation";
-import { VerificationFragmentType, Verifier, VerificationFragment, VerifierOptions } from "../../../types/core";
+import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
+import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationDidCode } from "../../../types/error";
-import { verifySignature } from "../../../did/verifier";
+import {
+  DidVerificationStatusArray,
+  InvalidDidVerificationStatus,
+  ValidDidVerificationStatus,
+  ValidDidVerificationStatusArray,
+  verifySignature,
+} from "../../../did/verifier";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
+import { OpenAttestationDidIdentityProofVerificationFragment } from "./didIdentityProof.type";
 
 const name = "OpenAttestationDidIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
-type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
+
+type VerifierType = Verifier<OpenAttestationDidIdentityProofVerificationFragment>;
 
 const skip: VerifierType["skip"] = async () => {
   return {
@@ -33,17 +41,15 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
-export interface SignatureVerificationFragment {
-  status: string;
-  did?: string;
-}
-
-const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
+const verifyV2 = async (
+  document: v2.WrappedDocument,
+  options: VerifierOptions
+): Promise<OpenAttestationDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV2Document(document))
     throw new CodedError("Document is not signed", OpenAttestationDidCode.UNSIGNED, "UNSIGNED");
   const data = getData(document);
   const merkleRoot = `0x${document.signature.merkleRoot}`;
-  const signatureVerificationDeferred: Promise<SignatureVerificationFragment>[] = data.issuers.map(async (issuer) => {
+  const signatureVerificationDeferred = data.issuers.map(async (issuer) => {
     if (issuer.identityProof?.type === "DID") {
       const did = issuer.id;
       if (!did) throw new CodedError("id is missing in issuer", OpenAttestationDidCode.DID_MISSING, "DID_MISSING");
@@ -55,16 +61,20 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
           "MALFORMED_IDENTITY_PROOF"
         );
       const correspondingProof = document.proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
-      if (!correspondingProof) return { status: "INVALID", reason: "`id` is missing from issuer" };
+      if (!correspondingProof)
+        throw new CodedError(
+          `No proof for ${key}`,
+          OpenAttestationDidCode.MALFORMED_IDENTITY_PROOF,
+          "MALFORMED_IDENTITY_PROOF"
+        );
 
-      const { verified } = await verifySignature({
+      return verifySignature({
         merkleRoot,
         key,
         signature: correspondingProof.signature,
         did,
         resolver: options.resolver,
       });
-      return { did, status: verified ? "VALID" : "INVALID" };
     }
     throw new CodedError(
       "Issuer is not using DID identityProof type",
@@ -72,20 +82,38 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
       OpenAttestationDidCode[OpenAttestationDidCode.INVALID_ISSUERS]
     );
   });
-  const signatureVerifications = await Promise.all(signatureVerificationDeferred);
-  const signedOnAll =
-    signatureVerifications.some((i) => i.status === "VALID") &&
-    signatureVerifications.every((i) => i.status === "VALID");
+  const signatureVerifications: DidVerificationStatusArray = await Promise.all(signatureVerificationDeferred);
 
-  return {
-    name,
-    type,
-    data: signatureVerifications,
-    status: signedOnAll ? "VALID" : "INVALID",
-  };
+  if (ValidDidVerificationStatusArray.guard(signatureVerifications)) {
+    return {
+      name,
+      type,
+      data: signatureVerifications,
+      status: "VALID",
+    };
+  }
+
+  const invalidSignature = signatureVerifications.find(InvalidDidVerificationStatus.guard);
+  if (InvalidDidVerificationStatus.guard(invalidSignature)) {
+    return {
+      name,
+      type,
+      data: signatureVerifications,
+      reason: invalidSignature.reason,
+      status: "INVALID",
+    };
+  }
+  throw new CodedError(
+    "Unable to retrieve the reason of the failure",
+    OpenAttestationDidCode.UNEXPECTED_ERROR,
+    "UNEXPECTED_ERROR"
+  );
 };
 
-const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
+const verifyV3 = async (
+  document: v3.WrappedDocument,
+  options: VerifierOptions
+): Promise<OpenAttestationDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV3Document(document))
     throw new CodedError("Document is not signed", OpenAttestationDidCode.UNSIGNED, "UNSIGNED");
 
@@ -101,34 +129,40 @@ const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions):
     resolver: options.resolver,
   });
 
+  if (ValidDidVerificationStatus.guard(verificationStatus)) {
+    return {
+      name,
+      type,
+      data: verificationStatus,
+      status: "VALID",
+    };
+  }
   return {
     name,
     type,
     data: verificationStatus,
-    status: verificationStatus.verified ? "VALID" : "INVALID",
+    reason: verificationStatus.reason,
+    status: "INVALID",
   };
 };
 
-const verify: VerifierType["verify"] = withCodedErrorHandler(
-  async (document, options) => {
-    if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
-    if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
-    throw new CodedError(
-      "Document does not match either v2 or v3 formats",
-      OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT,
-      OpenAttestationDidCode[OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT]
-    );
-  },
-  {
-    name,
-    type,
-    unexpectedErrorCode: OpenAttestationDidCode.UNEXPECTED_ERROR,
-    unexpectedErrorString: OpenAttestationDidCode[OpenAttestationDidCode.UNEXPECTED_ERROR],
-  }
-);
+const verify: VerifierType["verify"] = async (document, options) => {
+  if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
+  if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+  throw new CodedError(
+    "Document does not match either v2 or v3 formats",
+    OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT,
+    OpenAttestationDidCode[OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT]
+  );
+};
 
 export const openAttestationDidIdentityProof: VerifierType = {
   skip,
   test,
-  verify,
+  verify: withCodedErrorHandler(verify, {
+    name,
+    type,
+    unexpectedErrorCode: OpenAttestationDidCode.UNEXPECTED_ERROR,
+    unexpectedErrorString: OpenAttestationDidCode[OpenAttestationDidCode.UNEXPECTED_ERROR],
+  }),
 };
