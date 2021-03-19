@@ -1,16 +1,18 @@
 import { v3 } from "@govtechsg/open-attestation";
 import { getIdentifier } from "./getIdentifier";
-import { VerificationFragment } from "./types/core";
+import { SkippedVerificationFragment, ValidVerificationFragment } from "./types/core";
 import {
-  openAttestationDnsTxtIdentityProof,
-  openAttestationDnsDidIdentityProof,
   openAttestationDidIdentityProof,
+  openAttestationDnsDidIdentityProof,
+  openAttestationDnsTxtIdentityProof,
 } from ".";
 import { getProvider } from "./common/utils";
 
 import v3DidSignedRaw from "../test/fixtures/v3/did-signed.json";
 import v3DnsDidSignedRaw from "../test/fixtures/v3/dnsdid-signed.json";
 import v3DocumentStoreIssuedRaw from "../test/fixtures/v3/documentStore-issued.json";
+import { OpenAttestationDnsTxtIdentityProofValidFragmentV2 } from "./verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
+import { OpenAttestationDidIdentityProofValidFragmentV2 } from "./verifiers/issuerIdentity/did/didIdentityProof.type";
 
 const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
 const v3DnsDidSigned = v3DnsDidSignedRaw as v3.SignedWrappedDocument;
@@ -20,7 +22,7 @@ const options = {
   provider: getProvider({ network: "ropsten" }),
 };
 
-const verificationFragment1: VerificationFragment = {
+const verificationFragment1: SkippedVerificationFragment = {
   status: "SKIPPED",
   type: "DOCUMENT_STATUS",
   name: "OpenAttestationDidSignedDocumentStatus",
@@ -30,7 +32,7 @@ const verificationFragment1: VerificationFragment = {
     message: "Document was not signed by DID directly",
   },
 };
-const verificationFragment2: VerificationFragment = {
+const verificationFragment2: OpenAttestationDnsTxtIdentityProofValidFragmentV2 = {
   name: "OpenAttestationDnsTxtIdentityProof",
   type: "ISSUER_IDENTITY",
   data: [
@@ -42,7 +44,7 @@ const verificationFragment2: VerificationFragment = {
   ],
   status: "VALID",
 };
-const verificationFragment3: VerificationFragment = {
+const verificationFragment3: ValidVerificationFragment<{ status: "VALID"; location: string; key: string }[]> = {
   name: "OpenAttestationDnsDidIdentityProof",
   type: "ISSUER_IDENTITY",
   data: [
@@ -54,13 +56,13 @@ const verificationFragment3: VerificationFragment = {
   ],
   status: "VALID",
 };
-const verificationFragment4: VerificationFragment = {
+const verificationFragment4: OpenAttestationDidIdentityProofValidFragmentV2 = {
   name: "OpenAttestationDidIdentityProof",
   type: "ISSUER_IDENTITY",
   data: [
     {
       did: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-      status: "VALID",
+      verified: true,
     },
   ],
   status: "VALID",
@@ -68,7 +70,7 @@ const verificationFragment4: VerificationFragment = {
 /**
  * this fragment is malformed because the fragment's name is Unknown
  */
-const malformedVerificationFragment1: VerificationFragment = {
+const malformedVerificationFragment1: ValidVerificationFragment<[]> = {
   name: "Unknown",
   type: "ISSUER_IDENTITY",
   data: [],
@@ -77,7 +79,7 @@ const malformedVerificationFragment1: VerificationFragment = {
 /**
  * this fragment is malformed because the fragment's data is undefined
  */
-const malformedVerificationFragment2: VerificationFragment = {
+const malformedVerificationFragment2: ValidVerificationFragment<undefined> = {
   name: "OpenAttestationDnsDidIdentityProof",
   type: "ISSUER_IDENTITY",
   data: undefined,

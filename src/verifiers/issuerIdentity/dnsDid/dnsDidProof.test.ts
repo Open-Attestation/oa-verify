@@ -99,6 +99,11 @@ describe("verify", () => {
             },
           ],
           "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_IDENTITY",
+            "message": "Could not find identity at location",
+          },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
@@ -157,6 +162,11 @@ describe("verify", () => {
             "status": "INVALID",
           },
           "name": "OpenAttestationDnsDidIdentityProof",
+          "reason": Object {
+            "code": 6,
+            "codeString": "INVALID_IDENTITY",
+            "message": "Could not find identity at location",
+          },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }

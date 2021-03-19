@@ -1,18 +1,18 @@
-import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { verificationBuilder } from "./verifiers/verificationBuilder";
-import { Verifier, Verifiers } from "./types/core";
+import { Verifier } from "./types/core";
 import { openAttestationHash } from "./verifiers/documentIntegrity/hash/openAttestationHash";
 import { isValid } from "./validator";
 import { openAttestationEthereumTokenRegistryStatus } from "./verifiers/documentStatus/tokenRegistry";
 import { openAttestationEthereumDocumentStoreStatus } from "./verifiers/documentStatus/documentStore";
 import { openAttestationDidSignedDocumentStatus } from "./verifiers/documentStatus/didSigned";
-import { Identity, openAttestationDnsTxtIdentityProof } from "./verifiers/issuerIdentity/dnsTxt";
+import { openAttestationDnsTxtIdentityProof } from "./verifiers/issuerIdentity/dnsTxt";
 import { openAttestationDidIdentityProof } from "./verifiers/issuerIdentity/did";
 import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/dnsDid";
 import { createResolver } from "./did/resolver";
 import { getIdentifier } from "./getIdentifier";
+import * as utils from "./common/utils";
 
-const openAttestationVerifiers: Verifiers[] = [
+const openAttestationVerifiers = [
   openAttestationHash,
   openAttestationEthereumTokenRegistryStatus,
   openAttestationEthereumDocumentStoreStatus,
@@ -25,13 +25,16 @@ const defaultBuilderOption = {
   network: "homestead",
 };
 
-const verify = verificationBuilder<
-  | SignedWrappedDocument<v2.OpenAttestationDocument>
-  | WrappedDocument<v2.OpenAttestationDocument>
-  | WrappedDocument<v3.OpenAttestationDocument>
->(openAttestationVerifiers, defaultBuilderOption);
+const verify = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
 
 export * from "./types/core";
+export * from "./verifiers/documentIntegrity/hash/openAttestationHash.type";
+export * from "./verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
+export * from "./verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
+export * from "./verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.type";
+export * from "./verifiers/issuerIdentity/did/didIdentityProof.type";
+export * from "./verifiers/issuerIdentity/dnsDid/dnsDidProof.type";
+export * from "./verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 export * from "./types/error";
 export * from "./common/error";
 export {
@@ -40,7 +43,6 @@ export {
   isValid,
   verify,
   Verifier,
-  Identity,
   openAttestationHash,
   openAttestationEthereumDocumentStoreStatus,
   openAttestationEthereumTokenRegistryStatus,
@@ -50,4 +52,5 @@ export {
   openAttestationDidIdentityProof,
   createResolver,
   getIdentifier,
+  utils,
 };

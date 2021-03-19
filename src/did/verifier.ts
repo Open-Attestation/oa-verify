@@ -1,21 +1,31 @@
 import { PublicKey, Resolver } from "did-resolver";
 import { utils } from "ethers";
+import { Literal, Record, Static, String, Union, Array as RunTypesArray } from "runtypes";
 import { getPublicKey } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
 import { CodedError } from "../common/error";
 
-export interface ValidDidVerificationStatus {
-  verified: true;
-  did: string;
-}
+export const ValidDidVerificationStatus = Record({
+  verified: Literal(true),
+  did: String,
+});
+export type ValidDidVerificationStatus = Static<typeof ValidDidVerificationStatus>;
+export const ValidDidVerificationStatusArray = RunTypesArray(ValidDidVerificationStatus).withConstraint(
+  (elements) => elements.length > 0 || "Expect at least one valid element"
+);
+export type ValidDidVerificationStatusArray = Static<typeof ValidDidVerificationStatusArray>;
 
-export interface InvalidDidVerificationStatus {
-  verified: false;
-  did: string;
-  reason: Reason;
-}
+export const InvalidDidVerificationStatus = Record({
+  verified: Literal(false),
+  did: String,
+  reason: Reason,
+});
+export type InvalidDidVerificationStatus = Static<typeof InvalidDidVerificationStatus>;
 
-export type DidVerificationStatus = ValidDidVerificationStatus | InvalidDidVerificationStatus;
+export const DidVerificationStatus = Union(ValidDidVerificationStatus, InvalidDidVerificationStatus);
+export type DidVerificationStatus = Static<typeof DidVerificationStatus>;
+export const DidVerificationStatusArray = RunTypesArray(DidVerificationStatus);
+export type DidVerificationStatusArray = Static<typeof DidVerificationStatusArray>;
 
 interface VerifySignature {
   did: string;

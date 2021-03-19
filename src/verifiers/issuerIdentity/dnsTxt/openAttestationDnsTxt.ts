@@ -1,25 +1,24 @@
-import { getData, v2, v3, WrappedDocument, utils } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
 import { getDocumentStoreRecords } from "@govtechsg/dnsprove";
-import { VerificationFragmentType, VerifierOptions, Verifier, VerificationFragment } from "../../../types/core";
-import { OpenAttestationDnsTxtCode, Reason } from "../../../types/error";
+import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
+import { OpenAttestationDnsTxtCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
+import {
+  DnsTxtVerificationStatus,
+  InvalidDnsTxtVerificationStatus,
+  OpenAttestationDnsTxtIdentityProofInvalidFragmentV2,
+  OpenAttestationDnsTxtIdentityProofInvalidFragmentV3,
+  OpenAttestationDnsTxtIdentityProofValidFragmentV2,
+  OpenAttestationDnsTxtIdentityProofValidFragmentV3,
+  OpenAttestationDnsTxtIdentityProofVerificationFragment,
+  ValidDnsTxtVerificationStatus,
+  ValidDnsTxtVerificationStatusArray,
+} from "./openAttestationDnsTxt.type";
 
-export interface ValidIdentity {
-  status: "VALID";
-  location: string;
-  value: string;
-}
-
-export interface InvalidIdentity {
-  status: "INVALID";
-  location?: string;
-  value?: string;
-  reason: Reason;
-}
-
-export type Identity = ValidIdentity | InvalidIdentity;
-type VerifierType = Verifier<WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>>;
+const name = "OpenAttestationDnsTxtIdentityProof";
+const type: VerificationFragmentType = "ISSUER_IDENTITY";
+type VerifierType = Verifier<OpenAttestationDnsTxtIdentityProofVerificationFragment>;
 
 // Resolve identity of an issuer, currently supporting only DNS-TXT
 // DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
@@ -27,7 +26,7 @@ const resolveIssuerIdentity = async (
   location: string,
   smartContractAddress: string,
   options: VerifierOptions
-): Promise<Identity> => {
+): Promise<DnsTxtVerificationStatus> => {
   const network = await options.provider.getNetwork();
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
@@ -54,9 +53,6 @@ const resolveIssuerIdentity = async (
         },
       };
 };
-
-const name = "OpenAttestationDnsTxtIdentityProof";
-const type: VerificationFragmentType = "ISSUER_IDENTITY";
 
 const skip: VerifierType["skip"] = async () => {
   return {
@@ -89,7 +85,10 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
-const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
+const verifyV2 = async (
+  document: v2.WrappedDocument,
+  options: VerifierOptions
+): Promise<OpenAttestationDnsTxtIdentityProofValidFragmentV2 | OpenAttestationDnsTxtIdentityProofInvalidFragmentV2> => {
   const documentData = getData(document);
   const identities = await Promise.all(
     documentData.issuers.map((issuer) => {
@@ -112,7 +111,7 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
           );
         return resolveIssuerIdentity(location, smartContractAddress, options);
       }
-      const invalidResponse: Identity = {
+      const invalidResponse: InvalidDnsTxtVerificationStatus = {
         status: "INVALID",
         reason: {
           message: "Issuer is not using DNS-TXT identityProof type",
@@ -124,8 +123,17 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
     })
   );
 
-  const invalidIdentity = identities.find((identity): identity is InvalidIdentity => identity.status !== "VALID");
-  if (invalidIdentity) {
+  if (ValidDnsTxtVerificationStatusArray.guard(identities)) {
+    return {
+      name,
+      type,
+      data: identities,
+      status: "VALID",
+    };
+  }
+
+  const invalidIdentity = identities.find(InvalidDnsTxtVerificationStatus.guard);
+  if (InvalidDnsTxtVerificationStatus.guard(invalidIdentity)) {
     return {
       name,
       type,
@@ -134,15 +142,17 @@ const verifyV2 = async (document: v2.WrappedDocument, options: VerifierOptions):
       status: "INVALID",
     };
   }
-  return {
-    name,
-    type,
-    data: identities,
-    status: "VALID",
-  };
+  throw new CodedError(
+    "Unable to retrieve the reason of the failure",
+    OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
+    "UNEXPECTED_ERROR"
+  );
 };
 
-const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions): Promise<VerificationFragment> => {
+const verifyV3 = async (
+  document: v3.WrappedDocument,
+  options: VerifierOptions
+): Promise<OpenAttestationDnsTxtIdentityProofValidFragmentV3 | OpenAttestationDnsTxtIdentityProofInvalidFragmentV3> => {
   if (
     document.openAttestationMetadata.proof.method !== v3.Method.DocumentStore &&
     document.openAttestationMetadata.proof.method !== v3.Method.TokenRegistry
@@ -156,6 +166,17 @@ const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions):
   const { identifier } = document.openAttestationMetadata.identityProof;
   const issuerIdentity = await resolveIssuerIdentity(identifier, smartContractAddress, options);
 
+  if (ValidDnsTxtVerificationStatus.guard(issuerIdentity)) {
+    return {
+      name,
+      type,
+      data: {
+        identifier: issuerIdentity.location,
+        value: issuerIdentity.value,
+      },
+      status: "VALID",
+    };
+  }
   return {
     name,
     type,
@@ -163,35 +184,29 @@ const verifyV3 = async (document: v3.WrappedDocument, options: VerifierOptions):
       identifier: issuerIdentity.location,
       value: issuerIdentity.value,
     },
-    ...(issuerIdentity.status === "INVALID" ? { reason: issuerIdentity.reason } : {}),
-    status: issuerIdentity.status,
+    reason: issuerIdentity.reason,
+    status: "INVALID",
   };
 };
 
-const verify: VerifierType["verify"] = withCodedErrorHandler(
-  async (document, options) => {
-    if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
-    if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
-    throw new CodedError(
-      "Document does not match either v2 or v3 formats",
-      OpenAttestationDnsTxtCode.UNRECOGNIZED_DOCUMENT,
-      OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNRECOGNIZED_DOCUMENT]
-    );
-  },
-  {
-    name,
-    type,
-    unexpectedErrorCode: OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
-    unexpectedErrorString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNEXPECTED_ERROR],
-  }
-);
-
-export const openAttestationDnsTxtIdentityProof: Verifier<
-  WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>,
-  VerifierOptions,
-  Identity | Identity[]
-> = {
+export const openAttestationDnsTxtIdentityProof: Verifier<OpenAttestationDnsTxtIdentityProofVerificationFragment> = {
   skip,
   test,
-  verify,
+  verify: withCodedErrorHandler(
+    async (document, options) => {
+      if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
+      if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+      throw new CodedError(
+        "Document does not match either v2 or v3 formats",
+        OpenAttestationDnsTxtCode.UNRECOGNIZED_DOCUMENT,
+        OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNRECOGNIZED_DOCUMENT]
+      );
+    },
+    {
+      name,
+      type,
+      unexpectedErrorCode: OpenAttestationDnsTxtCode.UNEXPECTED_ERROR,
+      unexpectedErrorString: OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.UNEXPECTED_ERROR],
+    }
+  ),
 };

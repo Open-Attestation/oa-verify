@@ -78,7 +78,7 @@ describe("verify", () => {
           "data": Array [
             Object {
               "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-              "status": "VALID",
+              "verified": true,
             },
           ],
           "name": "OpenAttestationDidIdentityProof",
@@ -94,10 +94,20 @@ describe("verify", () => {
           "data": Array [
             Object {
               "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-              "status": "INVALID",
+              "reason": Object {
+                "code": 7,
+                "codeString": "WRONG_SIGNATURE",
+                "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+              },
+              "verified": false,
             },
           ],
           "name": "OpenAttestationDidIdentityProof",
+          "reason": Object {
+            "code": 7,
+            "codeString": "WRONG_SIGNATURE",
+            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+          },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
@@ -157,6 +167,11 @@ describe("verify", () => {
             "verified": false,
           },
           "name": "OpenAttestationDidIdentityProof",
+          "reason": Object {
+            "code": 7,
+            "codeString": "WRONG_SIGNATURE",
+            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+          },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
         }
@@ -164,6 +179,8 @@ describe("verify", () => {
     });
     it("should return invalid fragment for document using `DID` and signature is missing", async () => {
       const proofWithoutSignature = { ...v3DnsDidSigned.proof };
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error I really want to delete this :)
       delete proofWithoutSignature.signature;
       const documentWithInvalidSignature = {
         ...v3DidSigned,

@@ -24,58 +24,69 @@ console.log(isValid(fragments)); // display true
 ```json
 [
   {
-    "type": "DOCUMENT_INTEGRITY",
-    "name": "OpenAttestationHash",
     "data": true,
-    "status": "VALID"
+    "name": "OpenAttestationHash",
+    "status": "VALID",
+    "type": "DOCUMENT_INTEGRITY"
   },
   {
-    "status": "SKIPPED",
-    "type": "DOCUMENT_STATUS",
-    "name": "OpenAttestationSignedProof",
-    "reason": {
-      "code": 4,
-      "codeString": "SKIPPED",
-      "message": "Document does not have a proof block"
-    }
-  },
-  {
-    "name": "OpenAttestationEthereumTokenRegistryStatus",
-    "type": "DOCUMENT_STATUS",
     "data": {
-      "mintedOnAll": true,
       "details": [
         {
-          "minted": true,
-          "address": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
+          "address": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+          "minted": true
         }
-      ]
+      ],
+      "mintedOnAll": true
     },
-    "status": "VALID"
+    "name": "OpenAttestationEthereumTokenRegistryStatus",
+    "status": "VALID",
+    "type": "DOCUMENT_STATUS"
   },
   {
-    "status": "SKIPPED",
-    "type": "DOCUMENT_STATUS",
     "name": "OpenAttestationEthereumDocumentStoreStatus",
     "reason": {
       "code": 4,
       "codeString": "SKIPPED",
       "message": "Document issuers doesn't have \"documentStore\" or \"certificateStore\" property or DOCUMENT_STORE method"
-    }
+    },
+    "status": "SKIPPED",
+    "type": "DOCUMENT_STATUS"
   },
   {
-    "name": "OpenAttestationDnsTxt",
-    "type": "ISSUER_IDENTITY",
+    "name": "OpenAttestationDidSignedDocumentStatus",
+    "reason": {
+      "code": 0,
+      "codeString": "SKIPPED",
+      "message": "Document was not signed by DID directly"
+    },
+    "status": "SKIPPED",
+    "type": "DOCUMENT_STATUS"
+  },
+  {
     "data": [
       {
-        "status": "VALID",
         "location": "example.tradetrust.io",
+        "status": "VALID",
         "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe"
       }
     ],
-    "status": "VALID"
+    "name": "OpenAttestationDnsTxtIdentityProof",
+    "status": "VALID",
+    "type": "ISSUER_IDENTITY"
+  },
+  {
+    "name": "OpenAttestationDnsDidIdentityProof",
+    "reason": {
+      "code": 0,
+      "codeString": "SKIPPED",
+      "message": "Document was not issued using DNS-DID"
+    },
+    "status": "SKIPPED",
+    "type": "ISSUER_IDENTITY"
   }
 ]
+
 ```
 
 ## Advanced usage
@@ -181,6 +192,59 @@ const fragments = verify(documentRopstenValidWithCertificateStore, { network: "r
 isValid(fragments); // display false because ISSUER_IDENTITY is INVALID
 isValid(fragments, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"]); // display true because those types are VALID
 ```
+
+## Utils and types
+
+### Overview
+
+Various utilities and types are available to assert the correctness of fragments. Each verification method exports types for the fragment, and the data associated with the fragment.
+
+- fragment types are available in 4 flavors: `VALID`, `INVALID`, `SKIPPED`, and `ERROR`.
+- `VALID` and `INVALID` fragment data are available in 2 flavors most of the time, one for each version of `OpenAttestation`.
+
+This library provides types and utilities to:
+
+- get a specific fragment from all the fragments returned by the `verify` method
+- narrow down to a specific type of fragment
+- narrow down to a specific fragment data
+
+Let's see how to use it
+
+### Example
+
+```
+import {utils} from "@govtechsg/oa-verify";
+const fragments = verify(documentRopstenValidWithCertificateStore, { network: "ropsten" });
+// return the correct fragment, correctly typed
+const fragment = utils.getOpenAttestationEthereumTokenRegistryStatusFragment(fragments)
+
+if(utils.isValidFragment(fragment)) {
+    // guard to narrow to the valid fragment type
+    const {data} = fragment;
+    if (ValidTokenRegistryDataV2.guard(data)) {
+        // data is correctly typed here
+    }
+}
+```
+
+Note that in the example above, using `utils.isValidFragment` might be unnecessary. It's possible to use directly `ValidTokenRegistryDataV2.guard` over the data.
+
+### List of utilities
+- `getOpenAttestationHashFragment`
+- `getOpenAttestationDidSignedDocumentStatusFragment`
+- `getOpenAttestationEthereumDocumentStoreStatusFragment`
+- `getOpenAttestationEthereumTokenRegistryStatusFragment`
+- `getOpenAttestationDidIdentityProofFragment`
+- `getOpenAttestationDnsDidIdentityProofFragment`
+- `getOpenAttestationDnsTxtIdentityProofFragment`
+- `getDocumentIntegrityFragments`
+- `getDocumentStatusFragments`
+- `getIssuerIdentityFragments`
+- `isValidFragment`: type guard to filter only `VALID` fragment type
+- `isInvalidFragment`: type guard to filter only `INVALID` fragment type
+- `isErrorFragment`: type guard to filter only `ERROR` fragment type
+- `isSkippedFragment`: type guard to filter only `SKIPPED` fragment type
+
 
 ## Development
 

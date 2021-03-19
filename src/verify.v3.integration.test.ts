@@ -86,7 +86,7 @@ describe("verify v3(integration)", () => {
               "details": Object {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "verified": true,
+                  "issued": true,
                 },
                 "revocation": Object {
                   "revoked": false,
@@ -168,7 +168,7 @@ describe("verify v3(integration)", () => {
               "details": Object {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "verified": true,
+                  "issued": true,
                 },
                 "revocation": Object {
                   "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -251,7 +251,7 @@ describe("verify v3(integration)", () => {
               "details": Object {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "verified": true,
+                  "issued": true,
                 },
                 "revocation": Object {
                   "revoked": false,
@@ -334,7 +334,7 @@ describe("verify v3(integration)", () => {
               "details": Object {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "verified": true,
+                  "issued": true,
                 },
                 "revocation": Object {
                   "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -579,7 +579,7 @@ describe("verify v3(integration)", () => {
               "details": Object {
                 "issuance": Object {
                   "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                  "verified": true,
+                  "issued": true,
                 },
                 "revocation": Object {
                   "revoked": false,
@@ -684,6 +684,11 @@ describe("verify v3(integration)", () => {
                 "revokedOnAny": false,
               },
               "name": "OpenAttestationEthereumDocumentStoreStatus",
+              "reason": Object {
+                "code": 1,
+                "codeString": "DOCUMENT_NOT_ISSUED",
+                "message": "Document 0x6e3b3b131db956263d142f42a840962d31359fff61c28937d9d1add0ca04c89e has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
@@ -718,6 +723,11 @@ describe("verify v3(integration)", () => {
                 "revokedOnAny": true,
               },
               "name": "OpenAttestationEthereumDocumentStoreStatus",
+              "reason": Object {
+                "code": 5,
+                "codeString": "DOCUMENT_REVOKED",
+                "message": "Document 0xa9e9f0c9adc106908b9ee40325f5ca583912853751cf697f540cf647479a2cd8 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
@@ -921,6 +931,11 @@ describe("verify v3(integration)", () => {
                 "status": "INVALID",
               },
               "name": "OpenAttestationDnsDidIdentityProof",
+              "reason": Object {
+                "code": 6,
+                "codeString": "INVALID_IDENTITY",
+                "message": "Could not find identity at location",
+              },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
             },
@@ -939,7 +954,7 @@ describe("verify v3(integration)", () => {
                 "details": Object {
                   "issuance": Object {
                     "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                    "verified": true,
+                    "issued": true,
                   },
                   "revocation": Object {
                     "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -955,6 +970,11 @@ describe("verify v3(integration)", () => {
                 "revokedOnAny": true,
               },
               "name": "OpenAttestationDidSignedDocumentStatus",
+              "reason": Object {
+                "code": 5,
+                "codeString": "DOCUMENT_REVOKED",
+                "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
@@ -1048,6 +1068,11 @@ describe("verify v3(integration)", () => {
                 "status": "INVALID",
               },
               "name": "OpenAttestationDnsDidIdentityProof",
+              "reason": Object {
+                "code": 6,
+                "codeString": "INVALID_IDENTITY",
+                "message": "Could not find identity at location",
+              },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
             },
@@ -1066,7 +1091,7 @@ describe("verify v3(integration)", () => {
                 "details": Object {
                   "issuance": Object {
                     "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-                    "verified": true,
+                    "issued": true,
                   },
                   "revocation": Object {
                     "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
@@ -1082,6 +1107,11 @@ describe("verify v3(integration)", () => {
                 "revokedOnAny": true,
               },
               "name": "OpenAttestationDidSignedDocumentStatus",
+              "reason": Object {
+                "code": 5,
+                "codeString": "DOCUMENT_REVOKED",
+                "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },

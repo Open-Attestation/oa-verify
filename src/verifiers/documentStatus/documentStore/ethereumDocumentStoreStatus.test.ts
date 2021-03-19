@@ -417,6 +417,11 @@ describe("verify", () => {
             "revokedOnAny": false,
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 1,
+            "codeString": "DOCUMENT_NOT_ISSUED",
+            "message": "Document 0x6e3b3b131db956263d142f42a840962d31359fff61c28937d9d1add0ca04c89e has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
@@ -446,6 +451,11 @@ describe("verify", () => {
             "revokedOnAny": true,
           },
           "name": "OpenAttestationEthereumDocumentStoreStatus",
+          "reason": Object {
+            "code": 5,
+            "codeString": "DOCUMENT_REVOKED",
+            "message": "Document 0xa9e9f0c9adc106908b9ee40325f5ca583912853751cf697f540cf647479a2cd8 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+          },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
