@@ -103,6 +103,28 @@ To specify network:
 const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
 ```
 
+### Specify resolver
+
+`oa-verify` exposes a method, called `createResolver` that allows you to easily create custom resolvers, to resolve DIDs:
+
+```ts
+import {
+  createResolver,
+  verificationBuilder,
+  openAttestationVerifiers
+} from '@govtechsg/oa-verify';
+
+const resolver = createResolver({
+  networks: [{ name: 'my-network', rpcUrl: 'https://my-private-chain/besu', registry: '0xaE5a9b9...' }],
+});
+
+const verify = verificationBuilder(openAttestationVerifiers, { resolver });
+```
+
+At the moment, oa-verify supports two did resolvers:
+- [web-did-resolver](https://github.com/decentralized-identity/web-did-resolver#readme)
+- [ethd-did-resolver](https://github.com/decentralized-identity/ethr-did-resolver)
+
 ### Verify
 
 By default the provided `verify` method performs multiple checks on a document
