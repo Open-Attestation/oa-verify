@@ -27,7 +27,7 @@
     "@govtechsg/dnsprove": "^2.0.9",
     "@govtechsg/document-store": "^2.0.0",
     "@govtechsg/oa-did-sign": "^2.1.0",
-    "@govtechsg/open-attestation": "^4.5.0",
+    "@govtechsg/open-attestation": "^5.1.1",
     "@govtechsg/token-registry": "^2.0.0",
     "axios": "^0.21.1",
     "debug": "^4.1.1",
