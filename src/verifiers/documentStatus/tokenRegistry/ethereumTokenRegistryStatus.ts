@@ -70,7 +70,7 @@ const getMerkleRoot = (
 };
 
 const isNonExistentToken = (error: any) => {
-  const message: string | undefined = error.body?.error?.message;
+  const message: string | undefined = error.message;
   if (!message) return false;
   return message.includes("owner query for nonexistent token");
 };

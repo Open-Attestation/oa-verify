@@ -46,7 +46,6 @@ export const isIssuedOnDocumentStore = async ({
   try {
     const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
     const issued = await documentStoreContract.isIssued(merkleRoot);
-
     return issued
       ? {
           issued: true,
@@ -114,7 +113,6 @@ const verifyV2 = async (
   const merkleRoot = `0x${document.signature.merkleRoot}`;
   const { targetHash } = document.signature;
   const proofs = document.signature.proof || [];
-
   const issuanceStatuses = await Promise.all(
     documentStores.map((documentStore) =>
       isIssuedOnDocumentStore({ documentStore, merkleRoot, provider: options.provider })

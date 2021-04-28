@@ -1,4 +1,4 @@
-import { Resolver, DIDDocument, PublicKey } from "did-resolver";
+import { DIDDocument, Resolver, VerificationMethod } from "did-resolver";
 import { getResolver as ethrGetResolver } from "ethr-did-resolver";
 import { getResolver as webGetResolver } from "web-did-resolver";
 import NodeCache from "node-cache";
@@ -26,15 +26,21 @@ export const createResolver = ({ ethrResolverConfig }: { ethrResolverConfig?: Et
     : defaultResolver;
 };
 
-export const resolve = async (didUrl: string, resolver?: Resolver): Promise<DIDDocument> => {
+export const resolve = async (didUrl: string, resolver?: Resolver): Promise<DIDDocument | undefined> => {
   const cachedResult = didResolutionCache.get<DIDDocument>(didUrl);
   if (cachedResult) return cachedResult;
-  const did = resolver ? await resolver.resolve(didUrl) : await defaultResolver.resolve(didUrl);
+  const didResolutionResult = resolver ? await resolver.resolve(didUrl) : await defaultResolver.resolve(didUrl);
+  const did = didResolutionResult.didDocument || undefined;
   didResolutionCache.set(didUrl, did);
   return did;
 };
 
-export const getPublicKey = async (did: string, key: string, resolver?: Resolver): Promise<PublicKey | undefined> => {
-  const { publicKey } = await resolve(did, resolver);
-  return publicKey.find((k) => k.id.toLowerCase() === key.toLowerCase());
+export const getVerificationMethod = async (
+  did: string,
+  key: string,
+  resolver?: Resolver
+): Promise<VerificationMethod | undefined> => {
+  const didDocument = await resolve(did, resolver);
+  if (!didDocument) return;
+  return didDocument.verificationMethod?.find((k) => k.id.toLowerCase() === key.toLowerCase());
 };

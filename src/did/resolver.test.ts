@@ -6,22 +6,21 @@ import { INFURA_API_KEY } from "../config";
 import { createResolver, EthrResolverConfig, resolve } from "./resolver";
 
 const didDoc = {
-  "@context": "https://w3id.org/did/v1",
+  "@context": [
+    "https://www.w3.org/ns/did/v1",
+    "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld",
+  ],
+  assertionMethod: ["did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
   id: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-  publicKey: [
+  verificationMethod: [
     {
       id: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
-      type: "Secp256k1VerificationKey2018",
+      type: "EcdsaSecp256k1RecoveryMethod2020",
       controller: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      ethereumAddress: "0x0ce1854a3836daf9130028cf90d6d35b1ae46457",
+      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:3",
     },
   ],
-  authentication: [
-    {
-      type: "Secp256k1SignatureAuthentication2018",
-      publicKey: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
-    },
-  ],
+  authentication: ["did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
 };
 
 // this document has been created using:
@@ -88,7 +87,7 @@ describe("custom resolver", () => {
       createResolver({ ethrResolverConfig: customConfig })
     );
     expect(did).toEqual(didDoc);
-  });
+  }, 10000);
 
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
@@ -107,5 +106,5 @@ describe("custom resolver", () => {
       "type": "ISSUER_IDENTITY",
     }
   `);
-  });
+  }, 10000);
 });

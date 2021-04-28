@@ -1,7 +1,7 @@
-import { PublicKey, Resolver } from "did-resolver";
+import { VerificationMethod, Resolver } from "did-resolver";
 import { utils } from "ethers";
 import { Literal, Record, Static, String, Union, Array as RunTypesArray } from "runtypes";
-import { getPublicKey } from "./resolver";
+import { getVerificationMethod } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
 import { CodedError } from "../common/error";
 
@@ -31,28 +31,30 @@ interface VerifySignature {
   did: string;
   signature: string;
   merkleRoot: string;
-  publicKey: PublicKey;
+  verificationMethod: VerificationMethod;
 }
 
 export const verifySecp256k1VerificationKey2018 = ({
   did,
-  publicKey,
+  verificationMethod,
   merkleRoot,
   signature,
 }: VerifySignature): DidVerificationStatus => {
   const messageBytes = utils.arrayify(merkleRoot);
-  const { ethereumAddress } = publicKey;
-  if (!ethereumAddress) {
+  const { blockchainAccountId } = verificationMethod;
+  if (!blockchainAccountId) {
     return {
       did,
       verified: false,
       reason: {
         code: OpenAttestationSignatureCode.KEY_MISSING,
         codeString: OpenAttestationSignatureCode[OpenAttestationSignatureCode.KEY_MISSING],
-        message: `ethereumAddress not found on public key ${JSON.stringify(publicKey)}`,
+        message: `ethereumAddress not found on public key ${JSON.stringify(verificationMethod)}`,
       },
     };
   }
+  // blockchainAccountId looks like 0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:3, let's get rid of the part after @, @ included
+  const ethereumAddress = blockchainAccountId.split("@")[0];
 
   const merkleRootSigned = utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
   if (!merkleRootSigned) {
@@ -86,24 +88,24 @@ export const verifySignature = async ({
   signature: string;
   resolver?: Resolver;
 }): Promise<DidVerificationStatus> => {
-  const publicKey = await getPublicKey(did, key, resolver);
-  if (!publicKey)
+  const verificationMethod = await getVerificationMethod(did, key, resolver);
+  if (!verificationMethod)
     throw new CodedError(
       `No public key found on DID document for the DID ${did} and key ${key}`,
       OpenAttestationSignatureCode.KEY_NOT_IN_DID,
       "KEY_NOT_IN_DID"
     );
-  switch (publicKey.type) {
-    case "Secp256k1VerificationKey2018":
+  switch (verificationMethod.type) {
+    case "EcdsaSecp256k1RecoveryMethod2020":
       return verifySecp256k1VerificationKey2018({
         did,
-        publicKey,
+        verificationMethod,
         merkleRoot,
         signature,
       });
     default:
       throw new CodedError(
-        `Signature type ${publicKey.type} is currently not support`,
+        `Signature type ${verificationMethod.type} is currently not support`,
         OpenAttestationSignatureCode.UNSUPPORTED_KEY_TYPE,
         "UNSUPPORTED_KEY_TYPE"
       );

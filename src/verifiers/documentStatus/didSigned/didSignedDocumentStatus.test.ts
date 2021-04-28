@@ -6,7 +6,7 @@ import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDi
 import { documentDidCustomRevocation } from "../../../../test/fixtures/v2/documentDidCustomRevocation";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
-import { getPublicKey } from "../../../did/resolver";
+import { getVerificationMethod } from "../../../did/resolver";
 import { getProvider } from "../../../common/utils";
 import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentStore-wrapped.json";
 import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
@@ -62,7 +62,7 @@ const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStor
 
 jest.mock("../../../did/resolver");
 
-const mockGetPublicKey = getPublicKey as jest.Mock;
+const mockGetPublicKey = getVerificationMethod as jest.Mock;
 
 const whenPublicKeyResolvesSuccessfully = () => {
   // Private key for signing from this address
@@ -70,9 +70,9 @@ const whenPublicKeyResolvesSuccessfully = () => {
   // sign using wallet.signMessage(utils.arrayify(merkleRoot))
   mockGetPublicKey.mockResolvedValue({
     id: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-    type: "Secp256k1VerificationKey2018",
+    type: "EcdsaSecp256k1RecoveryMethod2020",
     controller: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-    ethereumAddress: "0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+    blockchainAccountId: "0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
   });
 };
 

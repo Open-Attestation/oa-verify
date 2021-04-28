@@ -15,7 +15,14 @@ import { OpenAttestationDnsDidIdentityProofVerificationFragment } from "../verif
 import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
-  return new providers.InfuraProvider(options.network, INFURA_API_KEY);
+  // create infura provider to get connection information
+  // we then use StaticJsonRpcProvider so that we can set our own custom limit
+  const uselessProvider = new providers.InfuraProvider(options.network, INFURA_API_KEY);
+  const connection = {
+    ...uselessProvider.connection,
+    throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
+  };
+  return new providers.StaticJsonRpcProvider(connection, options.network);
 };
 
 export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
