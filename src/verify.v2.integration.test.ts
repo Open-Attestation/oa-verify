@@ -1110,7 +1110,7 @@ describe("verify(integration)", () => {
     });
   });
 
-  it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued ", async () => {
+  it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued", async () => {
     const results = await verifyRopsten(documentRopstenRevokedWithToken);
     expect(results).toMatchInlineSnapshot(`
       Array [
