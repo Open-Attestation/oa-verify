@@ -41,24 +41,24 @@ export const getFragmentByName = <ReturnedFragment extends VerificationFragment>
 export const getOpenAttestationHashFragment = getFragmentByName<OpenAttestationHashVerificationFragment>(
   "OpenAttestationHash"
 );
-export const getOpenAttestationDidSignedDocumentStatusFragment = getFragmentByName<
-  OpenAttestationDidSignedDocumentStatusVerificationFragment
->("OpenAttestationDidSignedDocumentStatus");
-export const getOpenAttestationEthereumDocumentStoreStatusFragment = getFragmentByName<
-  OpenAttestationEthereumDocumentStoreStatusFragment
->("OpenAttestationEthereumDocumentStoreStatus");
-export const getOpenAttestationEthereumTokenRegistryStatusFragment = getFragmentByName<
-  OpenAttestationEthereumTokenRegistryStatusFragment
->("OpenAttestationEthereumTokenRegistryStatus");
-export const getOpenAttestationDidIdentityProofFragment = getFragmentByName<
-  OpenAttestationDidIdentityProofVerificationFragment
->("OpenAttestationDidIdentityProof");
-export const getOpenAttestationDnsDidIdentityProofFragment = getFragmentByName<
-  OpenAttestationDnsDidIdentityProofVerificationFragment
->("OpenAttestationDnsDidIdentityProof");
-export const getOpenAttestationDnsTxtIdentityProofFragment = getFragmentByName<
-  OpenAttestationDnsTxtIdentityProofVerificationFragment
->("OpenAttestationDnsTxtIdentityProof");
+export const getOpenAttestationDidSignedDocumentStatusFragment = getFragmentByName<OpenAttestationDidSignedDocumentStatusVerificationFragment>(
+  "OpenAttestationDidSignedDocumentStatus"
+);
+export const getOpenAttestationEthereumDocumentStoreStatusFragment = getFragmentByName<OpenAttestationEthereumDocumentStoreStatusFragment>(
+  "OpenAttestationEthereumDocumentStoreStatus"
+);
+export const getOpenAttestationEthereumTokenRegistryStatusFragment = getFragmentByName<OpenAttestationEthereumTokenRegistryStatusFragment>(
+  "OpenAttestationEthereumTokenRegistryStatus"
+);
+export const getOpenAttestationDidIdentityProofFragment = getFragmentByName<OpenAttestationDidIdentityProofVerificationFragment>(
+  "OpenAttestationDidIdentityProof"
+);
+export const getOpenAttestationDnsDidIdentityProofFragment = getFragmentByName<OpenAttestationDnsDidIdentityProofVerificationFragment>(
+  "OpenAttestationDnsDidIdentityProof"
+);
+export const getOpenAttestationDnsTxtIdentityProofFragment = getFragmentByName<OpenAttestationDnsTxtIdentityProofVerificationFragment>(
+  "OpenAttestationDnsTxtIdentityProof"
+);
 
 /**
  * Simple typed utility to return fragments depending on the type

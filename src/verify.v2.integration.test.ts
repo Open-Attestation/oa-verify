@@ -5,10 +5,10 @@
 import { v2 } from "@govtechsg/open-attestation";
 import {
   isValid,
-  verify,
-  verificationBuilder,
-  openAttestationVerifiers,
   openAttestationDidIdentityProof,
+  openAttestationVerifiers,
+  verificationBuilder,
+  verify,
 } from "./index";
 import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
 import {
@@ -30,7 +30,6 @@ import { documentDidMissingProof } from "../test/fixtures/v2/documentDidMissingP
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentRopstenObfuscated } from "../test/fixtures/v2/documentRopstenObfuscated";
-import { INFURA_API_KEY } from "./config";
 import v2DidSignedRevocationStoreNotRevokedRaw from "../test/fixtures/v2/did-revocation-store-signed-not-revoked.json";
 import v2DidSignedRevocationStoreButRevokedRaw from "../test/fixtures/v2/did-revocation-store-signed-revoked.json";
 import v2DnsDidSignedRevocationStoreNotRevokedRaw from "../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
