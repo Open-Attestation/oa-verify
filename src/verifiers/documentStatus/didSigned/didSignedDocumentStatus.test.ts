@@ -254,12 +254,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidObfuscatedRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: revocation block not found for an issuer],
+          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 2,
-            "codeString": "MISSING_REVOCATION",
-            "message": "revocation block not found for an issuer",
+            "code": 8,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
@@ -271,12 +271,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: unrecognized revocation type for an issuer],
+          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 9,
-            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
-            "message": "unrecognized revocation type for an issuer",
+            "code": 8,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
@@ -319,7 +319,21 @@ describe("verify", () => {
     });
     it("should fail when corresponding proof to key is not found in proof", async () => {
       whenPublicKeyResolvesSuccessfully();
-      const res = await openAttestationDidSignedDocumentStatus.verify({ ...documentDidSigned, proof: [] }, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(
+        {
+          ...documentDidSigned,
+          proof: [
+            {
+              created: "2021-03-25T07:52:31.291Z",
+              type: "OpenAttestationSignature2018",
+              proofPurpose: "assertionMethod",
+              verificationMethod: "did:ethr:0xdede",
+              signature: "0xabcf",
+            },
+          ],
+        },
+        options
+      );
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": [Error: Proof not found for did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller],
@@ -629,12 +643,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(docWithIncorrectRevocation as any, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: revocation type not found for an issuer],
+          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 9,
-            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
-            "message": "revocation type not found for an issuer",
+            "code": 8,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",

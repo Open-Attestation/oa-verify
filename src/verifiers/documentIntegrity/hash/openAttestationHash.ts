@@ -23,13 +23,7 @@ const skip: VerifierType["skip"] = () => {
 };
 
 const test: VerifierType["test"] = (document) => {
-  if (utils.isWrappedV3Document(document)) {
-    return true;
-  }
-  if (utils.isWrappedV2Document(document)) {
-    return !!document?.signature?.merkleRoot && !!document?.signature?.targetHash && !!document.data;
-  }
-  return false;
+  return utils.isWrappedV3Document(document) || utils.isWrappedV2Document(document);
 };
 
 const verify: VerifierType["verify"] = async (document) => {

@@ -89,7 +89,7 @@ describe("verify", () => {
             issuers: [
               {
                 ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
-                documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xabcd",
+                documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
           },
@@ -102,12 +102,12 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0xabcd",
+                  "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                   "issued": false,
                   "reason": Object {
                     "code": 1,
                     "codeString": "DOCUMENT_NOT_ISSUED",
-                    "message": "Invalid document store address",
+                    "message": "Contract is not found",
                   },
                 },
               ],
@@ -118,7 +118,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_ISSUED",
-            "message": "Invalid document store address",
+            "message": "Contract is not found",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",

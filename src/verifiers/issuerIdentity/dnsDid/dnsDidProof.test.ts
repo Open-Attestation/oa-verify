@@ -54,9 +54,11 @@ describe("test", () => {
     });
   });
   describe("v3", () => {
-    it("should return true for document using `DNS-DID` top level identity proof", () => {
+    it("should return true for signed document using `DNS-DID` top level identity proof", () => {
       expect(openAttestationDnsDidIdentityProof.test(v3DnsDidSigned, options)).toBe(true);
-      expect(openAttestationDnsDidIdentityProof.test(v3DnsDidWrapped, options)).toBe(true);
+    });
+    it("should return false for not signed document using `DNS-DID` top level identity proof", () => {
+      expect(openAttestationDnsDidIdentityProof.test(v3DnsDidWrapped, options)).toBe(false);
     });
     it("should return false for document using `DID` top level identity proof", () => {
       expect(openAttestationDnsDidIdentityProof.test(v3DidSigned, options)).toBe(false);

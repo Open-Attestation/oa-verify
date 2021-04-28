@@ -29,11 +29,10 @@ const skip: VerifierType["skip"] = async () => {
 };
 
 const test: VerifierType["test"] = (document) => {
-  if (utils.isWrappedV2Document(document)) {
+  if (utils.isSignedWrappedV2Document(document)) {
     const data = getData(document);
-    return !!data?.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
-  }
-  if (utils.isWrappedV3Document(document)) {
+    return data.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
+  } else if (utils.isSignedWrappedV3Document(document)) {
     return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
   }
   return false;
@@ -55,14 +54,8 @@ const verifyIssuerDnsDid = async ({
 };
 
 const verifyV2 = async (
-  document: v2.WrappedDocument
+  document: v2.SignedWrappedDocument
 ): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
-  if (!utils.isSignedWrappedV2Document(document))
-    throw new CodedError(
-      "document is not signed",
-      OpenAttestationDnsDidCode.UNSIGNED,
-      OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNSIGNED]
-    );
   const documentData = getData(document);
   const deferredVerificationStatus: Promise<DnsDidVerificationStatus>[] = documentData.issuers.map((issuer) => {
     const { identityProof } = issuer;
@@ -118,7 +111,7 @@ const verifyV2 = async (
 };
 
 const verifyV3 = async (
-  document: v3.WrappedDocument
+  document: v3.SignedWrappedDocument
 ): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV3Document(document))
     throw new CodedError(
@@ -152,10 +145,10 @@ const verifyV3 = async (
 };
 
 const verify: VerifierType["verify"] = async (document) => {
-  if (utils.isWrappedV2Document(document)) return verifyV2(document);
-  if (utils.isWrappedV3Document(document)) return verifyV3(document);
+  if (utils.isSignedWrappedV2Document(document)) return verifyV2(document);
+  else if (utils.isSignedWrappedV3Document(document)) return verifyV3(document);
   throw new CodedError(
-    "Document does not match either v2 or v3 formats",
+    "Document does not match either v2 or v3 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
     OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
   );

@@ -1,6 +1,6 @@
 import { v3, obfuscate } from "@govtechsg/open-attestation";
 import { isValid, verificationBuilder, openAttestationVerifiers, openAttestationDidIdentityProof } from "./index";
-import { getFailingFragments } from "../test/utils";
+import { getFailingFragments, getFragmentsByName } from "../test/utils";
 
 import v3DidWrappedRaw from "../test/fixtures/v3/did-wrapped.json";
 import v3DidSignedRaw from "../test/fixtures/v3/did-signed.json";
@@ -542,8 +542,8 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for documents correctly issued but with data obfuscated", async () => {
-      const obfuscated = obfuscate(v3DidSigned, ["issuer"]);
-      expect(obfuscated.issuer).toBe(undefined);
+      const obfuscated = obfuscate(v3DidSigned, ["reference"]);
+      expect(obfuscated.reference).toBe(undefined);
       const fragments = await verifyRopsten(obfuscated);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
@@ -874,22 +874,21 @@ describe("verify v3(integration)", () => {
           ]
         `);
       });
-      it("should return invalid fragments for documents that has not been signed", async () => {
+      it("should return skipped fragments for documents that has not been signed", async () => {
         const fragments = await verifyRopsten(v3DnsDidWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
-        expect(getFailingFragments(fragments)).toMatchInlineSnapshot(`
+        expect(getFragmentsByName(fragments, "OpenAttestationDnsDidIdentityProof")).toMatchInlineSnapshot(`
           Array [
             Object {
-              "data": [Error: document is not signed],
               "name": "OpenAttestationDnsDidIdentityProof",
               "reason": Object {
-                "code": 4,
-                "codeString": "UNSIGNED",
-                "message": "document is not signed",
+                "code": 0,
+                "codeString": "SKIPPED",
+                "message": "Document was not issued using DNS-DID",
               },
-              "status": "ERROR",
+              "status": "SKIPPED",
               "type": "ISSUER_IDENTITY",
             },
           ]

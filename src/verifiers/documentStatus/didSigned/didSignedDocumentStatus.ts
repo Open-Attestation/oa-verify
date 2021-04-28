@@ -34,10 +34,9 @@ const skip: VerifierType["skip"] = async () => {
 };
 
 const test: VerifierType["test"] = (document) => {
-  if (utils.isWrappedV2Document(document) && utils.isSignedWrappedV2Document(document)) {
+  if (utils.isSignedWrappedV2Document(document)) {
     return document.proof.some((proof) => proof.type === "OpenAttestationSignature2018");
-  }
-  if (utils.isWrappedV3Document(document) && utils.isSignedWrappedV3Document(document)) {
+  } else if (utils.isSignedWrappedV3Document(document)) {
     return document.proof.type === "OpenAttestationMerkleProofSignature2018";
   }
   return false;
@@ -316,7 +315,7 @@ const verify: VerifierType["verify"] = async (document, options) => {
   }
 
   throw new CodedError(
-    `Document does not match either v2 or v3 formats`,
+    `Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.`,
     OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_DOCUMENT]
   );

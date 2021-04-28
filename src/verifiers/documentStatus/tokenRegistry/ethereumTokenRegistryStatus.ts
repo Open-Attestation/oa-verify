@@ -51,7 +51,7 @@ export const getTokenRegistry = (
   }
 
   throw new CodedError(
-    `Document does not match either v2 or v3 formats`,
+    `Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.`,
     OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
   );
@@ -61,9 +61,9 @@ const getMerkleRoot = (
   document: WrappedDocument<v2.OpenAttestationDocument> | WrappedDocument<v3.OpenAttestationDocument>
 ): string => {
   if (utils.isWrappedV2Document(document)) return `0x${document.signature.merkleRoot}`;
-  if (utils.isWrappedV3Document(document)) return `0x${document.proof.merkleRoot}`;
+  else if (utils.isWrappedV3Document(document)) return `0x${document.proof.merkleRoot}`;
   throw new CodedError(
-    `Document does not match either v2 or v3 formats`,
+    `Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.`,
     OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT]
   );
@@ -165,12 +165,9 @@ const skip: VerifierType["skip"] = async () => {
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
-    return !!documentData?.issuers?.some((issuer) => "tokenRegistry" in issuer);
-  }
-  if (utils.isWrappedV3Document(document)) {
-    const documentData = document?.openAttestationMetadata;
-    if (!!documentData?.proof && !!documentData?.identityProof && !!documentData?.template)
-      return document?.openAttestationMetadata?.proof?.method === v3.Method.TokenRegistry;
+    return documentData.issuers.some((issuer) => "tokenRegistry" in issuer);
+  } else if (utils.isWrappedV3Document(document)) {
+    return document.openAttestationMetadata.proof.method === v3.Method.TokenRegistry;
   }
   return false;
 };
@@ -179,7 +176,7 @@ const test: VerifierType["test"] = (document) => {
 const verify: VerifierType["verify"] = async (document, options) => {
   if (!utils.isWrappedV3Document(document) && !utils.isWrappedV2Document(document))
     throw new CodedError(
-      `Document does not match either v2 or v3 formats`,
+      `Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.`,
       OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT,
       OpenAttestationEthereumTokenRegistryStatusCode[
         OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT

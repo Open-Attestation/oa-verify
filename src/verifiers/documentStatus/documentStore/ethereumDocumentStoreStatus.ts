@@ -98,13 +98,9 @@ const skip: VerifierType["skip"] = async () => {
 
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
-    // https://github.com/Open-Attestation/open-attestation/issues/148
-    // isWrappedV2Document does not correctly detect the document type, remove when issue is resolved
-    if (!document.data || !document.data.issuers) return false;
     const documentData = getData(document);
     return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
-  }
-  if (utils.isWrappedV3Document(document)) {
+  } else if (utils.isWrappedV3Document(document)) {
     return document.openAttestationMetadata.proof.method === v3.Method.DocumentStore;
   }
   return false;
@@ -245,9 +241,9 @@ const verifyV3 = async (
 
 const verify: VerifierType["verify"] = async (document, options) => {
   if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
-  if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+  else if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
   throw new CodedError(
-    `Document does not match either v2 or v3 formats`,
+    `Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.`,
     OpenAttestationEthereumDocumentStoreStatusCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.UNRECOGNIZED_DOCUMENT]
   );

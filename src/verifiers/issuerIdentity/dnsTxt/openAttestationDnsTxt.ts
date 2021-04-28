@@ -68,8 +68,7 @@ const skip: VerifierType["skip"] = async () => {
 };
 
 const test: VerifierType["test"] = (document) => {
-  // Stricter check until isWrappedV2Document gives more accurate results
-  if (utils.isWrappedV2Document(document) && document.data && document.data.issuers) {
+  if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
     // at least one issuer uses DNS-TXT
     return documentData.issuers.some((issuer) => {
@@ -78,8 +77,7 @@ const test: VerifierType["test"] = (document) => {
         issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
       );
     });
-  }
-  if (utils.isWrappedV3Document(document)) {
+  } else if (utils.isWrappedV3Document(document)) {
     return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSTxt;
   }
   return false;
@@ -195,7 +193,8 @@ export const openAttestationDnsTxtIdentityProof: Verifier<OpenAttestationDnsTxtI
   verify: withCodedErrorHandler(
     async (document, options) => {
       if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
-      if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+      else if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+      // this code is actually unreachable because of the test function
       throw new CodedError(
         "Document does not match either v2 or v3 formats",
         OpenAttestationDnsTxtCode.UNRECOGNIZED_DOCUMENT,
