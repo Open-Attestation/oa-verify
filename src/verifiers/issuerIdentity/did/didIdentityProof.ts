@@ -34,8 +34,7 @@ const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const { issuers } = getData(document);
     return issuers.some((issuer) => issuer.identityProof?.type === v2.IdentityProofType.Did);
-  }
-  if (utils.isWrappedV3Document(document)) {
+  } else if (utils.isWrappedV3Document(document)) {
     return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.Did;
   }
   return false;
@@ -148,9 +147,9 @@ const verifyV3 = async (
 
 const verify: VerifierType["verify"] = async (document, options) => {
   if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
-  if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
+  else if (utils.isWrappedV3Document(document)) return verifyV3(document, options);
   throw new CodedError(
-    "Document does not match either v2 or v3 formats",
+    "Document does not match either v2 or v3 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
     OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationDidCode[OpenAttestationDidCode.UNRECOGNIZED_DOCUMENT]
   );

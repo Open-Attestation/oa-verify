@@ -213,7 +213,7 @@ describe("verify", () => {
           issuers: [
             {
               ...documentRopstenValidWithToken.data.issuers[0],
-              tokenRegistry: "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xabcd",
+              tokenRegistry: "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
         },
@@ -227,17 +227,17 @@ describe("verify", () => {
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0xabcd",
+                "message": "Matching DNS record not found for 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               "status": "INVALID",
-              "value": "0xabcd",
+              "value": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 4,
             "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0xabcd",
+            "message": "Matching DNS record not found for 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
@@ -263,12 +263,12 @@ describe("verify", () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(documentWithoutIdentityLocation, options);
       expect(fragment).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Location not found in identity proof],
+          "data": [Error: Document does not match either v2 or v3 formats],
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
-            "code": 3,
-            "codeString": "INVALID_ISSUERS",
-            "message": "Location not found in identity proof",
+            "code": 5,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats",
           },
           "status": "ERROR",
           "type": "ISSUER_IDENTITY",
@@ -298,28 +298,14 @@ describe("verify", () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(document, options);
       expect(fragment).toMatchInlineSnapshot(`
         Object {
-          "data": Array [
-            Object {
-              "reason": Object {
-                "code": 3,
-                "codeString": "INVALID_ISSUERS",
-                "message": "Issuer is not using DNS-TXT identityProof type",
-              },
-              "status": "INVALID",
-            },
-            Object {
-              "location": "example.tradetrust.io",
-              "status": "VALID",
-              "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-          ],
+          "data": [Error: Document does not match either v2 or v3 formats],
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
-            "code": 3,
-            "codeString": "INVALID_ISSUERS",
-            "message": "Issuer is not using DNS-TXT identityProof type",
+            "code": 5,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats",
           },
-          "status": "INVALID",
+          "status": "ERROR",
           "type": "ISSUER_IDENTITY",
         }
       `);
@@ -332,7 +318,7 @@ describe("verify", () => {
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
-              documentStore: "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xabcd",
+              documentStore: "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               identityProof: {
                 type: "1350e9f5-920b-496d-b95c-2a2793f5bff6:string:DNS-TXT",
                 location: "291a5524-f1c6-45f8-aebc-d691cf020fdd:string:example.tradetrust.io",
@@ -358,10 +344,10 @@ describe("verify", () => {
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0xabcd",
+                "message": "Matching DNS record not found for 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
               "status": "INVALID",
-              "value": "0xabcd",
+              "value": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
             Object {
               "location": "example.tradetrust.io",
@@ -373,7 +359,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 4,
             "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0xabcd",
+            "message": "Matching DNS record not found for 0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
@@ -398,28 +384,14 @@ describe("verify", () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(document, options);
       expect(fragment).toMatchInlineSnapshot(`
         Object {
-          "data": Array [
-            Object {
-              "location": "example.tradetrust.io",
-              "status": "VALID",
-              "value": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
-            },
-            Object {
-              "reason": Object {
-                "code": 3,
-                "codeString": "INVALID_ISSUERS",
-                "message": "Issuer is not using DNS-TXT identityProof type",
-              },
-              "status": "INVALID",
-            },
-          ],
+          "data": [Error: Document does not match either v2 or v3 formats],
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
-            "code": 3,
-            "codeString": "INVALID_ISSUERS",
-            "message": "Issuer is not using DNS-TXT identityProof type",
+            "code": 5,
+            "codeString": "UNRECOGNIZED_DOCUMENT",
+            "message": "Document does not match either v2 or v3 formats",
           },
-          "status": "INVALID",
+          "status": "ERROR",
           "type": "ISSUER_IDENTITY",
         }
       `);

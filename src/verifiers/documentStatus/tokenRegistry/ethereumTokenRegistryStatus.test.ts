@@ -154,7 +154,7 @@ describe("verify", () => {
           issuers: [
             {
               ...documentRopstenNotIssuedWithTokenRegistry.data.issuers[0],
-              tokenRegistry: "0fb5b63a-aaa5-4e6e-a6f4-391c0f6ba423:string:0xabcd",
+              tokenRegistry: "0fb5b63a-aaa5-4e6e-a6f4-391c0f6ba423:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
         },
@@ -170,12 +170,12 @@ describe("verify", () => {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0xabcd",
+                "address": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_MINTED",
-                  "message": "Invalid token registry address",
+                  "message": "Token registry is not found",
                 },
               },
             ],
@@ -185,7 +185,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_MINTED",
-            "message": "Invalid token registry address",
+            "message": "Token registry is not found",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",

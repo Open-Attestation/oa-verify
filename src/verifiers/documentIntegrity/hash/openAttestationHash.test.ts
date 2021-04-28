@@ -140,7 +140,7 @@ describe("OpenAttestationHash", () => {
         },
       ]);
     });
-    it("should fail if the merkle root is missing", async () => {
+    it("should skip if the merkle root is missing", async () => {
       const tamperedDocument = {
         ...validV3Document,
         proof: {
@@ -156,7 +156,7 @@ describe("OpenAttestationHash", () => {
         },
       };
       const fragment = await verify(tamperedDocument as any);
-      expect(fragment[0].status).toBe("INVALID");
+      expect(fragment[0].status).toBe("SKIPPED");
     });
     it("should fail if the merkle root is empty", async () => {
       const tamperedDocument = {
