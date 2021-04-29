@@ -52,6 +52,8 @@ export interface VerificationFragment {
 export interface ValidVerificationFragment<Data> extends VerificationFragment {
   status: "VALID";
   data: Data;
+  // this is useless, it's just to make it easier to work with fragment, otherwise reason is not available and a consumer needs to narrow the type down first
+  reason?: never;
 }
 export interface InvalidVerificationFragment<Data> extends VerificationFragment {
   status: "INVALID";
