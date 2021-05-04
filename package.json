@@ -25,9 +25,9 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.1.2",
-    "@govtechsg/document-store": "^2.0.0",
-    "@govtechsg/open-attestation": "^5.2.2",
-    "@govtechsg/token-registry": "^2.0.0",
+    "@govtechsg/document-store": "^2.2.1",
+    "@govtechsg/open-attestation": "^5.2.3",
+    "@govtechsg/token-registry": "^2.5.2",
     "axios": "^0.21.1",
     "debug": "^4.3.1",
     "did-resolver": "^3.1.0",
@@ -35,7 +35,7 @@
     "ethr-did-resolver": "^4.3.3",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
-    "snyk": "^1.570.0",
+    "snyk": "^1.576.0",
     "web-did-resolver": "^2.0.4"
   },
   "devDependencies": {

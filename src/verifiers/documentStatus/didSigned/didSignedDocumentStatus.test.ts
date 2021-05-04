@@ -623,12 +623,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(docWithIncorrectRevocation as any, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
+          "data": [Error: revocation type not found for an issuer],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 8,
-            "codeString": "UNRECOGNIZED_DOCUMENT",
-            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
+            "code": 9,
+            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
+            "message": "revocation type not found for an issuer",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
