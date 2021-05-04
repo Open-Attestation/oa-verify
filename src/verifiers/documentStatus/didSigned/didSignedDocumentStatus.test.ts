@@ -6,7 +6,7 @@ import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDi
 import { documentDidCustomRevocation } from "../../../../test/fixtures/v2/documentDidCustomRevocation";
 import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
-import { getPublicKey } from "../../../did/resolver";
+import { getVerificationMethod } from "../../../did/resolver";
 import { getProvider } from "../../../common/utils";
 import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentStore-wrapped.json";
 import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
@@ -24,45 +24,25 @@ import sampleDidSignedRevocationStoreButNoLocationV2 from "../../../../test/fixt
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 
-const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
-  v2.OpenAttestationDocument
->;
-const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<
-  v2.OpenAttestationDocument
->;
-const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<
-  v2.OpenAttestationDocument
->;
-const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<
-  v2.OpenAttestationDocument
->;
-const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<
-  v2.OpenAttestationDocument
->;
+const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const didSignedV3 = sampleDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const didSignedRevocationStoreNotRevokedV3 = sampleDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<
-  v3.OpenAttestationDocument
->;
-const didSignedRevocationStoreButRevokedV3 = sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<
-  v3.OpenAttestationDocument
->;
-const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<
-  v3.OpenAttestationDocument
->;
+const didSignedRevocationStoreNotRevokedV3 = sampleDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreButRevokedV3 = sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const dnsDidSignedRevocationStoreNotRevokedV3 = sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<
-  v3.OpenAttestationDocument
->;
-const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<
-  v3.OpenAttestationDocument
->;
+const dnsDidSignedRevocationStoreNotRevokedV3 = sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 
 jest.mock("../../../did/resolver");
 
-const mockGetPublicKey = getPublicKey as jest.Mock;
+const mockGetPublicKey = getVerificationMethod as jest.Mock;
 
 const whenPublicKeyResolvesSuccessfully = () => {
   // Private key for signing from this address
@@ -70,9 +50,9 @@ const whenPublicKeyResolvesSuccessfully = () => {
   // sign using wallet.signMessage(utils.arrayify(merkleRoot))
   mockGetPublicKey.mockResolvedValue({
     id: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-    type: "Secp256k1VerificationKey2018",
+    type: "EcdsaSecp256k1RecoveryMethod2020",
     controller: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-    ethereumAddress: "0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+    blockchainAccountId: "0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
   });
 };
 
@@ -643,12 +623,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(docWithIncorrectRevocation as any, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
+          "data": [Error: revocation type not found for an issuer],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 8,
-            "codeString": "UNRECOGNIZED_DOCUMENT",
-            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
+            "code": 9,
+            "codeString": "UNRECOGNIZED_REVOCATION_TYPE",
+            "message": "revocation type not found for an issuer",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",

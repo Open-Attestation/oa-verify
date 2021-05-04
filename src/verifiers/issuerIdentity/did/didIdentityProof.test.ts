@@ -97,7 +97,7 @@ describe("verify", () => {
               "reason": Object {
                 "code": 7,
                 "codeString": "WRONG_SIGNATURE",
-                "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+                "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
               },
               "verified": false,
             },
@@ -106,7 +106,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 7,
             "codeString": "WRONG_SIGNATURE",
-            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+            "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
@@ -162,7 +162,7 @@ describe("verify", () => {
             "reason": Object {
               "code": 7,
               "codeString": "WRONG_SIGNATURE",
-              "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+              "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
             },
             "verified": false,
           },
@@ -170,7 +170,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 7,
             "codeString": "WRONG_SIGNATURE",
-            "message": "merkle root is not signed correctly by 0xe712878f6e8d5d4f9e87e10da604f9cb564c9a89",
+            "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",

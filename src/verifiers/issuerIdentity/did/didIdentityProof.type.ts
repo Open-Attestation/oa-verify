@@ -15,9 +15,7 @@ import {
  * Fragments
  */
 export type OpenAttestationDidIdentityProofValidFragmentV3 = ValidVerificationFragment<ValidDidVerificationStatus>;
-export type OpenAttestationDidIdentityProofInvalidFragmentV3 = InvalidVerificationFragment<
-  InvalidDidVerificationStatus
->;
+export type OpenAttestationDidIdentityProofInvalidFragmentV3 = InvalidVerificationFragment<InvalidDidVerificationStatus>;
 export type OpenAttestationDidIdentityProofValidFragmentV2 = ValidVerificationFragment<ValidDidVerificationStatusArray>;
 export type OpenAttestationDidIdentityProofInvalidFragmentV2 = InvalidVerificationFragment<DidVerificationStatusArray>;
 export type OpenAttestationDidIdentityProofErrorFragment = ErrorVerificationFragment<any>;
