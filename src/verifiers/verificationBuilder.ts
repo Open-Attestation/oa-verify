@@ -8,7 +8,7 @@ import {
 } from "../types/core";
 import { getProvider } from "../common/utils";
 
-// keepinp the following code for posterity. If we want the function below to return better types, we can use the following
+// keeping the following code for posterity. If we want the function below to return better types, we can use the following
 // type PromiseValue<T> = T extends Promise<infer U> ? U : never;
 // Promise<PromiseValue<ReturnType<T["verify"] | T["skip"]>>[]>
 /**
@@ -16,10 +16,18 @@ import { getProvider } from "../common/utils";
  * Before running each verifier, the manager will make sure the verifier can handle the specific document by calling its exposed test function.
  * The manager will return the consolidated list of {@link VerificationFragment}
  */
+let displayWarning = true;
 export const verificationBuilder = <T extends Verifier<any>>(
   verifiers: T[],
   builderOptions: VerificationBuilderOptions
 ) => (document: DocumentsToVerify, promisesCallback?: PromiseCallback): Promise<VerificationFragment[]> => {
+  // if the user didn't configure an API key and didn't configure a provider or a resolver, then he will likely use a development key. We then warn him once, that he may need to configure things properly, especially for production
+  if (displayWarning && (!builderOptions.resolver || !builderOptions.provider) && !process.env.INFURA_API_KEY) {
+    displayWarning = false;
+    console.warn(
+      "You are using oa-verify default configuration, which is not suitable for production environment. Please make sure that you configured the library correctly."
+    );
+  }
   const verifierOptions: VerifierOptions = {
     provider: getProvider(builderOptions),
     resolver: builderOptions.resolver,

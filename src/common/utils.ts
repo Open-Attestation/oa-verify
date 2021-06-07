@@ -26,7 +26,7 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
 };
 
 export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
-  return "provider" in options ? options.provider : getDefaultProvider(options);
+  return options.provider ?? getDefaultProvider(options);
 };
 
 /**
