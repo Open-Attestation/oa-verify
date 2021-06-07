@@ -16,6 +16,7 @@ export interface VerificationBuilderOptionsWithProvider {
 export interface VerificationBuilderOptionsWithNetwork {
   network: string;
   resolver?: Resolver;
+  provider?: never;
 }
 
 export type VerificationBuilderOptions = VerificationBuilderOptionsWithProvider | VerificationBuilderOptionsWithNetwork;
