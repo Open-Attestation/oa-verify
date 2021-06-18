@@ -1,9 +1,10 @@
-import { providers } from "ethers";
+import { providers, Signer } from "ethers";
 import {
   VerificationBuilderOptions,
   VerificationBuilderOptionsWithNetwork,
   VerificationFragment,
   VerificationFragmentType,
+  ProviderDetails,
 } from "../types/core";
 import { INFURA_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
@@ -27,6 +28,46 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
 
 export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
   return options.provider ?? getDefaultProvider(options);
+};
+
+export const getFallBackProvider = (options: ProviderDetails[]): providers.Provider | Signer => {
+  if (options.length < 2) throw new Error("Please provide at least two set of information");
+
+  const providerPriority = options.map((providerDetail, index) => {
+    switch (providerDetail.provider) {
+      case "infura":
+        return {
+          priority: index,
+          provider: new providers.InfuraProvider(providerDetail.network, providerDetail.apiKey),
+        };
+
+      case "alchemy":
+        return {
+          priority: index,
+          provider: new providers.AlchemyProvider(providerDetail.network, providerDetail.apiKey),
+        };
+
+      case "etherscan":
+        return {
+          priority: index,
+          provider: new providers.EtherscanProvider(providerDetail.network, providerDetail.apiKey),
+        };
+
+      case "jsonrpc":
+        return {
+          priority: index,
+          provider: new providers.JsonRpcProvider(),
+        };
+
+      default:
+        return {
+          priority: index,
+          provider: new providers.JsonRpcProvider(),
+        };
+    }
+  });
+
+  return new providers.FallbackProvider(providerPriority, 1);
 };
 
 /**
