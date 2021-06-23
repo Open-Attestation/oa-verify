@@ -109,7 +109,8 @@ export type DocumentsToVerify =
   | SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 export interface ProviderDetails {
-  network: "homestead" | "mainnet" | "ropsten" | "rinkeby";
-  provider: "alchemy" | "etherscan" | "infura" | "jsonrpc";
-  apiKey: string;
+  network?: "homestead" | "mainnet" | "ropsten" | "rinkeby";
+  provider?: "alchemy" | "etherscan" | "infura" | "jsonrpc";
+  url?: string;
+  apiKey?: string;
 }

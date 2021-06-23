@@ -6,7 +6,7 @@ import {
   VerificationFragmentType,
   ProviderDetails,
 } from "../types/core";
-import { INFURA_API_KEY } from "../config";
+import { INFURA_API_KEY, ALCHEMY_API_KEY, ETHERSCAN_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -30,44 +30,39 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
   return options.provider ?? getDefaultProvider(options);
 };
 
-export const getFallBackProvider = (options: ProviderDetails[]): providers.Provider | Signer => {
-  if (options.length < 2) throw new Error("Please provide at least two set of information");
+export const generateProvider = (options?: ProviderDetails): providers.Provider | Signer => {
+  if (!!options && Object.keys(options).length === 1 && options.apiKey) {
+    throw new Error(
+      "We could link the apiKey provided to a provider, please state the provider to use in the parameter."
+    );
+  }
 
-  const providerPriority = options.map((providerDetail, index) => {
-    switch (providerDetail.provider) {
-      case "infura":
-        return {
-          priority: index,
-          provider: new providers.InfuraProvider(providerDetail.network, providerDetail.apiKey),
-        };
+  const network = options?.network || process.env.NETWORK || "homestead";
+  const provider = options?.provider || "infura";
+  const url = options?.url || "";
 
-      case "alchemy":
-        return {
-          priority: index,
-          provider: new providers.AlchemyProvider(providerDetail.network, providerDetail.apiKey),
-        };
+  if (!!options && Object.keys(options).length === 1 && url) {
+    return new providers.JsonRpcProvider(url);
+  }
 
-      case "etherscan":
-        return {
-          priority: index,
-          provider: new providers.EtherscanProvider(providerDetail.network, providerDetail.apiKey),
-        };
+  let apiKey = "";
 
-      case "jsonrpc":
-        return {
-          priority: index,
-          provider: new providers.JsonRpcProvider(),
-        };
+  switch (provider) {
+    case "infura":
+      apiKey = options?.apiKey || process.env.INFURA_API_KEY || INFURA_API_KEY;
+      return new providers.InfuraProvider(network, apiKey);
 
-      default:
-        return {
-          priority: index,
-          provider: new providers.JsonRpcProvider(),
-        };
-    }
-  });
+    case "etherscan":
+      apiKey = options?.apiKey || process.env.ETHERSCAN_API_KEY || ETHERSCAN_API_KEY;
+      return new providers.EtherscanProvider(network, apiKey);
 
-  return new providers.FallbackProvider(providerPriority, 1);
+    case "alchemy":
+      apiKey = options?.apiKey || process.env.ALCHEMY_API_KEY || ALCHEMY_API_KEY;
+      return new providers.AlchemyProvider(network, apiKey);
+
+    case "jsonrpc":
+      return new providers.JsonRpcProvider(url);
+  }
 };
 
 /**
