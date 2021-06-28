@@ -6,7 +6,7 @@ import {
   VerificationFragmentType,
   ProviderDetails,
 } from "../types/core";
-import { INFURA_API_KEY, ALCHEMY_API_KEY, ETHERSCAN_API_KEY } from "../config";
+import { INFURA_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -30,6 +30,14 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
   return options.provider ?? getDefaultProvider(options);
 };
 
+/**
+ * Generate Provider using the following options: (if no option is specified it will use the default values)
+ * @param {Object} ProviderDetails - Details to use for the function to successfully generate a provider.
+ * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "ropsten", "rinkeby"
+ * @param {string} ProviderDetails.provider - Specify which provider to use: "infura", "alchemy", "etherscan" or "jsonrpc"
+ * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
+ * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
+ */
 export const generateProvider = (options?: ProviderDetails): providers.Provider | Signer => {
   if (!!options && Object.keys(options).length === 1 && options.apiKey) {
     throw new Error(
@@ -38,8 +46,8 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
   }
 
   const network = options?.network || process.env.NETWORK || "homestead";
-  const provider = options?.provider || "infura";
-  const url = options?.url || "";
+  const provider = options?.provider || process.env.PROVIDER || "infura";
+  const url = options?.url || process.env.JSONRPC_PROVIDER_URL || "";
 
   if (!!options && Object.keys(options).length === 1 && url) {
     return new providers.JsonRpcProvider(url);
@@ -49,19 +57,36 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
 
   switch (provider) {
     case "infura":
-      apiKey = options?.apiKey || process.env.INFURA_API_KEY || INFURA_API_KEY;
-      return new providers.InfuraProvider(network, apiKey);
+      apiKey = options?.apiKey || process.env.INFURA_API_KEY || "";
+      !apiKey &&
+        console.warn(
+          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
+        );
+      return apiKey ? new providers.InfuraProvider(network, apiKey) : new providers.InfuraProvider(network);
 
     case "etherscan":
-      apiKey = options?.apiKey || process.env.ETHERSCAN_API_KEY || ETHERSCAN_API_KEY;
+      apiKey = options?.apiKey || process.env.ETHERSCAN_API_KEY || "";
+      !apiKey &&
+        console.warn(
+          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
+        );
       return new providers.EtherscanProvider(network, apiKey);
 
     case "alchemy":
-      apiKey = options?.apiKey || process.env.ALCHEMY_API_KEY || ALCHEMY_API_KEY;
-      return new providers.AlchemyProvider(network, apiKey);
+      apiKey = options?.apiKey || process.env.ALCHEMY_API_KEY || "";
+      !apiKey &&
+        console.warn(
+          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
+        );
+      return apiKey ? new providers.AlchemyProvider(network, apiKey) : new providers.AlchemyProvider(network);
 
     case "jsonrpc":
       return new providers.JsonRpcProvider(url);
+
+    default:
+      throw new Error(
+        "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy, etherscan or jsonrpc."
+      );
   }
 };
 

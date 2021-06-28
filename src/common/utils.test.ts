@@ -280,7 +280,7 @@ describe("generateProvider", () => {
   it("should use the default values to generate the provider if user did not specify any provider details", () => {
     const provider = generateProvider() as any;
     expect(provider?._network?.name).toEqual("homestead");
-    expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
 
@@ -291,7 +291,7 @@ describe("generateProvider", () => {
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
     expect(provider?.baseUrl).toMatch(/(etherscan)/i);
-    expect(provider?.apiKey).toEqual("3TDJ85CXAA4NCTBMP3UE98UR48NC2XKVGG");
+    expect(provider?.apiKey).toEqual("9D13ZE7XSBTJ94N9BNJ2MA33VMAY2YPIRB");
   });
 
   it("should use the default alchemy apiKey if no apiKey specified", () => {
@@ -301,7 +301,7 @@ describe("generateProvider", () => {
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
-    expect(provider?.apiKey).toEqual("OlOgD-8qs5l3pQm-B_fcrMAmHTmAwkGj");
+    expect(provider?.apiKey).toEqual("_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC");
   });
 
   it("should use the default jsonrpc url which is localhost:8545", () => {
@@ -317,7 +317,7 @@ describe("generateProvider", () => {
     const options = { network: "ropsten" } as ProviderDetails;
     const provider = generateProvider(options) as any;
     expect(provider?._network?.name).toEqual("ropsten");
-    expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
 
@@ -325,7 +325,7 @@ describe("generateProvider", () => {
     const options = { provider: "infura" } as ProviderDetails;
     const provider = generateProvider(options) as any;
     expect(provider?._network?.name).toEqual("homestead");
-    expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
 
@@ -341,6 +341,13 @@ describe("generateProvider", () => {
       generateProvider(options);
     }).toThrowError(
       "We could link the apiKey provided to a provider, please state the provider to use in the parameter."
+    );
+  });
+
+  it("should throw an error when if process.env is using the wrong value for PROVIDER", () => {
+    process.env.PROVIDER = "ABC";
+    expect(() => generateProvider()).toThrowError(
+      "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy, etherscan or jsonrpc."
     );
   });
 

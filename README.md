@@ -86,7 +86,6 @@ console.log(isValid(fragments)); // display true
     "type": "ISSUER_IDENTITY"
   }
 ]
-
 ```
 
 ## Advanced usage
@@ -94,6 +93,11 @@ console.log(isValid(fragments)); // display true
 ### Environment Variables
 
 - `INFURA_API_KEY`: let you provide your own `INFURA` API key.
+- `ALCHEMY_API_KEY`: let you provide your own `ALCHEMY` API key.
+- `ETHERSCAN_API_KEY`: let you provide your own `ETHERSCAN` API key.
+- `JSONRPC_PROVIDER_URL`: let you provide your preferred JSON-RPC HTTP API URL.
+- `NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
+- `PROVIDER`: let you specify the provider to use, i.e. "infura", "alchemy", "etherscan", "jsonrpc".
 
 ### Switching network
 
@@ -119,20 +123,17 @@ const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten
 `oa-verify` exposes a method, called `createResolver` that allows you to easily create custom resolvers, to resolve DIDs:
 
 ```ts
-import {
-  createResolver,
-  verificationBuilder,
-  openAttestationVerifiers
-} from '@govtechsg/oa-verify';
+import { createResolver, verificationBuilder, openAttestationVerifiers } from "@govtechsg/oa-verify";
 
 const resolver = createResolver({
-  networks: [{ name: 'my-network', rpcUrl: 'https://my-private-chain/besu', registry: '0xaE5a9b9...' }],
+  networks: [{ name: "my-network", rpcUrl: "https://my-private-chain/besu", registry: "0xaE5a9b9..." }],
 });
 
 const verify = verificationBuilder(openAttestationVerifiers, { resolver });
 ```
 
 At the moment, oa-verify supports two did resolvers:
+
 - [web-did-resolver](https://github.com/decentralized-identity/web-did-resolver#readme)
 - [ethd-did-resolver](https://github.com/decentralized-identity/ethr-did-resolver)
 
@@ -193,6 +194,57 @@ isValid(fragments); // display false because ISSUER_IDENTITY is INVALID
 isValid(fragments, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"]); // display true because those types are VALID
 ```
 
+## Provider
+
+You may generate a provider using the provider generator, it supports `INFURA`, `ALCHEMY`, `ETHERSCAN` and `JsonRPC` provider.
+
+It requires a set of options:
+
+- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
+- `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy", "etherscan" or "jsonrpc".
+- `url`: The _url_ may be specified as a **string** in which is being used to connect to a JSON-RPC HTTP API
+- `apiKey`: The _apiKey_ may be specified as a **string** for use together with the provider. If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
+
+### Example
+
+The most basic way to use:
+
+```
+import { utils } from "@govtechsg/oa-verify";
+const provider = utils.generateProvider();
+// This will generate an infura provider using the default values.
+```
+
+Alternate way 1 (with environment variables):
+
+```
+// environment file
+NETWORK="ropsten"
+PROVIDER="infura"
+JSONRPC_PROVIDER_URL="http://jsonrpc.com"
+INFURA_API_KEY="ajdh1j23"
+// Either use INFURA_API_KEY, ALCHEMY_API_KEY or ETHERSCAN_API_KEY, please match the API_KEY variable with the PROVIDER variable.
+
+// provider file
+import { utils } from "@govtechsg/oa-verify";
+const provider = utils.generateProvider();
+// This will use the environment variables declared in the files automatically.
+```
+
+Alternate way 2 (passing values in as parameters):
+
+```
+import { utils } from "@govtechsg/oa-verify";
+const providerOptions = {
+  network: "ropsten",
+  provider: "infura",
+  apiKey: "abdfddsfe23232"
+};
+const provider = utils.generateProvider(providerOptions);
+// This will generate a provider based on the options provided.
+// NOTE: by using this way, it will override all environment variables and default values.
+```
+
 ## Utils and types
 
 ### Overview
@@ -230,6 +282,7 @@ if(utils.isValidFragment(fragment)) {
 Note that in the example above, using `utils.isValidFragment` might be unnecessary. It's possible to use directly `ValidTokenRegistryDataV2.guard` over the data.
 
 ### List of utilities
+
 - `getOpenAttestationHashFragment`
 - `getOpenAttestationDidSignedDocumentStatusFragment`
 - `getOpenAttestationEthereumDocumentStoreStatusFragment`
@@ -244,7 +297,6 @@ Note that in the example above, using `utils.isValidFragment` might be unnecessa
 - `isInvalidFragment`: type guard to filter only `INVALID` fragment type
 - `isErrorFragment`: type guard to filter only `ERROR` fragment type
 - `isSkippedFragment`: type guard to filter only `SKIPPED` fragment type
-
 
 ## Development
 
