@@ -92,12 +92,12 @@ console.log(isValid(fragments)); // display true
 
 ### Environment Variables
 
-- `INFURA_API_KEY`: let you provide your own `INFURA` API key.
-- `ALCHEMY_API_KEY`: let you provide your own `ALCHEMY` API key.
-- `ETHERSCAN_API_KEY`: let you provide your own `ETHERSCAN` API key.
-- `JSONRPC_PROVIDER_URL`: let you provide your preferred JSON-RPC HTTP API URL.
-- `NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
-- `PROVIDER`: let you specify the provider to use, i.e. "infura", "alchemy", "etherscan", "jsonrpc".
+- `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
+- `PROVIDER_ENDPOINT_URL`: let you provide your preferred JSON-RPC HTTP API URL.
+- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
+- `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "etherscan", "jsonrpc".
+
+_Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
 
 ### Switching network
 
@@ -219,11 +219,10 @@ Alternate way 1 (with environment variables):
 
 ```
 // environment file
-NETWORK="ropsten"
-PROVIDER="infura"
-JSONRPC_PROVIDER_URL="http://jsonrpc.com"
-INFURA_API_KEY="ajdh1j23"
-// Either use INFURA_API_KEY, ALCHEMY_API_KEY or ETHERSCAN_API_KEY, please match the API_KEY variable with the PROVIDER variable.
+PROVIDER_NETWORK="ropsten"
+PROVIDER_ENDPOINT_TYPE="infura"
+PROVIDER_ENDPOINT_URL="http://jsonrpc.com"
+PROVIDER_API_KEY="ajdh1j23"
 
 // provider file
 import { utils } from "@govtechsg/oa-verify";

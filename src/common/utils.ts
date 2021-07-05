@@ -6,7 +6,7 @@ import {
   VerificationFragmentType,
   ProviderDetails,
 } from "../types/core";
-import { INFURA_API_KEY } from "../config";
+import { PROVIDER_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -18,7 +18,7 @@ import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verif
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   // create infura provider to get connection information
   // we then use StaticJsonRpcProvider so that we can set our own custom limit
-  const uselessProvider = new providers.InfuraProvider(options.network, INFURA_API_KEY);
+  const uselessProvider = new providers.InfuraProvider(options.network, PROVIDER_API_KEY);
   const connection = {
     ...uselessProvider.connection,
     throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
@@ -41,43 +41,32 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
 export const generateProvider = (options?: ProviderDetails): providers.Provider | Signer => {
   if (!!options && Object.keys(options).length === 1 && options.apiKey) {
     throw new Error(
-      "We could link the apiKey provided to a provider, please state the provider to use in the parameter."
+      "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
     );
   }
 
-  const network = options?.network || process.env.NETWORK || "homestead";
-  const provider = options?.provider || process.env.PROVIDER || "infura";
-  const url = options?.url || process.env.JSONRPC_PROVIDER_URL || "";
+  const network = options?.network || process.env.PROVIDER_NETWORK || "homestead";
+  const provider = options?.provider || process.env.PROVIDER_ENDPOINT_TYPE || "infura";
+  const url = options?.url || process.env.PROVIDER_ENDPOINT_URL || "";
+  const apiKey =
+    options?.apiKey || (provider === "infura" && process.env.INFURA_API_KEY) || process.env.PROVIDER_API_KEY || "";
+  !apiKey &&
+    console.warn(
+      "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
+    );
 
   if (!!options && Object.keys(options).length === 1 && url) {
     return new providers.JsonRpcProvider(url);
   }
 
-  let apiKey = "";
-
   switch (provider) {
     case "infura":
-      apiKey = options?.apiKey || process.env.INFURA_API_KEY || "";
-      !apiKey &&
-        console.warn(
-          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
-        );
       return apiKey ? new providers.InfuraProvider(network, apiKey) : new providers.InfuraProvider(network);
 
     case "etherscan":
-      apiKey = options?.apiKey || process.env.ETHERSCAN_API_KEY || "";
-      !apiKey &&
-        console.warn(
-          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
-        );
       return new providers.EtherscanProvider(network, apiKey);
 
     case "alchemy":
-      apiKey = options?.apiKey || process.env.ALCHEMY_API_KEY || "";
-      !apiKey &&
-        console.warn(
-          "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
-        );
       return apiKey ? new providers.AlchemyProvider(network, apiKey) : new providers.AlchemyProvider(network);
 
     case "jsonrpc":

@@ -2,7 +2,7 @@ import { DIDDocument, Resolver, VerificationMethod } from "did-resolver";
 import { getResolver as ethrGetResolver } from "ethr-did-resolver";
 import { getResolver as webGetResolver } from "web-did-resolver";
 import NodeCache from "node-cache";
-import { INFURA_API_KEY } from "../config";
+import { PROVIDER_API_KEY } from "../config";
 
 export interface EthrResolverConfig {
   networks: Array<{
@@ -13,7 +13,7 @@ export interface EthrResolverConfig {
 }
 
 const providerConfig = {
-  networks: [{ name: "mainnet", rpcUrl: `https://mainnet.infura.io/v3/${INFURA_API_KEY}` }],
+  networks: [{ name: "mainnet", rpcUrl: `https://mainnet.infura.io/v3/${PROVIDER_API_KEY}` }],
 };
 
 const didResolutionCache = new NodeCache({ stdTTL: 5 * 60 }); // 5 min

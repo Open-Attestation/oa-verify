@@ -257,11 +257,15 @@ describe("generateProvider", () => {
   beforeEach(() => {
     jest.resetModules();
     process.env = {
-      NETWORK: "",
-      INFURA_API_KEY: "",
-      ALCHEMY_API_KEY: "",
-      ETHERSCAN_API_KEY: "",
+      PROVIDER_NETWORK: "",
+      PROVIDER_API_KEY: "",
     };
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.spyOn(console, "warn").mockRestore();
   });
 
   it("should use the details provided as top priority", () => {
@@ -340,20 +344,20 @@ describe("generateProvider", () => {
     expect(() => {
       generateProvider(options);
     }).toThrowError(
-      "We could link the apiKey provided to a provider, please state the provider to use in the parameter."
+      "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
     );
   });
 
   it("should throw an error when if process.env is using the wrong value for PROVIDER", () => {
-    process.env.PROVIDER = "ABC";
+    process.env.PROVIDER_ENDPOINT_TYPE = "ABC";
     expect(() => generateProvider()).toThrowError(
       "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy, etherscan or jsonrpc."
     );
   });
 
   it("should use the process.env values if there is one, should not use the default values, for infura test case", () => {
-    process.env.NETWORK = "rinkeby";
-    process.env.INFURA_API_KEY = "env123123";
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env123123";
 
     const provider = generateProvider() as any;
     expect(provider?._network?.name).toEqual("rinkeby");
@@ -364,8 +368,8 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for etherscan test case", () => {
-    process.env.NETWORK = "rinkeby";
-    process.env.ETHERSCAN_API_KEY = "env456456";
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env456456";
 
     const options = {
       provider: "etherscan",
@@ -379,8 +383,8 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for alchemy test case", () => {
-    process.env.NETWORK = "rinkeby";
-    process.env.ALCHEMY_API_KEY = "env789789";
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env789789";
 
     const options = {
       provider: "alchemy",
@@ -393,9 +397,19 @@ describe("generateProvider", () => {
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
   });
 
+  it("should use the process.env values if there is one, should not use the default values, for Json RPC test case", () => {
+    process.env.PROVIDER_ENDPOINT_URL = "www.1234.com";
+
+    const options = {
+      provider: "jsonrpc",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?.connection?.url).toMatch(/(www.1234.com)/i);
+  });
+
   it("should override the process.env value with the function parameter value", () => {
-    process.env.NETWORK = "rinkeby";
-    process.env.ALCHEMY_API_KEY = "env789789";
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env789789";
 
     const options = { network: "ropsten", provider: "alchemy", apiKey: "abc123" } as ProviderDetails;
     const provider = generateProvider(options) as any;
