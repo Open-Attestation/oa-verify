@@ -1,4 +1,4 @@
-import { providers, Signer } from "ethers";
+import { providers } from "ethers";
 import {
   VerificationBuilderOptions,
   VerificationBuilderOptionsWithNetwork,
@@ -18,7 +18,11 @@ import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verif
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   // create infura provider to get connection information
   // we then use StaticJsonRpcProvider so that we can set our own custom limit
-  const uselessProvider = new providers.InfuraProvider(options.network, PROVIDER_API_KEY);
+  const uselessProvider = generateProvider({
+    providerType: "infura",
+    network: options.network,
+    apiKey: PROVIDER_API_KEY,
+  }) as providers.InfuraProvider;
   const connection = {
     ...uselessProvider.connection,
     throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
@@ -34,11 +38,11 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
  * Generate Provider using the following options: (if no option is specified it will use the default values)
  * @param {Object} ProviderDetails - Details to use for the function to successfully generate a provider.
  * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "ropsten", "rinkeby"
- * @param {string} ProviderDetails.provider - Specify which provider to use: "infura", "alchemy", "etherscan" or "jsonrpc"
+ * @param {string} ProviderDetails.providerType - Specify which provider to use: "infura", "alchemy", "etherscan" or "jsonrpc"
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
  */
-export const generateProvider = (options?: ProviderDetails): providers.Provider | Signer => {
+export const generateProvider = (options?: ProviderDetails): providers.Provider => {
   if (!!options && Object.keys(options).length === 1 && options.apiKey) {
     throw new Error(
       "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
@@ -46,7 +50,7 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
   }
 
   const network = options?.network || process.env.PROVIDER_NETWORK || "homestead";
-  const provider = options?.provider || process.env.PROVIDER_ENDPOINT_TYPE || "infura";
+  const provider = options?.providerType || process.env.PROVIDER_ENDPOINT_TYPE || "infura";
   const url = options?.url || process.env.PROVIDER_ENDPOINT_URL || "";
   const apiKey =
     options?.apiKey || (provider === "infura" && process.env.INFURA_API_KEY) || process.env.PROVIDER_API_KEY || "";

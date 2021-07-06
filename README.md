@@ -236,7 +236,7 @@ Alternate way 2 (passing values in as parameters):
 import { utils } from "@govtechsg/oa-verify";
 const providerOptions = {
   network: "ropsten",
-  provider: "infura",
+  providerType: "infura",
   apiKey: "abdfddsfe23232"
 };
 const provider = utils.generateProvider(providerOptions);
