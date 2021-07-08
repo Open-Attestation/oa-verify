@@ -26,7 +26,7 @@ const openAttestationVerifiers = [
 ];
 
 const defaultBuilderOption = {
-  network: "homestead",
+  network: process.env.PROVIDER_NETWORK || "homestead",
 };
 
 const verify = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
