@@ -5,6 +5,7 @@ import {
   VerificationFragment,
   VerificationFragmentType,
   ProviderDetails,
+  providerType,
 } from "../types/core";
 import { PROVIDER_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
@@ -19,7 +20,7 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
   // create infura provider to get connection information
   // we then use StaticJsonRpcProvider so that we can set our own custom limit
   const uselessProvider = generateProvider({
-    providerType: "infura",
+    providerType: (process.env.PROVIDER_ENDPOINT_TYPE as providerType) || "infura",
     network: options.network,
     apiKey: PROVIDER_API_KEY,
   }) as providers.InfuraProvider;
@@ -62,6 +63,8 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
   if (!!options && Object.keys(options).length === 1 && url) {
     return new providers.JsonRpcProvider(url);
   }
+
+  console.log({ provider }, { url }, { apiKey });
 
   switch (provider) {
     case "infura":
