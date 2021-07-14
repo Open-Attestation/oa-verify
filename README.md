@@ -95,7 +95,7 @@ console.log(isValid(fragments)); // display true
 - `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
 - `PROVIDER_ENDPOINT_URL`: let you provide your preferred JSON-RPC HTTP API URL.
 - `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
-- `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "etherscan", "jsonrpc".
+- `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "jsonrpc".
 
 _Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
 
@@ -201,7 +201,7 @@ You may generate a provider using the provider generator, it supports `INFURA`, 
 It requires a set of options:
 
 - `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
-- `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy", "etherscan" or "jsonrpc".
+- `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy" or "jsonrpc".
 - `url`: The _url_ may be specified as a **string** in which is being used to connect to a JSON-RPC HTTP API
 - `apiKey`: The _apiKey_ may be specified as a **string** for use together with the provider. If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
 

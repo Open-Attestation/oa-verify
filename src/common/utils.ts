@@ -7,7 +7,7 @@ import {
   ProviderDetails,
   providerType,
 } from "../types/core";
-import { PROVIDER_API_KEY } from "../config";
+import { INFURA_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -17,29 +17,34 @@ import { OpenAttestationDnsDidIdentityProofVerificationFragment } from "../verif
 import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
+  const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
+  const providerType = (process.env.PROVIDER_ENDPOINT_TYPE as providerType) || "infura";
+  const apiKey = process.env.PROVIDER_API_KEY || "";
   // create infura provider to get connection information
   // we then use StaticJsonRpcProvider so that we can set our own custom limit
   const uselessProvider = generateProvider({
-    providerType: (process.env.PROVIDER_ENDPOINT_TYPE as providerType) || "infura",
-    network: options.network,
-    apiKey: PROVIDER_API_KEY,
-  }) as providers.InfuraProvider;
+    providerType,
+    network,
+    apiKey,
+  }) as providers.UrlJsonRpcProvider;
   const connection = {
     ...uselessProvider.connection,
     throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
   };
-  return new providers.StaticJsonRpcProvider(connection, options.network);
+  return new providers.StaticJsonRpcProvider(connection, network);
 };
 
+// getProvider is a function to get an existing provider or to get a Default provider, when given the options
 export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
   return options.provider ?? getDefaultProvider(options);
 };
 
 /**
+ * Generate Provider generates a provider based on the defined options or your env var, if no options or env var was detected, it will generate a provider based on the default values.
  * Generate Provider using the following options: (if no option is specified it will use the default values)
  * @param {Object} ProviderDetails - Details to use for the function to successfully generate a provider.
  * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "ropsten", "rinkeby"
- * @param {string} ProviderDetails.providerType - Specify which provider to use: "infura", "alchemy", "etherscan" or "jsonrpc"
+ * @param {string} ProviderDetails.providerType - Specify which provider to use: "infura", "alchemy" or "jsonrpc"
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
  */
@@ -63,15 +68,9 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
   if (!!options && Object.keys(options).length === 1 && url) {
     return new providers.JsonRpcProvider(url);
   }
-
-  console.log({ provider }, { url }, { apiKey });
-
   switch (provider) {
     case "infura":
       return apiKey ? new providers.InfuraProvider(network, apiKey) : new providers.InfuraProvider(network);
-
-    case "etherscan":
-      return new providers.EtherscanProvider(network, apiKey);
 
     case "alchemy":
       return apiKey ? new providers.AlchemyProvider(network, apiKey) : new providers.AlchemyProvider(network);
@@ -81,7 +80,7 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
 
     default:
       throw new Error(
-        "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy, etherscan or jsonrpc."
+        "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy or jsonrpc."
       );
   }
 };
