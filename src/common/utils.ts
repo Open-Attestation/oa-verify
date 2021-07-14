@@ -1,4 +1,5 @@
 import { providers } from "ethers";
+import { INFURA_API_KEY } from "../config";
 import {
   VerificationBuilderOptions,
   VerificationBuilderOptionsWithNetwork,
@@ -7,7 +8,6 @@ import {
   ProviderDetails,
   providerType,
 } from "../types/core";
-import { INFURA_API_KEY } from "../config";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -19,7 +19,7 @@ import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verif
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
   const providerType = (process.env.PROVIDER_ENDPOINT_TYPE as providerType) || "infura";
-  const apiKey = process.env.PROVIDER_API_KEY || "";
+  const apiKey = process.env.PROVIDER_API_KEY || (providerType === "infura" && INFURA_API_KEY) || "";
   // create infura provider to get connection information
   // we then use StaticJsonRpcProvider so that we can set our own custom limit
   const uselessProvider = generateProvider({
