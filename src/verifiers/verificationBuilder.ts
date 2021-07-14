@@ -22,7 +22,12 @@ export const verificationBuilder = <T extends Verifier<any>>(
   builderOptions: VerificationBuilderOptions
 ) => (document: DocumentsToVerify, promisesCallback?: PromiseCallback): Promise<VerificationFragment[]> => {
   // if the user didn't configure an API key and didn't configure a provider or a resolver, then he will likely use a development key. We then warn him once, that he may need to configure things properly, especially for production
-  if (displayWarning && (!builderOptions.resolver || !builderOptions.provider) && !process.env.INFURA_API_KEY) {
+  if (
+    displayWarning &&
+    (!builderOptions.resolver || !builderOptions.provider) &&
+    !process.env.INFURA_API_KEY &&
+    !process.env.PROVIDER_API_KEY
+  ) {
     displayWarning = false;
     console.warn(
       "You are using oa-verify default configuration, which is not suitable for production environment. Please make sure that you configured the library correctly."

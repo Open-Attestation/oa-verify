@@ -11,6 +11,10 @@ import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/d
 import { createResolver } from "./did/resolver";
 import { getIdentifier } from "./getIdentifier";
 import * as utils from "./common/utils";
+import util from "util";
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+util.deprecate(function infuraApiKey() {}, "'INFURA_API_KEY' has been deprecated, please use 'PROVIDER_API_KEY'.");
 
 const openAttestationVerifiers = [
   openAttestationHash,
@@ -22,7 +26,7 @@ const openAttestationVerifiers = [
 ];
 
 const defaultBuilderOption = {
-  network: "homestead",
+  network: process.env.PROVIDER_NETWORK || "homestead",
 };
 
 const verify = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);

@@ -10,8 +10,10 @@ import {
   getOpenAttestationEthereumDocumentStoreStatusFragment,
   getOpenAttestationEthereumTokenRegistryStatusFragment,
   getOpenAttestationHashFragment,
+  generateProvider,
 } from "./utils";
 import { AllVerificationFragment } from "..";
+import { ProviderDetails } from "../types/core";
 
 const fragments: AllVerificationFragment[] = [
   {
@@ -248,5 +250,150 @@ describe("getFragmentsByType", () => {
         "OpenAttestationDidIdentityProof",
       ]
     `);
+  });
+});
+
+describe("generateProvider", () => {
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = {
+      PROVIDER_NETWORK: "",
+      PROVIDER_API_KEY: "",
+      PROVIDER_ENDPOINT_TYPE: "",
+      PROVIDER_ENDPOINT_URL: "",
+    };
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.spyOn(console, "warn").mockRestore();
+  });
+
+  it("should use the details provided as top priority", () => {
+    const options = {
+      network: "ropsten",
+      providerType: "infura",
+      apiKey: "bb46da3f80e040e8ab73c0a9ff365d18",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+
+    expect(provider?._network?.name).toEqual("ropsten");
+    expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
+    expect(provider?.connection?.url).toMatch(/(infura)/i);
+  });
+
+  it("should use the default values to generate the provider if user did not specify any provider details", () => {
+    const provider = generateProvider() as any;
+    expect(provider?._network?.name).toEqual("homestead");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
+    expect(provider?.connection?.url).toMatch(/(infura)/i);
+  });
+
+  it("should use the default alchemy apiKey if no apiKey specified", () => {
+    const options = {
+      network: "ropsten",
+      providerType: "alchemy",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?.connection?.url).toMatch(/(alchemy)/i);
+    expect(provider?.apiKey).toEqual("_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC");
+  });
+
+  it("should use the default jsonrpc url which is localhost:8545", () => {
+    const options = {
+      network: "ropsten",
+      providerType: "jsonrpc",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?.connection?.url).toMatch(/(localhost:8545)/i);
+  });
+
+  it("should still generate a provider even if only one option (network) is provided", () => {
+    const options = { network: "ropsten" } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?._network?.name).toEqual("ropsten");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
+    expect(provider?.connection?.url).toMatch(/(infura)/i);
+  });
+
+  it("should still generate a provider even if only one option (provider) is provided", () => {
+    const options = { providerType: "infura" } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?._network?.name).toEqual("homestead");
+    expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
+    expect(provider?.connection?.url).toMatch(/(infura)/i);
+  });
+
+  it("should still generate a provider even if only one option (url) is provided", () => {
+    const options = { url: "www.123.com" } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?.connection?.url).toMatch(/(www.123.com)/i);
+  });
+
+  it("should throw an error and not generate a provider when only one option (apikey) is provided", () => {
+    const options = { apiKey: "abc123" } as ProviderDetails;
+    expect(() => {
+      generateProvider(options);
+    }).toThrowError(
+      "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
+    );
+  });
+
+  it("should throw an error when if process.env is using the wrong value for PROVIDER", () => {
+    process.env.PROVIDER_ENDPOINT_TYPE = "ABC";
+    expect(() => generateProvider()).toThrowError(
+      "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy or jsonrpc."
+    );
+  });
+
+  it("should use the process.env values if there is one, should not use the default values, for infura test case", () => {
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env123123";
+
+    const provider = generateProvider() as any;
+    expect(provider?._network?.name).toEqual("rinkeby");
+    expect(provider?._network?.name).not.toEqual("mainnet");
+    expect(provider?.apiKey).toEqual("env123123");
+    expect(provider?.apiKey).not.toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
+    expect(provider?.connection?.url).toMatch(/(infura)/i);
+  });
+
+  it("should use the process.env values if there is one, should not use the default values, for alchemy test case", () => {
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env789789";
+
+    const options = {
+      providerType: "alchemy",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?._network?.name).toEqual("rinkeby");
+    expect(provider?._network?.name).not.toEqual("mainnet");
+    expect(provider?.apiKey).toEqual("env789789");
+    expect(provider?.apiKey).not.toEqual("OlOgD-8qs5l3pQm-B_fcrMAmHTmAwkGj");
+    expect(provider?.connection?.url).toMatch(/(alchemy)/i);
+  });
+
+  it("should use the process.env values if there is one, should not use the default values, for Json RPC test case", () => {
+    process.env.PROVIDER_ENDPOINT_URL = "www.1234.com";
+
+    const options = {
+      providerType: "jsonrpc",
+    } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?.connection?.url).toMatch(/(www.1234.com)/i);
+  });
+
+  it("should override the process.env value with the function parameter value", () => {
+    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_API_KEY = "env789789";
+
+    const options = { network: "ropsten", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
+    const provider = generateProvider(options) as any;
+    expect(provider?._network?.name).toEqual("ropsten");
+    expect(provider?._network?.name).not.toEqual("rinkeby");
+    expect(provider?.apiKey).toEqual("abc123");
+    expect(provider?.apiKey).not.toEqual("env789789");
+    expect(provider?.connection?.url).toMatch(/(alchemy)/i);
   });
 });
