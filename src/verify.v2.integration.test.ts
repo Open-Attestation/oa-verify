@@ -48,8 +48,10 @@ const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "
 const verifyRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
 
 describe("verify(integration)", () => {
+  let defaultEnvironment: NodeJS.ProcessEnv;
   beforeEach(() => {
     jest.resetModules();
+    defaultEnvironment = process.env;
     process.env = Object.assign(process.env, {
       PROVIDER_NETWORK: "",
       PROVIDER_API_KEY: "",
@@ -61,11 +63,7 @@ describe("verify(integration)", () => {
   });
 
   afterEach(() => {
-    delete process.env.ETHEREUM_PROVIDER;
-    delete process.env.PROVIDER_NETWORK;
-    delete process.env.PROVIDER_API_KEY;
-    delete process.env.PROVIDER_ENDPOINT_TYPE;
-    delete process.env.PROVIDER_ENDPOINT_URL;
+    process.env = defaultEnvironment;
     jest.spyOn(console, "warn").mockRestore();
   });
   it("should skip all verifiers when the document is an empty object", async () => {
@@ -1247,7 +1245,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
     expect(isValid(results)).toStrictEqual(false);
-  });
+  }, 10000);
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
