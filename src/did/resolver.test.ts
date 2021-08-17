@@ -3,7 +3,7 @@ import { v3 } from "@govtechsg/open-attestation";
 import { openAttestationDidIdentityProof } from "../verifiers/issuerIdentity/did/didIdentityProof";
 import { verificationBuilder } from "../verifiers/verificationBuilder";
 import { INFURA_API_KEY } from "../config";
-import { createResolver, EthrResolverConfig, resolve } from "./resolver";
+import { createResolver, EthrResolverConfig, resolve, getProviderConfig } from "./resolver";
 
 const didDoc = {
   "@context": [
@@ -107,4 +107,46 @@ describe("custom resolver", () => {
     }
   `);
   }, 10000);
+});
+
+describe("getProviderConfig", () => {
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = {
+      PROVIDER_NETWORK: "",
+      PROVIDER_API_KEY: "",
+      PROVIDER_ENDPOINT_TYPE: "",
+      PROVIDER_ENDPOINT_URL: "",
+    };
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    jest.spyOn(console, "warn").mockImplementation(() => {});
+  });
+
+  afterEach(() => {
+    jest.spyOn(console, "warn").mockRestore();
+  });
+
+  it("should use env variables for provider config properties for didResolver", () => {
+    process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
+    process.env.PROVIDER_NETWORK = "ropsten";
+
+    expect(getProviderConfig()).toEqual({
+      networks: [{ name: "ropsten", rpcUrl: "https://eth-ropsten.alchemyapi.io/v2/_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC" }],
+    });
+  });
+
+  it("should set default when provider type is jsonrpc", () => {
+    process.env.PROVIDER_ENDPOINT_TYPE = "jsonrpc";
+    process.env.PROVIDER_NETWORK = "ropsten";
+
+    expect(getProviderConfig()).toEqual({
+      networks: [{ name: "mainnet", rpcUrl: "https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18" }],
+    });
+  });
+
+  it("should set defaults when no connection url and network is found in provider parameter object", () => {
+    expect(getProviderConfig()).toEqual({
+      networks: [{ name: "mainnet", rpcUrl: "https://mainnet.infura.io/v3/84842078b09946638c03157f83405213" }],
+    });
+  });
 });
