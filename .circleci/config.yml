@@ -1,4 +1,11 @@
-version: 2
+workflows:
+  version: 2
+  build-workflow:
+    jobs:
+      - build:
+          context:
+            - NPM Deployment
+
 jobs:
   build:
     docker:
