@@ -14,10 +14,20 @@ const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "
 describe("Handling HTTP response errors", () => {
   const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
   beforeAll(() => server.listen()); // Enable API mocking before tests
+  beforeEach(() => {
+    jest.resetModules();
+    process.env = {
+      PROVIDER_NETWORK: "",
+      PROVIDER_API_KEY: "",
+      PROVIDER_ENDPOINT_TYPE: "",
+      PROVIDER_ENDPOINT_URL: "",
+    };
+  });
   afterEach(() => server.resetHandlers()); // Reset any runtime request handlers we may add during the tests
   afterAll(() => server.close()); // Disable API mocking after the tests are done
 
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 429)", async () => {
+    process.env.PROVIDER_API_KEY = INFURA_API_KEY;
     server.use(
       rest.post(`https://mainnet.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
         return res(
@@ -94,6 +104,7 @@ describe("Handling HTTP response errors", () => {
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
   }, 60000);
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with a valid certificate (HTTP 502)", async () => {
+    process.env.PROVIDER_API_KEY = INFURA_API_KEY;
     server.use(
       rest.post(`https://mainnet.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
         return res(
@@ -170,6 +181,7 @@ describe("Handling HTTP response errors", () => {
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
   });
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 429)", async () => {
+    process.env.PROVIDER_API_KEY = INFURA_API_KEY;
     // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
     server.use(
       rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
@@ -247,6 +259,7 @@ describe("Handling HTTP response errors", () => {
     expect(isValid(results, ["DOCUMENT_STATUS"])).toStrictEqual(false); // Because of SERVER_ERROR
   });
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 502)", async () => {
+    process.env.PROVIDER_API_KEY = INFURA_API_KEY;
     // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
     server.use(
       rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {

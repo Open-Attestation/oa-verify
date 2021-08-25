@@ -107,3 +107,12 @@ export type DocumentsToVerify =
   | WrappedDocument<v2.OpenAttestationDocument>
   | WrappedDocument<v3.OpenAttestationDocument>
   | SignedWrappedDocument<v2.OpenAttestationDocument>;
+
+export type providerType = "alchemy" | "infura" | "jsonrpc";
+
+export interface ProviderDetails {
+  network?: string;
+  providerType?: providerType;
+  url?: string;
+  apiKey?: string;
+}
