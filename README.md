@@ -97,7 +97,7 @@ console.log(isValid(fragments)); // display true
 - `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
 - `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "jsonrpc".
 
-_Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
+_Provider that is supported: Infura, Alchemy, JSON-RPC_
 
 ### Switching network
 
@@ -196,7 +196,7 @@ isValid(fragments, ["DOCUMENT_INTEGRITY", "DOCUMENT_STATUS"]); // display true b
 
 ## Provider
 
-You may generate a provider using the provider generator, it supports `INFURA`, `ALCHEMY`, `ETHERSCAN` and `JsonRPC` provider.
+You may generate a provider using the provider generator, it supports `INFURA`, `ALCHEMY` and `JsonRPC` provider.
 
 It requires a set of options:
 
