@@ -87,7 +87,7 @@ describe("custom resolver", () => {
       createResolver({ ethrResolverConfig: customConfig })
     );
     expect(did).toEqual(didDoc);
-  }, 10000);
+  });
 
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
@@ -106,7 +106,7 @@ describe("custom resolver", () => {
       "type": "ISSUER_IDENTITY",
     }
   `);
-  }, 10000);
+  });
 });
 
 describe("getProviderConfig", () => {

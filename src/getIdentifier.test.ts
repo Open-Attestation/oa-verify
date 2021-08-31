@@ -141,7 +141,7 @@ describe("getIdentifier", () => {
     it("should return a DID identity proof if issuer fragment is of type OpenAttestationDidIdentityProof", async () => {
       const fragment = await openAttestationDidIdentityProof.verify(v3DidSigned, options);
       expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
-        identifier: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+        identifier: "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
         type: "DID",
       });
     });

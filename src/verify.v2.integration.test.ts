@@ -1245,7 +1245,7 @@ describe("verify(integration)", () => {
     expect(isValid(results, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     expect(isValid(results, ["ISSUER_IDENTITY"])).toStrictEqual(false);
     expect(isValid(results)).toStrictEqual(false);
-  }, 10000);
+  });
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
@@ -1914,22 +1914,12 @@ describe("verify(integration)", () => {
           "data": Array [
             Object {
               "location": "example.tradetrust.io",
-              "reason": Object {
-                "code": 4,
-                "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              },
-              "status": "INVALID",
+              "status": "VALID",
               "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "status": "INVALID",
+          "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
         Object {
@@ -2183,5 +2173,5 @@ describe("verify(integration)", () => {
         },
       ]
     `);
-  }, 10000);
+  });
 });

@@ -104,7 +104,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
@@ -140,7 +140,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
               "verified": true,
             },
             "name": "OpenAttestationDidIdentityProof",
@@ -150,7 +150,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for document issued correctly with DID & using DID identity proof, but not revoked on a document store", async () => {
       const fragments = await verifyRopsten(v3DidSignedRevocationStoreNotRevoked);
       const valid = isValid(fragments);
@@ -186,11 +186,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                   "revoked": false,
                 },
               },
@@ -223,7 +223,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
               "verified": true,
             },
             "name": "OpenAttestationDidIdentityProof",
@@ -233,7 +233,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof", async () => {
       const fragments = await verifyRopsten(v3DnsDidSigned);
       const valid = isValid(fragments);
@@ -269,7 +269,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
@@ -295,7 +295,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+              "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
               "location": "example.tradetrust.io",
               "status": "VALID",
             },
@@ -316,7 +316,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof, but not revoked  on a document store", async () => {
       const fragments = await verifyRopsten(v3DnsDidSignedRevocationStoreNotRevoked);
       const valid = isValid(fragments);
@@ -352,11 +352,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                   "revoked": false,
                 },
               },
@@ -379,7 +379,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+              "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
               "location": "example.tradetrust.io",
               "status": "VALID",
             },
@@ -400,7 +400,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for document issued correctly with document store & using DNS-TXT identity proof", async () => {
       const fragments = await verifyRopsten(v3DocumentStoreIssued);
       const valid = isValid(fragments);
@@ -426,11 +426,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "revoked": false,
                 },
               },
@@ -454,7 +454,7 @@ describe("verify v3(integration)", () => {
           Object {
             "data": Object {
               "identifier": "example.tradetrust.io",
-              "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "status": "VALID",
@@ -483,7 +483,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for document issued correctly with token registry & using DNS-TXT identity proof", async () => {
       const fragments = await verifyRopsten(v3TokenRegistryIssued);
       const valid = isValid(fragments);
@@ -559,7 +559,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
     it("should return valid fragments for documents correctly issued but with data obfuscated", async () => {
       const obfuscated = obfuscate(v3DidSigned, ["reference"]);
       expect(obfuscated.reference).toBe(undefined);
@@ -597,7 +597,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
@@ -633,7 +633,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
               "verified": true,
             },
             "name": "OpenAttestationDidIdentityProof",
@@ -643,7 +643,7 @@ describe("verify v3(integration)", () => {
         ]
       `);
       expect(valid).toBe(true);
-    }, 10000);
+    });
 
     it("should return the correct fragments even when process.env is used for out of the box verify for document with document store", async () => {
       // simulate loading process.env from .env file
@@ -676,11 +676,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "revoked": false,
                 },
               },
@@ -704,7 +704,7 @@ describe("verify v3(integration)", () => {
           Object {
             "data": Object {
               "identifier": "example.tradetrust.io",
-              "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "status": "VALID",
@@ -722,7 +722,7 @@ describe("verify v3(integration)", () => {
           },
         ]
       `);
-    }, 10000);
+    });
     it("should use the defaults to connect to provider even when process.env is not there for document with document store", async () => {
       const defaultBuilderOption = {
         network: process.env.PROVIDER_NETWORK || "homestead",
@@ -751,7 +751,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "issued": false,
                   "reason": Object {
                     "code": 1,
@@ -760,7 +760,7 @@ describe("verify v3(integration)", () => {
                   },
                 },
                 "revocation": Object {
-                  "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
@@ -794,13 +794,13 @@ describe("verify v3(integration)", () => {
           Object {
             "data": Object {
               "identifier": "example.tradetrust.io",
-              "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 4,
               "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+              "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
             "status": "INVALID",
             "type": "ISSUER_IDENTITY",
@@ -817,7 +817,7 @@ describe("verify v3(integration)", () => {
           },
         ]
       `);
-    }, 10000);
+    });
     it("should return the correct fragments when using process.env variables for did resolver", async () => {
       // simulate loading process.env from .env file
       process.env.PROVIDER_NETWORK = "ropsten";
@@ -860,7 +860,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
@@ -928,7 +928,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
                 "revocation": Object {
@@ -954,7 +954,7 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+              "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
               "location": "example.tradetrust.io",
               "status": "VALID",
             },
@@ -964,7 +964,7 @@ describe("verify v3(integration)", () => {
           },
         ]
       `);
-    }, 10000);
+    });
   });
   describe("invalid documents", () => {
     describe("document store", () => {
@@ -1012,7 +1012,7 @@ describe("verify v3(integration)", () => {
                     "reason": Object {
                       "code": 1,
                       "codeString": "DOCUMENT_NOT_ISSUED",
-                      "message": "Document 0x6e3b3b131db956263d142f42a840962d31359fff61c28937d9d1add0ca04c89e has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                      "message": "Document 0xdaf603bcee04e4489e624aed8d39c5f86674a34d5576031c5c3c9a5766b30885 has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
                     },
                   },
                   "revocation": Object {
@@ -1027,14 +1027,14 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 1,
                 "codeString": "DOCUMENT_NOT_ISSUED",
-                "message": "Document 0x6e3b3b131db956263d142f42a840962d31359fff61c28937d9d1add0ca04c89e has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "message": "Document 0xdaf603bcee04e4489e624aed8d39c5f86674a34d5576031c5c3c9a5766b30885 has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for document that has been revoked", async () => {
         const fragments = await verifyRopsten(v3DocumentStoreRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1046,15 +1046,15 @@ describe("verify v3(integration)", () => {
               "data": Object {
                 "details": Object {
                   "issuance": Object {
-                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                     "issued": true,
                   },
                   "revocation": Object {
-                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                     "reason": Object {
                       "code": 5,
                       "codeString": "DOCUMENT_REVOKED",
-                      "message": "Document 0xa9e9f0c9adc106908b9ee40325f5ca583912853751cf697f540cf647479a2cd8 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                      "message": "Document 0x4cefff86bef5079fd0f63a27cf2a849258cf15a6b7c9526bc63d00c7f3d3ebe8 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
                     },
                     "revoked": true,
                   },
@@ -1066,7 +1066,7 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 5,
                 "codeString": "DOCUMENT_REVOKED",
-                "message": "Document 0xa9e9f0c9adc106908b9ee40325f5ca583912853751cf697f540cf647479a2cd8 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "message": "Document 0x4cefff86bef5079fd0f63a27cf2a849258cf15a6b7c9526bc63d00c7f3d3ebe8 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
@@ -1084,20 +1084,20 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "identifier": "notinuse.tradetrust.io",
-                "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
               },
               "name": "OpenAttestationDnsTxtIdentityProof",
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
               },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
             },
           ]
         `);
-      }, 10000);
+      });
     });
     describe("token registry", () => {
       it("should return invalid fragments for documents that has been tampered", async () => {
@@ -1127,7 +1127,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for document that has not been issued", async () => {
         const fragments = await verifyRopsten(v3TokenRegistryWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1159,7 +1159,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that is using invalid DNS but correctly issued", async () => {
         const fragments = await verifyRopsten(v3TokenRegistryInvalidIssued);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
@@ -1183,7 +1183,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
     });
     describe("did (DNS-DID)", () => {
       it("should return invalid fragments for documents that has been tampered", async () => {
@@ -1213,7 +1213,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return skipped fragments for documents that has not been signed", async () => {
         const fragments = await verifyRopsten(v3DnsDidWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1233,7 +1233,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents with revocation method obfuscated", async () => {
         const obfuscated = obfuscate(v3DnsDidSigned, ["openAttestationMetadata.proof.revocation"]);
         const fragments = await verifyRopsten(obfuscated);
@@ -1255,7 +1255,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that is using invalid DNS but correctly signed", async () => {
         const fragments = await verifyRopsten(v3DnsDidInvalidSigned);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
@@ -1280,7 +1280,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that have been revoked", async () => {
         const fragments = await verifyRopsten(v3DnsDidSignedRevocationStoreButRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1292,15 +1292,15 @@ describe("verify v3(integration)", () => {
               "data": Object {
                 "details": Object {
                   "issuance": Object {
-                    "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                    "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                     "issued": true,
                   },
                   "revocation": Object {
-                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "address": "0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                     "reason": Object {
                       "code": 5,
                       "codeString": "DOCUMENT_REVOKED",
-                      "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                      "message": "Document 0xf2a180a23e7c9917513092d4f315e9aac963388d703d20da2760788032b687b0 has been revoked under contract 0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                     },
                     "revoked": true,
                   },
@@ -1312,14 +1312,14 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 5,
                 "codeString": "DOCUMENT_REVOKED",
-                "message": "Document 0x18821b9fb922c38c743bf223cfc08afb8f90c74527d1f9addf3ab766bf1d3eb1 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "message": "Document 0xf2a180a23e7c9917513092d4f315e9aac963388d703d20da2760788032b687b0 has been revoked under contract 0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
           ]
         `);
-      }, 10000);
+      });
     });
     describe("did (DID)", () => {
       it("should return invalid fragments for documents that has been tampered", async () => {
@@ -1349,7 +1349,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that has not been signed", async () => {
         const fragments = await verifyRopsten(v3DidWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1370,7 +1370,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents with revocation method obfuscated", async () => {
         const obfuscated = obfuscate(v3DidSigned, ["openAttestationMetadata.proof.revocation"]);
         const fragments = await verifyRopsten(obfuscated);
@@ -1392,7 +1392,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that is using invalid DNS but correctly signed", async () => {
         const fragments = await verifyRopsten(v3DidInvalidSigned);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
@@ -1417,7 +1417,7 @@ describe("verify v3(integration)", () => {
             },
           ]
         `);
-      }, 10000);
+      });
       it("should return invalid fragments for documents that have been revoked", async () => {
         const fragments = await verifyRopsten(v3DidSignedRevocationStoreButRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1429,15 +1429,15 @@ describe("verify v3(integration)", () => {
               "data": Object {
                 "details": Object {
                   "issuance": Object {
-                    "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                    "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                     "issued": true,
                   },
                   "revocation": Object {
-                    "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                    "address": "0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                     "reason": Object {
                       "code": 5,
                       "codeString": "DOCUMENT_REVOKED",
-                      "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                      "message": "Document 0xfdd40a012f38dacedad0d7fbe68726ac47f7836c6019f9824329207b9d7e6bb1 has been revoked under contract 0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
                     },
                     "revoked": true,
                   },
@@ -1449,14 +1449,14 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 5,
                 "codeString": "DOCUMENT_REVOKED",
-                "message": "Document 0xd271155c3fccaf97fd9404b15000399620002c092c047d3cd506cf51ecd522d7 has been revoked under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "message": "Document 0xfdd40a012f38dacedad0d7fbe68726ac47f7836c6019f9824329207b9d7e6bb1 has been revoked under contract 0xc7dfB2D05ab3Da91e723F2557817165e6acEAc38",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
             },
           ]
         `);
-      }, 10000);
+      });
     });
   });
 });
