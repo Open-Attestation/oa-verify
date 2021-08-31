@@ -276,7 +276,7 @@ describe("generateProvider", () => {
       providerType: "infura",
       apiKey: "bb46da3f80e040e8ab73c0a9ff365d18",
     } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
 
     expect(provider?._network?.name).toEqual("ropsten");
     expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
@@ -284,7 +284,7 @@ describe("generateProvider", () => {
   });
 
   it("should use the default values to generate the provider if user did not specify any provider details", () => {
-    const provider = generateProvider() as any;
+    const provider = generateProvider();
     expect(provider?._network?.name).toEqual("homestead");
     expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
@@ -295,7 +295,7 @@ describe("generateProvider", () => {
       network: "ropsten",
       providerType: "alchemy",
     } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
     expect(provider?.apiKey).toEqual("_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC");
   });
@@ -305,13 +305,13 @@ describe("generateProvider", () => {
       network: "ropsten",
       providerType: "jsonrpc",
     } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?.connection?.url).toMatch(/(localhost:8545)/i);
   });
 
   it("should still generate a provider even if only one option (network) is provided", () => {
     const options = { network: "ropsten" } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?._network?.name).toEqual("ropsten");
     expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
@@ -319,7 +319,7 @@ describe("generateProvider", () => {
 
   it("should still generate a provider even if only one option (provider) is provided", () => {
     const options = { providerType: "infura" } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?._network?.name).toEqual("homestead");
     expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
@@ -327,7 +327,7 @@ describe("generateProvider", () => {
 
   it("should still generate a provider even if only one option (url) is provided", () => {
     const options = { url: "www.123.com" } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?.connection?.url).toMatch(/(www.123.com)/i);
   });
 
@@ -351,7 +351,7 @@ describe("generateProvider", () => {
     process.env.PROVIDER_NETWORK = "rinkeby";
     process.env.PROVIDER_API_KEY = "env123123";
 
-    const provider = generateProvider() as any;
+    const provider = generateProvider();
     expect(provider?._network?.name).toEqual("rinkeby");
     expect(provider?._network?.name).not.toEqual("mainnet");
     expect(provider?.apiKey).toEqual("env123123");
@@ -366,7 +366,7 @@ describe("generateProvider", () => {
     const options = {
       providerType: "alchemy",
     } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?._network?.name).toEqual("rinkeby");
     expect(provider?._network?.name).not.toEqual("mainnet");
     expect(provider?.apiKey).toEqual("env789789");
@@ -380,7 +380,7 @@ describe("generateProvider", () => {
     const options = {
       providerType: "jsonrpc",
     } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?.connection?.url).toMatch(/(www.1234.com)/i);
   });
 
@@ -389,7 +389,7 @@ describe("generateProvider", () => {
     process.env.PROVIDER_API_KEY = "env789789";
 
     const options = { network: "ropsten", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
-    const provider = generateProvider(options) as any;
+    const provider = generateProvider(options);
     expect(provider?._network?.name).toEqual("ropsten");
     expect(provider?._network?.name).not.toEqual("rinkeby");
     expect(provider?.apiKey).toEqual("abc123");

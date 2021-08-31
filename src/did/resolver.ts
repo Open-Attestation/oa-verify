@@ -14,7 +14,7 @@ export interface EthrResolverConfig {
 }
 
 export const getProviderConfig = () => {
-  const provider = generateProvider() as any;
+  const provider = generateProvider();
   const rpcUrl = provider?.connection?.url || "";
   const networkName = provider?._network?.name === "homestead" ? "mainnet" : provider?._network?.name || "";
 

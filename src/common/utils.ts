@@ -48,7 +48,9 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
  */
-export const generateProvider = (options?: ProviderDetails): providers.Provider => {
+export const generateProvider = (
+  options?: ProviderDetails
+): (providers.JsonRpcProvider & { apiKey?: never }) | providers.InfuraProvider | providers.AlchemyProvider => {
   if (!!options && Object.keys(options).length === 1 && options.apiKey) {
     throw new Error(
       "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
