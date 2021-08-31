@@ -137,7 +137,7 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+            "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
             "verified": true,
           },
           "name": "OpenAttestationDidIdentityProof",
@@ -158,11 +158,11 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+            "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
             "reason": Object {
               "code": 7,
               "codeString": "WRONG_SIGNATURE",
-              "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "message": "merkle root is not signed correctly by 0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
             },
             "verified": false,
           },
@@ -170,7 +170,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 7,
             "codeString": "WRONG_SIGNATURE",
-            "message": "merkle root is not signed correctly by 0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+            "message": "merkle root is not signed correctly by 0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",

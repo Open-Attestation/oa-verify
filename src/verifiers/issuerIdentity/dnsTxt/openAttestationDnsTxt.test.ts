@@ -457,7 +457,7 @@ describe("verify", () => {
         Object {
           "data": Object {
             "identifier": "example.tradetrust.io",
-            "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "status": "VALID",
@@ -495,13 +495,13 @@ describe("verify", () => {
         Object {
           "data": Object {
             "identifier": "nonexistent.example.com",
-            "value": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+            "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 4,
             "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",

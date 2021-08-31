@@ -134,7 +134,7 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+            "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
             "location": "example.tradetrust.io",
             "status": "VALID",
           },
@@ -159,7 +159,7 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+            "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
             "location": "example.com",
             "status": "INVALID",
           },
