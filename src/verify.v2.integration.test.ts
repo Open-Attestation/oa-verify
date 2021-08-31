@@ -1855,7 +1855,7 @@ describe("verify(integration)", () => {
     process.env.PROVIDER_NETWORK = "ropsten";
     process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
     const defaultBuilderOption = {
-      network: process.env.PROVIDER_NETWORK || "homestead",
+      network: process.env.PROVIDER_NETWORK,
     };
     const verification = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
     const fragments = await verification(documentRopstenValidWithDocumentStore);
@@ -1914,22 +1914,12 @@ describe("verify(integration)", () => {
           "data": Array [
             Object {
               "location": "example.tradetrust.io",
-              "reason": Object {
-                "code": 4,
-                "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-              },
-              "status": "INVALID",
+              "status": "VALID",
               "value": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
-          "reason": Object {
-            "code": 4,
-            "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "status": "INVALID",
+          "status": "VALID",
           "type": "ISSUER_IDENTITY",
         },
         Object {
@@ -1947,8 +1937,9 @@ describe("verify(integration)", () => {
   });
 
   it("should use the defaults to connect to provider even when process.env is not there for document with document store", async () => {
+    process.env.PROVIDER_NETWORK = "";
     const defaultBuilderOption = {
-      network: process.env.PROVIDER_NETWORK || "homestead",
+      network: process.env.PROVIDER_NETWORK,
     };
     const verification = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
     const fragments = await verification(documentMainnetValidWithCertificateStore);
@@ -2032,7 +2023,7 @@ describe("verify(integration)", () => {
     process.env.PROVIDER_NETWORK = "ropsten";
     process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
     const defaultBuilderOption = {
-      network: process.env.PROVIDER_NETWORK || "homestead",
+      network: process.env.PROVIDER_NETWORK,
     };
     const verification = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
     const didFragments = await verification(documentDidSigned);
