@@ -22,6 +22,8 @@ jobs:
       - run:
           name: test
           command: npm run test
+          environment:
+            NODE_OPTIONS: --max_old_space_size=8192
       - run:
           name: build
           command: npm run build
