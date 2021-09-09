@@ -16,7 +16,6 @@ import {
   tamperedDocumentWithInvalidCertificateStore,
 } from "../test/fixtures/v2/tamperedDocument";
 import { documentRopstenValidWithCertificateStore } from "../test/fixtures/v2/documentRopstenValidWithCertificateStore";
-import { documentRopstenValidWithDocumentStore } from "../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentRopstenValidWithToken } from "../test/fixtures/v2/documentRopstenValidWithToken";
 import { documentRopstenRevokedWithToken } from "../test/fixtures/v2/documentRopstenRevokedWithToken";
 import { documentRopstenRevokedWithDocumentStore } from "../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
@@ -48,22 +47,13 @@ const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "
 const verifyRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
 
 describe("verify(integration)", () => {
-  let defaultEnvironment: NodeJS.ProcessEnv;
   beforeEach(() => {
     jest.resetModules();
-    defaultEnvironment = process.env;
-    process.env = Object.assign(process.env, {
-      PROVIDER_NETWORK: "",
-      PROVIDER_API_KEY: "",
-      PROVIDER_ENDPOINT_TYPE: "",
-      PROVIDER_ENDPOINT_URL: "",
-    });
     // eslint-disable-next-line @typescript-eslint/no-empty-function
     jest.spyOn(console, "warn").mockImplementation(() => {});
   });
 
   afterEach(() => {
-    process.env = defaultEnvironment;
     jest.spyOn(console, "warn").mockRestore();
   });
   it("should skip all verifiers when the document is an empty object", async () => {
