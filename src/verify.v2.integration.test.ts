@@ -47,14 +47,8 @@ const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "
 const verifyRinkeby = verificationBuilder(openAttestationVerifiers, { network: "rinkeby" });
 
 describe("verify(integration)", () => {
-  beforeEach(() => {
-    jest.resetModules();
-    // eslint-disable-next-line @typescript-eslint/no-empty-function
-    jest.spyOn(console, "warn").mockImplementation(() => {});
-  });
-
   afterEach(() => {
-    jest.spyOn(console, "warn").mockRestore();
+    delete process.env.ETHEREUM_PROVIDER;
   });
   it("should skip all verifiers when the document is an empty object", async () => {
     const fragments = await verifyRopsten({} as any);
