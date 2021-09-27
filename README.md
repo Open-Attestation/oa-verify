@@ -297,6 +297,18 @@ Note that in the example above, using `utils.isValidFragment` might be unnecessa
 - `isErrorFragment`: type guard to filter only `ERROR` fragment type
 - `isSkippedFragment`: type guard to filter only `SKIPPED` fragment type
 
+## Verification Method
+
+| Name | Type | Description | Present in default verifier? |
+|---|---|---|---|
+| OpenAttestationHash | DOCUMENT_INTEGRITY | Verify that merkle root and target hash matches the certificate | Yes |
+| OpenAttestationDidSignedDocumentStatus | DOCUMENT_STATUS | Verify the validity of the signature of a DID signed certificate | Yes |
+| OpenAttestationEthereumDocumentStoreStatus | DOCUMENT_STATUS | Verify the certificate has been issued to the document store and not revoked | Yes |
+| OpenAttestationEthereumTokenRegistryStatus | DOCUMENT_STATUS | Verify the certificate has been issued to the token registry and not revoked | Yes |
+| OpenAttestationDidIdentityProof | ISSUER_IDENTITY | Verify identity of DID (similar to OpenAttestationDidSignedDocumentStatus) | No |
+| OpenAttestationDnsDidIdentityProof | ISSUER_IDENTITY | Verify identify of DID certificate using DNS-TXT | Yes |
+| OpenAttestationDnsTxtIdentityProof | ISSUER_IDENTITY | Verify identify of document store certificate using DNS-TXT | Yes |
+
 ## Development
 
 For generating of test documents (for v3) you may use the script at `scripts/generate.v3.ts` by running `npm run generate:v3`.
