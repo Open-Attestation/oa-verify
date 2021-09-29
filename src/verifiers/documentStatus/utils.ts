@@ -1,5 +1,5 @@
 import { utils } from "@govtechsg/open-attestation";
-import { DocumentStore } from "@govtechsg/document-store/src/contracts/DocumentStore";
+import { DocumentStore } from "@govtechsg/document-store";
 import { errors, providers } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
