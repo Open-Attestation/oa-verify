@@ -1,5 +1,15 @@
-import { isValid } from "./validator";
-import { VerificationFragment } from "./types/core";
+import {
+  isValid,
+  isDocumentStoreAddressOrTokenRegistryAddressInvalid,
+  contractNotFound,
+  certificateNotIssued,
+  certificateRevoked,
+  invalidArgument,
+  serverError,
+  unhandledError,
+} from "./validator";
+import { VerificationFragment, InvalidVerificationFragment } from "./types/core";
+import { InvalidDocumentStoreDataV2 } from "./verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
 
 describe("isValid", () => {
   it("should throw an error when no fragments are provided", () => {
@@ -247,5 +257,362 @@ describe("isValid", () => {
         ])
       ).toStrictEqual(false);
     });
+  });
+});
+
+describe("isDocumentStoreAddressOrTokenRegistryAddressInvalid", () => {
+  it("should return true if document store address is invalid", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Invalid document store address",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if document store address is valid", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "some other error",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(false);
+  });
+  it("should return true if token registry address is invalid", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Invalid token registry address",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if token registry address is valid", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "some other error",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("contractNotFound", () => {
+  it("should return true if contract is not found in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Contract is not found",
+      },
+    };
+    expect(contractNotFound([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if contract is found in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "some other error",
+      },
+    };
+    expect(contractNotFound([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("certificateNotIssued", () => {
+  it("should return true if document not issued in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Contract is not found",
+      },
+    };
+    expect(certificateNotIssued([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if document is issued in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "Some Error",
+      },
+    };
+    expect(certificateNotIssued([verificationFragment])).toStrictEqual(false);
+  });
+  it("should return true if document not minted in token registry", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Invalid token registry address",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if document is minted in token registry", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "Some error",
+      },
+    };
+    expect(isDocumentStoreAddressOrTokenRegistryAddressInvalid([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("certificateRevoked", () => {
+  it("should return true if error reason is that document is revoked in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 5,
+        codeString: "5",
+        message: "Document has been revoked",
+      },
+    };
+    expect(certificateRevoked([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if error reason is that document is not revoked in document store", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some error, Document not revoked",
+      },
+    };
+    expect(certificateRevoked([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("invalidArgument", () => {
+  it("should return true if error is caused by an invalid merkle root in document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Invalid call arguments",
+      },
+    };
+    expect(invalidArgument([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if error is caused by an invalid merkle root in document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some other error",
+      },
+    };
+    expect(invalidArgument([verificationFragment])).toStrictEqual(false);
+  });
+  it("should return true if error is not caused by an invalid merkle root in token registry issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 6,
+        codeString: "6",
+        message: "Invalid contract arguments",
+      },
+    };
+    expect(invalidArgument([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if error is not caused by an invalid merkle root in token registry issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 2,
+        codeString: "2",
+        message: "Some other error",
+      },
+    };
+    expect(invalidArgument([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("serverError", () => {
+  it("should return true of the reason of the error is that we can't connect to Ethereum for document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 500,
+        codeString: "500",
+        message: "Server error",
+      },
+    };
+    expect(serverError([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return true of the reason of the error is that we can't connect to Ethereum for token registry minted fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 500,
+        codeString: "500",
+        message: "Server error",
+      },
+    };
+    expect(serverError([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false of the reason of the error is not that we can't connect to Ethereum for document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some other error",
+      },
+    };
+    expect(serverError([verificationFragment])).toStrictEqual(false);
+  });
+  it("should return false of the reason of the error is not that we can't connect to Ethereum for token registry minted fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 5,
+        codeString: "5",
+        message: "Some other error",
+      },
+    };
+    expect(serverError([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("unhandledError", () => {
+  it("should return true if there are some unhandled errors from document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some unhandled error",
+      },
+    };
+    expect(unhandledError([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if not some unhandled errors from document store issued fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumDocumentStoreStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 1,
+        codeString: "1",
+        message: "Some other error",
+      },
+    };
+    expect(unhandledError([verificationFragment])).toStrictEqual(false);
+  });
+  it("should return true if there are some unhandled errors from token registry minted fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some unhandled error",
+      },
+    };
+    expect(unhandledError([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if not some unhandled errors from token registry minted fragment", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationEthereumTokenRegistryStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 5,
+        codeString: "5",
+        message: "Some other error",
+      },
+    };
+    expect(unhandledError([verificationFragment])).toStrictEqual(false);
   });
 });
