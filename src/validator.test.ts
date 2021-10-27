@@ -9,7 +9,6 @@ import {
   unhandledError,
 } from "./validator";
 import { VerificationFragment, InvalidVerificationFragment } from "./types/core";
-import { InvalidDocumentStoreDataV2 } from "./verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
 
 describe("isValid", () => {
   it("should throw an error when no fragments are provided", () => {
