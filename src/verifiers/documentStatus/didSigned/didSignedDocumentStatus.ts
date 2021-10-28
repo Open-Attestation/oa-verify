@@ -4,7 +4,7 @@ import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../typ
 import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
-import { isRevokedOnDocumentStore } from "../utils";
+import { isRevokedByOcspResponder, isRevokedOnDocumentStore } from "../utils";
 import { InvalidRevocationStatus, RevocationStatus, ValidRevocationStatus } from "../revocation.types";
 import {
   DidSignedIssuanceStatus,
@@ -90,6 +90,18 @@ const verifyV2 = async (
             provider: options.provider,
             targetHash,
             proofs,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
+      case v2.RevocationType.OcspResponder:
+        if (typeof revocationItem.location === "string") {
+          return isRevokedByOcspResponder({
+            certId: documentData.id as string,
+            location: revocationItem.location,
           });
         }
         throw new CodedError(
@@ -237,6 +249,18 @@ const verifyV3 = async (
             targetHash,
             proofs,
             provider: options.provider,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
+      case v3.RevocationType.OcspResponder:
+        if (typeof location === "string") {
+          return isRevokedByOcspResponder({
+            certId: document.id as string,
+            location,
           });
         }
         throw new CodedError(

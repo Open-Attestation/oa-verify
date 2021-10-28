@@ -1,0 +1,68 @@
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "id": "90845b2d-d1b7-469f-a395-8da1b5c03ff3:string:SGCNM21566326",
+    "recipient": {
+      "name": "86ab2a15-02f4-4e7e-b61c-16ce8b4d747c:string:AUS FREIGHT",
+      "address": {
+        "street": "47005d53-c45c-4281-b71a-ac2b3c9c87a1:string:101 APPLE ROAD",
+        "country": "e930a4b4-88a5-4d5a-9ed5-d411621453e8:string:AUSTRALIA"
+      }
+    },
+    "consignment": {
+      "description": "9e659ced-b794-45b9-9f32-5dc9f4320e8c:string:16667 CARTONS OF RED WINE",
+      "quantity": {
+        "value": "ceeae777-8cb5-4337-a7dd-bf6dc4f1029a:string:5000",
+        "unit": "43bade76-0dbd-4896-be46-c1fcf14c92c9:string:LITRES"
+      },
+      "countryOfOrigin": "bd71c0a5-0146-4a82-8c80-45856bd96a89:string:AUSTRALIA",
+      "outwardBillNo": "2e4b7946-e5f7-4202-88bf-0ed44d3ef7fc:string:AQSIQ170923150",
+      "dateOfDischarge": "64787f35-5c69-476e-aa05-ece315be3808:string:2018-01-26",
+      "dateOfDeparture": "7823cb18-569d-4b7d-9c52-7439bccd9f4f:string:2018-01-30",
+      "countryOfFinalDestination": "b68e7c18-7da4-43af-8eda-30b7500323bf:string:CHINA",
+      "outgoingVehicleNo": "80567103-3879-45ca-9509-4c7093ff3252:string:COSCO JAPAN 074E/30-JAN"
+    },
+    "declaration": {
+      "name": "09c811e6-7fdb-4569-9d50-e5fc5b398547:string:PETER LEE",
+      "designation": "84e8bddd-9f25-4d48-887f-0e3c55a55c3c:string:SHIPPING MANAGER",
+      "date": "41aed209-fe00-403e-af79-e1253949e819:string:2018-01-28"
+    },
+    "$template": {
+      "name": "c97b98aa-5473-41c6-9027-9476aa8efcf6:string:CERTIFICATE_OF_NON_MANIPULATION",
+      "type": "883472ef-4875-44f5-afd2-64355087fe51:string:EMBEDDED_RENDERER",
+      "url": "a1552116-5bc5-4d17-b129-64c193237790:string:https://demo-cnm.openattestation.com"
+    },
+    "issuers": [
+      {
+        "id": "191b2304-0575-4050-b427-a165dd03daae:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+        "name": "01dc6f3d-2d2c-4efb-9fac-16b3fe35b272:string:Demo Issuer",
+        "revocation": {
+          "type": "cf44e94f-6c51-4dba-ad56-ce8739bbdb3f:string:OCSP_RESPONDER",
+          "location": "4bc1b2fe-4102-436a-96ae-01d0ff2b47b5:string:https://www.ica.gov.sg/ocsp"
+        },
+        "identityProof": {
+          "type": "1d353110-2d9f-4a53-91b6-fea6dfa5e140:string:DNS-DID",
+          "location": "5178b826-1bbe-406f-b0f8-14714f057b20:string:example.tradetrust.io",
+          "key": "bad19849-2313-4a1d-969f-4310a437366c:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller"
+        }
+      }
+    ]
+  },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "bbe0afee0378a14d947e16f6e850f6b50f41218e4dc0e39af8043ac802b550b7",
+    "proof": [
+      "4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74"
+    ],
+    "merkleRoot": "53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c"
+  },
+  "proof": [
+    {
+      "type": "OpenAttestationSignature2018",
+      "created": "2021-10-28T07:58:41.042Z",
+      "proofPurpose": "assertionMethod",
+      "verificationMethod": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+      "signature": "0x869f6956092f78d2e56e2bee67635fedcdfb6cfd5825f5a88ed1102cf15744ce4bddf629fa6a10dd739711c6c8dc79589038b59d99483a00eedd43cca219b6b61c"
+    }
+  ]
+}

@@ -5,7 +5,8 @@ import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
 import { CodedError } from "../../common/error";
-import { RevocationStatus } from "./revocation.types";
+import { OcspResponderRevocationReason, OcspResponderRevocationStatus, RevocationStatus } from "./revocation.types";
+import axios from "axios";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -61,6 +62,37 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
   return revokedStatuses.find((hash) => hash);
+};
+
+export const isRevokedByOcspResponder = async ({
+  certId,
+  location,
+}: {
+  certId: string;
+  location: string;
+}): Promise<RevocationStatus> => {
+  const { data } = await axios.get(`${location}/${certId}`);
+
+  const {
+    certStatus,
+    reasonCode,
+  }: { certStatus: OcspResponderRevocationStatus; reasonCode: OcspResponderRevocationReason } = data;
+  if (certStatus === "good") {
+    return {
+      revoked: false,
+      address: location,
+    };
+  }
+
+  return {
+    revoked: true,
+    address: location,
+    reason: {
+      message: OcspResponderRevocationReason[reasonCode],
+      code: reasonCode,
+      codeString: OcspResponderRevocationReason[reasonCode],
+    },
+  };
 };
 
 export const isRevokedOnDocumentStore = async ({

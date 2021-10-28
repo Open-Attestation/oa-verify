@@ -1,6 +1,10 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Resolver } from "did-resolver";
 import { providers } from "ethers";
+import {
+  OcspResponderRevocationReason,
+  OcspResponderRevocationStatus,
+} from "src/verifiers/documentStatus/revocation.types";
 import { Reason } from "./error";
 
 /**
@@ -115,4 +119,12 @@ export interface ProviderDetails {
   providerType?: providerType;
   url?: string;
   apiKey?: string;
+}
+
+export interface OcspResponse {
+  certId: string;
+  certStatus: OcspResponderRevocationStatus;
+  reasonCode?: OcspResponderRevocationReason;
+  revocationDate?: string;
+  thisUpdate?: string;
 }
