@@ -121,6 +121,13 @@ export interface ProviderDetails {
   apiKey?: string;
 }
 
+/**
+ * @param {string} certificateId - identifier of the certificate
+ * @param {string} certificateStatus - status of the certificate {@link OcspResponderRevocationStatus}
+ * @param {number} reasonCode - code indicating reason for revocation {@link OcspResponderRevocationReason}
+ * @param {string} revocationDate - date document was revoked
+ * @param {string} thisUpdate - date revocation object was added or updated
+ */
 export interface OcspResponse {
   certificateId: string;
   certificateStatus: OcspResponderRevocationStatus;
