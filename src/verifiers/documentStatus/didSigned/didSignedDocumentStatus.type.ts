@@ -44,7 +44,11 @@ export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatus
 export const OcspReasonCode = Number.withConstraint((n) => n >= 0 && n <= 10 && n != 7);
 export const OcspResponse = Record({
   certificateStatus: OcspResponderRevocationStatus,
+});
+
+export const OcspResponseRevoked = Record({
   reasonCode: OcspReasonCode,
+  certificateStatus: OcspResponderRevocationStatus,
 });
 
 /**

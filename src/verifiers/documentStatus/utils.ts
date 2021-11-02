@@ -10,7 +10,7 @@ import {
 import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, OcspResponderRevocationStatus, RevocationStatus } from "./revocation.types";
 import axios from "axios";
-import { OcspResponse } from "./didSigned/didSignedDocumentStatus.type";
+import { OcspResponse, OcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -77,35 +77,29 @@ export const isRevokedByOcspResponder = async ({
 }): Promise<RevocationStatus> => {
   const { data } = await axios.get(`${location}/${certificateId}`);
 
-  if (!OcspResponse.guard(data)) {
-    throw new CodedError(
-      "oscp response invalid",
-      OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
-      "OCSP_RESPONSE_INVALID"
-    );
-  }
-
-  const {
-    certificateStatus,
-    reasonCode,
-  }: { certificateStatus: OcspResponderRevocationStatus; reasonCode: OcspResponderRevocationReason } = data;
-
-  if (certificateStatus === "good") {
+  if (OcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
+    const { reasonCode } = data;
+    return {
+      revoked: true,
+      address: location,
+      reason: {
+        message: OcspResponderRevocationReason[reasonCode],
+        code: reasonCode,
+        codeString: OcspResponderRevocationReason[reasonCode],
+      },
+    };
+  } else if (OcspResponse.guard(data) && data.certificateStatus !== "revoked") {
     return {
       revoked: false,
       address: location,
     };
   }
 
-  return {
-    revoked: true,
-    address: location,
-    reason: {
-      message: OcspResponderRevocationReason[reasonCode],
-      code: reasonCode,
-      codeString: OcspResponderRevocationReason[reasonCode],
-    },
-  };
+  throw new CodedError(
+    "oscp response invalid",
+    OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+    "OCSP_RESPONSE_INVALID"
+  );
 };
 
 export const isRevokedOnDocumentStore = async ({

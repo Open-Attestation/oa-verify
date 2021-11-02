@@ -122,16 +122,17 @@ export interface ProviderDetails {
 }
 
 /**
- * @param {string} certificateId - identifier of the certificate
+ * Specifies the parameters of the OCSP response
  * @param {string} certificateStatus - status of the certificate {@link OcspResponderRevocationStatus}
- * @param {number} reasonCode - code indicating reason for revocation {@link OcspResponderRevocationReason}
- * @param {string} revocationDate - date document was revoked
- * @param {string} thisUpdate - date revocation object was added or updated
  */
 export interface OcspResponse {
-  certificateId: string;
   certificateStatus: OcspResponderRevocationStatus;
-  reasonCode?: OcspResponderRevocationReason;
-  revocationDate?: string;
-  thisUpdate?: string;
+}
+
+/**
+ * Specifies the parameters of the OCSP response when document is revoked
+ * @param {number} reasonCode - code indicating reason for revocation {@link OcspResponderRevocationReason}
+ */
+export interface OcspResponseRevoked extends OcspResponse {
+  reasonCode: OcspResponderRevocationReason;
 }

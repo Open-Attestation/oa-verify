@@ -26,16 +26,14 @@ import sampleDidSignedRevocationStoreButNoLocationV2 from "../../../../test/fixt
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 
-import sampleDidSignedOcspNotRevokedV2 from "../../../../test/fixtures/v2/did-revocation-ocsp-signed-not-revoked.json";
-import sampleDidSignedOcspButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-ocsp-signed-revoked.json";
+import sampleDidSignedOcsp from "../../../../test/fixtures/v2/did-revocation-ocsp-signed.json";
 
 const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const didSignedOcspNotRevokedV2 = sampleDidSignedOcspNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const didSignedOcspButRevokedV2 = sampleDidSignedOcspButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedOcsp = sampleDidSignedOcsp as SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
@@ -458,10 +456,10 @@ describe("verify", () => {
       whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
 
       const handlers = [
-        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566326", (_, res, ctx) => {
+        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
           return res(
             ctx.json({
-              certificateId: "SGCNM21566326",
+              certificateId: "SGCNM21566327",
               certificateStatus: "good",
             })
           );
@@ -471,7 +469,7 @@ describe("verify", () => {
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspNotRevokedV2, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -521,7 +519,7 @@ describe("verify", () => {
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspButRevokedV2, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
