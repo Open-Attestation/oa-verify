@@ -461,8 +461,8 @@ describe("verify", () => {
         rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566326", (_, res, ctx) => {
           return res(
             ctx.json({
-              certId: "SGCNM21566326",
-              certStatus: "good",
+              certificateId: "SGCNM21566326",
+              certificateStatus: "good",
             })
           );
         }),
@@ -508,8 +508,8 @@ describe("verify", () => {
         rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
           return res(
             ctx.json({
-              certId: "SGCNM21566327",
-              certStatus: "revoked",
+              certificateId: "SGCNM21566327",
+              certificateStatus: "revoked",
               reasonCode: 4,
               revocationDate: "2021-10-26T05:02:20.100Z",
               thisUpdate: "2021-10-26T05:02:20.100Z",

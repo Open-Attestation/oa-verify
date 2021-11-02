@@ -100,7 +100,7 @@ const verifyV2 = async (
       case v2.RevocationType.OcspResponder:
         if (typeof revocationItem.location === "string") {
           return isRevokedByOcspResponder({
-            certId: documentData.id as string,
+            certificateId: documentData.id as string,
             location: revocationItem.location,
           });
         }
@@ -259,7 +259,7 @@ const verifyV3 = async (
       case v3.RevocationType.OcspResponder:
         if (typeof location === "string") {
           return isRevokedByOcspResponder({
-            certId: document.id as string,
+            certificateId: document.id as string,
             location,
           });
         }

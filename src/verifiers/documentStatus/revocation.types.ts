@@ -1,4 +1,4 @@
-import { Literal, Record, Static, String, Union, Array as RunTypesArray, Optional } from "runtypes";
+import { Literal, Record, Static, String, Union, Array as RunTypesArray, Optional, Number } from "runtypes";
 import { Reason } from "../../types/error";
 
 export const ValidRevocationStatus = Record({
@@ -21,7 +21,9 @@ export type RevocationStatus = Static<typeof RevocationStatus>;
 export const RevocationStatusArray = RunTypesArray(RevocationStatus);
 export type RevocationStatusArray = Static<typeof RevocationStatusArray>;
 
-export type OcspResponderRevocationStatus = "good" | "revoked" | "unknown";
+export const OcspResponderRevocationStatus = Union(Literal("good"), Literal("revoked"), Literal("unknown"));
+export type OcspResponderRevocationStatus = Static<typeof OcspResponderRevocationStatus>;
+
 export enum OcspResponderRevocationReason {
   UNSPECIFIED = 0,
   KEY_COMPROMISE = 1,

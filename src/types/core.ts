@@ -122,8 +122,8 @@ export interface ProviderDetails {
 }
 
 export interface OcspResponse {
-  certId: string;
-  certStatus: OcspResponderRevocationStatus;
+  certificateId: string;
+  certificateStatus: OcspResponderRevocationStatus;
   reasonCode?: OcspResponderRevocationReason;
   revocationDate?: string;
   thisUpdate?: string;

@@ -1,4 +1,4 @@
-import { Array as RunTypesArray, Boolean, Literal, Record, Static, String, Union } from "runtypes";
+import { Array as RunTypesArray, Boolean, Literal, Record, Static, String, Union, Number } from "runtypes";
 import {
   ErrorVerificationFragment,
   InvalidVerificationFragment,
@@ -11,6 +11,7 @@ import {
   RevocationStatusArray,
   ValidRevocationStatus,
   ValidRevocationStatusArray,
+  OcspResponderRevocationStatus,
 } from "../revocation.types";
 
 /**
@@ -35,6 +36,16 @@ export const DidSignedIssuanceStatus = Union(ValidDidSignedIssuanceStatus, Inval
 export type DidSignedIssuanceStatus = Static<typeof DidSignedIssuanceStatus>;
 export const DidSignedIssuanceStatusArray = RunTypesArray(DidSignedIssuanceStatus);
 export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatusArray>;
+
+/**
+ * OCSP response
+ */
+
+export const OcspReasonCode = Number.withConstraint((n) => n >= 0 && n <= 10 && n != 7);
+export const OcspResponse = Record({
+  certificateStatus: OcspResponderRevocationStatus,
+  reasonCode: OcspReasonCode,
+});
 
 /**
  * Data for v2 Fragments

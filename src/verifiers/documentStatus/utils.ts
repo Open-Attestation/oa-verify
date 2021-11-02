@@ -3,10 +3,14 @@ import { DocumentStore } from "@govtechsg/document-store";
 import { errors, providers } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
-import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
+import {
+  OpenAttestationEthereumDocumentStoreStatusCode,
+  OpenAttestationDidSignedDocumentStatusCode,
+} from "../../types/error";
 import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, OcspResponderRevocationStatus, RevocationStatus } from "./revocation.types";
 import axios from "axios";
+import { OcspResponse } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -65,19 +69,28 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
 };
 
 export const isRevokedByOcspResponder = async ({
-  certId,
+  certificateId,
   location,
 }: {
-  certId: string;
+  certificateId: string;
   location: string;
 }): Promise<RevocationStatus> => {
-  const { data } = await axios.get(`${location}/${certId}`);
+  const { data } = await axios.get(`${location}/${certificateId}`);
+
+  if (!OcspResponse.guard(data)) {
+    throw new CodedError(
+      "oscp response invalid",
+      OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+      "OCSP_RESPONSE_INVALID"
+    );
+  }
 
   const {
-    certStatus,
+    certificateStatus,
     reasonCode,
-  }: { certStatus: OcspResponderRevocationStatus; reasonCode: OcspResponderRevocationReason } = data;
-  if (certStatus === "good") {
+  }: { certificateStatus: OcspResponderRevocationStatus; reasonCode: OcspResponderRevocationReason } = data;
+
+  if (certificateStatus === "good") {
     return {
       revoked: false,
       address: location,
