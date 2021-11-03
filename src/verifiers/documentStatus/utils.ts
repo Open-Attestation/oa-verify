@@ -8,9 +8,9 @@ import {
   OpenAttestationDidSignedDocumentStatusCode,
 } from "../../types/error";
 import { CodedError } from "../../common/error";
-import { OcspResponderRevocationReason, OcspResponderRevocationStatus, RevocationStatus } from "./revocation.types";
+import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
-import { OcspResponse, OcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
+import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -77,7 +77,7 @@ export const isRevokedByOcspResponder = async ({
 }): Promise<RevocationStatus> => {
   const { data } = await axios.get(`${location}/${certificateId}`);
 
-  if (OcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
+  if (ValidOcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
     const { reasonCode } = data;
     return {
       revoked: true,
@@ -88,7 +88,7 @@ export const isRevokedByOcspResponder = async ({
         codeString: OcspResponderRevocationReason[reasonCode],
       },
     };
-  } else if (OcspResponse.guard(data) && data.certificateStatus !== "revoked") {
+  } else if (ValidOcspResponse.guard(data) && data.certificateStatus !== "revoked") {
     return {
       revoked: false,
       address: location,

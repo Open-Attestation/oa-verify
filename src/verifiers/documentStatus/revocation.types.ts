@@ -1,4 +1,4 @@
-import { Literal, Record, Static, String, Union, Array as RunTypesArray, Optional, Number } from "runtypes";
+import { Literal, Record, Static, String, Union, Array as RunTypesArray, Optional } from "runtypes";
 import { Reason } from "../../types/error";
 
 export const ValidRevocationStatus = Record({
