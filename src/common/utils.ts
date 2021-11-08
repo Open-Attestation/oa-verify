@@ -19,6 +19,7 @@ import {
   OpenAttestationEthereumDocumentStoreStatusCode,
   OpenAttestationEthereumTokenRegistryStatusCode,
 } from "../types/error";
+import { warnProvider } from "../common/messages";
 
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
@@ -64,10 +65,7 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
   const url = options?.url || process.env.PROVIDER_ENDPOINT_URL || "";
   const apiKey =
     options?.apiKey || (provider === "infura" && process.env.INFURA_API_KEY) || process.env.PROVIDER_API_KEY || "";
-  !apiKey &&
-    console.warn(
-      "You are using oa-verify default configuration for provider, which is not suitable for production environment. Please make sure that you configured the library correctly."
-    );
+  !apiKey && console.warn(warnProvider);
 
   if (!!options && Object.keys(options).length === 1 && url) {
     return new providers.JsonRpcProvider(url);
