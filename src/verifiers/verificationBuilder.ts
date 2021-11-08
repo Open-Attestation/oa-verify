@@ -7,6 +7,7 @@ import {
   DocumentsToVerify,
 } from "../types/core";
 import { getProvider } from "../common/utils";
+import { warnProvider } from "../common/messages";
 
 // keeping the following code for posterity. If we want the function below to return better types, we can use the following
 // type PromiseValue<T> = T extends Promise<infer U> ? U : never;
@@ -29,9 +30,7 @@ export const verificationBuilder = <T extends Verifier<any>>(
     !process.env.PROVIDER_API_KEY
   ) {
     displayWarning = false;
-    console.warn(
-      "You are using oa-verify default configuration, which is not suitable for production environment. Please make sure that you configured the library correctly."
-    );
+    console.warn(warnProvider);
   }
   const verifierOptions: VerifierOptions = {
     provider: getProvider(builderOptions),
