@@ -2,7 +2,7 @@
 
 # Open Attestation (Verify)
 
-The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository is the codebase for the npm module that allows you to verify [wrapped document](/docs/developer-section/libraries/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. Some common use cases where you need this module:
+The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository is the codebase for the npm module that allows you to verify [wrapped document](/docs/developer-section/libraries/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. Some common use cases where you will need this module:
 
 - [Verifying a document](#verifying-a-document)
 - [Building custom verifier](#custom-verification)
