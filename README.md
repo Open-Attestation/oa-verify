@@ -178,6 +178,176 @@ console.log(isValid(fragments)); // output true
 
 ## Advanced usage
 
+### Extending Custom Verification
+
+Extending from [Custom Verification](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify#custom-verification) section, we will learn how to write custom verification methods and how you can distribute your own verifier.
+
+#### Building a custom verification method
+
+We will write a verification method having the following rules:
+
+1. it must run only on document having their version equal to `https://schema.openattestation.com/2.0/schema.json`.
+1. it must return a valid fragment, if and only if the document data hold a name property with the value `Certificate of Completion`
+
+**Document version must be equal to `https://schema.openattestation.com/2.0/schema.json`**
+
+This is where `skip` and `test` methods come into play. We will use the `test` method to return when the verification method run, and the `skip` method to explain why it didn't run:
+
+```ts
+// index.ts
+import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { getData } from "@govtechsg/open-attestation";
+import * as document from "./document.json";
+
+const customVerifier = {
+  skip: async () => {
+    return {
+      status: "SKIPPED",
+      type: "DOCUMENT_INTEGRITY",
+      name: "CustomVerifier",
+      reason: {
+        code: 0,
+        codeString: "SKIPPED",
+        message: `Document doesn't have version equal to 'https://schema.openattestation.com/2.0/schema.json'`,
+      },
+    };
+  },
+  test: () => document.version === "https://schema.openattestation.com/2.0/schema.json",
+};
+```
+
+> we use `DOCUMENT_INTEGRITY` type because we check for the content of the document.
+
+**Document holds correct `name` property**
+
+Once we have decided `when` the verification method run, it's time to write the logic of the verifier in the `verify` method. We will use [getData](https://www.openattestation.com/docs/developer-section/libraries/open-attestation#retrieving-document-data) utility to access the data of the document and return the appropriate fragment depending on the content:
+
+```ts
+// index.ts
+import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { getData } from "@govtechsg/open-attestation";
+import * as document from "./document.json";
+
+const customVerifier = {
+  skip: async () => {
+    /* content has been defined in the section above */
+  },
+  test: () => /* content has been defined in the section above */,
+  verify: async (document: any) => {
+    const documentData = getData(document);
+    if (documentData.name !== "Certificate of Completion") {
+      return {
+        type: "DOCUMENT_INTEGRITY",
+        name: "CustomVerifier",
+        data: documentData.name,
+        reason: {
+          code: 1,
+          codeString: "INVALID_NAME",
+          message: `Document name is ${documentData.name}`,
+        },
+        status: "INVALID",
+      };
+    }
+    return {
+      type: "DOCUMENT_INTEGRITY",
+      name: "CustomVerifier",
+      data: documentData.name,
+      status: "VALID",
+    };
+  },
+};
+```
+
+#### Building a custom verify method
+
+The `verify` function is built to run a list of verification method. Each verifier will produce a fragment that will help to determine if the document is valid. OpenAttestation comes with its own set of verification methods available in `openAttestationVerifiers`.
+
+The `verificationBuilder` function helps you to create custom verification method. You can reuse the default one exported by the library.
+
+Let's build a new verifier using our custom verification method:
+
+```ts
+// index.ts
+import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { getData } from "@govtechsg/open-attestation";
+import document from "./document.json";
+
+// our custom verifier will be valid only if the document version is not https://schema.openattestation.com/2.0/schema.json
+const customVerifier = {
+  skip: async () => {
+    return {
+      status: "SKIPPED",
+      type: "DOCUMENT_INTEGRITY",
+      name: "CustomVerifier",
+      reason: {
+        code: 0,
+        codeString: "SKIPPED",
+        message: `Document doesn't have version equal to 'https://schema.openattestation.com/2.0/schema.json'`,
+      },
+    };
+  },
+  test: () => document.version === "https://schema.openattestation.com/2.0/schema.json",
+  verify: async (document: any) => {
+    const documentData = getData(document);
+    if (documentData.name !== "Certificate of Completion") {
+      return {
+        type: "DOCUMENT_INTEGRITY",
+        name: "CustomVerifier",
+        data: documentData.name,
+        reason: {
+          code: 1,
+          codeString: "INVALID_NAME",
+          message: `Document name is ${documentData.name}`,
+        },
+        status: "INVALID",
+      };
+    }
+    return {
+      type: "DOCUMENT_INTEGRITY",
+      name: "CustomVerifier",
+      data: documentData.name,
+      status: "VALID",
+    };
+  },
+};
+
+// create your own verify function with all verifiers and your custom one
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
+
+const fragments = await verify(document);
+
+console.log(isValid(fragments)); // return false
+console.log(fragments.find((fragment: any) => fragment.name === "CustomVerifier")); // display the details on our specific verifier
+```
+
+The document that we [created](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify) is not valid against our own verifier because the name property does not exist. Try again with the following document:
+
+```json
+{
+  "version": "https://schema.openattestation.com/2.0/schema.json",
+  "data": {
+    "name": "66e35a92-9e97-4ffc-b94e-769773dd7535:string:Certificate of Completion",
+    "issuers": [
+      {
+        "documentStore": "375a13f9-ca3d-4a1f-a0c9-1fa92e43a3ec:string:0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+        "name": "448c7f62-3a93-4792-a157-fabcbf15b91a:string:University of Blockchain",
+        "identityProof": {
+          "type": "dcfc17e0-a178-4bb8-b0fb-6a2cfddb8f2f:string:DNS-TXT",
+          "location": "e3f54dbf-bb51-41bb-9511-e01a5c07ea86:string:example.openattestation.com"
+        }
+      }
+    ]
+  },
+  "privacy": { "obfuscatedData": [] },
+  "signature": {
+    "type": "SHA3MerkleProof",
+    "targetHash": "975887a864e11fbe27e90f4759c44db90193abc237dede81cd3cd7ca45c46522",
+    "proof": [],
+    "merkleRoot": "975887a864e11fbe27e90f4759c44db90193abc237dede81cd3cd7ca45c46522"
+  }
+}
+```
+
 ### Environment variables
 
 - `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
