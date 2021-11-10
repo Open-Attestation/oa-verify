@@ -61,18 +61,14 @@ A wrapped document (shown below) created using [Open Attestation](https://www.op
 
 To perform verification check on the document:
 
-```javascript
-// index.js
-const { isValid, openAttestationVerifiers, verificationBuilder } = require("@govtechsg/oa-verify");
-const document = require("./document.json");
+```ts
+// index.ts
+import { isValid, verify } from "@govtechsg/oa-verify";
+import * as document from "./document.json";
 
-const verify = verificationBuilder(openAttestationVerifiers, {
-  network: "ropsten",
-});
+const fragments = await verify(document as any);
 
-verify(document).then((fragments) => {
-  console.log(isValid(fragments)); // output true
-});
+console.log(isValid(fragments)); // output true
 ```
 
 ### Custom verification
@@ -87,13 +83,18 @@ All those verifiers are exported as `openAttestationVerifiers`
 
 You can build your own verify method or you own verifiers:
 
-```typescript
+```ts
+// creating your own verify using default exported verifiers
 import { verificationBuilder, openAttestationVerifiers } from "@govtechsg/oa-verify";
 
-// creating your own verify using default exported verifiers
-const verify = verificationBuilder(openAttestationVerifiers); // this verify is equivalent to the one exported by the library
-const verify = verificationBuilder([openAttestationVerifiers[0], openAttestationVerifiers[1]]); // this verify only run 2 verifiers
+const verify1 = verificationBuilder(openAttestationVerifiers, { network: "ropsten" }); // this verify is equivalent to the one exported by the library
+// this verify is equivalent to the one exported by the library
+const verify2 = verificationBuilder([openAttestationVerifiers[0], openAttestationVerifiers[1]], {
+  network: "ropsten",
+}); // this verify only run 2 verifiers
+```
 
+```ts
 // creating your own verify using custom verifier
 import { verificationBuilder, openAttestationVerifiers, Verifier } from "@govtechsg/oa-verify";
 const customVerifier: Verifier = {
@@ -109,7 +110,7 @@ const customVerifier: Verifier = {
 };
 
 // create your own verify function with all verifiers and your custom one
-const verify = verificationBuilder([...openAttestationVerifiers, customVerifier]);
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
 ```
 
 Refer to [verification methods](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify#custom-verification) to find out more on how to create your own custom verifier.
@@ -125,21 +126,21 @@ The `isValid` function will execute over fragments and determine if the fragment
 
 The function also allows a list of types to check for as a second parameter.
 
-```javascript
-// index.js
-const { isValid, openAttestationVerifiers, verificationBuilder } = require("@govtechsg/oa-verify");
-const document = require("./document.json");
+```ts
+// index.ts
+import { isValid, openAttestationVerifiers, verificationBuilder } from "@govtechsg/oa-verify";
+import * as document from "./document.json";
 
 const verify = verificationBuilder(openAttestationVerifiers, {
   network: "mainnet",
 });
 
-verify(document).then((fragments) => {
-  console.log(isValid(fragments, ["DOCUMENT_INTEGRITY"])); // output true
-  console.log(isValid(fragments, ["DOCUMENT_STATUS"])); // output false
-  console.log(isValid(fragments, ["ISSUER_IDENTITY"])); // output false
-  console.log(isValid(fragments)); // output false
-});
+const fragments = await verify(document as any);
+
+console.log(isValid(fragments, ["DOCUMENT_INTEGRITY"])); // output true
+console.log(isValid(fragments, ["DOCUMENT_STATUS"])); // output false
+console.log(isValid(fragments, ["ISSUER_IDENTITY"])); // outpute false
+console.log(isValid(fragments)); // output false
 ```
 
 - `isValid(fragments, ["DOCUMENT_INTEGRITY"])` returns true because the integrity of the document is not dependent on the network it has been published to.
@@ -151,26 +152,26 @@ verify(document).then((fragments) => {
 
 The `verify` function has an option to listen to individual verification methods. It might be useful if you want, for instance, to provide individual loader on your UI.
 
-```javascript
-// index.js
-const { isValid, openAttestationVerifiers, verificationBuilder } = require("@govtechsg/oa-verify");
-const document = require("./document.json");
+```ts
+// index.ts
+import { isValid, openAttestationVerifiers, verificationBuilder } from "@govtechsg/oa-verify";
+import * as document from "./document.json";
 
 const verify = verificationBuilder(openAttestationVerifiers, {
   network: "ropsten",
 });
 
-const promisesCallback = (verificationMethods) => {
+const promisesCallback = (verificationMethods: any) => {
   for (const verificationMethod of verificationMethods) {
-    verificationMethod.then((fragment) => {
+    verificationMethod.then((fragment: any) => {
       console.log(`${fragment.name} has been resolved with status ${fragment.status}`);
     });
   }
 };
 
-verify(document, promisesCallback).then((fragments) => {
-  console.log(isValid(fragments)); // output true
-});
+const fragments = await verify(document as any, promisesCallBack);
+
+console.log(isValid(fragments)); // output true
 ```
 
 ---
