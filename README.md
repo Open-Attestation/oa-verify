@@ -81,7 +81,7 @@ By default the provided `verify` method performs multiple checks on a document
 
 All those verifiers are exported as `openAttestationVerifiers`
 
-You can build your own verify method or you own verifiers:
+You can build your own verify method or your own verifiers:
 
 ```ts
 // creating your own verify using default exported verifiers
