@@ -113,7 +113,7 @@ const customVerifier: Verifier = {
 const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
 ```
 
-Refer to [verification methods](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify#custom-verification) to find out more on how to create your own custom verifier.
+Refer to [verification methods](#extending-custom-verification) to find out more on how to create your own custom verifier.
 
 ### Custom validation
 
@@ -180,7 +180,7 @@ console.log(isValid(fragments)); // output true
 
 ### Extending Custom Verification
 
-Extending from [Custom Verification](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify#custom-verification) section, we will learn how to write custom verification methods and how you can distribute your own verifier.
+Extending from [Custom Verification](#custom-verification) section, we will learn how to write custom verification methods and how you can distribute your own verifier.
 
 #### Building a custom verification method
 
@@ -320,7 +320,7 @@ console.log(isValid(fragments)); // return false
 console.log(fragments.find((fragment: any) => fragment.name === "CustomVerifier")); // display the details on our specific verifier
 ```
 
-The document that we [created](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-verify) is not valid against our own verifier because the name property does not exist. Try again with the following document:
+The document that we [created](#verifying-a-document) is not valid against our own verifier because the name property does not exist. Try again with the following document:
 
 ```json
 {
