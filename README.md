@@ -75,9 +75,9 @@ console.log(isValid(fragments)); // output true
 
 By default the provided `verify` method performs multiple checks on a document
 
-- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreStatus` and `OpenAttestationEthereumTokenRegistryStatus` verifiers
+- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreStatus`, `OpenAttestationEthereumTokenRegistryStatus` and `DidSignedDocumentStatus` verifiers
 - for the type `DOCUMENT_INTEGRITY`: it runs `OpenAttestationHash` verifier
-- for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt` verifier
+- for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt`, `DnsDidProof` and `DidIdentityProof` verifiers
 
 All those verifiers are exported as `openAttestationVerifiers`
 
@@ -113,7 +113,7 @@ const customVerifier: Verifier = {
 const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
 ```
 
-Refer to [verification methods](#extending-custom-verification) to find out more on how to create your own custom verifier.
+Refer to [Extending Custom Verification](#extending-custom-verification) to find out more on how to create your own custom verifier.
 
 ### Custom validation
 
