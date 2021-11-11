@@ -34,6 +34,8 @@ A verification happens on a wrapped document, and it consists of answering to so
 
 A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/open-attestation) would be required.
 
+> **NOTE:** The document shown below is valid and has been issued on the ropsten network
+
 ```json
 {
   "version": "https://schema.openattestation.com/2.0/schema.json",
@@ -117,6 +119,8 @@ Refer to [Extending Custom Verification](#extending-custom-verification) to find
 
 ### Custom validation
 
+Fragments would be produced after verifying a document. Each fragment will help to determine if the individual type mentioned [here](#custom-verification) is valid or not, and would collectively prove the validity of the document.
+
 The `isValid` function will execute over fragments and determine if the fragments produced a valid result. By default the function will return true if a document fulfill the following conditions:
 
 - The document has NOT been tampered, AND
@@ -150,7 +154,7 @@ console.log(isValid(fragments)); // output false
 
 ### Listening to individual verification method
 
-The `verify` function has an option to listen to individual verification methods. It might be useful if you want, for instance, to provide individual loader on your UI.
+The `verify` function provides an option to listen to individual verification methods. It might be useful if you want, for instance, to provide individual loaders on your UI.
 
 ```ts
 // index.ts
@@ -264,7 +268,7 @@ The `verify` function is built to run a list of verification method. Each verifi
 
 The `verificationBuilder` function helps you to create custom verification method. You can reuse the default one exported by the library.
 
-Let's build a new verifier using our custom verification method:
+Extending from what have been mentioned in [Custom Verification](#custom-verification), let's now build a new verifier using our custom verification method:
 
 ```ts
 // index.ts
