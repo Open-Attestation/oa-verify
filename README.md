@@ -77,7 +77,7 @@ By default the provided `verify` method performs multiple checks on a document
 
 - for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreStatus`, `OpenAttestationEthereumTokenRegistryStatus` and `DidSignedDocumentStatus` verifiers
 - for the type `DOCUMENT_INTEGRITY`: it runs `OpenAttestationHash` verifier
-- for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt`, `DnsDidProof` and `DidIdentityProof` verifiers
+- for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt` and `DnsDidProof` verifiers
 
 All those verifiers are exported as `openAttestationVerifiers`
 
