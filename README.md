@@ -99,7 +99,7 @@ const verify2 = verificationBuilder([openAttestationVerifiers[0], openAttestatio
 ```ts
 // creating your own verify using custom verifier
 import { verificationBuilder, openAttestationVerifiers, Verifier } from "@govtechsg/oa-verify";
-const customVerifier: Verifier = {
+const customVerifier: Verifier<any> = {
   skip: () => {
     // return a SkippedVerificationFragment if the verifier should be skipped or throw an error if it should always run
   },
@@ -199,11 +199,11 @@ This is where `skip` and `test` methods come into play. We will use the `test` m
 
 ```ts
 // index.ts
-import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { verificationBuilder, openAttestationVerifiers, Verifier, isValid } from "@govtechsg/oa-verify";
 import { getData } from "@govtechsg/open-attestation";
 import * as document from "./document.json";
 
-const customVerifier = {
+const customVerifier: Verifier<any> = {
   skip: async () => {
     return {
       status: "SKIPPED",
@@ -228,11 +228,11 @@ Once we have decided `when` the verification method run, it's time to write the 
 
 ```ts
 // index.ts
-import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { verificationBuilder, openAttestationVerifiers, Verifier, isValid } from "@govtechsg/oa-verify";
 import { getData } from "@govtechsg/open-attestation";
 import * as document from "./document.json";
 
-const customVerifier = {
+const customVerifier: Verifier<any> = {
   skip: async () => {
     /* content has been defined in the section above */
   },
@@ -272,12 +272,12 @@ Extending from what have been mentioned in [Custom Verification](#custom-verific
 
 ```ts
 // index.ts
-import { verificationBuilder, openAttestationVerifiers, isValid } from "@govtechsg/oa-verify";
+import { verificationBuilder, openAttestationVerifiers, Verifier, isValid } from "@govtechsg/oa-verify";
 import { getData } from "@govtechsg/open-attestation";
 import document from "./document.json";
 
 // our custom verifier will be valid only if the document version is not https://schema.openattestation.com/2.0/schema.json
-const customVerifier = {
+const customVerifier: Verifier<any> = {
   skip: async () => {
     return {
       status: "SKIPPED",
