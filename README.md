@@ -2,7 +2,7 @@
 
 # Open Attestation (Verify)
 
-The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository is the codebase for the npm module that allows you to verify [wrapped document](/docs/developer-section/libraries/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. Some common use cases where you will need this module:
+The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository is the codebase for the npm module that allows you to verify [wrapped document](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. Some common use cases where you will need this module:
 
 - [Verifying a document](#verifying-a-document)
 - [Building custom verifier](#custom-verification)
@@ -10,8 +10,8 @@ The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) r
 
 This module does not provide the following functionality:
 
-- Programmatic wrapping of OA documents (refer to [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/open-attestation#wrapping-documents))
-- Encryption or decryption of OA documents (refer to [Open Attestation (Encryption)](https://www.openattestation.com/docs/developer-section/libraries/open-attestation-encryption))
+- Programmatic wrapping of OA documents (refer to [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents))
+- Encryption or decryption of OA documents (refer to [Open Attestation (Encryption)](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation-encryption))
 - Programmatic issuance/revocation of document on the Ethereum blockchain
 
 ## Installation
@@ -32,7 +32,7 @@ A verification happens on a wrapped document, and it consists of answering to so
 - Is the issuance state of the document valid ?
 - Is the document issuer identity valid ? (see [identity proof](https://www.openattestation.com/docs/docs-section/how-does-it-work/issuance-identity))
 
-A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/open-attestation) would be required.
+A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation) would be required.
 
 > **NOTE:** The document shown below is valid and has been issued on the ropsten network
 
@@ -224,7 +224,7 @@ const customVerifier: Verifier<any> = {
 
 **Document holds correct `name` property**
 
-Once we have decided `when` the verification method run, it's time to write the logic of the verifier in the `verify` method. We will use [getData](https://www.openattestation.com/docs/developer-section/libraries/open-attestation#retrieving-document-data) utility to access the data of the document and return the appropriate fragment depending on the content:
+Once we have decided `when` the verification method run, it's time to write the logic of the verifier in the `verify` method. We will use [getData](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#retrieving-document-data) utility to access the data of the document and return the appropriate fragment depending on the content:
 
 ```ts
 // index.ts
