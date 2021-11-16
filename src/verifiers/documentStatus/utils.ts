@@ -3,9 +3,14 @@ import { DocumentStore } from "@govtechsg/document-store";
 import { errors, providers } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
-import { OpenAttestationEthereumDocumentStoreStatusCode } from "../../types/error";
+import {
+  OpenAttestationEthereumDocumentStoreStatusCode,
+  OpenAttestationDidSignedDocumentStatusCode,
+} from "../../types/error";
 import { CodedError } from "../../common/error";
-import { RevocationStatus } from "./revocation.types";
+import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
+import axios from "axios";
+import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -61,6 +66,40 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
   return revokedStatuses.find((hash) => hash);
+};
+
+export const isRevokedByOcspResponder = async ({
+  certificateId,
+  location,
+}: {
+  certificateId: string;
+  location: string;
+}): Promise<RevocationStatus> => {
+  const { data } = await axios.get(`${location}/${certificateId}`);
+
+  if (ValidOcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
+    const { reasonCode } = data;
+    return {
+      revoked: true,
+      address: location,
+      reason: {
+        message: OcspResponderRevocationReason[reasonCode],
+        code: reasonCode,
+        codeString: OcspResponderRevocationReason[reasonCode],
+      },
+    };
+  } else if (ValidOcspResponse.guard(data) && data.certificateStatus !== "revoked") {
+    return {
+      revoked: false,
+      address: location,
+    };
+  }
+
+  throw new CodedError(
+    "oscp response invalid",
+    OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+    "OCSP_RESPONSE_INVALID"
+  );
 };
 
 export const isRevokedOnDocumentStore = async ({

@@ -20,3 +20,19 @@ export const RevocationStatus = Union(ValidRevocationStatus, InvalidRevocationSt
 export type RevocationStatus = Static<typeof RevocationStatus>;
 export const RevocationStatusArray = RunTypesArray(RevocationStatus);
 export type RevocationStatusArray = Static<typeof RevocationStatusArray>;
+
+export const OcspResponderRevocationStatus = Union(Literal("good"), Literal("revoked"), Literal("unknown"));
+export type OcspResponderRevocationStatus = Static<typeof OcspResponderRevocationStatus>;
+
+export enum OcspResponderRevocationReason {
+  UNSPECIFIED = 0,
+  KEY_COMPROMISE = 1,
+  CA_COMPROMISE = 2,
+  AFFILIATION_CHANGED = 3,
+  SUPERSEDED = 4,
+  CESSATION_OF_OPERATION = 5,
+  CERTIFICATE_HOLD = 6,
+  REMOVE_FROM_CRL = 8,
+  PRIVILEGE_WITHDRAWN = 9,
+  A_A_COMPROMISE = 10,
+}

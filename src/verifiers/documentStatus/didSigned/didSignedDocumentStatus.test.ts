@@ -1,5 +1,7 @@
 import { v2, v3, WrappedDocument, SignedWrappedDocument } from "@govtechsg/open-attestation";
 import { openAttestationDidSignedDocumentStatus } from "./didSignedDocumentStatus";
+import { setupServer, SetupServerApi } from "msw/node";
+import { rest } from "msw";
 import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
@@ -24,11 +26,14 @@ import sampleDidSignedRevocationStoreButNoLocationV2 from "../../../../test/fixt
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 
+import sampleDidSignedOcsp from "../../../../test/fixtures/v2/did-revocation-ocsp-signed.json";
+
 const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedOcsp = sampleDidSignedOcsp as SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
@@ -118,6 +123,7 @@ describe("verify", () => {
     it("should pass for documents using `DID` and is correctly signed", async () => {
       whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
+
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -444,6 +450,113 @@ describe("verify", () => {
           "type": "DOCUMENT_STATUS",
         }
       `);
+    });
+
+    it("should pass when DID document is signed and is not revoked by an OCSP", async () => {
+      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+
+      const handlers = [
+        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
+          return res(
+            ctx.json({
+              certificateId: "SGCNM21566327",
+              certificateStatus: "good",
+            })
+          );
+        }),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "https://www.ica.gov.sg/ocsp",
+                  "revoked": false,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
+
+    it("should fail when DID document is signed but is found by an OCSP", async () => {
+      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+
+      const handlers = [
+        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
+          return res(
+            ctx.json({
+              certificateId: "SGCNM21566327",
+              certificateStatus: "revoked",
+              reasonCode: 4,
+              revocationDate: "2021-10-26T05:02:20.100Z",
+              thisUpdate: "2021-10-26T05:02:20.100Z",
+            })
+          );
+        }),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "https://www.ica.gov.sg/ocsp",
+                  "reason": Object {
+                    "code": 4,
+                    "codeString": "SUPERSEDED",
+                    "message": "SUPERSEDED",
+                  },
+                  "revoked": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SUPERSEDED",
+            "message": "SUPERSEDED",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
     });
   });
 
