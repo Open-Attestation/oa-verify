@@ -38,7 +38,13 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
-const verifyIssuerDnsDid = async ({
+/**
+ * Returns the status object if txt record exists on domain name.
+ * DNS-DID IdentityProofType.
+ * @param key DID Public key with `did:ethr:` prefix and `#controller` suffix
+ * @param location Domain name
+ */
+export const verifyIssuerDnsDid = async ({
   key,
   location,
 }: {

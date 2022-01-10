@@ -20,13 +20,22 @@ const name = "OpenAttestationDnsTxtIdentityProof";
 const type: VerificationFragmentType = "ISSUER_IDENTITY";
 type VerifierType = Verifier<OpenAttestationDnsTxtIdentityProofVerificationFragment>;
 
-// Resolve identity of an issuer, currently supporting only DNS-TXT
-// DNS-TXT is explained => https://github.com/Open-Attestation/adr/blob/master/decentralized_identity_proof_DNS-TXT.md
-const resolveIssuerIdentity = async (
-  location: string,
-  smartContractAddress: string,
-  options: VerifierOptions
-): Promise<DnsTxtVerificationStatus> => {
+/**
+ * Returns the status object if txt record exists on domain name.
+ * DNS-TXT IdentityProofType.
+ * @param location Domain name
+ * @param smartContractAddress Smart contract address
+ * @param options Verifier options
+ */
+export const verifyIssuerDnsTxt = async ({
+  location,
+  smartContractAddress,
+  options,
+}: {
+  location: string;
+  smartContractAddress: string;
+  options: VerifierOptions;
+}): Promise<DnsTxtVerificationStatus> => {
   const network = await options.provider.getNetwork();
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
@@ -107,7 +116,7 @@ const verifyV2 = async (
             OpenAttestationDnsTxtCode.INVALID_ISSUERS,
             OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_ISSUERS]
           );
-        return resolveIssuerIdentity(location, smartContractAddress, options);
+        return verifyIssuerDnsTxt({ location, smartContractAddress, options });
       }
       const invalidResponse: InvalidDnsTxtVerificationStatus = {
         status: "INVALID",
@@ -162,7 +171,7 @@ const verifyV3 = async (
     );
   const smartContractAddress = document.openAttestationMetadata.proof.value;
   const { identifier } = document.openAttestationMetadata.identityProof;
-  const issuerIdentity = await resolveIssuerIdentity(identifier, smartContractAddress, options);
+  const issuerIdentity = await verifyIssuerDnsTxt({ location: identifier, smartContractAddress, options });
 
   if (ValidDnsTxtVerificationStatus.guard(issuerIdentity)) {
     return {

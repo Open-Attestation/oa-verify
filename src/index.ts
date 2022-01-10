@@ -5,9 +5,9 @@ import { isValid } from "./validator";
 import { openAttestationEthereumTokenRegistryStatus } from "./verifiers/documentStatus/tokenRegistry";
 import { openAttestationEthereumDocumentStoreStatus } from "./verifiers/documentStatus/documentStore";
 import { openAttestationDidSignedDocumentStatus } from "./verifiers/documentStatus/didSigned";
-import { openAttestationDnsTxtIdentityProof } from "./verifiers/issuerIdentity/dnsTxt";
-import { openAttestationDidIdentityProof } from "./verifiers/issuerIdentity/did";
-import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/dnsDid";
+import { openAttestationDnsTxtIdentityProof, verifyIssuerDnsTxt } from "./verifiers/issuerIdentity/dnsTxt";
+import { openAttestationDidIdentityProof, verifyIssuerDid } from "./verifiers/issuerIdentity/did";
+import { openAttestationDnsDidIdentityProof, verifyIssuerDnsDid } from "./verifiers/issuerIdentity/dnsDid";
 import { createResolver } from "./did/resolver";
 import { getIdentifier } from "./getIdentifier";
 import * as utils from "./common/utils";
@@ -57,4 +57,7 @@ export {
   createResolver,
   getIdentifier,
   utils,
+  verifyIssuerDnsTxt,
+  verifyIssuerDnsDid,
+  verifyIssuerDid,
 };

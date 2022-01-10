@@ -40,6 +40,17 @@ const test: VerifierType["test"] = (document) => {
   return false;
 };
 
+/**
+ * Returns the status object if txt record exists on domain name.
+ * DID IdentityProofType.
+ * @param key DID Public key with `did:ethr:` prefix and `#controller` suffix
+ * @param merkleRoot Merkle root value in wrapped document
+ * @param did DID Public key with `did:ethr:` prefix
+ * @param signature `signature` value of `proof` in wrapped document
+ * @param resolver Resolver for DID documents
+ */
+export const verifyIssuerDid = verifySignature;
+
 const verifyV2 = async (
   document: v2.WrappedDocument,
   options: VerifierOptions
