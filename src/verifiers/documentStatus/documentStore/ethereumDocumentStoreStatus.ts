@@ -95,6 +95,8 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
+// Checks if document isWrappedDocument
+// Check if document is of type documentStore or certificateStore
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
@@ -109,16 +111,19 @@ const verifyV2 = async (
   document: WrappedDocument<v2.OpenAttestationDocument>,
   options: VerifierOptions
 ): Promise<OpenAttestationEthereumDocumentStoreStatusFragment> => {
-  const documentStores = getIssuersDocumentStores(document);
-  const merkleRoot = `0x${document.signature.merkleRoot}`;
-  const { targetHash } = document.signature;
-  const proofs = document.signature.proof || [];
+  const documentStores = getIssuersDocumentStores(document); // get document store address
+  const merkleRoot = `0x${document.signature.merkleRoot}`; 
+  const { targetHash } = document.signature; // get signature hash
+  const proofs = document.signature.proof || []; // get signature proof
   const issuanceStatuses = await Promise.all(
     documentStores.map((documentStore) =>
-      isIssuedOnDocumentStore({ documentStore, merkleRoot, provider: options.provider })
+      // check if merkle root issued on document store
+      isIssuedOnDocumentStore({ documentStore, merkleRoot, provider: options.provider }) 
     )
   );
+  // find responses that are invalid issuance response
   const notIssued = issuanceStatuses.find(InvalidDocumentStoreIssuanceStatus.guard);
+  // return invalid response if, there is an invalid issuance
   if (InvalidDocumentStoreIssuanceStatus.guard(notIssued)) {
     return {
       name,
@@ -132,6 +137,7 @@ const verifyV2 = async (
     };
   }
 
+  // Get revocation status of document 
   const revocationStatuses: RevocationStatus[] = await Promise.all(
     documentStores.map((documentStore) =>
       isRevokedOnDocumentStore({
@@ -143,8 +149,9 @@ const verifyV2 = async (
       })
     )
   );
+  // find responses that are revocation
   const revoked = revocationStatuses.find(InvalidRevocationStatus.guard);
-
+  // return invalid response if, there is an revocation
   if (InvalidRevocationStatus.guard(revoked)) {
     return {
       name,
@@ -159,6 +166,7 @@ const verifyV2 = async (
     };
   }
 
+  // valid, since there's an issuance and no revocation
   if (
     ValidDocumentStoreIssuanceStatusArray.guard(issuanceStatuses) &&
     ValidRevocationStatusArray.guard(revocationStatuses)
@@ -189,7 +197,9 @@ const verifyV3 = async (
   const merkleRoot = `0x${merkleRootRaw}`;
   const { value: documentStore } = document.openAttestationMetadata.proof;
 
+  // Check if document issued on document store
   const issuance = await isIssuedOnDocumentStore({ documentStore, merkleRoot, provider: options.provider });
+  // Check if document revoked on document store
   const revocation = await isRevokedOnDocumentStore({
     documentStore,
     merkleRoot,
@@ -197,6 +207,7 @@ const verifyV3 = async (
     proofs,
     provider: options.provider,
   });
+
   const data = {
     issuedOnAll: issuance.issued,
     revokedOnAny: revocation.revoked,
@@ -206,6 +217,7 @@ const verifyV3 = async (
     },
   };
 
+  // return valid response since it's issued and unrevoked
   if (ValidDocumentStoreDataV3.guard(data)) {
     return {
       name,
@@ -215,6 +227,7 @@ const verifyV3 = async (
     };
   }
 
+  // return reason for failure
   let reason: Reason | undefined;
   if (InvalidRevocationStatus.guard(revocation)) {
     reason = revocation.reason;
@@ -237,6 +250,7 @@ const verifyV3 = async (
   };
 };
 
+// return after checks on issuance and revocation
 const verify: VerifierType["verify"] = async (document, options) => {
   if (utils.isWrappedV2Document(document)) return verifyV2(document, options);
   else if (utils.isWrappedV3Document(document)) return verifyV3(document, options);

@@ -22,10 +22,13 @@ const skip: VerifierType["skip"] = () => {
   });
 };
 
+// Check if document isWrappedDocument (regardless of V2 or V3) - isWrappedV3Document/isWrappedV2Document
+// Has to have merkle root and target hash and data
 const test: VerifierType["test"] = (document) => {
   return utils.isWrappedV3Document(document) || utils.isWrappedV2Document(document);
 };
 
+// Verify that the signature is correct - verifySignature
 const verify: VerifierType["verify"] = async (document) => {
   const hash = await verifySignature(document);
   if (!hash) {
@@ -49,6 +52,7 @@ const verify: VerifierType["verify"] = async (document) => {
   };
 };
 
+// Checks if document structure is valid and if document is signed properly
 export const openAttestationHash: VerifierType = {
   skip,
   test,

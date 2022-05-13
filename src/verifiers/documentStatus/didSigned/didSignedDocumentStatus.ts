@@ -33,6 +33,8 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
+// Checks if document isWrappedDocument
+// Check if document is of type OpenAttestationSignature2018 or OpenAttestationMerkleProofSignature2018
 const test: VerifierType["test"] = (document) => {
   if (utils.isSignedWrappedV2Document(document)) {
     return document.proof.some((proof) => proof.type === "OpenAttestationSignature2018");
@@ -63,6 +65,7 @@ const verifyV2 = async (
   const merkleRoot = `0x${document.signature.merkleRoot}`;
   const { targetHash, proof: proofs } = document.signature;
   documentData.issuers.forEach((issuer) => {
+    // checks that all the issuers are did/dns-did
     if (!(issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"))
       throw new CodedError(
         "All issuers must use DID or DNS-DID identityProof type.",
@@ -72,7 +75,9 @@ const verifyV2 = async (
   });
   const { issuers } = documentData;
 
+  //get all revocation details
   const revocation: (v2.Revocation | undefined)[] = issuers.map((issuer) => issuer.revocation);
+  //throw error if any issuer has no revocation details
   if (revocation.some((r) => typeof r?.type === "undefined"))
     throw new CodedError(
       "revocation block not found for an issuer",
@@ -80,10 +85,12 @@ const verifyV2 = async (
       "MISSING_REVOCATION"
     );
 
+  //get all revocation status
   const revocationStatusCallback = (revocationItem: v2.Revocation): Promise<RevocationStatus> => {
     switch (revocationItem.type) {
       case v2.RevocationType.RevocationStore:
         if (typeof revocationItem.location === "string") {
+          // get revocation status of doc on document store
           return isRevokedOnDocumentStore({
             documentStore: revocationItem.location,
             merkleRoot,
@@ -99,6 +106,7 @@ const verifyV2 = async (
         );
       case v2.RevocationType.OcspResponder:
         if (typeof revocationItem.location === "string") {
+          // get revocation status of doc on ocsp
           return isRevokedByOcspResponder({
             certificateId: documentData.id as string,
             location: revocationItem.location,
@@ -110,6 +118,7 @@ const verifyV2 = async (
           "REVOCATION_LOCATION_MISSING"
         );
       case v2.RevocationType.None:
+        // assume the doc is valid
         return Promise.resolve({ revoked: false });
       default:
         throw new CodedError(
@@ -119,6 +128,7 @@ const verifyV2 = async (
         );
     }
   };
+
 
   const revocationStatuses = await Promise.all((revocation as v2.Revocation[]).map(revocationStatusCallback));
 
@@ -145,6 +155,7 @@ const verifyV2 = async (
         OpenAttestationDidSignedDocumentStatusCode.MALFORMED_IDENTITY_PROOF,
         "MALFORMED_IDENTITY_PROOF"
       );
+      
     const correspondingProof = document.proof.find((p) => p.verificationMethod.toLowerCase() === key.toLowerCase());
     if (!correspondingProof)
       throw new CodedError(
@@ -152,6 +163,7 @@ const verifyV2 = async (
         OpenAttestationDidSignedDocumentStatusCode.CORRESPONDING_PROOF_MISSING,
         "CORRESPONDING_PROOF_MISSING"
       );
+      // check if merkle root is signed properly
     return verifySignature({
       merkleRoot,
       key,
@@ -174,6 +186,7 @@ const verifyV2 = async (
     },
   };
 
+  // return if issued, unrevoked and issuance is valid
   if (ValidDidSignedDataV2.guard(data)) {
     return {
       name,
@@ -217,6 +230,7 @@ const verifyV3 = async (
   const metaData = document.openAttestationMetadata;
 
   const verificationResult = transformToDidSignedIssuanceStatus(
+    // check if merkle root is signed properly
     await verifySignature({
       key: document.proof.key,
       did: metaData.proof.value,
@@ -243,6 +257,7 @@ const verifyV3 = async (
     switch (docType) {
       case v3.RevocationType.RevocationStore:
         if (typeof location === "string") {
+          // get revocation status of doc on document store
           return isRevokedOnDocumentStore({
             documentStore: location,
             merkleRoot,
@@ -275,7 +290,8 @@ const verifyV3 = async (
   );
 
   const revokedOnAny = revocationStatus.revoked;
-
+  
+  // return valid if valid issuance and unrevoked
   if (ValidDidSignedIssuanceStatus.guard(verificationResult) && ValidRevocationStatus.guard(revocationStatus)) {
     return {
       name,

@@ -162,6 +162,9 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
+
+// Checks if document isWrappedDocument
+// Check if document is of type tokenRegistry
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
@@ -182,11 +185,14 @@ const verify: VerifierType["verify"] = async (document, options) => {
         OpenAttestationEthereumTokenRegistryStatusCode.UNRECOGNIZED_DOCUMENT
       ]
     );
-  const tokenRegistry = getTokenRegistry(document);
-  const merkleRoot = getMerkleRoot(document);
+  const tokenRegistry = getTokenRegistry(document); // getTokenRegistry address
+  const merkleRoot = getMerkleRoot(document); // getMerkleRoot address
+  // Checks if token minted on registry, and if is owned
   const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
 
+  // validate results in mintStatus, that it's minted and the token registry address is correct
   if (ValidTokenRegistryStatus.guard(mintStatus)) {
+    //valid token 
     const fragment = {
       name,
       type,
@@ -204,6 +210,7 @@ const verify: VerifierType["verify"] = async (document, options) => {
       };
     }
   } else {
+    //invalid token 
     const fragment = {
       name,
       type,

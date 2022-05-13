@@ -66,7 +66,9 @@ const skip: VerifierType["skip"] = async () => {
     },
   };
 };
-
+// check if isWrappedDocument
+// check if it's a documentStore or tokenRegistry or certificateStore
+// check if there's a issuer that uses dnstxt proof
 const test: VerifierType["test"] = (document) => {
   if (utils.isWrappedV2Document(document)) {
     const documentData = getData(document);
@@ -90,6 +92,7 @@ const verifyV2 = async (
   const documentData = getData(document);
   const identities = await Promise.all(
     documentData.issuers.map((issuer) => {
+      //Check if current issuer using dns txt
       if (issuer.identityProof?.type === v2.IdentityProofType.DNSTxt) {
         const { location } = issuer.identityProof;
         const smartContractAddress = issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore;
@@ -107,8 +110,10 @@ const verifyV2 = async (
             OpenAttestationDnsTxtCode.INVALID_ISSUERS,
             OpenAttestationDnsTxtCode[OpenAttestationDnsTxtCode.INVALID_ISSUERS]
           );
-        return resolveIssuerIdentity(location, smartContractAddress, options);
+        return resolveIssuerIdentity(location, smartContractAddress, options); 
+        // find matching dns txt record, and returns valid response
       }
+      // Current dns issuer not using dns txt, return invalid
       const invalidResponse: InvalidDnsTxtVerificationStatus = {
         status: "INVALID",
         reason: {
@@ -121,6 +126,7 @@ const verifyV2 = async (
     })
   );
 
+  // Check if there's a valid dns txt
   if (ValidDnsTxtVerificationStatusArray.guard(identities)) {
     return {
       name,
@@ -130,6 +136,7 @@ const verifyV2 = async (
     };
   }
 
+  // no valid dns txt
   const invalidIdentity = identities.find(InvalidDnsTxtVerificationStatus.guard);
   if (InvalidDnsTxtVerificationStatus.guard(invalidIdentity)) {
     return {

@@ -28,6 +28,8 @@ const skip: VerifierType["skip"] = async () => {
   };
 };
 
+// check if isWrappedDocument
+// check if there's a issuer that uses dns-did proof
 const test: VerifierType["test"] = (document) => {
   if (utils.isSignedWrappedV2Document(document)) {
     const data = getData(document);
@@ -84,10 +86,11 @@ const verifyV2 = async (
         OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
         OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
       );
-    return verifyIssuerDnsDid({ key, location });
+    return verifyIssuerDnsDid({ key, location }); // return response on whether key matches public dns record
   });
   const verificationStatus = await Promise.all(deferredVerificationStatus);
 
+  // return valid response if there's a valid dns-did, matching the key
   if (ValidDnsDidVerificationStatusArray.guard(verificationStatus)) {
     return {
       name,
@@ -121,8 +124,9 @@ const verifyV3 = async (
     );
   const location = document.openAttestationMetadata.identityProof.identifier;
   const { key } = document.proof;
-  const verificationStatus = await verifyIssuerDnsDid({ key, location });
+  const verificationStatus = await verifyIssuerDnsDid({ key, location }); // return response on whether key matches public dns record
 
+  // return valid response if there's a valid dns-did, matching the key
   if (ValidDnsDidVerificationStatus.guard(verificationStatus)) {
     return {
       name,

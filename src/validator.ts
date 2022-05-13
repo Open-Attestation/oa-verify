@@ -1,5 +1,7 @@
 import { VerificationFragment, VerificationFragmentType } from "./types/core";
 
+//At least one of the results need to be valid, the rest need to be skipped
+// Verification fragment type needs to be specified
 export const isValid = (
   verificationFragments: VerificationFragment[],
   types: VerificationFragmentType[] = ["DOCUMENT_STATUS", "DOCUMENT_INTEGRITY", "ISSUER_IDENTITY"]
