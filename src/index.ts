@@ -20,7 +20,7 @@ const openAttestationVerifiers = [
   openAttestationHash,
   openAttestationEthereumTokenRegistryStatus,
   openAttestationEthereumDocumentStoreStatus,
-  openAttestationDidSignedDocumentStatus,
+  openAttestationDidSignedDocumentStatus, // not done yet
   openAttestationDnsTxtIdentityProof,
   openAttestationDnsDidIdentityProof,
 ];

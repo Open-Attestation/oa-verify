@@ -1,0 +1,40 @@
+digraph G {
+
+    node [style=filled];
+    label = "openAttestationHash.ts"
+
+  subgraph cluster_1 {
+
+    label = "test"
+
+    start_test [label="Start"]
+    valid_test [label= "Valid" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentIntegrity/hash/openAttestationHash.ts#L28"];
+    invalid_test [label= "Skipped"];
+    
+    start_test -> valid_test [label="isWrappedV2Document"];
+    start_test -> valid_test [label="isWrappedV3Document"];
+    start_test -> invalid_test [label="Neither"];
+  }
+
+  subgraph cluster_2 {
+
+    label = "verify"
+
+    start_verify [label="Start"]
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+    verify [label="verify signature" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentIntegrity/hash/openAttestationHash.ts#L33"];
+    
+    valid_test -> start_verify;
+    start_verify -> verify;
+    verify -> valid [label="untampered"];
+    verify -> invalid [label="tampered"];
+  }
+
+  subgraph cluster_3 {
+
+    label = "skip"
+    invalid_test -> skip;
+  }
+
+}

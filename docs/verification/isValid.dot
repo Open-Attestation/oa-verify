@@ -1,0 +1,34 @@
+digraph G {
+
+  // subgraph cluster_0 {
+  //   style=filled;
+  //   color=lightgrey;
+  //   node [style=filled,color=white];
+  //   a0 -> a1 -> a2 -> a3;
+  //   label = "process #1";
+  // }
+
+  subgraph cluster_1 {
+
+    label = "validator.ts / isValid"
+
+    node [style=filled];
+    error [label= "Error"];
+    start [label="Start"]
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+    result_count [label="Verification Results Count"];
+    type_count [label="Verification Type Count"];
+    check_result [label="Check Result"];
+    
+    start -> result_count;
+    result_count -> error [label="Less than 1"];
+    result_count -> type_count
+    type_count -> error [label="Less than 1"];
+    type_count -> check_result [label="FOR EACH"];
+    check_result -> check_result [label="VALID/SKIPPED"];
+    check_result -> valid [label="Complete"];
+    check_result -> invalid [label="Invalid"];
+  }
+
+}

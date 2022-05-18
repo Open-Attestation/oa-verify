@@ -1,0 +1,89 @@
+digraph G {
+
+    node [style=filled];
+    label = "openAttestationHash.ts"
+
+  subgraph cluster_1 {
+
+    label = "test"
+
+    start_test [label="Start"]
+    valid_test [label= "Valid" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentIntegrity/hash/openAttestationHash.ts#L28"];
+    
+    v2_valid_identity_type [label="valid v2 identity type"]
+    v3_valid_identity_type [label="valid v3 identity type"]
+    
+    invalid_test [label= "Skipped"];
+    start_test -> v2_valid_identity_type [label="isSignedWrappedV2Document"];
+    start_test -> v3_valid_identity_type [label="isSignedWrappedV3Document"];
+
+    v2_valid_identity_type -> invalid_test
+    v2_valid_identity_type -> valid_test [label="IdentityProofType DNS-DID"];
+    
+
+    v3_valid_identity_type -> valid_test [label="identity proof type DNSDid"];
+    v3_valid_identity_type-> invalid_test
+
+    start_test -> invalid_test [label="Neither"];
+  }
+
+  subgraph cluster_2 {
+
+    label = "verify"
+
+    verify_start_verify [label="Start"]
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+    // verify [label="isTokenMintedOnRegistry" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.ts#L191"];
+    v2_valid_identity_type_verify [label="valid v2 identity type"]
+    
+    v2_check_issuer_details [label="check issuer identity"]
+    v2_verify_dns_txt_verify [label="verify dns txt"]
+    
+    valid_test -> verify_start_verify;
+    
+    verify_start_verify -> v2_valid_identity_type_verify [label = "isSignedWrappedV2Document"]
+    verify_start_verify -> invalid
+
+    
+    v2_valid_identity_type_verify -> v2_check_issuer_details [label="IdentityProofType DNSDid"];
+    v2_valid_identity_type_verify -> invalid
+    
+    v2_check_issuer_details -> v2_verify_dns_txt_verify [label="valid dns location & smart contract address"];
+    v2_verify_dns_txt_verify -> valid [label="dns txt match smart contract address"]
+    v2_verify_dns_txt_verify -> invalid
+    v2_check_issuer_details -> invalid
+  }
+
+
+  subgraph cluster_3 {
+
+    label = "verify"
+
+    verify_start_verify [label="Start"]
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+    v3_valid_identity_type_verify [label="check issuer identity"]
+    
+    v3_verify_dns_txt_verify [label="verify dns txt"]
+    
+    valid_test -> verify_start_verify;
+    
+    verify_start_verify -> v3_valid_identity_type_verify [label = "isSignedWrappedV3Document"]
+    
+
+    
+    
+    v3_valid_identity_type_verify -> v3_verify_dns_txt_verify [label="valid dns location & smart contract address"];
+    v3_valid_identity_type_verify -> invalid
+    v3_verify_dns_txt_verify -> valid [label="dns txt match smart contract address"]
+    v3_verify_dns_txt_verify -> invalid
+  }
+
+  subgraph cluster_4 {
+
+    label = "skip"
+    invalid_test -> skip;
+  }
+
+}

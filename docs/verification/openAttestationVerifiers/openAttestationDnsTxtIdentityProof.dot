@@ -1,0 +1,91 @@
+digraph G {
+
+    node [style=filled];
+    label = "openAttestationHash.ts"
+
+  subgraph cluster_1 {
+
+    label = "test"
+
+    start_test [label="Start"]
+    valid_test [label= "Valid" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentIntegrity/hash/openAttestationHash.ts#L28"];
+    
+    v2_valid_type [label="valid v2 type"]
+    v2_valid_identity_type [label="valid v2 identity type"]
+    v3 [label="v3"]
+    invalid_test [label= "Skipped"];
+    start_test -> v2_valid_identity_type [label="isWrappedV2Document"];
+    start_test -> v3 [label="isWrappedV3Document"];
+
+    v2_valid_identity_type -> invalid_test
+    v2_valid_identity_type -> v2_valid_type [label="IdentityProofType dnstxt"];
+    v2_valid_type -> valid_test [label="documentStore"];
+    v2_valid_type -> valid_test [label="tokenRegistry"];
+    v2_valid_type -> valid_test [label="certificateStore"];
+    v2_valid_type -> invalid_test
+
+    v3 -> valid_test [label="identity proof type DNSTxt"];
+    v3-> invalid_test
+
+    start_test -> invalid_test [label="Neither"];
+  }
+
+  subgraph cluster_2 {
+
+    label = "verify"
+
+    verify_start_verify [label="Start"]
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+    // verify [label="isTokenMintedOnRegistry" URL="https://github.com/Open-Attestation/oa-verify/blob/080d82ed7223a1f29d7b8fee6e3f3e466c72227c/src/verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.ts#L191"];
+    v2_valid_identity_type [label="valid v2 identity type"]
+    v2_valid_type_verify [label="valid v2 type"]
+    v2_check_issuer_details [label="check issuer identity"]
+    v2_verify_dns_txt_verify [label="verify dns txt"]
+    
+    valid_test -> verify_start_verify;
+    
+    verify_start_verify -> v2_valid_identity_type_verify [label = "isWrappedV2Document"]
+    verify_start_verify -> invalid
+
+    v2_start_verify -> invalid
+    v2_valid_identity_type_verify -> v2_valid_type_verify [label="IdentityProofType dnstxt"];
+    v2_valid_identity_type_verify -> invalid
+    v2_valid_type_verify -> v2_check_issuer_details [label="documentStore"];
+    v2_valid_type_verify -> v2_check_issuer_details [label="tokenRegistry"];
+    v2_valid_type_verify -> v2_check_issuer_details [label="certificateStore"];
+    v2_valid_type_verify -> invalid
+    v2_check_issuer_details -> v2_verify_dns_txt_verify [label="valid dns location & smart contract address"];
+    v2_verify_dns_txt_verify -> valid [label="dns txt match smart contract address"]
+    v2_verify_dns_txt_verify -> invalid
+    v2_check_issuer_details -> invalid
+  }
+
+  subgraph cluster_3 {
+
+    label = "verify"
+
+    verify_start_verify -> v3_valid_type_verify [label = "isWrappedV3Document"]
+    
+    v3_valid_type_verify -> v3_check_issuer_details [label="documentStore"];
+    v3_valid_type_verify -> v3_check_issuer_details [label="tokenRegistry"];
+    v3_valid_type_verify -> invalid;
+
+    v3_check_issuer_details -> v3_verify_dns_txt_verify [label="valid dns location & smart contract address"];
+    v3_check_issuer_details -> invalid
+
+    v3_verify_dns_txt_verify -> valid [label="dns txt match smart contract address"];
+    v3_verify_dns_txt_verify -> invalid;
+    
+    v3_valid_type_verify [label="valid v3 type"]
+    v3_check_issuer_details [label="check issuer identity"]
+    v3_verify_dns_txt_verify [label="verify dns txt"]
+  }
+
+  subgraph cluster_4 {
+
+    label = "skip"
+    invalid_test -> skip;
+  }
+
+}
