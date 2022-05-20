@@ -1,0 +1,27 @@
+
+
+digraph g {
+    
+    subgraph Token_Check {
+        
+        //"EthereumTokenRegistryStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "tokenRegistry" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.TokenRegistry;
+
+
+        label = "EthereumTokenRegistryStatus"
+        TokenCheckStart [label="Start"]
+        TokenCheckSchema [label="Check Document Schema"]
+        TokenCheckProof [label="Check If Document's proof is Token Registry"]
+        TokenCheckConnect [label="Connect to Token Registry"]
+        TokenCheckMint [label="Check if Document's Merkle Root minted on Token Registry"]
+        
+        HashCheckSignature -> TokenCheckSchema [label = "Token Registry"]
+        TokenCheckSchema -> TokenCheckProof
+        TokenCheckProof -> TokenCheckConnect
+        TokenCheckConnect -> TokenCheckMint
+    }
+
+
+}

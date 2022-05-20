@@ -1,0 +1,133 @@
+
+
+digraph g {
+
+    // document.openAttestationMetadata.proof.method
+    // EthereumTokenRegistryStatus OR EthereumDocumentStoreStatus
+
+    // document.proof.type
+    // DidSignedDocumentStatus
+
+    // document.openAttestationMetadata.identityProof.type
+    // DnsTxtIdentityProof OR DnsDidIdentityProof
+
+    subgraph cluster_Hash_Check {
+
+        label = "openAttestationHash"
+        HashCheckStart [label="Start"]
+        HashCheckSchema [label="Check Document Schema"]
+        HashCheckSignature [label = "Verify Signature"]
+        HashCheckStart -> HashCheckSchema
+        HashCheckSchema -> HashCheckSignature
+    }
+
+    subgraph cluster_Token_Check {
+
+        //"EthereumTokenRegistryStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "tokenRegistry" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.TokenRegistry;
+
+        label = "EthereumTokenRegistryStatus"
+        TokenCheckStart [label="Start"]
+        TokenCheckSchema [label="Check Document Schema"]
+        TokenCheckProof [label="Check If Document's proof is\n Token Registry"]
+        TokenCheckConnect [label="Connect to Token Registry"]
+        TokenCheckMint [label="Check if Document's Merkle Root\n minted on Token Registry"]
+        
+        TokenCheckStart -> TokenCheckSchema
+        TokenCheckSchema -> TokenCheckProof
+        TokenCheckProof -> TokenCheckConnect
+        TokenCheckConnect -> TokenCheckMint
+    }
+
+
+    subgraph cluster_DocumentStore_Check {
+
+        //"EthereumDocumentStoreStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.DocumentStore;
+
+        label = "EthereumDocumentStoreStatus"
+        DocumentStoreStart [label="Start"]
+        DocumentStoreSchema [label="Check Document Schema"]
+        DocumentStoreProof [label="Check If Document's proof is\n DocumentStore or CertificateStore"]
+        DocumentStoreConnect [label="Connect to Document Stores"]
+        DocumentStoreMint [label="Check if Document's Merkle Root on\n Document Store"]
+        DocumentStoreRevoked [label="Check if Document's Merkle Root hasn't\n been Revoked on Document Store"]
+        
+        DocumentStoreStart -> DocumentStoreSchema
+        DocumentStoreSchema -> DocumentStoreProof
+        DocumentStoreProof -> DocumentStoreConnect
+        DocumentStoreConnect -> DocumentStoreMint
+        DocumentStoreMint -> DocumentStoreRevoked
+    }
+
+
+    subgraph cluster_DidSigned_Check {
+
+        //"DidSignedDocumentStatus"
+        // Test Condition
+        // V2 // return document.proof.some((proof) => proof.type === "OpenAttestationSignature2018");
+        // V3 // return document.proof.type === "OpenAttestationMerkleProofSignature2018";
+
+        label = "DidSignedDocumentStatus"
+        DidSignedStart [label="Start"]
+        DidSignedSchema [label="Check Document Schema"]
+        DidSignedIssuer [label="Ensure That Document's issuer is \nDID or DNS-DID"]
+        DidSignedEndpoint [label="Ensure that the Revocation Endpoint\n Details available or None Specified"]
+        DidSignedRevoked [label="Check if Document revoked on\n Document Store or OCSP"]
+        
+        DidSignedStart -> DidSignedSchema
+        DidSignedSchema -> DidSignedIssuer
+        DidSignedIssuer -> DidSignedEndpoint
+        DidSignedEndpoint -> DidSignedRevoked
+    }
+
+    subgraph cluster_DnsTxt_Check {
+
+        //"DnsTxtIdentityProof"
+        // Test Condition
+        // V2 // return (
+        //     (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
+        //     issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+        //   );
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSTxt;
+
+        label = "DnsTxtIdentityProof"
+        DNSTxtStart [label="Start"]
+        DNSTxtSchema [label="Check Document Schema"]
+        DNSTxtIssuer [label="Ensure That Document's issuer is \nDNSTxt"]
+        DNSTxtProof [label="Check If Document's proof is \nDocumentStore, CertificateStore or \nTokenRegistry"]
+        // DNSTxtEndpoint [label="Ensure that the DNS Location and \nSmart Contract Address Specified"]
+        DNSTxtRevoked [label="Check DNS TXT is the same \nas Smart Contract Address"]
+        
+        DNSTxtStart -> DNSTxtSchema
+        DNSTxtSchema -> DNSTxtIssuer
+        DNSTxtIssuer -> DNSTxtProof
+        // DNSTxtProof -> DNSTxtEndpoint
+        // DNSTxtEndpoint -> DNSTxtRevoked
+        DNSTxtProof -> DNSTxtRevoked
+    }
+
+
+    subgraph cluster_DnsDid_Check {
+
+        //"DnsDidIdentityProof"
+        // Test Condition
+        // V2 // return data.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
+
+        label = "DnsDidIdentityProof"
+        DNSDidStart [label="Start"]
+        DNSDidSchema [label="Check Document Schema"]
+        DNSDidIssuer [label="Ensure That Document's issuer\n is DNSDid"]
+        DNSDidRevoked [label="Check DNS TXT is the same as\n Smart Contract Address"]
+        
+        DNSDidStart -> DNSDidSchema
+        DNSDidSchema -> DNSDidIssuer
+        DNSDidIssuer -> DNSDidRevoked
+    }
+
+}

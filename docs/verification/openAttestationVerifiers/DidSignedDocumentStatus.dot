@@ -1,0 +1,102 @@
+digraph G {
+
+    node [style=filled];
+    label = "openAttestationHash.ts"
+
+  subgraph cluster_1 {
+    label = "test"
+    URL = "https://github.com/Open-Attestation/oa-verify/blob/7aa532d1c247f3e2cf6c54f7247e95c9560ccaaf/src/verifiers/documentStatus/didSigned/didSignedDocumentStatus.ts#L36"
+    invalid_test [label= "Skipped"];
+    
+    start_test [label="Start"]
+    start_test -> v2 [label="Signed Wrapped V2 Doc"];
+    start_test -> v3 [label="Signed Wrapped V3 Doc"];
+
+    v2 [label="v2"]
+    valid_test [label= "Valid"];
+    v2 -> valid_test [label="Doc Proof Type: OpenAttestationSignature2018"];
+    v2 -> invalid_test
+
+    v3 [label="v3"]
+    v3 -> valid_test [label="Doc Proof Type: OpenAttestationMerkleProofSignature2018"];
+    v3-> invalid_test
+
+    start_test -> invalid_test [label="Neither"];
+  }
+
+  subgraph cluster_2 {
+
+    URL = "https://github.com/Open-Attestation/oa-verify/blob/7aa532d1c247f3e2cf6c54f7247e95c9560ccaaf/src/verifiers/documentStatus/didSigned/didSignedDocumentStatus.ts#L324"
+    label = "verify"
+    
+    valid [label= "Valid"];
+    invalid [label= "Invalid"];
+
+    verify_start_verify [label="Start"]
+    valid_test -> verify_start_verify;
+    
+    verify_start_verify -> v2_valid_identity_type_verify [label = "Signed Wrapped V2 Doc"]
+    verify_start_verify -> invalid
+
+    v2_valid_identity_type_verify [label="Valid V2 Identity Type", URL = "https://github.com/Open-Attestation/oa-verify/blob/7aa532d1c247f3e2cf6c54f7247e95c9560ccaaf/src/verifiers/documentStatus/didSigned/didSignedDocumentStatus.ts#58"]
+    v2_valid_identity_type_verify -> v2_check_issuer_details [label="IdentityProofType: DID"];
+    v2_valid_identity_type_verify -> v2_check_issuer_details [label="IdentityProofType: DNS-DID"];
+    v2_valid_identity_type_verify -> invalid
+    
+    v2_check_issuer_details [label="Check Revocation Details"]
+    v2_check_issuer_details -> v2_verify_dns_txt_verify [label="valid revocation url/address"];
+    v2_check_issuer_details -> invalid
+
+    v2_verify_dns_txt_verify [label="Verify Document Revocation"]
+    v2_verify_dns_txt_verify -> invalid
+    v2_verify_dns_txt_verify -> v2_verify_signature [label="None"]
+    v2_verify_dns_txt_verify -> v2_verify_revocationstore [label="Revocation type: RevocationStore"]
+    v2_verify_dns_txt_verify -> v2_verify_ocspresponder [label="Revocation type: OcspResponder"]
+
+    v2_verify_revocationstore [label="Verify Document RevocationStore"]
+    v2_verify_revocationstore -> v2_verify_signature [label="document not on RevocationStore"]
+    v2_verify_revocationstore -> invalid
+
+    v2_verify_ocspresponder [label="Verify Document OcspResponder"]
+    v2_verify_ocspresponder -> v2_verify_signature [label="document not on OcspResponder"]
+    v2_verify_ocspresponder -> invalid
+
+    v2_verify_signature [label="Verify Document Signature"]
+    v2_verify_signature -> valid [label="document signature valid"]
+    v2_verify_signature -> invalid
+    
+  }
+
+
+  subgraph cluster_3 {
+
+    verify_start_verify -> v3_verify_signature [label = "Signed Wrapped V3 Doc"]
+    verify_start_verify -> invalid
+
+    v3_verify_signature [label="Verify Document Signature", URL = "https://github.com/Open-Attestation/oa-verify/blob/7aa532d1c247f3e2cf6c54f7247e95c9560ccaaf/src/verifiers/documentStatus/didSigned/didSignedDocumentStatus.ts#L209"]
+    v3_verify_signature -> v3_check_issuer_details [label="document signature valid"]
+    v3_verify_signature -> invalid
+    
+    v3_check_issuer_details [label="Check Revocation Details"]
+    v3_check_issuer_details -> v3_verify_dns_txt_verify [label="valid revocation url/address"];
+    v3_check_issuer_details -> invalid
+
+    v3_verify_dns_txt_verify [label="Verify Document Revocation"]
+    v3_verify_dns_txt_verify -> invalid
+    v3_verify_dns_txt_verify -> valid [label="None"]
+    v3_verify_dns_txt_verify -> v3_verify_revocationstore [label="Revocation type RevocationStore"]
+    
+    v3_verify_revocationstore [label="Verify Document RevocationStore"]
+    v3_verify_revocationstore -> valid [label="document not on RevocationStore"]
+    v3_verify_revocationstore -> invalid
+    
+  }
+
+
+  subgraph cluster_4 {
+
+    label = "skip"
+    invalid_test -> skip;
+  }
+
+}

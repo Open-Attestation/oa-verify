@@ -1,0 +1,25 @@
+
+
+digraph g {
+
+    subgraph DidSigned_Check {
+
+        //"DidSignedDocumentStatus"
+        // Test Condition
+        // V2 // return document.proof.some((proof) => proof.type === "OpenAttestationSignature2018");
+        // V3 // return document.proof.type === "OpenAttestationMerkleProofSignature2018";
+
+        label = "DidSignedDocumentStatus"
+        DidSignedStart [label="Start"]
+        DidSignedSchema [label="Check Document Schema"]
+        DidSignedIssuer [label="Ensure That Document's issuer is DID or DNS-DID"]
+        DidSignedEndpoint [label="Ensure that the Revocation Endpoint Details available or None Specified"]
+        DidSignedRevoked [label="Check if Document revoked on Document Store or OCSP"]
+        
+        DidSignedStart -> DidSignedSchema
+        DidSignedSchema -> DidSignedIssuer
+        DidSignedIssuer -> DidSignedEndpoint
+        DidSignedEndpoint -> DidSignedRevoked
+    }
+
+}

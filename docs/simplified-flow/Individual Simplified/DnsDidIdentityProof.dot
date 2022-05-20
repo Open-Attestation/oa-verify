@@ -1,0 +1,23 @@
+
+
+digraph g {
+    
+    subgraph DnsDid_Check {
+
+        //"DnsDidIdentityProof"
+        // Test Condition
+        // V2 // return data.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
+
+        label = "DnsDidIdentityProof"
+        DNSDidStart [label="Start"]
+        DNSDidSchema [label="Check Document Schema"]
+        DNSDidIssuer [label="Ensure That Document's issuer is DNSDid"]
+        DNSDidRevoked [label="Check DNS TXT is the same as Smart Contract Address"]
+        
+        DNSDidStart -> DNSDidSchema
+        DNSDidSchema -> DNSDidIssuer
+        DNSDidIssuer -> DNSDidRevoked
+    }
+
+}

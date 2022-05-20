@@ -1,0 +1,68 @@
+
+
+digraph g {
+
+    subgraph cluster_Hash_Check {
+
+        label = "openAttestationHash"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentIntegrity/hash/openAttestationHash.ts#:~:text=const%20verify"
+        HashCheckStart [label="Start"]
+        HashCheckSchema [label="Check Document Schema"]
+        HashCheckSignature [label = "Verify Signature"]
+        HashCheckStart -> HashCheckSchema
+        HashCheckSchema -> HashCheckSignature
+    }
+
+    subgraph cluster_Token_Check {
+
+        //"EthereumTokenRegistryStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "tokenRegistry" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.TokenRegistry;
+
+        label = "EthereumTokenRegistryStatus"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.ts#:~:text=const%20verify"
+        // TokenCheckStart [label="Start"]
+        // TokenCheckSchema [label="Check Document Schema"]
+        // TokenCheckProof [label="Check If Document's proof is\n Token Registry"]
+        TokenCheckConnect [label="Connect to Token Registry"]
+        TokenCheckMint [label="Check if Document Merkle Root\n minted on Token Registry"]
+        
+        // HashCheckSignature -> TokenCheckSchema
+        // TokenCheckSchema -> TokenCheckProof
+        // HashCheckSignature -> TokenCheckProof
+        // TokenCheckProof -> TokenCheckConnect
+        HashCheckSignature -> TokenCheckConnect
+        TokenCheckConnect -> TokenCheckMint
+    }
+
+    subgraph cluster_DnsTxt_Check {
+
+        //"DnsTxtIdentityProof"
+        // Test Condition
+        // V2 // return (
+        //     (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
+        //     issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+        //   );
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSTxt;
+
+        label = "DnsTxtIdentityProof"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.ts#:~:text=const%20verify"
+        // DNSTxtStart [label="Start"]
+        // DNSTxtSchema [label="Check Document Schema"]
+        DNSTxtIssuer [label="Ensure That Document issuer is \nDNSTxt"]
+        // DNSTxtProof [label="Check If Document's proof is \nDocumentStore, CertificateStore or \nTokenRegistry"]
+        // DNSTxtEndpoint [label="Ensure that the DNS Location and \nSmart Contract Address Specified"]
+        DNSTxtRevoked [label="Check DNS TXT is the same \nas Smart Contract Address"]
+        
+        // TokenCheckMint -> DNSTxtSchema
+        // DNSTxtSchema -> DNSTxtIssuer
+        TokenCheckMint -> DNSTxtIssuer
+        // DNSTxtIssuer -> DNSTxtProof
+        // DNSTxtProof -> DNSTxtEndpoint
+        // DNSTxtEndpoint -> DNSTxtRevoked
+        // DNSTxtProof -> DNSTxtRevoked
+        DNSTxtIssuer -> DNSTxtRevoked
+    }
+
+}

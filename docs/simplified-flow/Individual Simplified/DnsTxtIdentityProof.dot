@@ -1,0 +1,30 @@
+
+
+digraph g {
+
+    subgraph DnsTxt_Check {
+
+        //"DnsTxtIdentityProof"
+        // Test Condition
+        // V2 // return (
+        //     (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
+        //     issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+        //   );
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSTxt;
+
+        label = "DnsTxtIdentityProof"
+        DNSTxtStart [label="Start"]
+        DNSTxtSchema [label="Check Document Schema"]
+        DNSTxtIssuer [label="Ensure That Document's issuer is DNSTxt"]
+        DNSTxtProof [label="Check If Document's proof is DocumentStore, CertificateStore or TokenRegistry"]
+        DNSTxtEndpoint [label="Ensure that the DNS Location and Smart Contract Address Specified"]
+        DNSTxtRevoked [label="Check DNS TXT is the same as Smart Contract Address"]
+        
+        DNSTxtStart -> DNSTxtSchema
+        DNSTxtSchema -> DNSTxtIssuer
+        DNSTxtIssuer -> DNSTxtProof
+        DNSTxtProof -> DNSTxtEndpoint
+        DNSTxtEndpoint -> DNSTxtRevoked
+    }
+    
+}

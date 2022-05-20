@@ -1,0 +1,13 @@
+
+
+digraph g {
+
+    subgraph Hash_Check {
+        label = "openAttestationHash"
+        HashCheckStart [label="Start"]
+        HashCheckSchema [label="Check Document Schema"]
+        HashCheckSignature [label = "Verify Signature"]
+        HashCheckStart -> HashCheckSchema
+        HashCheckSchema -> HashCheckSignature
+    }
+}

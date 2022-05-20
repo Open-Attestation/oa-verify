@@ -1,0 +1,28 @@
+
+
+digraph g {
+    
+    subgraph DocumentStore_Check {
+
+        //"EthereumDocumentStoreStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.DocumentStore;
+        
+        
+        label = "EthereumDocumentStoreStatus"
+        // DocumentStoreStart [label="Start"]
+        DocumentStoreSchema [label="Check Document Schema"]
+        DocumentStoreProof [label="Check If Document's proof is DocumentStore or CertificateStore"]
+        DocumentStoreConnect [label="Connect to Document Stores"]
+        DocumentStoreMint [label="Check if Document's Merkle Root on Document Store"]
+        DocumentStoreRevoked [label="Check if Document's Merkle Root hasn't been Revoked on Document Store"]
+        
+        HashCheckSignature -> DocumentStoreSchema [label = "Document Store"]
+        DocumentStoreSchema -> DocumentStoreProof
+        DocumentStoreProof -> DocumentStoreConnect
+        DocumentStoreConnect -> DocumentStoreMint
+        DocumentStoreMint -> DocumentStoreRevoked
+    }
+
+}

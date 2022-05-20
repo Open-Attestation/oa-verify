@@ -1,0 +1,74 @@
+
+
+digraph g {
+
+    // document.openAttestationMetadata.proof.method
+    // EthereumTokenRegistryStatus OR EthereumDocumentStoreStatus
+
+    // document.proof.type
+    // DidSignedDocumentStatus
+
+    // document.openAttestationMetadata.identityProof.type
+    // DnsTxtIdentityProof OR DnsDidIdentityProof
+
+    subgraph cluster_Hash_Check {
+
+        label = "openAttestationHash"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.ts#:~:text=const%20verify"
+
+        HashCheckStart [label="Start"]
+        HashCheckSchema [label="Check Document Schema"]
+        HashCheckSignature [label = "Verify Signature"]
+        HashCheckStart -> HashCheckSchema
+        HashCheckSchema -> HashCheckSignature
+    }
+
+    subgraph cluster_DidSigned_Check {
+
+        //"DidSignedDocumentStatus"
+        // Test Condition
+        // V2 // return document.proof.some((proof) => proof.type === "OpenAttestationSignature2018");
+        // V3 // return document.proof.type === "OpenAttestationMerkleProofSignature2018";
+
+        // V2 // if (!(issuer.identityProof?.type === "DID" || issuer.identityProof?.type === "DNS-DID"))
+    
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentStatus/didSigned/didSignedDocumentStatus.ts#:~:text=const%20verify"
+        label = "DidSignedDocumentStatus"
+
+        // DidSignedStart [label="Start"]
+        // DidSignedSchema [label="Check Document Schema"]
+        // DidSignedIssuer [label="Ensure That Document's issuer is \nDID or DNS-DID"]
+        DidSignedEndpoint [label="Ensure that the Revocation Endpoint\n Details available or None Specified"]
+        DidSignedRevoked [label="Check if Document revoked on\n Document Store or OCSP"]
+        
+        // DidSignedStart -> DidSignedSchema
+        // DidSignedSchema -> DidSignedIssuer
+        // HashCheckSignature -> DidSignedIssuer
+        HashCheckSignature -> DidSignedEndpoint
+        // DidSignedIssuer -> DidSignedEndpoint
+        DidSignedEndpoint -> DidSignedRevoked
+    }
+
+    subgraph cluster_DnsDid_Check {
+
+        //"DnsDidIdentityProof"
+        // Test Condition
+        // V2 // return data.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
+
+        // V2 // if (identityProofType !== v2.IdentityProofType.DNSDid) THROW
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/issuerIdentity/dnsDid/dnsDidProof.ts#:~:text=const%20verify"
+        label = "DnsDidIdentityProof"
+        // DNSDidStart [label="Start"]
+        // DNSDidSchema [label="Check Document Schema"]
+        // DNSDidIssuer [label="Ensure That Document's issuer\n is DNSDid"]
+        DNSDidRevoked [label="Check DNS TXT is the same as\n Smart Contract Address"]
+        
+        // DNSDidStart -> DNSDidSchema
+        // DNSDidSchema -> DNSDidIssuer
+        // HashCheckSignature -> DNSDidIssuer
+        // DNSDidIssuer -> DNSDidRevoked
+        DidSignedRevoked -> DNSDidRevoked
+    }
+
+}

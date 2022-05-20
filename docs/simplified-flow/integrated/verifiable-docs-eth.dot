@@ -1,0 +1,84 @@
+
+
+digraph g {
+
+    // document.openAttestationMetadata.proof.method
+    // EthereumTokenRegistryStatus OR EthereumDocumentStoreStatus
+
+    // document.proof.type
+    // DidSignedDocumentStatus
+
+    // document.openAttestationMetadata.identityProof.type
+    // DnsTxtIdentityProof OR DnsDidIdentityProof
+
+    subgraph cluster_Hash_Check {
+
+        label = "openAttestationHash"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentStatus/tokenRegistry/ethereumTokenRegistryStatus.ts#:~:text=const%20verify"
+
+        HashCheckStart [label="Start"]
+        HashCheckSchema [label="Check Document Schema"]
+        HashCheckSignature [label = "Verify Signature"]
+        HashCheckStart -> HashCheckSchema
+        HashCheckSchema -> HashCheckSignature
+    }
+
+    subgraph cluster_DocumentStore_Check {
+
+        //"EthereumDocumentStoreStatus"
+        // Test Condition
+        // V2 // return documentData.issuers.some((issuer) => "documentStore" in issuer || "certificateStore" in issuer);
+        // V3 // return document.openAttestationMetadata.proof.method === v3.Method.DocumentStore;
+
+        label = "EthereumDocumentStoreStatus"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.ts#:~:text=const%20verify"
+
+        // DocumentStoreStart [label="Start"]
+        // DocumentStoreSchema [label="Check Document Schema"]
+        // DocumentStoreProof [label="Check If Document's proof is\n DocumentStore or CertificateStore"]
+        DocumentStoreConnect [label="Connect to Document Stores"]
+        DocumentStoreMint [label="Check if Document Merkle Root on\n Document Store"]
+        DocumentStoreRevoked [label="Check if Document Merkle Root has not\n been Revoked on Document Store"]
+        
+        // HashCheckSignature -> DocumentStoreSchema [label = "Document Store"]
+        // DocumentStoreSchema -> DocumentStoreProof
+        // DocumentStoreProof -> DocumentStoreConnect
+        // DocumentStoreConnect -> DocumentStoreMint
+        // DocumentStoreMint -> DocumentStoreRevoked
+
+        HashCheckSignature -> DocumentStoreConnect
+        DocumentStoreConnect -> DocumentStoreMint
+        DocumentStoreMint -> DocumentStoreRevoked
+    }
+
+    subgraph cluster_DnsTxt_Check {
+
+        //"DnsTxtIdentityProof"
+        // Test Condition
+        // V2 // return (
+        //     (issuer.documentStore || issuer.tokenRegistry || issuer.certificateStore) &&
+        //     issuer.identityProof?.type === v2.IdentityProofType.DNSTxt
+        //   );
+        // V3 // return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSTxt;
+
+        label = "DnsTxtIdentityProof"
+        URL = "https://github.com/Open-Attestation/oa-verify/blob/master/src/verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.ts#:~:text=const%20verify"
+
+        // DNSTxtStart [label="Start"]
+        // DNSTxtSchema [label="Check Document Schema"]
+        // DNSTxtIssuer [label="Ensure That Document's issuer is \nDNSTxt"]
+        // DNSTxtProof [label="Check If Document's proof is \nDocumentStore, CertificateStore or \nTokenRegistry"]
+        // DNSTxtEndpoint [label="Ensure that the DNS Location and \nSmart Contract Address Specified"]
+        DNSTxtRevoked [label="Check DNS TXT is the same \nas Smart Contract Address"]
+        
+        // DNSTxtStart -> DNSTxtSchema
+        // DNSTxtSchema -> DNSTxtIssuer
+        // DNSTxtIssuer -> DNSTxtProof
+        // DNSTxtProof -> DNSTxtEndpoint
+        // DNSTxtEndpoint -> DNSTxtRevoked
+        // DNSTxtProof -> DNSTxtRevoked
+
+        DocumentStoreRevoked -> DNSTxtRevoked
+    }
+
+}
