@@ -10,7 +10,12 @@ import {
 import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
-import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
+import {
+  ValidOcspResponse,
+  ValidOcspResponseRevoked,
+  ValidOcspResponse2,
+  ValidOcspResponseRevoked2,
+} from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -128,7 +133,7 @@ export const isRevokedOnDocumentStore = async ({
  * that are already in the wild. Do consider removing support for old OCSP responders
  * in the next major version of oa-verify.
  */
-export const isRevokedByOcspResponder = async ({
+const isRevokedByOcspResponder = async ({
   certificateId,
   location,
 }: {
@@ -160,4 +165,61 @@ export const isRevokedByOcspResponder = async ({
     OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
     "OCSP_RESPONSE_INVALID"
   );
+};
+
+export const isRevokedByOcspResponder2 = async ({
+  certificateId,
+  merkleRoot,
+  targetHash,
+  proofs,
+  location,
+}: {
+  certificateId: string; // FIXME: Omit this field after removing support for old OCSP responders
+  merkleRoot: string;
+  targetHash: Hash;
+  proofs?: Hash[];
+  location: string;
+}): Promise<RevocationStatus> => {
+  const intermediateHashes = getIntermediateHashes(targetHash, proofs);
+
+  try {
+    for (const hash of intermediateHashes) {
+      const { data } = await axios.get(`${location}/${hash}`).catch((e) => {
+        throw new CodedError(
+          `Invalid or unexpected response from OCSP Responder - ${e}`,
+          OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+          "OCSP_RESPONSE_INVALID"
+        );
+      });
+
+      if (ValidOcspResponse2.guard(data)) {
+        continue;
+      } else if (ValidOcspResponseRevoked2.guard(data)) {
+        const { reasonCode } = data;
+        return {
+          revoked: true,
+          address: location,
+          reason: {
+            message: `Document ${merkleRoot} has been revoked under OCSP Responder: ${location}`,
+            code: reasonCode,
+            codeString: OcspResponderRevocationReason[reasonCode],
+          },
+        };
+      } else {
+        throw new CodedError(
+          `Invalid or unexpected response from OCSP Responder`,
+          OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+          "OCSP_RESPONSE_INVALID"
+        );
+      }
+    }
+  } catch (_) {
+    // FIXME: Omit this try/catch fallback after removing support for old OCSP responders
+    return isRevokedByOcspResponder({ certificateId, location });
+  }
+
+  return {
+    revoked: false,
+    address: location,
+  };
 };

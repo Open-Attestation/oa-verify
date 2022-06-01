@@ -4,7 +4,7 @@ import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../typ
 import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
-import { isRevokedByOcspResponder, isRevokedOnDocumentStore } from "../utils";
+import { isRevokedByOcspResponder2, isRevokedOnDocumentStore } from "../utils";
 import { InvalidRevocationStatus, RevocationStatus, ValidRevocationStatus } from "../revocation.types";
 import {
   DidSignedIssuanceStatus,
@@ -99,8 +99,11 @@ const verifyV2 = async (
         );
       case v2.RevocationType.OcspResponder:
         if (typeof revocationItem.location === "string") {
-          return isRevokedByOcspResponder({
+          return isRevokedByOcspResponder2({
             certificateId: documentData.id as string,
+            merkleRoot,
+            targetHash,
+            proofs,
             location: revocationItem.location,
           });
         }
