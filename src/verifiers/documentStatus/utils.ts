@@ -68,40 +68,6 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   return revokedStatuses.find((hash) => hash);
 };
 
-export const isRevokedByOcspResponder = async ({
-  certificateId,
-  location,
-}: {
-  certificateId: string;
-  location: string;
-}): Promise<RevocationStatus> => {
-  const { data } = await axios.get(`${location}/${certificateId}`);
-
-  if (ValidOcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
-    const { reasonCode } = data;
-    return {
-      revoked: true,
-      address: location,
-      reason: {
-        message: OcspResponderRevocationReason[reasonCode],
-        code: reasonCode,
-        codeString: OcspResponderRevocationReason[reasonCode],
-      },
-    };
-  } else if (ValidOcspResponse.guard(data) && data.certificateStatus !== "revoked") {
-    return {
-      revoked: false,
-      address: location,
-    };
-  }
-
-  throw new CodedError(
-    "oscp response invalid",
-    OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
-    "OCSP_RESPONSE_INVALID"
-  );
-};
-
 export const isRevokedOnDocumentStore = async ({
   documentStore,
   merkleRoot,
@@ -153,4 +119,45 @@ export const isRevokedOnDocumentStore = async ({
       },
     };
   }
+};
+
+/**
+ * @deprecated Replaced by `isRevokedByOcspResponder2()` to check against merkle root & intermediate hashes (i.e. do not revoke by document id)
+ *
+ * These checks retained for backwards compatibility with older OCSP responders
+ * that are already in the wild. Do consider removing support for old OCSP responders
+ * in the next major version of oa-verify.
+ */
+export const isRevokedByOcspResponder = async ({
+  certificateId,
+  location,
+}: {
+  certificateId: string;
+  location: string;
+}): Promise<RevocationStatus> => {
+  const { data } = await axios.get(`${location}/${certificateId}`);
+
+  if (ValidOcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
+    const { reasonCode } = data;
+    return {
+      revoked: true,
+      address: location,
+      reason: {
+        message: OcspResponderRevocationReason[reasonCode],
+        code: reasonCode,
+        codeString: OcspResponderRevocationReason[reasonCode],
+      },
+    };
+  } else if (ValidOcspResponse.guard(data) && data.certificateStatus !== "revoked") {
+    return {
+      revoked: false,
+      address: location,
+    };
+  }
+
+  throw new CodedError(
+    "Invalid or unexpected response from OCSP Responder",
+    OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
+    "OCSP_RESPONSE_INVALID"
+  );
 };
