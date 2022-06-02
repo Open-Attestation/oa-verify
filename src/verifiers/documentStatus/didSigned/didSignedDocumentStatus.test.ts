@@ -119,6 +119,7 @@ describe("verify", () => {
   beforeEach(() => {
     mockGetPublicKey.mockReset();
   });
+
   describe("v2", () => {
     it("should pass for documents using `DID` and is correctly signed", async () => {
       whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
@@ -451,8 +452,7 @@ describe("verify", () => {
         }
       `);
     });
-
-    it("should pass when DID document is signed and is not revoked by an OCSP", async () => {
+    it("should pass when DID document is signed and is not revoked by an OCSP v1", async () => {
       whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
 
       const handlers = [
@@ -498,8 +498,7 @@ describe("verify", () => {
 
       server.close();
     });
-
-    it("should fail when DID document is signed but is found by an OCSP", async () => {
+    it("should fail when DID document is signed but is found by an OCSP v1", async () => {
       whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
 
       const handlers = [
@@ -558,6 +557,137 @@ describe("verify", () => {
 
       server.close();
     });
+    it("should pass when DID document is signed and is not revoked by an OCSP v2", async () => {
+      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+
+      const handlers = [
+        rest.get(
+          "https://www.ica.gov.sg/ocsp/0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+              })
+            );
+          }
+        ),
+        rest.get(
+          "https://www.ica.gov.sg/ocsp/0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "https://www.ica.gov.sg/ocsp",
+                  "revoked": false,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
+    it("should fail when DID document is signed but is found by an OCSP v2", async () => {
+      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+
+      const handlers = [
+        rest.get(
+          "https://www.ica.gov.sg/ocsp/0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+              })
+            );
+          }
+        ),
+        rest.get(
+          "https://www.ica.gov.sg/ocsp/0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: true,
+                documentHash: "0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+                reasonCode: 4,
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "https://www.ica.gov.sg/ocsp",
+                  "reason": Object {
+                    "code": 4,
+                    "codeString": "SUPERSEDED",
+                    "message": "Document 0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c has been revoked under OCSP Responder: https://www.ica.gov.sg/ocsp",
+                  },
+                  "revoked": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SUPERSEDED",
+            "message": "Document 0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c has been revoked under OCSP Responder: https://www.ica.gov.sg/ocsp",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
   });
 
   describe("v3", () => {
@@ -602,7 +732,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreNotRevokedV3, options);
@@ -628,7 +757,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedV3, options);
@@ -653,7 +781,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should pass for documents using `DID-DNS` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreNotRevokedV3, options);
@@ -679,7 +806,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should fail when revocation block is missing", async () => {
       whenPublicKeyResolvesSuccessfully();
       const docWithoutRevocationBlock = {
@@ -716,7 +842,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
       whenPublicKeyResolvesSuccessfully();
       const docWithIncorrectRevocation = {
@@ -748,7 +873,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should fail for documents using `DID` and is correctly signed, and is revoked on a document store (if specified)", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButRevokedV3, options);
@@ -784,7 +908,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should fail for documents using `DID-DNS` and is correctly signed, and is revoked on a document store (if specified)", async () => {
       whenPublicKeyResolvesSuccessfully();
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreButRevokedV3, options);
@@ -820,7 +943,6 @@ describe("verify", () => {
         }
       `);
     });
-
     it("should fail when signature is wrong", async () => {
       whenPublicKeyResolvesSuccessfully();
       const documentWithWrongSig = {
