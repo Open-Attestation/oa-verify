@@ -453,10 +453,10 @@ describe("verify", () => {
       `);
     });
     it("should pass when DID document is signed and is not revoked by an OCSP v1", async () => {
-      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+      whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
-        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
+        rest.get("https://ocsp.example.com/SGCNM21566327", (_, res, ctx) => {
           return res(
             ctx.json({
               certificateId: "SGCNM21566327",
@@ -476,13 +476,13 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "https://www.ica.gov.sg/ocsp",
+                  "address": "https://ocsp.example.com",
                   "revoked": false,
                 },
               ],
@@ -499,10 +499,10 @@ describe("verify", () => {
       server.close();
     });
     it("should fail when DID document is signed but is found by an OCSP v1", async () => {
-      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+      whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
-        rest.get("https://www.ica.gov.sg/ocsp/SGCNM21566327", (_, res, ctx) => {
+        rest.get("https://ocsp.example.com/SGCNM21566327", (_, res, ctx) => {
           return res(
             ctx.json({
               certificateId: "SGCNM21566327",
@@ -525,13 +525,13 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "https://www.ica.gov.sg/ocsp",
+                  "address": "https://ocsp.example.com",
                   "reason": Object {
                     "code": 4,
                     "codeString": "SUPERSEDED",
@@ -558,27 +558,27 @@ describe("verify", () => {
       server.close();
     });
     it("should pass when DID document is signed and is not revoked by an OCSP v2", async () => {
-      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+      whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
         rest.get(
-          "https://www.ica.gov.sg/ocsp/0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+          "https://ocsp.example.com/0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
           (_, res, ctx) => {
             return res(
               ctx.json({
                 revoked: false,
-                documentHash: "0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+                documentHash: "0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
               })
             );
           }
         ),
         rest.get(
-          "https://www.ica.gov.sg/ocsp/0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+          "https://ocsp.example.com/0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
           (_, res, ctx) => {
             return res(
               ctx.json({
                 revoked: false,
-                documentHash: "0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+                documentHash: "0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
               })
             );
           }
@@ -595,13 +595,13 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "https://www.ica.gov.sg/ocsp",
+                  "address": "https://ocsp.example.com",
                   "revoked": false,
                 },
               ],
@@ -618,28 +618,28 @@ describe("verify", () => {
       server.close();
     });
     it("should fail when DID document is signed but is found by an OCSP v2", async () => {
-      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+      whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
         rest.get(
-          "https://www.ica.gov.sg/ocsp/0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+          "https://ocsp.example.com/0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
           (_, res, ctx) => {
             return res(
               ctx.json({
-                revoked: false,
-                documentHash: "0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c",
+                revoked: true,
+                documentHash: "0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+                reasonCode: 4,
               })
             );
           }
         ),
         rest.get(
-          "https://www.ica.gov.sg/ocsp/0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
+          "https://ocsp.example.com/0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
           (_, res, ctx) => {
             return res(
               ctx.json({
-                revoked: true,
-                documentHash: "0x4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
-                reasonCode: 4,
+                revoked: false,
+                documentHash: "0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
               })
             );
           }
@@ -656,17 +656,17 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "https://www.ica.gov.sg/ocsp",
+                  "address": "https://ocsp.example.com",
                   "reason": Object {
                     "code": 4,
                     "codeString": "SUPERSEDED",
-                    "message": "Document 0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c has been revoked under OCSP Responder: https://www.ica.gov.sg/ocsp",
+                    "message": "Document 0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c has been revoked under OCSP Responder: https://ocsp.example.com",
                   },
                   "revoked": true,
                 },
@@ -679,7 +679,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 4,
             "codeString": "SUPERSEDED",
-            "message": "Document 0x53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c has been revoked under OCSP Responder: https://www.ica.gov.sg/ocsp",
+            "message": "Document 0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c has been revoked under OCSP Responder: https://ocsp.example.com",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
