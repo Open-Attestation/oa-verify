@@ -4,7 +4,7 @@ import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../typ
 import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
-import { isRevokedByOcspResponder, isRevokedOnDocumentStore } from "../utils";
+import { isRevokedByOcspResponder, isRevokedByOcspResponder2, isRevokedOnDocumentStore } from "../utils";
 import { InvalidRevocationStatus, RevocationStatus, ValidRevocationStatus } from "../revocation.types";
 import {
   DidSignedIssuanceStatus,
@@ -98,11 +98,17 @@ const verifyV2 = async (
           "REVOCATION_LOCATION_MISSING"
         );
       case v2.RevocationType.OcspResponder:
-        if (typeof revocationItem.location === "string") {
-          return isRevokedByOcspResponder({
-            certificateId: documentData.id as string,
-            location: revocationItem.location,
-          });
+        const { location } = revocationItem;
+        if (typeof location === "string") {
+          return isRevokedByOcspResponder2({
+            merkleRoot,
+            targetHash,
+            proofs,
+            location,
+          }).catch(() =>
+            // FIXME: Omit this catch fallback after removing support for old OCSP responders
+            isRevokedByOcspResponder({ certificateId: documentData.id as string, location })
+          );
         }
         throw new CodedError(
           "missing revocation location for an issuer",

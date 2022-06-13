@@ -1,68 +1,66 @@
 {
   "version": "https://schema.openattestation.com/2.0/schema.json",
   "data": {
-    "id": "119450a6-e966-4cfc-b422-46a15944e5aa:string:SGCNM21566327",
+    "id": "34d75f11-a68e-4377-9def-5a378ac931de:string:SGCNM21566327",
     "recipient": {
-      "name": "bec209c5-591b-4221-af7c-b30ac645e807:string:AUS FREIGHT",
+      "name": "610ab6a5-34e9-4b30-b2dd-3364beb36a62:string:AUS FREIGHT",
       "address": {
-        "street": "f1a3c0c6-154b-4749-9f86-a52da8ada385:string:101 APPLE ROAD",
-        "country": "6e12ae04-f675-4f58-9558-6a389765bf02:string:AUSTRALIA"
+        "street": "05167e77-04ee-4515-b725-7a0504b3ecf1:string:101 APPLE ROAD",
+        "country": "d66f1e51-30e2-4f3b-ae65-7c3097e3be31:string:AUSTRALIA"
       }
     },
     "consignment": {
-      "description": "2dc3a053-21af-4fce-8e89-8210aa14123f:string:16667 CARTONS OF RED WINE",
+      "description": "6b54955f-f521-4d8e-8c1c-caa3492331ac:string:16667 CARTONS OF RED WINE",
       "quantity": {
-        "value": "7ab472a4-7ff0-4a6b-b8d7-1f10e27c6056:string:5000",
-        "unit": "9c6169b6-9c69-46c2-add1-b269dd3f5b52:string:LITRES"
+        "value": "3f0f6603-f239-4272-b7e4-ca9adfa311da:string:5000",
+        "unit": "e118af6d-cc85-4473-b995-780b7a7768a4:string:LITRES"
       },
-      "countryOfOrigin": "899126dd-df52-409a-9e3b-c7bdf8263715:string:AUSTRALIA",
-      "outwardBillNo": "a4575114-eef0-406f-b5b3-d4af37695928:string:AQSIQ170923150",
-      "dateOfDischarge": "ddc1931f-f51e-469e-9cde-989c9098e04d:string:2018-01-26",
-      "dateOfDeparture": "68066b60-1d0a-4a8a-b3b6-b39e34841253:string:2018-01-30",
-      "countryOfFinalDestination": "ad80faa3-6db3-41fd-bac3-767f26ea8afe:string:CHINA",
-      "outgoingVehicleNo": "c32dd0e2-5324-474d-8bf5-ad1ec6a62771:string:COSCO JAPAN 074E/30-JAN"
+      "countryOfOrigin": "a63f3624-3751-40b1-b37c-32cbc451b6e7:string:AUSTRALIA",
+      "outwardBillNo": "9387719e-7a8b-4d81-8d92-d2bab87e3617:string:AQSIQ170923150",
+      "dateOfDischarge": "3aeae321-1f6e-4fba-bc66-10fba2b44308:string:2018-01-26",
+      "dateOfDeparture": "282ab552-81a2-4423-a860-38b8b22f2aec:string:2018-01-30",
+      "countryOfFinalDestination": "c59ce94d-7ca4-496f-a6b5-95fc3e113c14:string:CHINA",
+      "outgoingVehicleNo": "e03b4762-b5a7-4830-ada2-885a513f44fd:string:COSCO JAPAN 074E/30-JAN"
     },
     "declaration": {
-      "name": "e0fffed5-98f0-48a0-be58-cf52badd1efd:string:PETER LEE",
-      "designation": "409088a3-e414-4df4-855d-8cb8999b0b09:string:SHIPPING MANAGER",
-      "date": "b5346ea9-55d3-4eee-ae4c-4add815bfec4:string:2018-01-28"
+      "name": "f7cb21aa-38a1-43f1-8e8e-56a01e271ed4:string:PETER LEE",
+      "designation": "b993c20a-d347-47df-b125-944812b28ae8:string:SHIPPING MANAGER",
+      "date": "3d83f95a-adf1-4f0e-9929-5a05b3d0eb39:string:2018-01-28"
     },
     "$template": {
-      "name": "803c4074-0750-4cb9-9faf-1468fb2fe011:string:CERTIFICATE_OF_NON_MANIPULATION",
-      "type": "cf6b9e55-e119-44e8-97b5-3b4b5399b359:string:EMBEDDED_RENDERER",
-      "url": "5f922b43-7780-4b88-8bd6-8fc68cdc6884:string:https://demo-cnm.openattestation.com"
+      "name": "579a0440-6365-4635-ba37-93588c62a0b1:string:CERTIFICATE_OF_NON_MANIPULATION",
+      "type": "65356aaf-2c83-45e9-8553-2f3f86f4cb4b:string:EMBEDDED_RENDERER",
+      "url": "d16fa0f1-a34f-4e6d-8dbb-1f1604bb8c95:string:https://demo-cnm.openattestation.com"
     },
     "issuers": [
       {
-        "id": "a0142f9f-1bdc-45db-acb8-afa775409e36:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
-        "name": "59e59aea-026f-449c-83b6-04c6c89d5985:string:Demo Issuer",
+        "id": "11152e6e-3095-4854-9528-6b287d764e4d:string:did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+        "name": "83caf389-6532-4e7a-8cc0-9c2d1c967178:string:Demo Issuer",
         "revocation": {
-          "type": "8f78272a-0dab-4b36-915b-7447e45d1c7b:string:OCSP_RESPONDER",
-          "location": "7acf98ff-53f4-492d-90e3-c2db3f757565:string:https://www.ica.gov.sg/ocsp"
+          "type": "e248e987-f202-45b7-96db-0c2f875c780f:string:OCSP_RESPONDER",
+          "location": "ff751117-df1b-400d-a631-f4e9772cc348:string:https://ocsp.example.com"
         },
         "identityProof": {
-          "type": "bdfa535a-2479-4480-8914-d285fe3db418:string:DNS-DID",
-          "location": "717ca05b-b154-4fff-95d7-b0e47705eb02:string:example.tradetrust.io",
-          "key": "a88609e2-f020-440c-bf34-f569457e903c:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller"
+          "type": "584d86d0-441b-4f05-848a-d912dc96a1e8:string:DNS-DID",
+          "location": "fc729041-e639-4bd2-988b-7f8727e5ad48:string:example.openattestation.com",
+          "key": "a40f13ba-81dd-43a3-b084-77fd83c908ba:string:did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller"
         }
       }
     ]
   },
   "signature": {
     "type": "SHA3MerkleProof",
-    "targetHash": "4d26a49266ba73f57276b0865d995c4c6ae8be52fe54988e85b4cbf222f49e74",
-    "proof": [
-      "bbe0afee0378a14d947e16f6e850f6b50f41218e4dc0e39af8043ac802b550b7"
-    ],
-    "merkleRoot": "53b4a76854688ee7857442d01f33d1805e3a237377fd0e5d53a43cda30dd742c"
+    "targetHash": "28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+    "proof": ["75cb35254e73f3cbb2b63ff2d07a051d2c9e5f81f7e1fd77631df8b8ed93c1bc"],
+    "merkleRoot": "56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c"
   },
   "proof": [
     {
       "type": "OpenAttestationSignature2018",
-      "created": "2021-10-28T07:58:41.042Z",
+      "created": "2022-06-10T04:05:01.095Z",
       "proofPurpose": "assertionMethod",
-      "verificationMethod": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-      "signature": "0x869f6956092f78d2e56e2bee67635fedcdfb6cfd5825f5a88ed1102cf15744ce4bddf629fa6a10dd739711c6c8dc79589038b59d99483a00eedd43cca219b6b61c"
+      "verificationMethod": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
+      "signature": "0x486ff94db8e88f434c260792d92ef0f528f5834b6c42460fb255e2876002c14460bd8311bdb987514e5e2e0581b580d5b1ef114054b0b397295eb5421e1038111c"
     }
   ]
 }
