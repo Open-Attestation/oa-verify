@@ -1,26 +1,26 @@
-import { ethers } from "ethers";
 import { v3 } from "@govtechsg/open-attestation";
+import { ethers } from "ethers";
+import { INFURA_API_KEY } from "../config";
 import { openAttestationDidIdentityProof } from "../verifiers/issuerIdentity/did/didIdentityProof";
 import { verificationBuilder } from "../verifiers/verificationBuilder";
-import { INFURA_API_KEY } from "../config";
-import { createResolver, EthrResolverConfig, resolve, getProviderConfig } from "./resolver";
+import { createResolver, EthrResolverConfig, getProviderConfig, resolve } from "./resolver";
 
 const didDoc = {
   "@context": [
     "https://www.w3.org/ns/did/v1",
     "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld",
   ],
-  assertionMethod: ["did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
-  id: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+  assertionMethod: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
+  id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
   verificationMethod: [
     {
-      id: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
+      id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
       type: "EcdsaSecp256k1RecoveryMethod2020",
-      controller: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:3",
+      controller: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:5",
     },
   ],
-  authentication: ["did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
+  authentication: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
 };
 
 // this document has been created using:
@@ -37,7 +37,7 @@ const v3DidSigned = {
   ],
   issuanceDate: "2010-01-01T19:23:24Z",
   issuer: {
-    id: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+    id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     name: "anyway",
   },
   type: ["VerifiableCredential", "Name"],
@@ -49,41 +49,41 @@ const v3DidSigned = {
     proof: {
       type: "OpenAttestationProofMethod",
       method: "DID",
-      value: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      value: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       revocation: {
         type: "NONE",
       },
     },
     identityProof: {
       type: "DID",
-      identifier: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      identifier: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     },
   },
   proof: {
     type: "OpenAttestationMerkleProofSignature2018",
     proofPurpose: "assertionMethod",
-    targetHash: "a1c29778310a0c6d6a8f614bb689e10771a78b4d94f0c9289e5a448804f46c24",
+    targetHash: "b87e09cfd45082d277d3f29957aead552836c0c8ea9744958c05c8554751c9d1",
     proofs: [],
-    merkleRoot: "a1c29778310a0c6d6a8f614bb689e10771a78b4d94f0c9289e5a448804f46c24",
+    merkleRoot: "b87e09cfd45082d277d3f29957aead552836c0c8ea9744958c05c8554751c9d1",
     salts:
-      "W3sidmFsdWUiOiJjYWZjZGMyNDEwNmQ3OTcxODhkOTNlN2Y3YTQzMmNlMGY3ZjRjNjljZTRkNTZkODMxMjJhNTllNzAwZGEzYzY4IiwicGF0aCI6InZlcnNpb24ifSx7InZhbHVlIjoiYmE2NzNhNjU5M2U5MGVmZDQxYjFmODQ1ZmE2N2VmODQ1ODA5YjdiY2Q3MTk3NDkxNDRkZWQxNmRmZGFmNGEzZSIsInBhdGgiOiJAY29udGV4dFswXSJ9LHsidmFsdWUiOiIyMjY3ZDAyMGZjZjQzYjcxZGFjNDQxOTJjZmY3NzQ2NzQ1MTRlODNlMGU2Yzg0M2U4MDE5ZTdkNzlmMDNkMzI1IiwicGF0aCI6IkBjb250ZXh0WzFdIn0seyJ2YWx1ZSI6ImMzMDVkNGU1NWVmZTgwNGM2NTM3NTY5NzU4MWI4ZWUzNzk5YmJiZWQxOTE4NGI4ODdhMDRkNGJiOWE1NjdlOWIiLCJwYXRoIjoiQGNvbnRleHRbMl0ifSx7InZhbHVlIjoiNjI4YTZiYzc5NDg2ZjBmNjQyMzZhNWEwMGYxZjljZWFiODM3ZDJmMzJiZjM0ZDAwMzVhYjUxNDdlOTVkZjhjMCIsInBhdGgiOiJpc3N1YW5jZURhdGUifSx7InZhbHVlIjoiODA4YzA1ZWVlMzdhZjExOTAyYzgxNWZjMTUwMTk5Y2NlZjdkMzIxMzkwNDI0M2U1OTkyMzU5YjhhZjU2NWViMiIsInBhdGgiOiJpc3N1ZXIuaWQifSx7InZhbHVlIjoiZDA4ZWNjYWU4YjY4MzhmMWRjZmE1YzdkOTg3NjRhNDI3YWJmZjUzMWVhMTU0NzEyMDJkOWVkNzM1MjZjMTc0NyIsInBhdGgiOiJpc3N1ZXIubmFtZSJ9LHsidmFsdWUiOiIyZjZjOGVmMDE0YWJkOGI0MGY2MWQ2MmYyMjVhNWEzYjc3OTFlYTEzODA1N2YyODA3NDdlMDAyNjhlY2ZmNTRkIiwicGF0aCI6InR5cGVbMF0ifSx7InZhbHVlIjoiNzg2OWE3ZmMwMWYzNGI2OTI5OTE2NmU1MDhkMDdjMWMzMjg4Nzg3NzViMWY2NGI2NjA3ZWY0NGI1ZGU5YTRiYSIsInBhdGgiOiJ0eXBlWzFdIn0seyJ2YWx1ZSI6ImRiNGNhODA1OWIxZmVlZGM5ZTRiNTE4NTQwMmUwN2EwMjNlNTE3MTNjMTdhN2QwNDdmZjUwOGQwOWY2NDU5YTkiLCJwYXRoIjoiY3JlZGVudGlhbFN1YmplY3QuaWQifSx7InZhbHVlIjoiNjU2ZjdiYzg2NmRmMmYxMDU3ZTk1MDQ1N2YxZDI0NGZjNGVlMmYyYTRhMTQ3MTFhNzc3NTU5YTc5MjI0NjYyOSIsInBhdGgiOiJjcmVkZW50aWFsU3ViamVjdC5uYW1lIn0seyJ2YWx1ZSI6IjY2MDYwMTgwMzA0NmNlM2MzYzEwODA3NWQ5OTc1ZTA0ZGRhMDI3ODEzNDRlZjk2YjcwYjFlYzU0OGRlNjU4ZWUiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEucHJvb2YudHlwZSJ9LHsidmFsdWUiOiJkZjZlZGNiODcxNTY3OWYzYmM5MTEzNjNlYWFhNzJkMzVhMWE4N2FlNjVjZDliNGMyN2UyZTJiOTE1YmQ2YTEwIiwicGF0aCI6Im9wZW5BdHRlc3RhdGlvbk1ldGFkYXRhLnByb29mLm1ldGhvZCJ9LHsidmFsdWUiOiJmMjg5MmNhZjUwYzRiYTUzNGYwNzhlZDIwODcwNzk5YTdmZDQwOTM1YzU4Njg0ODA5Mzg1NGM4M2M0ZGI0YTkwIiwicGF0aCI6Im9wZW5BdHRlc3RhdGlvbk1ldGFkYXRhLnByb29mLnZhbHVlIn0seyJ2YWx1ZSI6IjRlOTM2YTljMTAyZWY2NDZjMWRhYjQ5NjE1ZGNmZjFkNjU2OThlMDYyNjQ5ZWUyODM2ZDk5NDRhYmEwNTk0ZWEiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEucHJvb2YucmV2b2NhdGlvbi50eXBlIn0seyJ2YWx1ZSI6ImIzNzJkOTU5OGU3MTc4NmI2NzE2NWRlYjM4ZTFkMzRmMWU4OGEzYmY0NWJkNjA5Y2RhYzZkZDIzMzQ5ZjI5ZTUiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEuaWRlbnRpdHlQcm9vZi50eXBlIn0seyJ2YWx1ZSI6Ijk5NzQwMmZkZWNlYzM1MmYyZWUyNGMyNDQ4NWI2MmQyODAzYTA5Njc1MmUwNTUxYTc4ZjUyYWMzZDQ1MzFkODEiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEuaWRlbnRpdHlQcm9vZi5pZGVudGlmaWVyIn1d",
+      "W3sidmFsdWUiOiIxMTJmMjhkODFmNTA4ZTYwOTExZWJjYWM0YWRkODRhNjkyYzBkNDU5MzFjYTM1ZWI0NmRmYmVkNjU4YzE2MGNlIiwicGF0aCI6InZlcnNpb24ifSx7InZhbHVlIjoiMmE1NGRjNTIzNWFmYjhlYTJhMjJkZDFiOGZmM2ExNjYyNmNlNTc3NjIyMzcyMWMwY2Q0NGM1NDMwYzZmMDljZSIsInBhdGgiOiJAY29udGV4dFswXSJ9LHsidmFsdWUiOiIwMmRiYjM0YmU3ZWE5YjRkYjUzNTEyNGI5YmI3MTFiZGRmY2I1ZmVlNmE2NzdhZDQ2MzAxNTBhOWI0YmJmOTU4IiwicGF0aCI6IkBjb250ZXh0WzFdIn0seyJ2YWx1ZSI6IjJiZTFlMzYzYjMzMjg2ODg1OWE5N2VmZjU3ZDExMDRlZWQ0NzdkMzM1YWNjMTYyZTQ0ZDU3OTlhZGU3NTljOWEiLCJwYXRoIjoiQGNvbnRleHRbMl0ifSx7InZhbHVlIjoiYTMxYmMzNTMxMmRkZjE0ZmE3YTA1YzU1NjM4ZjExMWQzMDQ3MWYzNjYzYThjZDM1Y2VjMTJmN2RkNDhiMmUwNSIsInBhdGgiOiJpc3N1YW5jZURhdGUifSx7InZhbHVlIjoiZDYyNjFlOTEwMjVmNjdhYTQ0ZGEwNGRkZWI0MmE4MThmM2ZhMDZmNDZkMmFhMWVlNmRjY2IxMzEwMjk2NGQxOCIsInBhdGgiOiJpc3N1ZXIuaWQifSx7InZhbHVlIjoiNWQxZTNhOWM2MmMxMTdlNTFiMjgwNzNhYjA0NTA4ZWZhNzdlODkwZmRkNWVmOWJlMTM3MTE3ODg1YzJhMDM0MSIsInBhdGgiOiJpc3N1ZXIubmFtZSJ9LHsidmFsdWUiOiJlMDU0NmNhY2E1MDBlY2EyNjhhMTM5YmIwZDYyNjZmNDI5MzM0N2Y4NTY3MTc5NzQzYTNlY2IyMzg5ZTdiMDkxIiwicGF0aCI6InR5cGVbMF0ifSx7InZhbHVlIjoiZGY0ZTA0MDAwMjIzNjg0ZWZiZmNlNzQwYWFlM2UzOTg2YWYyMWU0Y2ZlYjYxZDM5NWQ1NDk5NjQ0NWYxYjExZCIsInBhdGgiOiJ0eXBlWzFdIn0seyJ2YWx1ZSI6IjlkNmQwZGM3MDNiMThjMWVlYjI0ZjY2ZGUxODhlZGMzODMwM2M2YWRlNWU0MWQ1NzQzYmM2OWMzODEyNDQ4NDYiLCJwYXRoIjoiY3JlZGVudGlhbFN1YmplY3QuaWQifSx7InZhbHVlIjoiNjYyZTU4NTNkZDUyY2VkM2I4MGU0YzFhNDhhYjhlMmY5OTc3NDRiZTRmZDdiOGM5ODQ1NmMzOTMyZDE0MTI2ZCIsInBhdGgiOiJjcmVkZW50aWFsU3ViamVjdC5uYW1lIn0seyJ2YWx1ZSI6ImVlMTJlZjRhZjU2Njc1ODQwYmUzNjgzYzAxZWY5ZjE5ZmNiOGNiMTkwMGY3ODRlYjY0ZWI5Njc5MjA3YjY2YzciLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEucHJvb2YudHlwZSJ9LHsidmFsdWUiOiI0MWY5ZmFkMjM0MGI3NGFkYWFmZGU4YTYwYTk1NGM3NjU5Y2NlMGM0ODY0YjNiN2ZkNjA1YTRjYmM5MDIzYWJlIiwicGF0aCI6Im9wZW5BdHRlc3RhdGlvbk1ldGFkYXRhLnByb29mLm1ldGhvZCJ9LHsidmFsdWUiOiJmMThkN2ZlMjUzNzg3ZTg0ZTdiN2E3ZjI1NjYzZWI3NjkwOTljZmMyMDBkMDE5NTAyNjVlNDkwMGU4MTE5YWYxIiwicGF0aCI6Im9wZW5BdHRlc3RhdGlvbk1ldGFkYXRhLnByb29mLnZhbHVlIn0seyJ2YWx1ZSI6ImUxN2EyYTZlM2FhY2QwNDViZGYxZjUxNTU2YTFmNTAxNzhhMWEwN2VmZDYzY2ExMDRiZWM5OThhODM0YzY5NzEiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEucHJvb2YucmV2b2NhdGlvbi50eXBlIn0seyJ2YWx1ZSI6IjBiMzNkNDhjYzY5ODMwMTlhZmJkNzk3YWIxMTA2YzZmOGFjMjVjY2NlNjMzMzVmOGVkN2MzMzQ4YmViNmM0NGMiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEuaWRlbnRpdHlQcm9vZi50eXBlIn0seyJ2YWx1ZSI6ImNkMTUzN2MyN2NlYjdhMjhjNTA2ZDU0Y2MxN2EzMmM5NmI2MzUxMzdiZDU4M2ZiMjRmYmEyNzQwZmMwYWFmNDYiLCJwYXRoIjoib3BlbkF0dGVzdGF0aW9uTWV0YWRhdGEuaWRlbnRpdHlQcm9vZi5pZGVudGlmaWVyIn1d",
     privacy: {
       obfuscated: [],
     },
-    key: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
+    key: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
     signature:
-      "0x03767d1f4f66c332c63ad2ed38a64334614759f1dc69c295a3bda1299b90a4ff00200761683dbb24e41d6bf2f237c9985dbd6eb21afad4c62831ba08e9d177fb1b",
+      "0x7ffae45f4527cafa40866736ddeda7941ce46ce4b5395c0cb8c5064064f2aa624a1e062579cdc42e51b1e65f2f9eddd6634219047d3fc449a72e097181a920b31b",
   },
 } as v3.SignedWrappedDocument;
 
 const customConfig: EthrResolverConfig = {
-  networks: [{ name: "ropsten", rpcUrl: `https://ropsten.infura.io/v3/${INFURA_API_KEY}` }],
+  networks: [{ name: "goerli", rpcUrl: `https://goerli.infura.io/v3/${INFURA_API_KEY}` }],
 };
 
 describe("custom resolver", () => {
   it("should resolve did using resolver", async () => {
     const did = await resolve(
-      "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       createResolver({ ethrResolverConfig: customConfig })
     );
     expect(did).toEqual(didDoc);
@@ -96,16 +96,16 @@ describe("custom resolver", () => {
     });
     const fragment = await verify(v3DidSigned);
     expect(fragment[0]).toMatchInlineSnapshot(`
-    Object {
-      "data": Object {
-        "did": "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-        "verified": true,
-      },
-      "name": "OpenAttestationDidIdentityProof",
-      "status": "VALID",
-      "type": "ISSUER_IDENTITY",
-    }
-  `);
+      Object {
+        "data": Object {
+          "did": "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+          "verified": true,
+        },
+        "name": "OpenAttestationDidIdentityProof",
+        "status": "VALID",
+        "type": "ISSUER_IDENTITY",
+      }
+    `);
   });
 });
 
@@ -128,16 +128,16 @@ describe("getProviderConfig", () => {
 
   it("should use env variables for provider config properties for didResolver", () => {
     process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
-    process.env.PROVIDER_NETWORK = "ropsten";
+    process.env.PROVIDER_NETWORK = "goerli";
 
     expect(getProviderConfig()).toEqual({
-      networks: [{ name: "ropsten", rpcUrl: "https://eth-ropsten.alchemyapi.io/v2/_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC" }],
+      networks: [{ name: "goerli", rpcUrl: "https://eth-goerli.alchemyapi.io/v2/_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC" }],
     });
   });
 
   it("should set default when provider type is jsonrpc", () => {
     process.env.PROVIDER_ENDPOINT_TYPE = "jsonrpc";
-    process.env.PROVIDER_NETWORK = "ropsten";
+    process.env.PROVIDER_NETWORK = "goerli";
 
     expect(getProviderConfig()).toEqual({
       networks: [{ name: "mainnet", rpcUrl: "https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18" }],

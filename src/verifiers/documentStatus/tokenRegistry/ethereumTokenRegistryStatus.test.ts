@@ -1,52 +1,40 @@
 import { v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { openAttestationEthereumTokenRegistryStatus } from "./ethereumTokenRegistryStatus";
-import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
-import { documentRopstenValidWithToken } from "../../../../test/fixtures/v2/documentRopstenValidWithToken";
-import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
-import { documentRopstenNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithDocumentStore";
-import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
+import { documentGoerliValidWithToken } from "../../../../test/fixtures/v2/documentGoerliValidWithToken";
+import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
+import { documentNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentNotIssuedWithDocumentStore";
+import { documentNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentNotIssuedWithTokenRegistry";
+import { openAttestationEthereumTokenRegistryStatus } from "./ethereumTokenRegistryStatus";
 
-import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
+import v3TokenRegistryWrappedRaw from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
 
 import { getProvider } from "../../../common/utils";
 
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
-const options = { provider: getProvider({ network: "ropsten" }) };
+const options = { provider: getProvider({ network: "goerli" }) };
 
 describe("test", () => {
   describe("v2", () => {
     it("should return false when document does not have data", async () => {
-      const documentWithoutData: any = { ...documentRopstenValidWithToken, data: null };
+      const documentWithoutData: any = { ...documentGoerliValidWithToken, data: null };
       const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutData, options);
       expect(shouldVerify).toBe(false);
     });
 
     it("should return false when document does not have issuers", async () => {
       const documentWithoutIssuer: any = {
-        ...documentRopstenValidWithToken,
-        data: { ...documentRopstenValidWithToken.data, issuers: null },
+        ...documentGoerliValidWithToken,
+        data: { ...documentGoerliValidWithToken.data, issuers: null },
       };
       const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutIssuer, options);
       expect(shouldVerify).toBe(false);
     });
 
-    it("should return false when document uses certificate store", async () => {
-      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
-        documentRopstenNotIssuedWithCertificateStore,
-        options
-      );
-      expect(shouldVerify).toBe(false);
-    });
-
     it("should return false when document uses document store", async () => {
-      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(
-        documentRopstenNotIssuedWithDocumentStore,
-        options
-      );
+      const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentNotIssuedWithDocumentStore, options);
       expect(shouldVerify).toBe(false);
     });
 
@@ -148,12 +136,12 @@ describe("verify", () => {
   describe("v2", () => {
     it("should return an invalid fragment when token registry is invalid", async () => {
       const documentWithInvalidTokenRegistry: any = {
-        ...documentRopstenNotIssuedWithTokenRegistry,
+        ...documentNotIssuedWithTokenRegistry,
         data: {
-          ...documentRopstenNotIssuedWithTokenRegistry.data,
+          ...documentNotIssuedWithTokenRegistry.data,
           issuers: [
             {
-              ...documentRopstenNotIssuedWithTokenRegistry.data.issuers[0],
+              ...documentNotIssuedWithTokenRegistry.data.issuers[0],
               tokenRegistry: "0fb5b63a-aaa5-4e6e-a6f4-391c0f6ba423:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
@@ -195,12 +183,12 @@ describe("verify", () => {
 
     it("should return an invalid fragment when token registry does not exist", async () => {
       const documentWithMissingTokenRegistry: any = {
-        ...documentRopstenNotIssuedWithTokenRegistry,
+        ...documentNotIssuedWithTokenRegistry,
         data: {
-          ...documentRopstenNotIssuedWithTokenRegistry.data,
+          ...documentNotIssuedWithTokenRegistry.data,
           issuers: [
             {
-              ...documentRopstenNotIssuedWithTokenRegistry.data.issuers[0],
+              ...documentNotIssuedWithTokenRegistry.data.issuers[0],
               tokenRegistry: "0fb5b63a-aaa5-4e6e-a6f4-391c0f6ba423:string:0x0000000000000000000000000000000000000000",
             },
           ],
@@ -242,7 +230,7 @@ describe("verify", () => {
 
     it("should return an invalid fragment when document with token registry has not been minted", async () => {
       const fragment = await openAttestationEthereumTokenRegistryStatus.verify(
-        documentRopstenNotIssuedWithTokenRegistry,
+        documentNotIssuedWithTokenRegistry,
         options
       );
 
@@ -251,7 +239,7 @@ describe("verify", () => {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0xb53499ee758352fAdDfCed863d9ac35C809E2F20",
+                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
@@ -275,14 +263,14 @@ describe("verify", () => {
     });
 
     it("should return a valid fragment when document with token registry has been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentRopstenValidWithToken, options);
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentGoerliValidWithToken, options);
 
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0xe59877ac86c0310e9ddaeb627f42fdee5f793fbe",
+                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
                 "minted": true,
               },
             ],
@@ -297,10 +285,10 @@ describe("verify", () => {
 
     it("should return an error fragment when document has 2 issuers with token registry", async () => {
       const documentHasTwoIssuersWithTokenRegistry: any = {
-        ...documentRopstenValidWithToken,
+        ...documentGoerliValidWithToken,
         data: {
-          ...documentRopstenValidWithToken.data,
-          issuers: [documentRopstenValidWithToken.data.issuers[0], documentRopstenValidWithToken.data.issuers[0]],
+          ...documentGoerliValidWithToken.data,
+          issuers: [documentGoerliValidWithToken.data.issuers[0], documentGoerliValidWithToken.data.issuers[0]],
         },
       };
 
@@ -325,7 +313,7 @@ describe("verify", () => {
     });
 
     it("should return an error fragment when used with other issuance methods", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentRopstenMixedIssuance, options);
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentMixedIssuance, options);
 
       expect(fragment).toMatchInlineSnapshot(`
         Object {
@@ -437,7 +425,7 @@ describe("verify", () => {
         Object {
           "data": Object {
             "details": Object {
-              "address": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+              "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
               "minted": false,
               "reason": Object {
                 "code": 1,
@@ -466,7 +454,7 @@ describe("verify", () => {
         Object {
           "data": Object {
             "details": Object {
-              "address": "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+              "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
               "minted": true,
             },
             "mintedOnAll": true,
@@ -482,10 +470,7 @@ describe("verify", () => {
 
 describe("skip", () => {
   it("should return the skip fragment", async () => {
-    const fragment = await openAttestationEthereumTokenRegistryStatus.skip(
-      documentRopstenNotIssuedWithTokenRegistry,
-      options
-    );
+    const fragment = await openAttestationEthereumTokenRegistryStatus.skip(documentNotIssuedWithTokenRegistry, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "name": "OpenAttestationEthereumTokenRegistryStatus",

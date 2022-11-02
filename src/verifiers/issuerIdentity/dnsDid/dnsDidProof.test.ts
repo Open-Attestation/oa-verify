@@ -1,15 +1,15 @@
 import { v3 } from "@govtechsg/open-attestation";
-import { openAttestationDnsDidIdentityProof } from "./dnsDidProof";
-import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
+import { documentDnsDidMixedTokenRegistryValid } from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
 import { documentDnsDidNoDnsTxt } from "../../../../test/fixtures/v2/documentDnsDidNoDnsTxt";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import { documentDnsDidMixedTokenRegistryValid } from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
+import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
 import { getProvider } from "../../../common/utils";
+import { openAttestationDnsDidIdentityProof } from "./dnsDidProof";
 
-import v3DnsDidWrappedRaw from "../../../../test/fixtures/v3/dnsdid-wrapped.json";
 import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
 import v3DnsDidSignedRaw from "../../../../test/fixtures/v3/dnsdid-signed.json";
+import v3DnsDidWrappedRaw from "../../../../test/fixtures/v3/dnsdid-wrapped.json";
 import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
 
@@ -20,7 +20,7 @@ const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
-  provider: getProvider({ network: "ropsten" }),
+  provider: getProvider({ network: "goerli" }),
 };
 
 describe("skip", () => {
@@ -44,7 +44,7 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(openAttestationDnsDidIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDnsDidIdentityProof.test(documentGoerliValidWithDocumentStore, options)).toBe(false);
     });
     it("should return false for documents where any issuer is using the `DID` identity proof", () => {
       expect(openAttestationDnsDidIdentityProof.test(documentDidSigned, options)).toBe(false);
@@ -78,8 +78,8 @@ describe("verify", () => {
         Object {
           "data": Array [
             Object {
-              "key": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
-              "location": "example.tradetrust.io",
+              "key": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
+              "location": "demo-tradetrust.openattestation.com",
               "status": "VALID",
             },
           ],
@@ -134,8 +134,8 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
-            "location": "example.tradetrust.io",
+            "key": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
+            "location": "demo-tradetrust.openattestation.com",
             "status": "VALID",
           },
           "name": "OpenAttestationDnsDidIdentityProof",
@@ -159,7 +159,7 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "key": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90#controller",
+            "key": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
             "location": "example.com",
             "status": "INVALID",
           },

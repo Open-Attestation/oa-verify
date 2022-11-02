@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-empty-function,camelcase */
-import { __unsafe__use__it__at__your__own__risks__wrapDocument, v3 } from "@govtechsg/open-attestation";
-import { writeFileSync } from "fs";
-import { execSync } from "child_process";
 import { sign } from "@govtechsg/oa-did-sign";
+import { v3, __unsafe__use__it__at__your__own__risks__wrapDocument } from "@govtechsg/open-attestation";
+import { execSync } from "child_process";
+import { writeFileSync } from "fs";
+import { getLogger } from "../src/common/logger";
 import {
   baseDidDocument,
   baseDnsDidDocument,
   baseDocumentStoreDocument,
   baseTokenRegistryDocument,
 } from "../test/fixtures/v3/documents";
-import { getLogger } from "../src/common/logger";
 
 const { info } = getLogger("generate.v3");
 
@@ -24,10 +24,10 @@ const key = {
 const signMerkleRoot = async (merkleRoot: string) => sign("Secp256k1VerificationKey2018", merkleRoot, key);
 
 const ethereumDocumentConfig = {
-  network: "ropsten",
+  network: "goerli",
   dns: "demo-tradetrust.openattestation.com",
-  documentStore: "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
-  tokenRegistry: "0x13249BA1Ec6B957Eb35D34D7b9fE5D91dF225B5B",
+  documentStore: "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+  tokenRegistry: "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
   wallet: {
     address: "0x1245e5B64D785b25057f7438F715f4aA5D965733",
     key: "0x416f14debf10172f04bef09f9b774480561ee3f05ee1a6f75df3c71ec0c60666",

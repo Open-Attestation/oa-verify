@@ -11,7 +11,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
     phone: string;
   };
 }
-export const tamperedDocumentWithCertificateStore: WrappedDocument<CustomDocument> = {
+export const tamperedDocument: WrappedDocument<CustomDocument> = {
   version: SchemaId.v2,
   schema: "tradetrust/1.0",
   data: {
@@ -58,7 +58,7 @@ export const tamperedDocumentWithCertificateStore: WrappedDocument<CustomDocumen
   },
 };
 
-export const tamperedDocumentWithInvalidCertificateStore: WrappedDocument<CustomDocument> = {
+export const tamperedDocumentInvalid: WrappedDocument<CustomDocument> = {
   version: SchemaId.v2,
   schema: "tradetrust/1.0",
   data: {

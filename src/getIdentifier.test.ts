@@ -1,25 +1,25 @@
 import { v3 } from "@govtechsg/open-attestation";
-import { getIdentifier } from "./getIdentifier";
-import { SkippedVerificationFragment, ValidVerificationFragment } from "./types/core";
 import {
   openAttestationDidIdentityProof,
   openAttestationDnsDidIdentityProof,
   openAttestationDnsTxtIdentityProof,
 } from ".";
 import { getProvider } from "./common/utils";
+import { getIdentifier } from "./getIdentifier";
+import { SkippedVerificationFragment, ValidVerificationFragment } from "./types/core";
 
 import v3DidSignedRaw from "../test/fixtures/v3/did-signed.json";
 import v3DnsDidSignedRaw from "../test/fixtures/v3/dnsdid-signed.json";
 import v3DocumentStoreIssuedRaw from "../test/fixtures/v3/documentStore-issued.json";
-import { OpenAttestationDnsTxtIdentityProofValidFragmentV2 } from "./verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 import { OpenAttestationDidIdentityProofValidFragmentV2 } from "./verifiers/issuerIdentity/did/didIdentityProof.type";
+import { OpenAttestationDnsTxtIdentityProofValidFragmentV2 } from "./verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 
 const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
 const v3DnsDidSigned = v3DnsDidSignedRaw as v3.SignedWrappedDocument;
 const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 
 const options = {
-  provider: getProvider({ network: "ropsten" }),
+  provider: getProvider({ network: "goerli" }),
 };
 
 const verificationFragment1: SkippedVerificationFragment = {
@@ -127,21 +127,21 @@ describe("getIdentifier", () => {
     it("should return a DNS identity proof if issuer fragment is of type OpenAttestationDnsTxtIdentityProof", async () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(v3DocumentStoreIssued, options);
       expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
-        identifier: "example.tradetrust.io",
+        identifier: "demo-tradetrust.openattestation.com",
         type: "DNS",
       });
     });
     it("should return a DNS-DID identity proof if issuer fragment is of type OpenAttestationDnsDidIdentityProof", async () => {
       const fragment = await openAttestationDnsDidIdentityProof.verify(v3DnsDidSigned, options);
       expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
-        identifier: "example.tradetrust.io",
+        identifier: "demo-tradetrust.openattestation.com",
         type: "DNS-DID",
       });
     });
     it("should return a DID identity proof if issuer fragment is of type OpenAttestationDidIdentityProof", async () => {
       const fragment = await openAttestationDidIdentityProof.verify(v3DidSigned, options);
       expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
-        identifier: "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+        identifier: "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
         type: "DID",
       });
     });

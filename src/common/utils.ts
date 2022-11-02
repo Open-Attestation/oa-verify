@@ -1,13 +1,17 @@
 import { providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
+  ProviderDetails,
+  providerType,
   VerificationBuilderOptions,
   VerificationBuilderOptionsWithNetwork,
   VerificationFragment,
   VerificationFragmentType,
-  ProviderDetails,
-  providerType,
 } from "../types/core";
+import {
+  OpenAttestationEthereumDocumentStoreStatusCode,
+  OpenAttestationEthereumTokenRegistryStatusCode,
+} from "../types/error";
 import { OpenAttestationHashVerificationFragment } from "../verifiers/documentIntegrity/hash/openAttestationHash.type";
 import { OpenAttestationDidSignedDocumentStatusVerificationFragment } from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type";
 import { OpenAttestationEthereumDocumentStoreStatusFragment } from "../verifiers/documentStatus/documentStore/ethereumDocumentStoreStatus.type";
@@ -15,10 +19,6 @@ import { OpenAttestationEthereumTokenRegistryStatusFragment } from "../verifiers
 import { OpenAttestationDidIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/did/didIdentityProof.type";
 import { OpenAttestationDnsDidIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsDid/dnsDidProof.type";
 import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
-import {
-  OpenAttestationEthereumDocumentStoreStatusCode,
-  OpenAttestationEthereumTokenRegistryStatusCode,
-} from "../types/error";
 
 export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
   const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
@@ -47,7 +47,7 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
  * Generate Provider generates a provider based on the defined options or your env var, if no options or env var was detected, it will generate a provider based on the default values.
  * Generate Provider using the following options: (if no option is specified it will use the default values)
  * @param {Object} ProviderDetails - Details to use for the function to successfully generate a provider.
- * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "ropsten", "rinkeby"
+ * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "goerli"
  * @param {string} ProviderDetails.providerType - Specify which provider to use: "infura", "alchemy" or "jsonrpc"
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.

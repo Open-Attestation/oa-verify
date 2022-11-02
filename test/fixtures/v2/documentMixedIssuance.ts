@@ -1,4 +1,4 @@
-export const documentRopstenMixedIssuance: any = {
+export const documentMixedIssuance: any = {
   version: "https://schema.openattestation.com/2.0/schema.json",
   data: {
     id: "adb44816-1e3e-43c3-8f49-835ee0ef79a7:string:SGCNM21566325",
