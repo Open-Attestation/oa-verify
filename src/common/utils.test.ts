@@ -1,4 +1,10 @@
+import { AllVerificationFragment } from "..";
+import { InvalidVerificationFragment, ProviderDetails } from "../types/core";
 import {
+  certificateNotIssued,
+  certificateRevoked,
+  contractNotFound,
+  generateProvider,
   getDocumentIntegrityFragments,
   getDocumentStatusFragments,
   getFragmentByName,
@@ -10,17 +16,11 @@ import {
   getOpenAttestationEthereumDocumentStoreStatusFragment,
   getOpenAttestationEthereumTokenRegistryStatusFragment,
   getOpenAttestationHashFragment,
-  generateProvider,
-  isDocumentStoreAddressOrTokenRegistryAddressInvalid,
-  contractNotFound,
-  certificateNotIssued,
-  certificateRevoked,
   invalidArgument,
+  isDocumentStoreAddressOrTokenRegistryAddressInvalid,
   serverError,
   unhandledError,
 } from "./utils";
-import { AllVerificationFragment } from "..";
-import { ProviderDetails, InvalidVerificationFragment } from "../types/core";
 
 const fragments: AllVerificationFragment[] = [
   {
@@ -96,7 +96,7 @@ const fragments: AllVerificationFragment[] = [
   },
   {
     data: {
-      did: "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      did: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       verified: true,
     },
     name: "OpenAttestationDidIdentityProof",
@@ -158,7 +158,7 @@ describe("getFragmentByName", () => {
     expect(getOpenAttestationDidIdentityProofFragment(fragments)).toMatchInlineSnapshot(`
       Object {
         "data": Object {
-          "did": "did:ethr:ropsten:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+          "did": "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
           "verified": true,
         },
         "name": "OpenAttestationDidIdentityProof",
@@ -279,13 +279,13 @@ describe("generateProvider", () => {
 
   it("should use the details provided as top priority", () => {
     const options = {
-      network: "ropsten",
+      network: "goerli",
       providerType: "infura",
       apiKey: "bb46da3f80e040e8ab73c0a9ff365d18",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
 
-    expect(provider?._network?.name).toEqual("ropsten");
+    expect(provider?._network?.name).toEqual("goerli");
     expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
@@ -299,7 +299,7 @@ describe("generateProvider", () => {
 
   it("should use the default alchemy apiKey if no apiKey specified", () => {
     const options = {
-      network: "ropsten",
+      network: "goerli",
       providerType: "alchemy",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
@@ -309,7 +309,7 @@ describe("generateProvider", () => {
 
   it("should use the default jsonrpc url which is localhost:8545", () => {
     const options = {
-      network: "ropsten",
+      network: "goerli",
       providerType: "jsonrpc",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
@@ -317,9 +317,9 @@ describe("generateProvider", () => {
   });
 
   it("should still generate a provider even if only one option (network) is provided", () => {
-    const options = { network: "ropsten" } as ProviderDetails;
+    const options = { network: "goerli" } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("ropsten");
+    expect(provider?._network?.name).toEqual("goerli");
     expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
@@ -355,11 +355,11 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for infura test case", () => {
-    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_NETWORK = "goerli";
     process.env.PROVIDER_API_KEY = "env123123";
 
     const provider = generateProvider() as any;
-    expect(provider?._network?.name).toEqual("rinkeby");
+    expect(provider?._network?.name).toEqual("goerli");
     expect(provider?._network?.name).not.toEqual("mainnet");
     expect(provider?.apiKey).toEqual("env123123");
     expect(provider?.apiKey).not.toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
@@ -367,14 +367,14 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for alchemy test case", () => {
-    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_NETWORK = "goerli";
     process.env.PROVIDER_API_KEY = "env789789";
 
     const options = {
       providerType: "alchemy",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("rinkeby");
+    expect(provider?._network?.name).toEqual("goerli");
     expect(provider?._network?.name).not.toEqual("mainnet");
     expect(provider?.apiKey).toEqual("env789789");
     expect(provider?.apiKey).not.toEqual("OlOgD-8qs5l3pQm-B_fcrMAmHTmAwkGj");
@@ -392,13 +392,13 @@ describe("generateProvider", () => {
   });
 
   it("should override the process.env value with the function parameter value", () => {
-    process.env.PROVIDER_NETWORK = "rinkeby";
+    process.env.PROVIDER_NETWORK = "sepolia";
     process.env.PROVIDER_API_KEY = "env789789";
 
-    const options = { network: "ropsten", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
+    const options = { network: "goerli", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("ropsten");
-    expect(provider?._network?.name).not.toEqual("rinkeby");
+    expect(provider?._network?.name).toEqual("goerli");
+    expect(provider?._network?.name).not.toEqual("sepolia");
     expect(provider?.apiKey).toEqual("abc123");
     expect(provider?.apiKey).not.toEqual("env789789");
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);

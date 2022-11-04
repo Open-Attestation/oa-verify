@@ -4,12 +4,12 @@
 
 import { rest } from "msw";
 import { setupServer } from "msw/node";
-import { isValid, openAttestationVerifiers, verificationBuilder, verify } from "./index";
-import { documentMainnetValidWithCertificateStore } from "../test/fixtures/v2/documentMainnetValidWithCertificateStore";
+import { documentMainnetValid } from "../test/fixtures/v2/documentMainnetValid";
 import { INFURA_API_KEY } from "./config";
+import { isValid, openAttestationVerifiers, verificationBuilder, verify } from "./index";
 
 const verifyHomestead = verify;
-const verifyRopsten = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const verifyGoerli = verificationBuilder(openAttestationVerifiers, { network: "goerli" });
 
 describe("Handling HTTP response errors", () => {
   const server = setupServer(); // Placing the following tests in a separate block due to how msw intercepts ALL connections
@@ -36,7 +36,7 @@ describe("Handling HTTP response errors", () => {
         );
       })
     );
-    const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
+    const results = await verifyHomestead(documentMainnetValid);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -113,7 +113,7 @@ describe("Handling HTTP response errors", () => {
         );
       })
     );
-    const results = await verifyHomestead(documentMainnetValidWithCertificateStore);
+    const results = await verifyHomestead(documentMainnetValid);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -182,16 +182,16 @@ describe("Handling HTTP response errors", () => {
   });
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 429)", async () => {
     process.env.PROVIDER_API_KEY = INFURA_API_KEY;
-    // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
+    // NOTE: Purpose of this test is to use a mainnet cert on goerli. The mainnet cert store is perfectly valid, but does not exist on goerli.
     server.use(
-      rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
+      rest.post(`https://goerli.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
         return res(
           ctx.status(429, "Mocked rate limit error"),
           ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 3 })
         );
       })
     );
-    const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
+    const results = await verifyGoerli(documentMainnetValid);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -211,12 +211,12 @@ describe("Handling HTTP response errors", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": [Error: missing revert data in call exception (error={"reason":"failed response","code":"SERVER_ERROR","requestBody":"{\\"method\\":\\"eth_call\\",\\"params\\":[{\\"to\\":\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\",\\"data\\":\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\"},\\"latest\\"],\\"id\\":42,\\"jsonrpc\\":\\"2.0\\"}","requestMethod":"POST","url":"https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18"}, data="0x", code=CALL_EXCEPTION, version=providers/5.4.5)],
+          "data": [Error: missing revert data in call exception (error={"reason":"failed response","code":"SERVER_ERROR","requestBody":"{\\"method\\":\\"eth_call\\",\\"params\\":[{\\"to\\":\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\",\\"data\\":\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\"},\\"latest\\"],\\"id\\":42,\\"jsonrpc\\":\\"2.0\\"}","requestMethod":"POST","url":"https://goerli.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18"}, data="0x", code=CALL_EXCEPTION, version=providers/5.4.5)],
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
             "code": 0,
             "codeString": "UNEXPECTED_ERROR",
-            "message": "missing revert data in call exception (error={\\"reason\\":\\"failed response\\",\\"code\\":\\"SERVER_ERROR\\",\\"requestBody\\":\\"{\\\\\\"method\\\\\\":\\\\\\"eth_call\\\\\\",\\\\\\"params\\\\\\":[{\\\\\\"to\\\\\\":\\\\\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\\\\\",\\\\\\"data\\\\\\":\\\\\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\\\\\"},\\\\\\"latest\\\\\\"],\\\\\\"id\\\\\\":42,\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\"}\\",\\"requestMethod\\":\\"POST\\",\\"url\\":\\"https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18\\"}, data=\\"0x\\", code=CALL_EXCEPTION, version=providers/5.4.5)",
+            "message": "missing revert data in call exception (error={\\"reason\\":\\"failed response\\",\\"code\\":\\"SERVER_ERROR\\",\\"requestBody\\":\\"{\\\\\\"method\\\\\\":\\\\\\"eth_call\\\\\\",\\\\\\"params\\\\\\":[{\\\\\\"to\\\\\\":\\\\\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\\\\\",\\\\\\"data\\\\\\":\\\\\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\\\\\"},\\\\\\"latest\\\\\\"],\\\\\\"id\\\\\\":42,\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\"}\\",\\"requestMethod\\":\\"POST\\",\\"url\\":\\"https://goerli.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18\\"}, data=\\"0x\\", code=CALL_EXCEPTION, version=providers/5.4.5)",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
@@ -260,16 +260,16 @@ describe("Handling HTTP response errors", () => {
   });
   it("should return SERVER_ERROR when Ethers cannot connect to Infura with an invalid certificate (HTTP 502)", async () => {
     process.env.PROVIDER_API_KEY = INFURA_API_KEY;
-    // NOTE: Purpose of this test is to use a mainnet cert on ropsten. The mainnet cert store is perfectly valid, but does not exist on ropsten.
+    // NOTE: Purpose of this test is to use a mainnet cert on goerli. The mainnet cert store is perfectly valid, but does not exist on goerli.
     server.use(
-      rest.post(`https://ropsten.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
+      rest.post(`https://goerli.infura.io/v3/${INFURA_API_KEY}`, (req, res, ctx) => {
         return res(
           ctx.status(502, "Mocked rate limit error"),
           ctx.json({ jsonrpc: "2.0", result: "0xs0meR4nd0mErr0r", id: 4 })
         );
       })
     );
-    const results = await verifyRopsten(documentMainnetValidWithCertificateStore);
+    const results = await verifyGoerli(documentMainnetValid);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -289,12 +289,12 @@ describe("Handling HTTP response errors", () => {
           "type": "DOCUMENT_STATUS",
         },
         Object {
-          "data": [Error: missing revert data in call exception (error={"reason":"bad response","code":"SERVER_ERROR","status":502,"headers":{"x-powered-by":"msw","content-type":"application/json"},"body":"{\\"jsonrpc\\":\\"2.0\\",\\"result\\":\\"0xs0meR4nd0mErr0r\\",\\"id\\":4}","requestBody":"{\\"method\\":\\"eth_call\\",\\"params\\":[{\\"to\\":\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\",\\"data\\":\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\"},\\"latest\\"],\\"id\\":42,\\"jsonrpc\\":\\"2.0\\"}","requestMethod":"POST","url":"https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18"}, data="0x", code=CALL_EXCEPTION, version=providers/5.4.5)],
+          "data": [Error: missing revert data in call exception (error={"reason":"bad response","code":"SERVER_ERROR","status":502,"headers":{"x-powered-by":"msw","content-type":"application/json"},"body":"{\\"jsonrpc\\":\\"2.0\\",\\"result\\":\\"0xs0meR4nd0mErr0r\\",\\"id\\":4}","requestBody":"{\\"method\\":\\"eth_call\\",\\"params\\":[{\\"to\\":\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\",\\"data\\":\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\"},\\"latest\\"],\\"id\\":42,\\"jsonrpc\\":\\"2.0\\"}","requestMethod":"POST","url":"https://goerli.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18"}, data="0x", code=CALL_EXCEPTION, version=providers/5.4.5)],
           "name": "OpenAttestationEthereumDocumentStoreStatus",
           "reason": Object {
             "code": 0,
             "codeString": "UNEXPECTED_ERROR",
-            "message": "missing revert data in call exception (error={\\"reason\\":\\"bad response\\",\\"code\\":\\"SERVER_ERROR\\",\\"status\\":502,\\"headers\\":{\\"x-powered-by\\":\\"msw\\",\\"content-type\\":\\"application/json\\"},\\"body\\":\\"{\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\",\\\\\\"result\\\\\\":\\\\\\"0xs0meR4nd0mErr0r\\\\\\",\\\\\\"id\\\\\\":4}\\",\\"requestBody\\":\\"{\\\\\\"method\\\\\\":\\\\\\"eth_call\\\\\\",\\\\\\"params\\\\\\":[{\\\\\\"to\\\\\\":\\\\\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\\\\\",\\\\\\"data\\\\\\":\\\\\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\\\\\"},\\\\\\"latest\\\\\\"],\\\\\\"id\\\\\\":42,\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\"}\\",\\"requestMethod\\":\\"POST\\",\\"url\\":\\"https://ropsten.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18\\"}, data=\\"0x\\", code=CALL_EXCEPTION, version=providers/5.4.5)",
+            "message": "missing revert data in call exception (error={\\"reason\\":\\"bad response\\",\\"code\\":\\"SERVER_ERROR\\",\\"status\\":502,\\"headers\\":{\\"x-powered-by\\":\\"msw\\",\\"content-type\\":\\"application/json\\"},\\"body\\":\\"{\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\",\\\\\\"result\\\\\\":\\\\\\"0xs0meR4nd0mErr0r\\\\\\",\\\\\\"id\\\\\\":4}\\",\\"requestBody\\":\\"{\\\\\\"method\\\\\\":\\\\\\"eth_call\\\\\\",\\\\\\"params\\\\\\":[{\\\\\\"to\\\\\\":\\\\\\"0x007d40224f6562461633ccfbaffd359ebb2fc9ba\\\\\\",\\\\\\"data\\\\\\":\\\\\\"0x163aa6311a040999254caaf7a33cba67ec6a9b862da1dacf8a0d1e3bb76347060fc615d6\\\\\\"},\\\\\\"latest\\\\\\"],\\\\\\"id\\\\\\":42,\\\\\\"jsonrpc\\\\\\":\\\\\\"2.0\\\\\\"}\\",\\"requestMethod\\":\\"POST\\",\\"url\\":\\"https://goerli.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18\\"}, data=\\"0x\\", code=CALL_EXCEPTION, version=providers/5.4.5)",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",

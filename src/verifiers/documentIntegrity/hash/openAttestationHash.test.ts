@@ -1,20 +1,20 @@
-import { WrappedDocument, v3 } from "@govtechsg/open-attestation";
-import { openAttestationHash } from "./openAttestationHash";
-import { tamperedDocumentWithCertificateStore } from "../../../../test/fixtures/v2/tamperedDocument";
+import { v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { document } from "../../../../test/fixtures/v2/document";
+import { tamperedDocument } from "../../../../test/fixtures/v2/tamperedDocument";
 import sampleWrappedV3 from "../../../../test/fixtures/v3/did-wrapped.json";
 import { verificationBuilder } from "../../verificationBuilder";
+import { openAttestationHash } from "./openAttestationHash";
 
 const validV3Document = sampleWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 
-const verify = verificationBuilder([openAttestationHash], { network: "ropsten" });
+const verify = verificationBuilder([openAttestationHash], { network: "goerli" });
 
 describe("OpenAttestationHash", () => {
   describe("v2", () => {
     it("should return a skipped fragment when document is missing target hash", async () => {
       const newDocument = {
-        ...tamperedDocumentWithCertificateStore,
-        signature: { ...tamperedDocumentWithCertificateStore.signature },
+        ...tamperedDocument,
+        signature: { ...tamperedDocument.signature },
       };
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error I really want to delete this :)
@@ -35,8 +35,8 @@ describe("OpenAttestationHash", () => {
     });
     it("should return a skipped fragment when document is missing merkle root", async () => {
       const newDocument = {
-        ...tamperedDocumentWithCertificateStore,
-        signature: { ...tamperedDocumentWithCertificateStore.signature },
+        ...tamperedDocument,
+        signature: { ...tamperedDocument.signature },
       };
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error I really want to delete this :)
@@ -57,8 +57,8 @@ describe("OpenAttestationHash", () => {
     });
     it("should return a skipped fragment when document is missing data", async () => {
       const newDocument = {
-        ...tamperedDocumentWithCertificateStore,
-        data: { ...tamperedDocumentWithCertificateStore.data },
+        ...tamperedDocument,
+        data: { ...tamperedDocument.data },
       };
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-expect-error I really want to delete this :)
@@ -78,7 +78,7 @@ describe("OpenAttestationHash", () => {
       ]);
     });
     it("should return an invalid fragment when document has been tampered", async () => {
-      const fragment = await verify(tamperedDocumentWithCertificateStore);
+      const fragment = await verify(tamperedDocument);
       expect(fragment).toStrictEqual([
         {
           name: "OpenAttestationHash",

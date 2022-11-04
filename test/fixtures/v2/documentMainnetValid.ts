@@ -9,7 +9,7 @@ interface CustomDocument extends v2.OpenAttestationDocument {
   };
 }
 
-export const documentMainnetValidWithCertificateStore: WrappedDocument<CustomDocument> = {
+export const documentMainnetValid: WrappedDocument<CustomDocument> = {
   version: SchemaId.v2,
   schema: "opencerts/1.4",
   data: {

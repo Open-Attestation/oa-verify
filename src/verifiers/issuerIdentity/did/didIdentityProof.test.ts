@@ -1,16 +1,16 @@
 import { v3 } from "@govtechsg/open-attestation";
-import { openAttestationDidIdentityProof } from "./didIdentityProof";
-import { documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
+import { documentDidMixedTokenRegistry } from "../../../../test/fixtures/v2/documentDidMixedTokenRegistry";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDidWrongSignature } from "../../../../test/fixtures/v2/documentDidWrongSignature";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import { documentDidMixedTokenRegistry } from "../../../../test/fixtures/v2/documentDidMixedTokenRegistry";
-import { getProvider } from "../../../common/utils";
-import v3DidWrappedRaw from "../../../../test/fixtures/v3/did-wrapped.json";
+import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
 import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
+import v3DidWrappedRaw from "../../../../test/fixtures/v3/did-wrapped.json";
 import v3DnsDidSignedRaw from "../../../../test/fixtures/v3/dnsdid-signed.json";
 import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
+import { getProvider } from "../../../common/utils";
+import { openAttestationDidIdentityProof } from "./didIdentityProof";
 
 const v3DidSigned = v3DidSignedRaw as v3.SignedWrappedDocument;
 const v3DidWrapped = v3DidWrappedRaw as v3.WrappedDocument;
@@ -20,7 +20,7 @@ const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
   provider: getProvider({
-    network: "ropsten",
+    network: "goerli",
   }),
 };
 
@@ -45,7 +45,7 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(openAttestationDidIdentityProof.test(documentRopstenValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDidIdentityProof.test(documentGoerliValidWithDocumentStore, options)).toBe(false);
     });
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
       expect(openAttestationDidIdentityProof.test(documentDidSigned, options)).toBe(true);
@@ -77,7 +77,7 @@ describe("verify", () => {
         Object {
           "data": Array [
             Object {
-              "did": "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89",
+              "did": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
               "verified": true,
             },
           ],
@@ -137,7 +137,7 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+            "did": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
             "verified": true,
           },
           "name": "OpenAttestationDidIdentityProof",
@@ -158,11 +158,11 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+            "did": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
             "reason": Object {
               "code": 7,
               "codeString": "WRONG_SIGNATURE",
-              "message": "merkle root is not signed correctly by 0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+              "message": "merkle root is not signed correctly by 0x1245e5B64D785b25057f7438F715f4aA5D965733",
             },
             "verified": false,
           },
@@ -170,7 +170,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 7,
             "codeString": "WRONG_SIGNATURE",
-            "message": "merkle root is not signed correctly by 0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+            "message": "merkle root is not signed correctly by 0x1245e5B64D785b25057f7438F715f4aA5D965733",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",

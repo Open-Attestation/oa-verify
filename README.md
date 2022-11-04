@@ -34,29 +34,47 @@ A verification happens on a wrapped document, and it consists of answering to so
 
 A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation) would be required.
 
-> **NOTE:** The document shown below is valid and has been issued on the ropsten network
+> **NOTE:** The document shown below is valid and has been issued on the goerli network
 
 ```json
 {
   "version": "https://schema.openattestation.com/2.0/schema.json",
   "data": {
+    "billFrom": {},
+    "billTo": { "company": {} },
+    "$template": {
+      "type": "f76f4d39-8d23-455b-96ba-5889e0233641:string:EMBEDDED_RENDERER",
+      "name": "575f0624-7f43-484c-9285-edd1ae96ebc6:string:INVOICE",
+      "url": "fb61f072-64e9-4c2f-83bf-ae68fd911414:string:https://generic-templates.tradetrust.io"
+    },
     "issuers": [
       {
-        "documentStore": "746531fb-bcbf-44d1-a32f-d662c411a71e:string:0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-        "name": "824f1c2e-e289-4574-b207-d39afb151592:string:University of Blockchain",
+        "name": "ed121e9e-8f70-4a01-a422-4509d837c13f:string:Demo Issuer",
+        "documentStore": "08948d61-9392-459f-b476-e3c51961f04b:string:0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
         "identityProof": {
-          "type": "e92275d8-5e8f-4adf-98fe-62e615f9837d:string:DNS-TXT",
-          "location": "3628440e-c859-4eec-bf47-fffedafec154:string:example.openattestation.com"
+          "type": "61c13b84-181a-43aa-85f5-dfe89e4b6963:string:DNS-TXT",
+          "location": "d7ba5e33-cf5f-4fcc-a4b7-3e6e17324966:string:demo-tradetrust.openattestation.com"
+        },
+        "revocation": {
+          "type": "23d47c6b-4384-4c31-90ca-8284602f6b3e:string:NONE"
         }
       }
-    ]
+    ],
+    "links": {
+      "self": {
+        "href": "121c55c0-864d-4e54-a1f0-86bec4b9a050:string:https://action.openattestation.com?q=%7B%22type%22%3A%22DOCUMENT%22%2C%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Ftradetrust-functions.netlify.app%2F.netlify%2Ffunctions%2Fstorage%2Faea9cb1a-816a-4fd7-b3a9-84924dc9a9e9%22%2C%22key%22%3A%22d80b453e53bb26d3b36efe65f18f0482f52d97cffad6f6c9c195d10e165b9a83%22%2C%22permittedActions%22%3A%5B%22STORE%22%5D%2C%22redirect%22%3A%22https%3A%2F%2Fdev.tradetrust.io%2F%22%2C%22chainId%22%3A%225%22%7D%7D"
+      }
+    },
+    "network": {
+      "chain": "05eb1707-5426-41d8-8fde-bc48ff0f2182:string:ETH",
+      "chainId": "ae505425-2df7-4597-87d2-037418d7bcbf:string:5"
+    }
   },
-  "privacy": { "obfuscatedData": [] },
   "signature": {
     "type": "SHA3MerkleProof",
-    "targetHash": "0badef8f1d5652abef918c15725412b715c708d5eb25fe14df155d63c5241f62",
+    "targetHash": "f292056ed5e5535400cec63b78a84ec384d2d77117e1606a17644e7b97a03cac",
     "proof": [],
-    "merkleRoot": "0badef8f1d5652abef918c15725412b715c708d5eb25fe14df155d63c5241f62"
+    "merkleRoot": "f292056ed5e5535400cec63b78a84ec384d2d77117e1606a17644e7b97a03cac"
   }
 }
 ```
@@ -89,10 +107,10 @@ You can build your own verify method or your own verifiers:
 // creating your own verify using default exported verifiers
 import { verificationBuilder, openAttestationVerifiers } from "@govtechsg/oa-verify";
 
-const verify1 = verificationBuilder(openAttestationVerifiers, { network: "ropsten" }); // this verify is equivalent to the one exported by the library
+const verify1 = verificationBuilder(openAttestationVerifiers, { network: "goerli" }); // this verify is equivalent to the one exported by the library
 // this verify is equivalent to the one exported by the library
 const verify2 = verificationBuilder([openAttestationVerifiers[0], openAttestationVerifiers[1]], {
-  network: "ropsten",
+  network: "goerli",
 }); // this verify only run 2 verifiers
 ```
 
@@ -112,7 +130,7 @@ const customVerifier: Verifier<any> = {
 };
 
 // create your own verify function with all verifiers and your custom one
-const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "goerli" });
 ```
 
 Refer to [Extending Custom Verification](#extending-custom-verification) to find out more on how to create your own custom verifier.
@@ -162,7 +180,7 @@ import { isValid, openAttestationVerifiers, verificationBuilder } from "@govtech
 import * as document from "./document.json";
 
 const verify = verificationBuilder(openAttestationVerifiers, {
-  network: "ropsten",
+  network: "goerli",
 });
 
 const promisesCallback = (verificationMethods: any) => {
@@ -316,7 +334,7 @@ const customVerifier: Verifier<any> = {
 };
 
 // create your own verify function with all verifiers and your custom one
-const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "ropsten" });
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "goerli" });
 
 const fragments = await verify(document);
 
@@ -356,7 +374,7 @@ The document that we [created](#verifying-a-document) is not valid against our o
 
 - `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
 - `PROVIDER_ENDPOINT_URL`: let you provide your preferred JSON-RPC HTTP API URL.
-- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
+- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "goerli".
 - `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "jsonrpc".
 
 _Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
@@ -377,7 +395,7 @@ const verify = verificationBuilder(openAttestationVerifiers, { provider: customP
 To specify network:
 
 ```ts
-const verify = verificationBuilder(openAttestationVerifiers, { network: "ropsten" });
+const verify = verificationBuilder(openAttestationVerifiers, { network: "goerli" });
 ```
 
 ### Specify resolver
@@ -407,7 +425,7 @@ You may generate a provider using the provider generator, it supports `INFURA`, 
 
 It requires a set of options:
 
-- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "ropsten", "rinkeby".
+- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "goerli".
 - `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy" or "jsonrpc".
 - `url`: The _url_ may be specified as a **string** in which is being used to connect to a JSON-RPC HTTP API
 - `apiKey`: The _apiKey_ may be specified as a **string** for use together with the provider. If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
@@ -426,7 +444,7 @@ Alternate way 1 (with environment variables):
 
 ```ts
 // environment file
-PROVIDER_NETWORK = "ropsten";
+PROVIDER_NETWORK = "goerli";
 PROVIDER_ENDPOINT_TYPE = "infura";
 PROVIDER_ENDPOINT_URL = "http://jsonrpc.com";
 PROVIDER_API_KEY = "ajdh1j23";
@@ -442,7 +460,7 @@ Alternate way 2 (passing values in as parameters):
 ```ts
 import { utils } from "@govtechsg/oa-verify";
 const providerOptions = {
-  network: "ropsten",
+  network: "goerli",
   providerType: "infura",
   apiKey: "abdfddsfe23232",
 };
@@ -474,7 +492,7 @@ Let's see how to use it
 
 ```ts
 import { utils } from "@govtechsg/oa-verify";
-const fragments = verify(documentRopstenValidWithCertificateStore, { network: "ropsten" });
+const fragments = verify(documentValidWithCertificateStore, { network: "goerli" });
 // return the correct fragment, correctly typed
 const fragment = utils.getOpenAttestationEthereumTokenRegistryStatusFragment(fragments);
 

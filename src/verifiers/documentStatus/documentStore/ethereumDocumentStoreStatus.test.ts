@@ -1,19 +1,16 @@
 import { v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { openAttestationEthereumDocumentStoreStatus } from "./ethereumDocumentStoreStatus";
-import { documentRopstenRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithDocumentStore";
-import { documentRopstenRevokedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenRevokedWithCertificateStore";
-import { documentRopstenNotIssuedWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithCertificateStore";
-import { documentRopstenValidWithCertificateStore } from "../../../../test/fixtures/v2/documentRopstenValidWithCertificateStore";
-import { documentRopstenNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentRopstenNotIssuedWithTokenRegistry";
-import { documentRopstenValidWithDocumentStore as v2documentRopstenValidWithDocumentStore } from "../../../../test/fixtures/v2/documentRopstenValidWithDocumentStore";
-import { documentRopstenMixedIssuance } from "../../../../test/fixtures/v2/documentRopstenMixedIssuance";
+import { documentGoerliRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliRevokedWithDocumentStore";
+import { documentGoerliValidWithDocumentStore as v2documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
+import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
+import { documentNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentNotIssuedWithTokenRegistry";
 import { getProvider } from "../../../common/utils";
+import { openAttestationEthereumDocumentStoreStatus } from "./ethereumDocumentStoreStatus";
 
 // v3 documents
-import v3DocumentStoreWrappedRaw from "../../../../test/fixtures/v3/documentStore-wrapped.json";
+import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
 import v3DocumentStoreIssuedRaw from "../../../../test/fixtures/v3/documentStore-issued.json";
 import v3DocumentStoreRevokedRaw from "../../../../test/fixtures/v3/documentStore-revoked.json";
-import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
+import v3DocumentStoreWrappedRaw from "../../../../test/fixtures/v3/documentStore-wrapped.json";
 import v3TokenRegistryIssuedRaw from "../../../../test/fixtures/v3/tokenRegistry-issued.json";
 
 const v3DocumentStoreWrapped = v3DocumentStoreWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
@@ -22,13 +19,13 @@ const v3DidSigned = v3DidSignedRaw as WrappedDocument<v3.OpenAttestationDocument
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 const v3DocumentStoreRevoked = v3DocumentStoreRevokedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
-const options = { provider: getProvider({ network: "ropsten" }) };
+const options = { provider: getProvider({ network: "goerli" }) };
 
 describe("test", () => {
   describe("v2", () => {
     it("should return false when document does not have data", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
-        { ...v2documentRopstenValidWithDocumentStore, data: null } as any,
+        { ...v2documentGoerliValidWithDocumentStore, data: null } as any,
         options
       );
       expect(shouldVerify).toBe(false);
@@ -36,8 +33,8 @@ describe("test", () => {
     it("should return false when document does not have issuers", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
         {
-          ...v2documentRopstenValidWithDocumentStore,
-          data: { ...v2documentRopstenValidWithDocumentStore.data, issuers: null },
+          ...v2documentGoerliValidWithDocumentStore,
+          data: { ...v2documentGoerliValidWithDocumentStore.data, issuers: null },
         } as any,
         options
       );
@@ -45,14 +42,14 @@ describe("test", () => {
     });
     it("should return false when document uses token registry", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
-        documentRopstenNotIssuedWithTokenRegistry,
+        documentNotIssuedWithTokenRegistry,
         options
       );
       expect(shouldVerify).toBe(false);
     });
     it("should return true when document uses document store", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
-        documentRopstenRevokedWithDocumentStore,
+        documentGoerliRevokedWithDocumentStore,
         options
       );
       expect(shouldVerify).toBe(true);
@@ -83,12 +80,12 @@ describe("verify", () => {
     it("should return an invalid fragment when document store is invalid", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         {
-          ...documentRopstenRevokedWithDocumentStore,
+          ...documentGoerliRevokedWithDocumentStore,
           data: {
-            ...documentRopstenRevokedWithDocumentStore.data,
+            ...documentGoerliRevokedWithDocumentStore.data,
             issuers: [
               {
-                ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
+                ...documentGoerliRevokedWithDocumentStore.data.issuers[0],
                 documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -128,12 +125,12 @@ describe("verify", () => {
     it("should return an invalid fragment when document store does not exists", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         {
-          ...documentRopstenRevokedWithDocumentStore,
+          ...documentGoerliRevokedWithDocumentStore,
           data: {
-            ...documentRopstenRevokedWithDocumentStore.data,
+            ...documentGoerliRevokedWithDocumentStore.data,
             issuers: [
               {
-                ...documentRopstenRevokedWithDocumentStore.data.issuers[0],
+                ...documentGoerliRevokedWithDocumentStore.data.issuers[0],
                 documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
               },
             ],
@@ -170,43 +167,10 @@ describe("verify", () => {
         }
       `);
     });
-    it("should return an invalid fragment when document was not issued", async () => {
-      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        documentRopstenNotIssuedWithCertificateStore,
-        options
-      );
-      expect(fragment).toMatchInlineSnapshot(`
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "issued": false,
-                  "reason": Object {
-                    "code": 1,
-                    "codeString": "DOCUMENT_NOT_ISSUED",
-                    "message": "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  },
-                },
-              ],
-            },
-            "issuedOnAll": false,
-          },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 1,
-            "codeString": "DOCUMENT_NOT_ISSUED",
-            "message": "Document 0x2e97b28b1cb7ca50179af42f1f5581591251a2d93dd6dac75fafc8a69077f4ed has not been issued under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "status": "INVALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-    });
+
     it("should return an invalid fragment when document with document store that has been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        documentRopstenRevokedWithDocumentStore,
+        documentGoerliRevokedWithDocumentStore,
         options
       );
       expect(fragment).toMatchInlineSnapshot(`
@@ -215,17 +179,17 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                    "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   },
                   "revoked": true,
                 },
@@ -238,57 +202,17 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x3d29524b18c3efe1cbad07e1ba9aa80c496cbf0b6255d6f331ca9b540e17e452 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
         }
       `);
     });
-    it("should return an invalid fragment when document with certificate store that has been revoked", async () => {
-      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        documentRopstenRevokedWithCertificateStore,
-        options
-      );
-      expect(fragment).toMatchInlineSnapshot(`
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "reason": Object {
-                    "code": 5,
-                    "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0xa874e4c79b27ddd3701984aaff9bc8bd30248f3214401d53ff238286900204a6 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  },
-                  "revoked": true,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": true,
-          },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "reason": Object {
-            "code": 5,
-            "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0xa874e4c79b27ddd3701984aaff9bc8bd30248f3214401d53ff238286900204a6 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-          },
-          "status": "INVALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-    });
+
     it("should return a valid fragment when document with document store that has not been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        v2documentRopstenValidWithDocumentStore,
+        v2documentGoerliValidWithDocumentStore,
         options
       );
 
@@ -298,13 +222,13 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "revoked": false,
                 },
               ],
@@ -318,40 +242,9 @@ describe("verify", () => {
         }
       `);
     });
-    it("should return a valid fragment when document with certificate store that has not been revoked", async () => {
-      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        documentRopstenValidWithCertificateStore,
-        options
-      );
 
-      expect(fragment).toMatchInlineSnapshot(`
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
-                  "revoked": false,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": false,
-          },
-          "name": "OpenAttestationEthereumDocumentStoreStatus",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-    });
     it("should return an invalid fragment when used with other issuance methods", async () => {
-      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(documentRopstenMixedIssuance, options);
+      const fragment = await openAttestationEthereumDocumentStoreStatus.verify(documentMixedIssuance, options);
 
       expect(fragment).toMatchInlineSnapshot(`
         Object {
@@ -376,11 +269,11 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "revoked": false,
               },
             },
@@ -400,16 +293,16 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "issued": false,
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_ISSUED",
-                  "message": "Document 0xdaf603bcee04e4489e624aed8d39c5f86674a34d5576031c5c3c9a5766b30885 has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                  "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 },
               },
               "revocation": Object {
-                "address": "0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "revoked": false,
               },
             },
@@ -420,7 +313,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_ISSUED",
-            "message": "Document 0xdaf603bcee04e4489e624aed8d39c5f86674a34d5576031c5c3c9a5766b30885 has not been issued under contract 0x8bA63EAB43342AAc3AdBB4B827b68Cf4aAE5Caca",
+            "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -434,15 +327,15 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 "reason": Object {
                   "code": 5,
                   "codeString": "DOCUMENT_REVOKED",
-                  "message": "Document 0x4cefff86bef5079fd0f63a27cf2a849258cf15a6b7c9526bc63d00c7f3d3ebe8 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+                  "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                 },
                 "revoked": true,
               },
@@ -454,7 +347,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x4cefff86bef5079fd0f63a27cf2a849258cf15a6b7c9526bc63d00c7f3d3ebe8 has been revoked under contract 0x8Fc57204c35fb9317D91285eF52D6b892EC08cD3",
+            "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
