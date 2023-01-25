@@ -9,6 +9,7 @@ import {
   VerificationFragmentType,
 } from "../types/core";
 import {
+  OpenAttestationDidSignedDocumentStatusCode,
   OpenAttestationEthereumDocumentStoreStatusCode,
   OpenAttestationEthereumTokenRegistryStatusCode,
 } from "../types/error";
@@ -190,10 +191,17 @@ export const certificateNotIssued = (fragments: VerificationFragment[]): boolean
 };
 
 // this function check if the reason of the error is that the document is revoked in document store
+// this can happen if the document is identified by DID or not
+// If its identified by DID, then the error code will be under OADIDSignedDocumentStatusCode; else it will be under OAEthereumDocumentStoreStatusCode.
 export const certificateRevoked = (fragments: VerificationFragment[]): boolean => {
   const documentStoreIssuedFragment = getOpenAttestationEthereumDocumentStoreStatusFragment(fragments);
   // 1 is the error code used by oa-verify in case of document / token not issued / minted
-  return documentStoreIssuedFragment?.reason?.code === OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED;
+  const docStoreStatus =
+    documentStoreIssuedFragment?.reason?.code === OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED;
+  const didSignedDocumentStatus = getOpenAttestationDidSignedDocumentStatusFragment(fragments);
+  const didSignedDocStoreStatus =
+    didSignedDocumentStatus?.reason?.code === OpenAttestationDidSignedDocumentStatusCode.DOCUMENT_REVOKED;
+  return docStoreStatus || didSignedDocStoreStatus;
 };
 
 // this function check if the error is caused by an invalid merkle root (incorrect length/odd length/invalid characters)

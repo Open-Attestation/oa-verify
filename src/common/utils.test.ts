@@ -583,6 +583,34 @@ describe("certificateRevoked", () => {
     };
     expect(certificateRevoked([verificationFragment])).toStrictEqual(false);
   });
+  it("should return true if error reason is that document is revoked in document store and is identified by a DID", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationDidSignedDocumentStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 12,
+        codeString: "DOCUMENT_REVOKED",
+        message: "Document has been revoked",
+      },
+    };
+    expect(certificateRevoked([verificationFragment])).toStrictEqual(true);
+  });
+  it("should return false if error reason is that document is not revoked in document store and is identified by a DID", () => {
+    const verificationFragment: InvalidVerificationFragment<any> = {
+      status: "INVALID",
+      name: "OpenAttestationDidSignedDocumentStatus",
+      type: "DOCUMENT_STATUS",
+      data: {},
+      reason: {
+        code: 3,
+        codeString: "3",
+        message: "Some error, Document not revoked",
+      },
+    };
+    expect(certificateRevoked([verificationFragment])).toStrictEqual(false);
+  });
 });
 
 describe("invalidArgument", () => {

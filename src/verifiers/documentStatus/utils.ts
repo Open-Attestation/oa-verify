@@ -73,9 +73,9 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   return revokedStatuses.find((hash) => hash);
 };
 
-/** isRevokedOnDocumentStore is used at 2 verifiers. {@link ethereumDocumentStoreStatus} and at {@link didSignedDocumentStatus}, the main difference is that they return different error codes/code strings 
+/** isRevokedOnDocumentStore is used at 2 verifiers. {@link ethereumDocumentStoreStatus} and at {@link didSignedDocumentStatus}, the main difference is that they return different error codes/code strings
  * the flag identifiedByDID is static, it should be determined within the verifier file itself.
-*/
+ */
 export const isRevokedOnDocumentStore = async ({
   documentStore,
   merkleRoot,
@@ -89,7 +89,7 @@ export const isRevokedOnDocumentStore = async ({
   provider: providers.Provider;
   targetHash: Hash;
   proofs?: Hash[];
-  identifiedByDID?: boolean
+  identifiedByDID?: boolean;
 }): Promise<RevocationStatus> => {
   const [code, codeString] = identifiedByDID
     ? [
