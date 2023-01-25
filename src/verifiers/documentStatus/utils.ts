@@ -73,19 +73,33 @@ export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediat
   return revokedStatuses.find((hash) => hash);
 };
 
+/** isRevokedOnDocumentStore is used at 2 verifiers. {@link ethereumDocumentStoreStatus} and at {@link didSignedDocumentStatus}, the main difference is that they return different error codes/code strings 
+ * the flag identifiedByDID is static, it should be determined within the verifier file itself.
+*/
 export const isRevokedOnDocumentStore = async ({
   documentStore,
   merkleRoot,
   provider,
   targetHash,
   proofs,
+  identifiedByDID = false,
 }: {
   documentStore: string;
   merkleRoot: string;
   provider: providers.Provider;
   targetHash: Hash;
   proofs?: Hash[];
+  identifiedByDID?: boolean
 }): Promise<RevocationStatus> => {
+  const [code, codeString] = identifiedByDID
+    ? [
+        OpenAttestationDidSignedDocumentStatusCode.DOCUMENT_REVOKED,
+        OpenAttestationDidSignedDocumentStatusCode[OpenAttestationDidSignedDocumentStatusCode.DOCUMENT_REVOKED],
+      ]
+    : [
+        OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+        OpenAttestationEthereumDocumentStoreStatusCode[OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED],
+      ];
   try {
     const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
     const intermediateHashes = getIntermediateHashes(targetHash, proofs);
@@ -97,11 +111,8 @@ export const isRevokedOnDocumentStore = async ({
           address: documentStore,
           reason: {
             message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
-            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-            codeString:
-              OpenAttestationEthereumDocumentStoreStatusCode[
-                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-              ],
+            code,
+            codeString,
           },
         }
       : {
@@ -116,11 +127,8 @@ export const isRevokedOnDocumentStore = async ({
       address: documentStore,
       reason: {
         message: decodeError(error),
-        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-        codeString:
-          OpenAttestationEthereumDocumentStoreStatusCode[
-            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-          ],
+        code,
+        codeString,
       },
     };
   }

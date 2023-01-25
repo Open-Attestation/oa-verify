@@ -1112,7 +1112,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "reason": Object {
-                    "code": 5,
+                    "code": 12,
                     "codeString": "DOCUMENT_REVOKED",
                     "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   },
@@ -1125,7 +1125,7 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 5,
+            "code": 12,
             "codeString": "DOCUMENT_REVOKED",
             "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
           },
@@ -1156,7 +1156,7 @@ describe("verify(integration)", () => {
                 Object {
                   "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   "reason": Object {
-                    "code": 5,
+                    "code": 12,
                     "codeString": "DOCUMENT_REVOKED",
                     "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
                   },
@@ -1169,7 +1169,7 @@ describe("verify(integration)", () => {
           },
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
-            "code": 5,
+            "code": 12,
             "codeString": "DOCUMENT_REVOKED",
             "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
           },

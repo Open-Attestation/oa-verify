@@ -62,6 +62,7 @@ export enum OpenAttestationDidSignedDocumentStatusCode {
   UNRECOGNIZED_REVOCATION_TYPE = 9,
   REVOCATION_LOCATION_MISSING = 10,
   OCSP_RESPONSE_INVALID = 11,
+  DOCUMENT_REVOKED = 12
 }
 export enum OpenAttestationDidCode {
   SKIPPED = 0,

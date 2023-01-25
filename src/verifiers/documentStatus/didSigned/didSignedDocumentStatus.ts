@@ -90,6 +90,7 @@ const verifyV2 = async (
             provider: options.provider,
             targetHash,
             proofs,
+            identifiedByDID: true
           });
         }
         throw new CodedError(
@@ -255,6 +256,7 @@ const verifyV3 = async (
             targetHash,
             proofs,
             provider: options.provider,
+            identifiedByDID: true
           });
         }
         throw new CodedError(
