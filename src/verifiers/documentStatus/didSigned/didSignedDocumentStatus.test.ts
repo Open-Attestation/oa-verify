@@ -26,7 +26,7 @@ import sampleDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixture
 import sampleDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-revoked.json";
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
-import sampleDidSignedOcspResponderV2 from "../../../../test/fixtures/v2/did-revocation-ocsp-signed.json";
+import sampleDidSignedOcspResponderV2 from "../../../../test/fixtures/v2/did-ocsp-revocation-signed.json";
 
 const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
