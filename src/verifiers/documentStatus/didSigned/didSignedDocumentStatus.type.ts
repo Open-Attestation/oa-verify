@@ -43,12 +43,12 @@ export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatus
 
 export const ValidOcspReasonCode = Number.withConstraint((n) => n >= 0 && n <= 10 && n != 7);
 
-export const ValidOcspResponse2 = Record({
+export const ValidOcspResponse = Record({
   revoked: Literal(false),
   documentHash: String,
 });
 
-export const ValidOcspResponseRevoked2 = Record({
+export const ValidOcspResponseRevoked = Record({
   revoked: Literal(true),
   documentHash: String,
   reasonCode: ValidOcspReasonCode,

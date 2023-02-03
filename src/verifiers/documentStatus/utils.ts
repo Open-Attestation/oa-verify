@@ -10,7 +10,7 @@ import {
 import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
-import { ValidOcspResponse2, ValidOcspResponseRevoked2 } from "./didSigned/didSignedDocumentStatus.type";
+import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -121,7 +121,7 @@ export const isRevokedOnDocumentStore = async ({
   }
 };
 
-export const isRevokedByOcspResponder2 = async ({
+export const isRevokedByOcspResponder = async ({
   merkleRoot,
   targetHash,
   proofs,
@@ -143,9 +143,9 @@ export const isRevokedByOcspResponder2 = async ({
       );
     });
 
-    if (ValidOcspResponse2.guard(data)) {
+    if (ValidOcspResponse.guard(data)) {
       continue;
-    } else if (ValidOcspResponseRevoked2.guard(data)) {
+    } else if (ValidOcspResponseRevoked.guard(data)) {
       const { reasonCode } = data;
       return {
         revoked: true,
