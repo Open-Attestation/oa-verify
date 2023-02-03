@@ -13,6 +13,7 @@ import sampleDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixture
 import sampleDidSignedV3 from "../../../../test/fixtures/v3/did-signed.json";
 import sampleDnsDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV3 from "../../../../test/fixtures/v3/dnsdid-revocation-store-signed-revoked.json";
+import sampleDidSignedOcspResponderV3 from "../../../../test/fixtures/v3/did-ocsp-revocation-signed.json";
 import sampleDNSDidSignedV3 from "../../../../test/fixtures/v3/dnsdid-signed.json";
 import sampleDocumentStoreWrappedV3 from "../../../../test/fixtures/v3/documentStore-wrapped.json";
 import sampleTokenRegistryWrappedV3 from "../../../../test/fixtures/v3/tokenRegistry-wrapped.json";
@@ -25,15 +26,14 @@ import sampleDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixture
 import sampleDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/did-revocation-store-signed-revoked.json";
 import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-not-revoked.json";
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
-
-import sampleDidSignedOcsp from "../../../../test/fixtures/v2/did-revocation-ocsp-signed.json";
+import sampleDidSignedOcspResponderV2 from "../../../../test/fixtures/v2/did-revocation-ocsp-signed.json";
 
 const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const didSignedOcsp = sampleDidSignedOcsp as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedOcspResponderV2 = sampleDidSignedOcspResponderV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
@@ -44,6 +44,7 @@ const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreBu
 const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreNotRevokedV3 = sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedOcspResponderV3 = sampleDidSignedOcspResponderV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 
 jest.mock("../../../did/resolver");
 
@@ -484,7 +485,7 @@ describe("verify", () => {
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -545,7 +546,7 @@ describe("verify", () => {
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
           "data": Object {
@@ -879,6 +880,107 @@ describe("verify", () => {
           "type": "DOCUMENT_STATUS",
         }
       `);
+    });
+    it("should pass when DID document is signed and is not revoked by an OCSP", async () => {
+      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+
+      const handlers = [
+        rest.get(
+          "https://ocsp.example.com/0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
+                "issued": true,
+              },
+              "revocation": Object {
+                "address": "https://ocsp.example.com",
+                "revoked": false,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": false,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "status": "VALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
+    it("should fail when DID document is signed but is found by an OCSP", async () => {
+      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+
+      const handlers = [
+        rest.get(
+          "https://ocsp.example.com/0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: true,
+                documentHash: "0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+                reasonCode: 4,
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Object {
+                "did": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
+                "issued": true,
+              },
+              "revocation": Object {
+                "address": "https://ocsp.example.com",
+                "reason": Object {
+                  "code": 4,
+                  "codeString": "SUPERSEDED",
+                  "message": "Document 0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40 has been revoked under OCSP Responder: https://ocsp.example.com",
+                },
+                "revoked": true,
+              },
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 4,
+            "codeString": "SUPERSEDED",
+            "message": "Document 0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40 has been revoked under OCSP Responder: https://ocsp.example.com",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
     });
   });
 });
