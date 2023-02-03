@@ -11,7 +11,6 @@ import {
   RevocationStatusArray,
   ValidRevocationStatus,
   ValidRevocationStatusArray,
-  OcspResponderRevocationStatus,
 } from "../revocation.types";
 
 /**
