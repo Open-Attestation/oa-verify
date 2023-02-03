@@ -260,7 +260,19 @@ const verifyV3 = async (
           "REVOCATION_LOCATION_MISSING"
         );
       case v3.RevocationType.OcspResponder:
-        throw new Error("Ocsp revocation type not yet supported for v3");
+        if (typeof location === "string") {
+          return isRevokedByOcspResponder({
+            merkleRoot,
+            targetHash,
+            proofs,
+            location,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
       case v3.RevocationType.None:
         return { revoked: false };
       default:
