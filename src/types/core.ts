@@ -1,10 +1,12 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Resolver } from "did-resolver";
 import { providers } from "ethers";
+import { Static } from "runtypes";
+
 import {
-  OcspResponderRevocationReason,
-  OcspResponderRevocationStatus,
-} from "src/verifiers/documentStatus/revocation.types";
+  ValidOcspResponse,
+  ValidOcspResponseRevoked,
+} from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type"; // "../ didSigned/didSignedDocumentStatus.type";
 import { Reason } from "./error";
 
 /**
@@ -122,17 +124,11 @@ export interface ProviderDetails {
 }
 
 /**
- * Specifies the parameters of the OCSP response
- * @param {string} certificateStatus - status of the certificate {@link OcspResponderRevocationStatus}
+ * A response from an OCSP Responder indicating a document has not been revoked
  */
-export interface OcspResponse {
-  certificateStatus: OcspResponderRevocationStatus;
-}
+export type ValidOcspResponse = Static<typeof ValidOcspResponse>;
 
 /**
- * Specifies the parameters of the OCSP response when document is revoked
- * @param {number} reasonCode - code indicating reason for revocation {@link OcspResponderRevocationReason}
+ * A response from an OCSP Responder indicating a document has been revoked
  */
-export interface OcspResponseRevoked extends OcspResponse {
-  reasonCode: OcspResponderRevocationReason;
-}
+export type ValidOcspResponseRevoked = Static<typeof ValidOcspResponseRevoked>;
