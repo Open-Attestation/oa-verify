@@ -453,112 +453,7 @@ describe("verify", () => {
         }
       `);
     });
-    it("should pass when DID document is signed and is not revoked by an OCSP v1", async () => {
-      whenPublicKeyResolvesSuccessfully();
-
-      const handlers = [
-        rest.get("https://ocsp.example.com/SGCNM21566327", (_, res, ctx) => {
-          return res(
-            ctx.json({
-              certificateId: "SGCNM21566327",
-              certificateStatus: "good",
-            })
-          );
-        }),
-      ];
-
-      const server: SetupServerApi = setupServer(...handlers);
-      server.listen();
-
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
-      expect(res).toMatchInlineSnapshot(`
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "https://ocsp.example.com",
-                  "revoked": false,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": false,
-          },
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "status": "VALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-
-      server.close();
-    });
-    it("should fail when DID document is signed but is found by an OCSP v1", async () => {
-      whenPublicKeyResolvesSuccessfully();
-
-      const handlers = [
-        rest.get("https://ocsp.example.com/SGCNM21566327", (_, res, ctx) => {
-          return res(
-            ctx.json({
-              certificateId: "SGCNM21566327",
-              certificateStatus: "revoked",
-              reasonCode: 4,
-              revocationDate: "2021-10-26T05:02:20.100Z",
-              thisUpdate: "2021-10-26T05:02:20.100Z",
-            })
-          );
-        }),
-      ];
-
-      const server: SetupServerApi = setupServer(...handlers);
-      server.listen();
-
-      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcsp, options);
-      expect(res).toMatchInlineSnapshot(`
-        Object {
-          "data": Object {
-            "details": Object {
-              "issuance": Array [
-                Object {
-                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
-                  "issued": true,
-                },
-              ],
-              "revocation": Array [
-                Object {
-                  "address": "https://ocsp.example.com",
-                  "reason": Object {
-                    "code": 4,
-                    "codeString": "SUPERSEDED",
-                    "message": "SUPERSEDED",
-                  },
-                  "revoked": true,
-                },
-              ],
-            },
-            "issuedOnAll": true,
-            "revokedOnAny": true,
-          },
-          "name": "OpenAttestationDidSignedDocumentStatus",
-          "reason": Object {
-            "code": 4,
-            "codeString": "SUPERSEDED",
-            "message": "SUPERSEDED",
-          },
-          "status": "INVALID",
-          "type": "DOCUMENT_STATUS",
-        }
-      `);
-
-      server.close();
-    });
-    it("should pass when DID document is signed and is not revoked by an OCSP v2", async () => {
+    it("should pass when DID document is signed and is not revoked by an OCSP", async () => {
       whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
@@ -618,7 +513,7 @@ describe("verify", () => {
 
       server.close();
     });
-    it("should fail when DID document is signed but is found by an OCSP v2", async () => {
+    it("should fail when DID document is signed but is found by an OCSP", async () => {
       whenPublicKeyResolvesSuccessfully();
 
       const handlers = [
