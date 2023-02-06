@@ -1,12 +1,6 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { Resolver } from "did-resolver";
 import { providers } from "ethers";
-import { Static } from "runtypes";
-
-import {
-  ValidOcspResponse,
-  ValidOcspResponseRevoked,
-} from "../verifiers/documentStatus/didSigned/didSignedDocumentStatus.type"; // "../ didSigned/didSignedDocumentStatus.type";
 import { Reason } from "./error";
 
 /**
@@ -122,13 +116,3 @@ export interface ProviderDetails {
   url?: string;
   apiKey?: string;
 }
-
-/**
- * A response from an OCSP Responder indicating a document has not been revoked
- */
-export type ValidOcspResponse = Static<typeof ValidOcspResponse>;
-
-/**
- * A response from an OCSP Responder indicating a document has been revoked
- */
-export type ValidOcspResponseRevoked = Static<typeof ValidOcspResponseRevoked>;
