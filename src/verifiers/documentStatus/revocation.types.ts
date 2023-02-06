@@ -21,9 +21,6 @@ export type RevocationStatus = Static<typeof RevocationStatus>;
 export const RevocationStatusArray = RunTypesArray(RevocationStatus);
 export type RevocationStatusArray = Static<typeof RevocationStatusArray>;
 
-export const OcspResponderRevocationStatus = Union(Literal("good"), Literal("revoked"), Literal("unknown"));
-export type OcspResponderRevocationStatus = Static<typeof OcspResponderRevocationStatus>;
-
 export enum OcspResponderRevocationReason {
   UNSPECIFIED = 0,
   KEY_COMPROMISE = 1,

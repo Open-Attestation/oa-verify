@@ -4,7 +4,7 @@ import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../typ
 import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";
 import { CodedError } from "../../../common/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
-import { isRevokedByOcspResponder, isRevokedByOcspResponder2, isRevokedOnDocumentStore } from "../utils";
+import { isRevokedByOcspResponder, isRevokedOnDocumentStore } from "../utils";
 import { InvalidRevocationStatus, RevocationStatus, ValidRevocationStatus } from "../revocation.types";
 import {
   DidSignedIssuanceStatus,
@@ -100,15 +100,12 @@ const verifyV2 = async (
       case v2.RevocationType.OcspResponder:
         const { location } = revocationItem;
         if (typeof location === "string") {
-          return isRevokedByOcspResponder2({
+          return isRevokedByOcspResponder({
             merkleRoot,
             targetHash,
             proofs,
             location,
-          }).catch(() =>
-            // FIXME: Omit this catch fallback after removing support for old OCSP responders
-            isRevokedByOcspResponder({ certificateId: documentData.id as string, location })
-          );
+          });
         }
         throw new CodedError(
           "missing revocation location for an issuer",
@@ -263,7 +260,19 @@ const verifyV3 = async (
           "REVOCATION_LOCATION_MISSING"
         );
       case v3.RevocationType.OcspResponder:
-        throw new Error("Ocsp revocation type not yet supported for v3");
+        if (typeof location === "string") {
+          return isRevokedByOcspResponder({
+            merkleRoot,
+            targetHash,
+            proofs,
+            location,
+          });
+        }
+        throw new CodedError(
+          "missing revocation location for an issuer",
+          OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
+          "REVOCATION_LOCATION_MISSING"
+        );
       case v3.RevocationType.None:
         return { revoked: false };
       default:

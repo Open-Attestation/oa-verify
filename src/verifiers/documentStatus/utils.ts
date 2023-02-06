@@ -10,12 +10,7 @@ import {
 import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
-import {
-  ValidOcspResponse,
-  ValidOcspResponseRevoked,
-  ValidOcspResponse2,
-  ValidOcspResponseRevoked2,
-} from "./didSigned/didSignedDocumentStatus.type";
+import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -126,48 +121,7 @@ export const isRevokedOnDocumentStore = async ({
   }
 };
 
-/**
- * @deprecated Replaced by `isRevokedByOcspResponder2()` to check against merkle root & intermediate hashes (i.e. do not revoke by document id)
- *
- * These checks retained for backwards compatibility with older OCSP responders
- * that are already in the wild. Do consider removing support for old OCSP responders
- * in the next major version of oa-verify.
- */
 export const isRevokedByOcspResponder = async ({
-  certificateId,
-  location,
-}: {
-  certificateId: string;
-  location: string;
-}): Promise<RevocationStatus> => {
-  const { data } = await axios.get(`${location}/${certificateId}`);
-
-  if (ValidOcspResponseRevoked.guard(data) && data.certificateStatus === "revoked") {
-    const { reasonCode } = data;
-    return {
-      revoked: true,
-      address: location,
-      reason: {
-        message: OcspResponderRevocationReason[reasonCode],
-        code: reasonCode,
-        codeString: OcspResponderRevocationReason[reasonCode],
-      },
-    };
-  } else if (ValidOcspResponse.guard(data) && data.certificateStatus !== "revoked") {
-    return {
-      revoked: false,
-      address: location,
-    };
-  }
-
-  throw new CodedError(
-    "Invalid or unexpected response from OCSP Responder",
-    OpenAttestationDidSignedDocumentStatusCode.OCSP_RESPONSE_INVALID,
-    "OCSP_RESPONSE_INVALID"
-  );
-};
-
-export const isRevokedByOcspResponder2 = async ({
   merkleRoot,
   targetHash,
   proofs,
@@ -189,9 +143,9 @@ export const isRevokedByOcspResponder2 = async ({
       );
     });
 
-    if (ValidOcspResponse2.guard(data)) {
+    if (ValidOcspResponse.guard(data)) {
       continue;
-    } else if (ValidOcspResponseRevoked2.guard(data)) {
+    } else if (ValidOcspResponseRevoked.guard(data)) {
       const { reasonCode } = data;
       return {
         revoked: true,

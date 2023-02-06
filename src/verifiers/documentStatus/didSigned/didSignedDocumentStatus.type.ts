@@ -11,7 +11,6 @@ import {
   RevocationStatusArray,
   ValidRevocationStatus,
   ValidRevocationStatusArray,
-  OcspResponderRevocationStatus,
 } from "../revocation.types";
 
 /**
@@ -42,37 +41,13 @@ export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatus
  */
 
 export const ValidOcspReasonCode = Number.withConstraint((n) => n >= 0 && n <= 10 && n != 7);
-/**
- * @deprecated Replaced by `ValidOcspResponse2`
- *
- * This type guard is retained for backwards compatibility with older OCSP responders
- * that are already in the wild. Do consider removing support for the old OCSP responders
- * in the next major version of oa-verify.
- *
- * OCSP Responder (new response format): https://github.com/Open-Attestation/ocsp-responder#checking-document-status
- */
+
 export const ValidOcspResponse = Record({
-  certificateStatus: OcspResponderRevocationStatus,
-});
-export const ValidOcspResponse2 = Record({
   revoked: Literal(false),
   documentHash: String,
 });
 
-/**
- * @deprecated Replaced by `ValidOcspResponseRevoked2`
- *
- * This type guard is retained for backwards compatibility with older OCSP responders
- * that are already in the wild. Do consider removing support for the old OCSP responders
- * in the next major version of oa-verify.
- *
- * OCSP Responder (new response format): https://github.com/Open-Attestation/ocsp-responder#checking-document-status
- */
 export const ValidOcspResponseRevoked = Record({
-  reasonCode: ValidOcspReasonCode,
-  certificateStatus: OcspResponderRevocationStatus,
-});
-export const ValidOcspResponseRevoked2 = Record({
   revoked: Literal(true),
   documentHash: String,
   reasonCode: ValidOcspReasonCode,
