@@ -1,5 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { TradeTrustErc721Factory } from "@govtechsg/token-registry";
+import { TradeTrustToken__factory } from "@govtechsg/token-registry/contracts";
 import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
@@ -116,7 +116,7 @@ export const isTokenMintedOnRegistry = async ({
   provider: providers.Provider;
 }): Promise<ValidTokenRegistryStatus | InvalidTokenRegistryStatus> => {
   try {
-    const tokenRegistryContract = await TradeTrustErc721Factory.connect(tokenRegistry, provider);
+    const tokenRegistryContract = await TradeTrustToken__factory.connect(tokenRegistry, provider);
     const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
     return minted
       ? { minted, address: tokenRegistry }
