@@ -17,8 +17,7 @@ export const documentDnsDidSigned: any = {
         },
         identityProof: {
           type: "0c12407d-31a4-4a4e-839e-f5f8bb77c317:string:DNS-DID",
-          key:
-            "1949b9e6-7dc2-49c8-bf07-e88931ceef59:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
+          key: "1949b9e6-7dc2-49c8-bf07-e88931ceef59:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
           location: "0259c7c5-b373-467c-95f9-a63b8be53b13:string:demo-tradetrust.openattestation.com",
         },
       },

@@ -56,10 +56,14 @@ export type InvalidTokenRegistryDataV3 = Static<typeof InvalidTokenRegistryDataV
 /**
  * Fragments
  */
-export type OpenAttestationEthereumTokenRegistryStatusValidFragmentV2 = ValidVerificationFragment<ValidTokenRegistryDataV2>;
-export type OpenAttestationEthereumTokenRegistryStatusValidFragmentV3 = ValidVerificationFragment<ValidTokenRegistryDataV3>;
-export type OpenAttestationEthereumTokenRegistryStatusInvalidFragmentV2 = InvalidVerificationFragment<InvalidTokenRegistryDataV2>;
-export type OpenAttestationEthereumTokenRegistryStatusInvalidFragmentV3 = InvalidVerificationFragment<InvalidTokenRegistryDataV3>;
+export type OpenAttestationEthereumTokenRegistryStatusValidFragmentV2 =
+  ValidVerificationFragment<ValidTokenRegistryDataV2>;
+export type OpenAttestationEthereumTokenRegistryStatusValidFragmentV3 =
+  ValidVerificationFragment<ValidTokenRegistryDataV3>;
+export type OpenAttestationEthereumTokenRegistryStatusInvalidFragmentV2 =
+  InvalidVerificationFragment<InvalidTokenRegistryDataV2>;
+export type OpenAttestationEthereumTokenRegistryStatusInvalidFragmentV3 =
+  InvalidVerificationFragment<InvalidTokenRegistryDataV3>;
 export type OpenAttestationEthereumTokenRegistryStatusErrorFragment = ErrorVerificationFragment<any>;
 
 export type OpenAttestationEthereumTokenRegistryStatusFragment =
