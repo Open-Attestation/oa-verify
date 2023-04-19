@@ -14,9 +14,10 @@ export interface ErrorOptions {
   unexpectedErrorString: string;
 }
 
-export const withCodedErrorHandler =
- <X extends VerificationFragment, T extends Verifier<X>["verify"]>(verify: T, errorOptions: ErrorOptions) =>
- async (
+export const withCodedErrorHandler = <X extends VerificationFragment, T extends Verifier<X>["verify"]>(
+  verify: T,
+  errorOptions: ErrorOptions
+) => async (
   document: DocumentsToVerify,
   options: VerifierOptions
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
