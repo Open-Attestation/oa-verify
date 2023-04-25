@@ -22,11 +22,11 @@ export const withCodedErrorHandler = <X extends VerificationFragment, T extends 
   options: VerifierOptions
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore https://github.com/microsoft/TypeScript/issues/26781
-): ReturnType<T> | Promise<ErrorVerificationFragment<any>> => {
+): ReturnType<Promise<T>> | Promise<ErrorVerificationFragment<any>> => {
   try {
     // Using return await to ensure async function execute in try block
     return await verify(document, options);
-  } catch (e) {
+  } catch (e: any) {
     const { message, code, codeString } = e;
     const { name, type, unexpectedErrorCode, unexpectedErrorString } = errorOptions;
     if (message && code && codeString) {
