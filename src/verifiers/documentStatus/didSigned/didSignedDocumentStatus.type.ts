@@ -100,17 +100,44 @@ export const InvalidDidSignedDataV3 = Record({
 export type InvalidDidSignedDataV3 = Static<typeof InvalidDidSignedDataV3>;
 
 /**
+ * Data for v4 Fragments
+ */
+export const ValidDidSignedDataV4 = Record({
+  issuedOnAll: Literal(true),
+  revokedOnAny: Literal(false),
+  details: Record({
+    issuance: ValidDidSignedIssuanceStatus,
+    revocation: ValidRevocationStatus,
+  }),
+});
+export type ValidDidSignedDataV4 = Static<typeof ValidDidSignedDataV3>;
+
+export const InvalidDidSignedDataV4 = Record({
+  issuedOnAll: Boolean,
+  revokedOnAny: Boolean,
+  details: Record({
+    issuance: DidSignedIssuanceStatus,
+    revocation: RevocationStatus,
+  }),
+});
+export type InvalidDidSignedDataV4 = Static<typeof InvalidDidSignedDataV3>;
+
+/**
  * Fragments
  */
 export type OpenAttestationDidSignedDocumentStatusValidFragmentV2 = ValidVerificationFragment<ValidDidSignedDataV2>;
 export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV2 = InvalidVerificationFragment<InvalidDidSignedDataV2>;
 export type OpenAttestationDidSignedDocumentStatusValidFragmentV3 = ValidVerificationFragment<ValidDidSignedDataV3>;
 export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV3 = InvalidVerificationFragment<InvalidDidSignedDataV3>;
+export type OpenAttestationDidSignedDocumentStatusValidFragmentV4 = ValidVerificationFragment<ValidDidSignedDataV4>;
+export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV4 = InvalidVerificationFragment<InvalidDidSignedDataV4>;
 export type OpenAttestationDidSignedDocumentStatusErrorFragment = ErrorVerificationFragment<any>;
 export type OpenAttestationDidSignedDocumentStatusVerificationFragment =
   | OpenAttestationDidSignedDocumentStatusValidFragmentV2
   | OpenAttestationDidSignedDocumentStatusInvalidFragmentV2
   | OpenAttestationDidSignedDocumentStatusValidFragmentV3
   | OpenAttestationDidSignedDocumentStatusInvalidFragmentV3
+  | OpenAttestationDidSignedDocumentStatusValidFragmentV4
+  | OpenAttestationDidSignedDocumentStatusInvalidFragmentV4
   | OpenAttestationDidSignedDocumentStatusErrorFragment
   | SkippedVerificationFragment;
