@@ -17,8 +17,7 @@ export const documentDidCustomRevocation: any = {
         },
         identityProof: {
           type: "877d7405-ee94-434a-a258-ec6add2877d5:string:DID",
-          key:
-            "37fec355-da53-4c2f-b8d7-b064b305e879:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "37fec355-da53-4c2f-b8d7-b064b305e879:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
         },
       },
     ],

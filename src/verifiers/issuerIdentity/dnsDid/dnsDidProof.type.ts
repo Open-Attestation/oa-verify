@@ -35,12 +35,18 @@ export type DnsDidVerificationStatusArray = Static<typeof DnsDidVerificationStat
 /**
  * Fragments
  */
-export type OpenAttestationDnsDidIdentityProofValidFragmentV4 = ValidVerificationFragment<ValidDnsDidVerificationStatus>;
-export type OpenAttestationDnsDidIdentityProofInvalidFragmentV4 = InvalidVerificationFragment<InvalidDnsDidVerificationStatus>;
-export type OpenAttestationDnsDidIdentityProofValidFragmentV3 = ValidVerificationFragment<ValidDnsDidVerificationStatus>;
-export type OpenAttestationDnsDidIdentityProofInvalidFragmentV3 = InvalidVerificationFragment<InvalidDnsDidVerificationStatus>;
-export type OpenAttestationDnsDidIdentityProofValidFragmentV2 = ValidVerificationFragment<ValidDnsDidVerificationStatusArray>;
-export type OpenAttestationDnsDidIdentityProofInvalidFragmentV2 = InvalidVerificationFragment<DnsDidVerificationStatusArray>;
+export type OpenAttestationDnsDidIdentityProofValidFragmentV4 =
+  ValidVerificationFragment<ValidDnsDidVerificationStatus>;
+export type OpenAttestationDnsDidIdentityProofInvalidFragmentV4 =
+  InvalidVerificationFragment<InvalidDnsDidVerificationStatus>;
+export type OpenAttestationDnsDidIdentityProofValidFragmentV3 =
+  ValidVerificationFragment<ValidDnsDidVerificationStatus>;
+export type OpenAttestationDnsDidIdentityProofInvalidFragmentV3 =
+  InvalidVerificationFragment<InvalidDnsDidVerificationStatus>;
+export type OpenAttestationDnsDidIdentityProofValidFragmentV2 =
+  ValidVerificationFragment<ValidDnsDidVerificationStatusArray>;
+export type OpenAttestationDnsDidIdentityProofInvalidFragmentV2 =
+  InvalidVerificationFragment<DnsDidVerificationStatusArray>;
 export type OpenAttestationDnsDidIdentityProofErrorFragment = ErrorVerificationFragment<any>;
 export type OpenAttestationDnsDidIdentityProofVerificationFragment =
   | OpenAttestationDnsDidIdentityProofValidFragmentV2

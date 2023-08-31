@@ -89,39 +89,34 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
  * Simple typed utility to return a fragment depending on the name
  * @param name
  */
-export const getFragmentByName = <ReturnedFragment extends VerificationFragment>(name: string) => <
-  Fragment extends VerificationFragment
->(
-  fragments: Fragment[]
-): ReturnedFragment | undefined => fragments.find((fragment) => fragment.name === name) as ReturnedFragment | undefined;
-export const getOpenAttestationHashFragment = getFragmentByName<OpenAttestationHashVerificationFragment>(
-  "OpenAttestationHash"
-);
-export const getOpenAttestationDidSignedDocumentStatusFragment = getFragmentByName<OpenAttestationDidSignedDocumentStatusVerificationFragment>(
-  "OpenAttestationDidSignedDocumentStatus"
-);
-export const getOpenAttestationEthereumDocumentStoreStatusFragment = getFragmentByName<OpenAttestationEthereumDocumentStoreStatusFragment>(
-  "OpenAttestationEthereumDocumentStoreStatus"
-);
-export const getOpenAttestationEthereumTokenRegistryStatusFragment = getFragmentByName<OpenAttestationEthereumTokenRegistryStatusFragment>(
-  "OpenAttestationEthereumTokenRegistryStatus"
-);
-export const getOpenAttestationDidIdentityProofFragment = getFragmentByName<OpenAttestationDidIdentityProofVerificationFragment>(
-  "OpenAttestationDidIdentityProof"
-);
-export const getOpenAttestationDnsDidIdentityProofFragment = getFragmentByName<OpenAttestationDnsDidIdentityProofVerificationFragment>(
-  "OpenAttestationDnsDidIdentityProof"
-);
-export const getOpenAttestationDnsTxtIdentityProofFragment = getFragmentByName<OpenAttestationDnsTxtIdentityProofVerificationFragment>(
-  "OpenAttestationDnsTxtIdentityProof"
-);
+export const getFragmentByName =
+  <ReturnedFragment extends VerificationFragment>(name: string) =>
+  <Fragment extends VerificationFragment>(fragments: Fragment[]): ReturnedFragment | undefined =>
+    fragments.find((fragment) => fragment.name === name) as ReturnedFragment | undefined;
+export const getOpenAttestationHashFragment =
+  getFragmentByName<OpenAttestationHashVerificationFragment>("OpenAttestationHash");
+export const getOpenAttestationDidSignedDocumentStatusFragment =
+  getFragmentByName<OpenAttestationDidSignedDocumentStatusVerificationFragment>(
+    "OpenAttestationDidSignedDocumentStatus"
+  );
+export const getOpenAttestationEthereumDocumentStoreStatusFragment =
+  getFragmentByName<OpenAttestationEthereumDocumentStoreStatusFragment>("OpenAttestationEthereumDocumentStoreStatus");
+export const getOpenAttestationEthereumTokenRegistryStatusFragment =
+  getFragmentByName<OpenAttestationEthereumTokenRegistryStatusFragment>("OpenAttestationEthereumTokenRegistryStatus");
+export const getOpenAttestationDidIdentityProofFragment =
+  getFragmentByName<OpenAttestationDidIdentityProofVerificationFragment>("OpenAttestationDidIdentityProof");
+export const getOpenAttestationDnsDidIdentityProofFragment =
+  getFragmentByName<OpenAttestationDnsDidIdentityProofVerificationFragment>("OpenAttestationDnsDidIdentityProof");
+export const getOpenAttestationDnsTxtIdentityProofFragment =
+  getFragmentByName<OpenAttestationDnsTxtIdentityProofVerificationFragment>("OpenAttestationDnsTxtIdentityProof");
 
 /**
  * Simple typed utility to return fragments depending on the type
  */
-const getFragmentByType = <T extends VerificationFragmentType>(type: T) => <Fragment extends VerificationFragment>(
-  fragments: Fragment[]
-): (Fragment & { type: T })[] => fragments.filter((fragment) => fragment.type === type) as (Fragment & { type: T })[];
+const getFragmentByType =
+  <T extends VerificationFragmentType>(type: T) =>
+  <Fragment extends VerificationFragment>(fragments: Fragment[]): (Fragment & { type: T })[] =>
+    fragments.filter((fragment) => fragment.type === type) as (Fragment & { type: T })[];
 
 export const getDocumentIntegrityFragments = getFragmentByType("DOCUMENT_INTEGRITY");
 export const getDocumentStatusFragments = getFragmentByType("DOCUMENT_STATUS");

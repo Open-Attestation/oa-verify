@@ -14,8 +14,7 @@ export const documentDnsDidMixedTokenRegistryInvalid: any = {
         revocation: { type: "f616b59c-10d4-4321-b3c5-8a68b6cde69e:string:NONE" },
         identityProof: {
           type: "30260b01-59ea-4f98-9ac8-f01e7a2fdb3b:string:DNS-DID",
-          key:
-            "fde9b540-0e21-4a22-a055-d0238c226911:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "fde9b540-0e21-4a22-a055-d0238c226911:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           location: "600bf394-130b-4440-a294-3c838e6b4dd4:string:example.com",
         },
       },
@@ -87,8 +86,7 @@ export const documentDnsDidMixedTokenRegistryValid: any = {
         revocation: { type: "a13d5e6d-b566-446e-aab9-ce18901199bb:string:NONE" },
         identityProof: {
           type: "f06b7de2-b0a0-4f8a-ae9f-5d3b57996222:string:DNS-DID",
-          key:
-            "6848a56a-927b-4b78-a028-1f749950b431:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "6848a56a-927b-4b78-a028-1f749950b431:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           location: "5aed1f89-5dec-4296-aa5f-41902c344312:string:example.tradetrust.io",
         },
       },

@@ -85,10 +85,14 @@ export type InvalidDocumentStoreDataV3 = Static<typeof InvalidDocumentStoreDataV
 /**
  * Fragments
  */
-export type OpenAttestationEthereumDocumentStoreStatusFragmentValidFragmentV2 = ValidVerificationFragment<ValidDocumentStoreDataV2>;
-export type OpenAttestationEthereumDocumentStoreStatusFragmentInvalidFragmentV2 = InvalidVerificationFragment<InvalidDocumentStoreDataV2>;
-export type OpenAttestationEthereumDocumentStoreStatusFragmentValidFragmentV3 = ValidVerificationFragment<ValidDocumentStoreDataV3>;
-export type OpenAttestationEthereumDocumentStoreStatusFragmentInvalidFragmentV3 = InvalidVerificationFragment<InvalidDocumentStoreDataV3>;
+export type OpenAttestationEthereumDocumentStoreStatusFragmentValidFragmentV2 =
+  ValidVerificationFragment<ValidDocumentStoreDataV2>;
+export type OpenAttestationEthereumDocumentStoreStatusFragmentInvalidFragmentV2 =
+  InvalidVerificationFragment<InvalidDocumentStoreDataV2>;
+export type OpenAttestationEthereumDocumentStoreStatusFragmentValidFragmentV3 =
+  ValidVerificationFragment<ValidDocumentStoreDataV3>;
+export type OpenAttestationEthereumDocumentStoreStatusFragmentInvalidFragmentV3 =
+  InvalidVerificationFragment<InvalidDocumentStoreDataV3>;
 export type OpenAttestationEthereumDocumentStoreStatusErrorFragment = ErrorVerificationFragment<any>;
 export type OpenAttestationEthereumDocumentStoreStatusFragment =
   | OpenAttestationEthereumDocumentStoreStatusFragmentValidFragmentV2
