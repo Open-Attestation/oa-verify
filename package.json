@@ -27,7 +27,7 @@
   "dependencies": {
     "@govtechsg/dnsprove": "^2.6.1",
     "@govtechsg/document-store": "^2.2.3",
-    "@govtechsg/open-attestation": "^6.2.0",
+    "@govtechsg/open-attestation": "6.8.0-alpha.1",
     "@govtechsg/token-registry": "^4.1.7",
     "axios": "^0.21.4",
     "debug": "^4.3.1",
@@ -39,10 +39,9 @@
     "web-did-resolver": "^2.0.4"
   },
   "devDependencies": {
-    "@commitlint/cli": "^16.1.0",
-    "@commitlint/config-conventional": "^16.0.0",
-    "@commitlint/prompt": "^16.1.0",
-    "@ls-age/commitlint-circle": "1.0.0",
+    "@commitlint/cli": "^17.6.7",
+    "@commitlint/config-conventional": "^17.6.7",
+    "@commitlint/prompt": "^17.6.7",
     "@types/debug": "^4.1.5",
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
@@ -58,7 +57,7 @@
     "jest-watch-typeahead": "^0.6.3",
     "msw": "^0.28.2",
     "prettier": "^2.2.1",
-    "semantic-release": "^19.0.2",
+    "semantic-release": "^21.1.1",
     "snyk": "^1.931.0",
     "ts-jest": "^26.5.5",
     "typescript": "^4.9.5"

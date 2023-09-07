@@ -224,14 +224,15 @@ const verify: VerifierType["verify"] = async (document, options) => {
   }
 };
 
-export const openAttestationEthereumTokenRegistryStatus: Verifier<OpenAttestationEthereumTokenRegistryStatusFragment> = {
-  skip,
-  test,
-  verify: withCodedErrorHandler(verify, {
-    name,
-    type,
-    unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
-    unexpectedErrorString:
-      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
-  }),
-};
+export const openAttestationEthereumTokenRegistryStatus: Verifier<OpenAttestationEthereumTokenRegistryStatusFragment> =
+  {
+    skip,
+    test,
+    verify: withCodedErrorHandler(verify, {
+      name,
+      type,
+      unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
+      unexpectedErrorString:
+        OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
+    }),
+  };

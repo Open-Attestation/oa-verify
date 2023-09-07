@@ -14,8 +14,7 @@ export const documentDidWrongSignature: any = {
         revocation: { type: "bcd9fe64-1b8a-41d3-a176-5d750b4a6cef:string:NONE" },
         identityProof: {
           type: "c2990f33-814c-4c7f-a14c-8cef4b1aa8ad:string:DID",
-          key:
-            "4ef2653f-7fb5-409b-acc1-a76344ff2de0:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "4ef2653f-7fb5-409b-acc1-a76344ff2de0:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
         },
       },
     ],

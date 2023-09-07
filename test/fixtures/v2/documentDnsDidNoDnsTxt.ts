@@ -14,8 +14,7 @@ export const documentDnsDidNoDnsTxt: any = {
         revocation: { type: "adec602e-b8a1-49c6-b0d6-1c10022e0ee3:string:NONE" },
         identityProof: {
           type: "35a65289-4ca0-4e73-ab7e-c4d50949c186:string:DNS-DID",
-          key:
-            "37f0906b-0c43-4ce4-80d3-e239b79ef087:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "37f0906b-0c43-4ce4-80d3-e239b79ef087:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           location: "cf6df0b9-daca-4998-bb77-86b251d23f36:string:example.com",
         },
       },
