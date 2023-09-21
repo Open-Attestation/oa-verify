@@ -1,5 +1,5 @@
 import { VerificationMethod, Resolver } from "did-resolver";
-import { utils } from "ethers";
+import { getBytes, verifyMessage } from "ethers";
 import { Literal, Record, Static, String, Union, Array as RunTypesArray } from "runtypes";
 import { getVerificationMethod } from "./resolver";
 import { Reason, OpenAttestationSignatureCode } from "../types/error";
@@ -40,7 +40,7 @@ export const verifySecp256k1VerificationKey2018 = ({
   merkleRoot,
   signature,
 }: VerifySignature): DidVerificationStatus => {
-  const messageBytes = utils.arrayify(merkleRoot);
+  const messageBytes = getBytes(merkleRoot);
   const { blockchainAccountId } = verificationMethod;
   if (!blockchainAccountId) {
     return {
@@ -56,7 +56,7 @@ export const verifySecp256k1VerificationKey2018 = ({
   // blockchainAccountId looks like 0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:3, let's get rid of the part after @, @ included
   const ethereumAddress = blockchainAccountId.split("@")[0];
 
-  const merkleRootSigned = utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
+  const merkleRootSigned = verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
   if (!merkleRootSigned) {
     return {
       did,
