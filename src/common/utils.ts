@@ -1,4 +1,4 @@
-import { providers } from "ethers";
+import { AlchemyProvider, InfuraProvider, JsonRpcProvider, Provider } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
   ProviderDetails,
@@ -20,7 +20,7 @@ import { OpenAttestationDidIdentityProofVerificationFragment } from "../verifier
 import { OpenAttestationDnsDidIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsDid/dnsDidProof.type";
 import { OpenAttestationDnsTxtIdentityProofVerificationFragment } from "../verifiers/issuerIdentity/dnsTxt/openAttestationDnsTxt.type";
 
-export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): providers.Provider => {
+export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwork): Provider => {
   const network = options.network || process.env.PROVIDER_NETWORK || "homestead";
   const providerType = (process.env.PROVIDER_ENDPOINT_TYPE as providerType) || "infura";
   const apiKey = process.env.PROVIDER_API_KEY || (providerType === "infura" && INFURA_API_KEY) || "";
@@ -30,16 +30,13 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
     providerType,
     network,
     apiKey,
-  }) as providers.UrlJsonRpcProvider;
-  const connection = {
-    ...uselessProvider.connection,
-    throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
-  };
-  return new providers.StaticJsonRpcProvider(connection, network);
+  }) as InfuraProvider | AlchemyProvider | JsonRpcProvider;
+
+  return uselessProvider;
 };
 
 // getProvider is a function to get an existing provider or to get a Default provider, when given the options
-export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
+export const getProvider = (options: VerificationBuilderOptions): Provider => {
   return options.provider ?? getDefaultProvider(options);
 };
 
@@ -52,7 +49,7 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
  */
-export const generateProvider = (options?: ProviderDetails): providers.Provider => {
+export const generateProvider = (options?: ProviderDetails): Provider => {
   if (!!options && Object.keys(options).length === 1 && options.apiKey) {
     throw new Error(
       "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
@@ -66,17 +63,17 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
     options?.apiKey || (provider === "infura" && process.env.INFURA_API_KEY) || process.env.PROVIDER_API_KEY || "";
 
   if (!!options && Object.keys(options).length === 1 && url) {
-    return new providers.JsonRpcProvider(url);
+    return new JsonRpcProvider(url);
   }
   switch (provider) {
     case "infura":
-      return apiKey ? new providers.InfuraProvider(network, apiKey) : new providers.InfuraProvider(network);
+      return apiKey ? new InfuraProvider(network, apiKey) : new InfuraProvider(network);
 
     case "alchemy":
-      return apiKey ? new providers.AlchemyProvider(network, apiKey) : new providers.AlchemyProvider(network);
+      return apiKey ? new AlchemyProvider(network, apiKey) : new AlchemyProvider(network);
 
     case "jsonrpc":
-      return new providers.JsonRpcProvider(url);
+      return new JsonRpcProvider(url);
 
     default:
       throw new Error(

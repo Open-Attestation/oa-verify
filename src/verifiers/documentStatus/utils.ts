@@ -1,6 +1,6 @@
 import { utils } from "@govtechsg/open-attestation";
 import { DocumentStore } from "@govtechsg/document-store";
-import { errors, providers } from "ethers";
+import { Provider, isError } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { Hash } from "../../types/core";
 import {
@@ -29,24 +29,26 @@ export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => 
  * */
 export const decodeError = (error: any) => {
   const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  console.log("error zixiang here", error);
   switch (true) {
     case !error.reason &&
       (error.method?.toLowerCase() === "isRevoked(bytes32)".toLowerCase() ||
         error.method?.toLowerCase() === "isIssued(bytes32)".toLowerCase()) &&
-      error.code === errors.CALL_EXCEPTION:
+      isError(error, "CALL_EXCEPTION"):
       return "Contract is not found";
     case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-      error.code === errors.UNSUPPORTED_OPERATION:
+      error.code === isError(error, "UNSUPPORTED_OPERATION"):
       return "ENS name is not configured";
-    case reason.toLowerCase() === "bad address checksum".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+    case reason.toLowerCase() === "bad address checksum".toLowerCase() &&
+      error.code === isError(error, "INVALID_ARGUMENT"):
       return "Bad document store address checksum";
     case error.message?.toLowerCase() === "name not found".toLowerCase():
       return "ENS name is not found";
-    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === isError(error, "INVALID_ARGUMENT"):
       return "Invalid document store address";
-    case error.code === errors.INVALID_ARGUMENT:
+    case error.code === isError(error, "INVALID_ARGUMENT"):
       return "Invalid call arguments";
-    case error.code === errors.SERVER_ERROR:
+    case error.code === isError(error, "SERVER_ERROR"):
       throw new CodedError(
         "Unable to connect to the Ethereum network, please try again later",
         OpenAttestationEthereumDocumentStoreStatusCode.SERVER_ERROR,
@@ -77,7 +79,7 @@ export const isRevokedOnDocumentStore = async ({
 }: {
   documentStore: string;
   merkleRoot: string;
-  provider: providers.Provider;
+  provider: Provider;
   targetHash: Hash;
   proofs?: Hash[];
 }): Promise<RevocationStatus> => {

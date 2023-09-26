@@ -1,5 +1,5 @@
 import { v3 } from "@govtechsg/open-attestation";
-import { ethers } from "ethers";
+import { JsonRpcProvider } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import { openAttestationDidIdentityProof } from "../verifiers/issuerIdentity/did/didIdentityProof";
 import { verificationBuilder } from "../verifiers/verificationBuilder";
@@ -91,7 +91,7 @@ describe("custom resolver", () => {
 
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
-      provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
+      provider: new JsonRpcProvider(customConfig.networks[0].rpcUrl),
       resolver: createResolver({ ethrResolverConfig: customConfig }),
     });
     const fragment = await verify(v3DidSigned);
