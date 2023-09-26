@@ -32,6 +32,11 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
     apiKey,
   }) as InfuraProvider | AlchemyProvider | JsonRpcProvider;
 
+  // TODO: Set throttle limit to 3 as per code below
+  // const connection = {
+  //   ...uselessProvider.connection,
+  //   throttleLimit: 3, // default is 12 which may retry 12 times for 2 minutes on 429 failures
+  // };
   return uselessProvider;
 };
 

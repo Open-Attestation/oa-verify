@@ -1,6 +1,6 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { TradeTrustToken__factory } from "@govtechsg/token-registry/contracts";
-import { constants, errors, providers } from "ethers";
+import { isError, Provider, ZeroAddress } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
 import { CodedError } from "../../../common/error";
@@ -78,7 +78,7 @@ const isMissingTokenRegistry = (error: any) => {
   return (
     !error.reason &&
     error.method?.toLowerCase() === "ownerOf(uint256)".toLowerCase() &&
-    error.code === errors.CALL_EXCEPTION
+    isError(error, "CALL_EXCEPTION")
   );
 };
 const decodeError = (error: any) => {
@@ -88,14 +88,13 @@ const decodeError = (error: any) => {
       return `Document has not been issued under token registry`;
     case isMissingTokenRegistry(error):
       return `Token registry is not found`;
-    case reason.toLowerCase() === "ENS name not configured".toLowerCase() &&
-      error.code === errors.UNSUPPORTED_OPERATION:
+    case reason.toLowerCase() === "ENS name not configured".toLowerCase() && isError(error, "UNSUPPORTED_OPERATION"):
       return "ENS name is not configured";
-    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === errors.INVALID_ARGUMENT:
+    case reason.toLowerCase() === "invalid address".toLowerCase() && error.code === isError(error, "INVALID_ARGUMENT"):
       return `Invalid token registry address`;
-    case error.code === errors.INVALID_ARGUMENT:
+    case error.code === isError(error, "INVALID_ARGUMENT"):
       return `Invalid contract arguments`;
-    case error.code === errors.SERVER_ERROR:
+    case error.code === isError(error, "SERVER_ERROR"):
       throw new CodedError(
         "Unable to connect to the Ethereum network, please try again later",
         OpenAttestationEthereumTokenRegistryStatusCode.SERVER_ERROR,
@@ -113,11 +112,11 @@ export const isTokenMintedOnRegistry = async ({
 }: {
   tokenRegistry: string;
   merkleRoot: string;
-  provider: providers.Provider;
+  provider: Provider;
 }): Promise<ValidTokenRegistryStatus | InvalidTokenRegistryStatus> => {
   try {
-    const tokenRegistryContract = await TradeTrustToken__factory.connect(tokenRegistry, provider);
-    const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
+    const tokenRegistryContract = await TradeTrustToken__factory.connect(tokenRegistry, provider); // TODO: update once token-registry's ethers is bumped
+    const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === ZeroAddress));
     return minted
       ? { minted, address: tokenRegistry }
       : {
