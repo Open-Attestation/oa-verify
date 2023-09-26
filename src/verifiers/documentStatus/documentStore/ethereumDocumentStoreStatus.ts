@@ -1,5 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { providers } from "ethers";
+import { Provider } from "ethers";
 import { DocumentStoreFactory } from "@govtechsg/document-store";
 import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
@@ -41,7 +41,7 @@ export const isIssuedOnDocumentStore = async ({
 }: {
   documentStore: string;
   merkleRoot: string;
-  provider: providers.Provider;
+  provider: Provider;
 }): Promise<DocumentStoreIssuanceStatus> => {
   try {
     const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);

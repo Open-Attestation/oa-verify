@@ -26,7 +26,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.6.1",
-    "@govtechsg/document-store": "^2.2.3",
+    "@govtechsg/document-store": "^3.0.0",
     "@govtechsg/open-attestation": "^6.2.0",
     "@govtechsg/token-registry": "^4.1.7",
     "axios": "^0.21.4",
