@@ -9,6 +9,7 @@ import { openAttestationDnsTxtIdentityProof } from "./verifiers/issuerIdentity/d
 import { openAttestationDidIdentityProof } from "./verifiers/issuerIdentity/did";
 import { openAttestationDnsDidIdentityProof } from "./verifiers/issuerIdentity/dnsDid";
 import { createResolver } from "./did/resolver";
+import { verifySignature } from "./did/verifier";
 import { getIdentifier } from "./getIdentifier";
 import * as utils from "./common/utils";
 import util from "util";
@@ -57,4 +58,5 @@ export {
   createResolver,
   getIdentifier,
   utils,
+  verifySignature,
 };
