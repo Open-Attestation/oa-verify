@@ -50,7 +50,7 @@ jest.mock("../../../did/resolver");
 
 const mockGetPublicKey = getVerificationMethod as jest.Mock;
 
-const whenPublicKeyResolvesSuccessfully = (key = "0xB26B4941941C51a4885E5B7D3A1B861E54405f90") => {
+const whenPublicKeyResolvesSuccessfully = (key = "eip155:5:0xB26B4941941C51a4885E5B7D3A1B861E54405f90") => {
   // Private key for signing from this address
   // 0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655
   // sign using wallet.signMessage(utils.arrayify(merkleRoot))
@@ -121,7 +121,7 @@ describe("verify", () => {
 
   describe("v2", () => {
     it("should pass for documents using `DID` and is correctly signed", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidSigned, options);
 
       expect(res).toMatchInlineSnapshot(`
@@ -151,7 +151,7 @@ describe("verify", () => {
       `);
     });
     it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreNotRevokedV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -180,7 +180,7 @@ describe("verify", () => {
       `);
     });
     it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDnsDidSigned, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -209,7 +209,7 @@ describe("verify", () => {
       `);
     });
     it("should pass for documents using `DID-DNS` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreNotRevokedV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -337,7 +337,7 @@ describe("verify", () => {
       `);
     });
     it("should fail when signature is wrong", async () => {
-      whenPublicKeyResolvesSuccessfully("0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89");
       const incorrectSignatureDocument = { ...documentDnsDidSigned, proof: documentDidSigned.proof };
       const res = await openAttestationDidSignedDocumentStatus.verify(incorrectSignatureDocument, options);
       expect(res).toMatchInlineSnapshot(`
@@ -377,7 +377,7 @@ describe("verify", () => {
       `);
     });
     it("should fail for documents using `DID` and is correctly signed, and is revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButRevokedV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -416,7 +416,7 @@ describe("verify", () => {
       `);
     });
     it("should fail for documents using `DID-DNS` and is correctly signed, and is revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreButRevokedV2, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -515,7 +515,9 @@ describe("verify", () => {
       server.close();
     });
     it("should fail when DID document is signed but is found by an OCSP", async () => {
+      console.log(1);
       whenPublicKeyResolvesSuccessfully();
+      console.log(2);
 
       const handlers = [
         rest.get(
@@ -543,6 +545,7 @@ describe("verify", () => {
         ),
       ];
 
+      console.log(3);
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
@@ -589,7 +592,7 @@ describe("verify", () => {
 
   describe("v3", () => {
     it("should pass for documents using `DID` and is correctly signed", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -613,7 +616,7 @@ describe("verify", () => {
       `);
     });
     it("should throw an missing revocation location type error when revocation location is missing when revocation type is REVOCATION_STORE", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButNoLocationV3, options);
       expect(res).toMatchInlineSnapshot(`
           Object {
@@ -630,7 +633,7 @@ describe("verify", () => {
         `);
     });
     it("should pass for documents using `DID` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreNotRevokedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -655,7 +658,7 @@ describe("verify", () => {
       `);
     });
     it("should pass for documents using `DID-DNS` and is correctly signed", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -679,7 +682,7 @@ describe("verify", () => {
       `);
     });
     it("should pass for documents using `DID-DNS` and is correctly signed, and is not revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreNotRevokedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -704,7 +707,7 @@ describe("verify", () => {
       `);
     });
     it("should fail when revocation block is missing", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const docWithoutRevocationBlock = {
         ...didSignedV3,
         openAttestationMetadata: {
@@ -740,7 +743,7 @@ describe("verify", () => {
         `);
     });
     it("should throw an unrecognized revocation type error when revocation is not set to NONE or REVOCATION_STORE", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const docWithIncorrectRevocation = {
         ...didSignedV3,
         openAttestationMetadata: {
@@ -771,7 +774,7 @@ describe("verify", () => {
         `);
     });
     it("should fail for documents using `DID` and is correctly signed, and is revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(didSignedRevocationStoreButRevokedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -806,7 +809,7 @@ describe("verify", () => {
       `);
     });
     it("should fail for documents using `DID-DNS` and is correctly signed, and is revoked on a document store (if specified)", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const res = await openAttestationDidSignedDocumentStatus.verify(dnsDidSignedRevocationStoreButRevokedV3, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
@@ -841,7 +844,7 @@ describe("verify", () => {
       `);
     });
     it("should fail when signature is wrong", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
       const documentWithWrongSig = {
         ...didSignedV3,
         proof: {
@@ -882,7 +885,7 @@ describe("verify", () => {
       `);
     });
     it("should pass when DID document is signed and is not revoked by an OCSP", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
 
       const handlers = [
         rest.get(
@@ -927,7 +930,7 @@ describe("verify", () => {
       server.close();
     });
     it("should fail when DID document is signed but is found by an OCSP", async () => {
-      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+      whenPublicKeyResolvesSuccessfully("eip155:5:0x1245e5B64D785b25057f7438F715f4aA5D965733");
 
       const handlers = [
         rest.get(
