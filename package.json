@@ -33,7 +33,7 @@
     "debug": "^4.3.1",
     "did-resolver": "^3.1.0",
     "ethers": "^5.1.4",
-    "ethr-did-resolver": "^4.3.3",
+    "ethr-did-resolver": "^10.0.0",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
     "web-did-resolver": "^2.0.4"
