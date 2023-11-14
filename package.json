@@ -31,12 +31,12 @@
     "@govtechsg/token-registry": "^4.1.7",
     "axios": "^1.6.0",
     "debug": "^4.3.1",
-    "did-resolver": "^3.1.0",
+    "did-resolver": "^4.1.0",
     "ethers": "^5.1.4",
-    "ethr-did-resolver": "^10.0.0",
+    "ethr-did-resolver": "^8.1.2",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
-    "web-did-resolver": "^2.0.4"
+    "web-did-resolver": "^2.0.27"
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
