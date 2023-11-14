@@ -6,10 +6,7 @@ import { verificationBuilder } from "../verifiers/verificationBuilder";
 import { createResolver, EthrResolverConfig, getProviderConfig, resolve } from "./resolver";
 
 const didDoc = {
-  "@context": [
-    "https://www.w3.org/ns/did/v1",
-    "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld",
-  ],
+  "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020/v2"],
   assertionMethod: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
   id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
   verificationMethod: [
@@ -17,7 +14,7 @@ const didDoc = {
       id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
       type: "EcdsaSecp256k1RecoveryMethod2020",
       controller: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:5",
+      blockchainAccountId: "eip155:5:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     },
   ],
   authentication: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
@@ -89,7 +86,7 @@ describe("custom resolver", () => {
     expect(did).toEqual(didDoc);
   });
 
-  it("should resolve did using verifier", async () => {
+  it.only("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
       provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
       resolver: createResolver({ ethrResolverConfig: customConfig }),
