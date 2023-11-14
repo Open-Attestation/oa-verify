@@ -86,7 +86,7 @@ describe("custom resolver", () => {
     expect(did).toEqual(didDoc);
   });
 
-  it.only("should resolve did using verifier", async () => {
+  it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
       provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
       resolver: createResolver({ ethrResolverConfig: customConfig }),
