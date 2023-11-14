@@ -53,8 +53,8 @@ export const verifySecp256k1VerificationKey2018 = ({
       },
     };
   }
-  // blockchainAccountId looks like 0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:3, let's get rid of the part after @, @ included
-  const ethereumAddress = blockchainAccountId.split("@")[0];
+  // blockchainAccountId looks like eip155:5:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457, let's get rid of the part before the 2nd ":", ":" included
+  const ethereumAddress = blockchainAccountId.split(":")[2];
 
   const merkleRootSigned = utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
   if (!merkleRootSigned) {
