@@ -515,9 +515,7 @@ describe("verify", () => {
       server.close();
     });
     it("should fail when DID document is signed but is found by an OCSP", async () => {
-      console.log(1);
       whenPublicKeyResolvesSuccessfully();
-      console.log(2);
 
       const handlers = [
         rest.get(
@@ -545,7 +543,6 @@ describe("verify", () => {
         ),
       ];
 
-      console.log(3);
       const server: SetupServerApi = setupServer(...handlers);
       server.listen();
 
