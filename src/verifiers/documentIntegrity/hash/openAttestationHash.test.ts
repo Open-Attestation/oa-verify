@@ -1,4 +1,4 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
 import { document } from "../../../../test/fixtures/v2/document";
 import { tamperedDocument } from "../../../../test/fixtures/v2/tamperedDocument";
 import sampleWrappedV3 from "../../../../test/fixtures/v3/did-wrapped.json";

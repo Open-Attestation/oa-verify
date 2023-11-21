@@ -1,4 +1,4 @@
-import { getData, SignedWrappedDocument, utils, v2, v3 } from "@govtechsg/open-attestation";
+import { getData, SignedWrappedDocument, utils, v2, v3 } from "@tradetrust-tt/tradetrust";
 import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationDidSignedDocumentStatusCode, Reason } from "../../../types/error";
 import { DidVerificationStatus, ValidDidVerificationStatus, verifySignature } from "../../../did/verifier";

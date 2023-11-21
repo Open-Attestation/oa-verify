@@ -1,4 +1,4 @@
-import { v3 } from "@govtechsg/open-attestation";
+import { v3 } from "@tradetrust-tt/tradetrust";
 import {
   openAttestationDidIdentityProof,
   openAttestationDnsDidIdentityProof,

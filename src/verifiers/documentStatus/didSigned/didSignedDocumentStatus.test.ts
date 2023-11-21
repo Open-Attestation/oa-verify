@@ -1,4 +1,4 @@
-import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
 import { rest } from "msw";
 import { setupServer, SetupServerApi } from "msw/node";
 import { documentDidCustomRevocation } from "../../../../test/fixtures/v2/documentDidCustomRevocation";

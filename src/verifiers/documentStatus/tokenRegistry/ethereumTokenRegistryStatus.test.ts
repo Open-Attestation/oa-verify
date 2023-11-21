@@ -1,4 +1,4 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentGoerliValidWithToken } from "../../../../test/fixtures/v2/documentGoerliValidWithToken";
 import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";

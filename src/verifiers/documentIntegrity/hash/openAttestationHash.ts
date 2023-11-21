@@ -1,4 +1,4 @@
-import { utils, verifySignature } from "@govtechsg/open-attestation";
+import { utils, verifySignature } from "@tradetrust-tt/tradetrust";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationHashCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";

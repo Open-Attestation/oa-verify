@@ -1,4 +1,4 @@
-import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3 } from "@tradetrust-tt/tradetrust";
 import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationDidCode } from "../../../types/error";
 import {

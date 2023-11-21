@@ -1,4 +1,4 @@
-import { v3 } from "@govtechsg/open-attestation";
+import { v3 } from "@tradetrust-tt/tradetrust";
 
 export const baseDnsDidDocument: v3.OpenAttestationDocument = {
   "@context": [

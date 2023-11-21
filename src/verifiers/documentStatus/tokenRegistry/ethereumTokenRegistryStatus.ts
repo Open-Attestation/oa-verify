@@ -1,4 +1,4 @@
-import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
 import { TradeTrustToken__factory } from "@govtechsg/token-registry/contracts";
 import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";

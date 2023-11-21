@@ -1,4 +1,4 @@
-import { obfuscate, v3 } from "@govtechsg/open-attestation";
+import { obfuscate, v3 } from "@tradetrust-tt/tradetrust";
 import { getFailingFragments, getFragmentsByName } from "../test/utils";
 import { isValid, openAttestationDidIdentityProof, openAttestationVerifiers, verificationBuilder } from "./index";
 

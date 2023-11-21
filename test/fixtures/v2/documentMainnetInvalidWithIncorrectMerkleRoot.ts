@@ -1,4 +1,4 @@
-import { v2, WrappedDocument, SchemaId } from "@govtechsg/open-attestation";
+import { v2, WrappedDocument, SchemaId } from "@tradetrust-tt/tradetrust";
 
 interface CustomDocument extends v2.OpenAttestationDocument {
   recipient: {

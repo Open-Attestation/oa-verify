@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function,camelcase */
 import { sign } from "@govtechsg/oa-did-sign";
-import { v3, __unsafe__use__it__at__your__own__risks__wrapDocument } from "@govtechsg/open-attestation";
+import { v3, __unsafe__use__it__at__your__own__risks__wrapDocument } from "@tradetrust-tt/tradetrust";
 import { execSync } from "child_process";
 import { writeFileSync } from "fs";
 import { getLogger } from "../src/common/logger";

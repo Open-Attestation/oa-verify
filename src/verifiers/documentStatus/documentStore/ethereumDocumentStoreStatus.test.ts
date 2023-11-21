@@ -1,4 +1,4 @@
-import { v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
 import { documentGoerliRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliRevokedWithDocumentStore";
 import { documentGoerliValidWithDocumentStore as v2documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
 import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
