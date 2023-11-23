@@ -18,7 +18,7 @@
     "test:watch": "jest --watch",
     "lint": "eslint . --ext .ts --max-warnings 0",
     "lint:fix": "npm run lint -- --fix",
-    "snyk-protect": "snyk protect",
+    "snyk-protect": "snyk-protect",
     "prepare": "npm run snyk-protect",
     "generate:v3": "DEBUG=oa-verify* ts-node scripts/generate.v3.ts"
   },
@@ -29,7 +29,7 @@
     "@govtechsg/document-store": "^2.2.3",
     "@govtechsg/open-attestation": "^6.2.0",
     "@govtechsg/token-registry": "^4.1.7",
-    "axios": "^1.6.0",
+    "axios": "^1.6.2",
     "debug": "^4.3.1",
     "did-resolver": "^3.1.0",
     "ethers": "^5.1.4",
@@ -59,7 +59,7 @@
     "msw": "^0.28.2",
     "prettier": "^2.2.1",
     "semantic-release": "^19.0.2",
-    "snyk": "^1.931.0",
+    "@snyk/protect": "^1.1248.0",
     "ts-jest": "^26.5.5",
     "typescript": "^4.9.5"
   },
