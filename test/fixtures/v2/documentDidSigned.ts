@@ -17,8 +17,7 @@ export const documentDidSigned: any = {
         },
         identityProof: {
           type: "aa9eb261-43b8-4121-867b-be805c526da0:string:DID",
-          key:
-            "43771c2e-b8c7-49b2-a274-17f4d4982bec:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
+          key: "43771c2e-b8c7-49b2-a274-17f4d4982bec:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
         },
       },
     ],

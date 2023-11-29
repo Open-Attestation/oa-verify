@@ -14,8 +14,7 @@ export const documentDidMixedTokenRegistry: any = {
         revocation: { type: "6ebb23bb-d83d-4ca9-8523-d8618b6c34d5:string:NONE" },
         identityProof: {
           type: "1fd92bf6-0b01-4705-8b04-805747b7eec1:string:DID",
-          key:
-            "3e1d0a2e-6b33-45ee-addd-c7fc4a39276a:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "3e1d0a2e-6b33-45ee-addd-c7fc4a39276a:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
         },
       },
       {
