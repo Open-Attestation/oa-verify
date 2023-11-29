@@ -36,7 +36,7 @@
     "ethr-did-resolver": "^4.3.3",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
-    "web-did-resolver": "^2.0.4"
+    "web-did-resolver": "^2.0.27"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
