@@ -32,8 +32,7 @@ export const documentMixedIssuance: any = {
         },
         identityProof: {
           type: "5bb93c34-0252-4d8b-8c77-afbc878ed7f2:string:DNS-DID",
-          key:
-            "672297df-72a8-417a-ac6c-ed7b154e70c8:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "672297df-72a8-417a-ac6c-ed7b154e70c8:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
           location: "55dc441f-61ca-4d6f-9f56-0c751f11f210:string:eexample.tradetrust.io",
         },
       },
@@ -45,8 +44,7 @@ export const documentMixedIssuance: any = {
         },
         identityProof: {
           type: "382e37a8-b296-4acb-ad33-315d4d7ddadb:string:DID",
-          key:
-            "159a2583-e1e1-4b33-a5ca-397ef537bf53:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
+          key: "159a2583-e1e1-4b33-a5ca-397ef537bf53:string:did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
         },
       },
     ],

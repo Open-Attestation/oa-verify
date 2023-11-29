@@ -67,8 +67,7 @@ export const documentGoerliObfuscated: WrappedDocument<CustomDocument> = {
     total: "b3f99049-89ba-41fc-8087-0d1003da4c32:string:sdf",
     links: {
       self: {
-        href:
-          "8252ae56-0bb0-4937-ba16-b03170553f07:string:https://action.openattestation.com?q=%7B%22type%22%3A%22DOCUMENT%22%2C%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Ftradetrust-functions.netlify.app%2F.netlify%2Ffunctions%2Fstorage%2F65e44a7c-264f-4b6d-8719-bb9401de1f9c%22%2C%22key%22%3A%225d18dc966ca159297b036b1ac6757d74aaf9fa6c4973b99fd164bfec9490d75b%22%2C%22permittedActions%22%3A%5B%22STORE%22%5D%2C%22redirect%22%3A%22https%3A%2F%2Fdev.tradetrust.io%2F%22%2C%22chainId%22%3A%225%22%7D%7D",
+        href: "8252ae56-0bb0-4937-ba16-b03170553f07:string:https://action.openattestation.com?q=%7B%22type%22%3A%22DOCUMENT%22%2C%22payload%22%3A%7B%22uri%22%3A%22https%3A%2F%2Ftradetrust-functions.netlify.app%2F.netlify%2Ffunctions%2Fstorage%2F65e44a7c-264f-4b6d-8719-bb9401de1f9c%22%2C%22key%22%3A%225d18dc966ca159297b036b1ac6757d74aaf9fa6c4973b99fd164bfec9490d75b%22%2C%22permittedActions%22%3A%5B%22STORE%22%5D%2C%22redirect%22%3A%22https%3A%2F%2Fdev.tradetrust.io%2F%22%2C%22chainId%22%3A%225%22%7D%7D",
       },
     },
     network: {

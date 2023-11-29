@@ -103,9 +103,11 @@ export type InvalidDidSignedDataV3 = Static<typeof InvalidDidSignedDataV3>;
  * Fragments
  */
 export type OpenAttestationDidSignedDocumentStatusValidFragmentV2 = ValidVerificationFragment<ValidDidSignedDataV2>;
-export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV2 = InvalidVerificationFragment<InvalidDidSignedDataV2>;
+export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV2 =
+  InvalidVerificationFragment<InvalidDidSignedDataV2>;
 export type OpenAttestationDidSignedDocumentStatusValidFragmentV3 = ValidVerificationFragment<ValidDidSignedDataV3>;
-export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV3 = InvalidVerificationFragment<InvalidDidSignedDataV3>;
+export type OpenAttestationDidSignedDocumentStatusInvalidFragmentV3 =
+  InvalidVerificationFragment<InvalidDidSignedDataV3>;
 export type OpenAttestationDidSignedDocumentStatusErrorFragment = ErrorVerificationFragment<any>;
 export type OpenAttestationDidSignedDocumentStatusVerificationFragment =
   | OpenAttestationDidSignedDocumentStatusValidFragmentV2

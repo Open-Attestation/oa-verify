@@ -58,10 +58,14 @@ export type DnsTxtVerificationStatusDataV3 = Static<typeof DnsTxtVerificationSta
 /**
  * Fragments
  */
-export type OpenAttestationDnsTxtIdentityProofValidFragmentV2 = ValidVerificationFragment<ValidDnsTxtVerificationStatusArray>;
-export type OpenAttestationDnsTxtIdentityProofInvalidFragmentV2 = InvalidVerificationFragment<DnsTxtVerificationStatusArray>;
-export type OpenAttestationDnsTxtIdentityProofValidFragmentV3 = ValidVerificationFragment<ValidDnsTxtVerificationStatusDataV3>;
-export type OpenAttestationDnsTxtIdentityProofInvalidFragmentV3 = InvalidVerificationFragment<InvalidDnsTxtVerificationStatusDataV3>;
+export type OpenAttestationDnsTxtIdentityProofValidFragmentV2 =
+  ValidVerificationFragment<ValidDnsTxtVerificationStatusArray>;
+export type OpenAttestationDnsTxtIdentityProofInvalidFragmentV2 =
+  InvalidVerificationFragment<DnsTxtVerificationStatusArray>;
+export type OpenAttestationDnsTxtIdentityProofValidFragmentV3 =
+  ValidVerificationFragment<ValidDnsTxtVerificationStatusDataV3>;
+export type OpenAttestationDnsTxtIdentityProofInvalidFragmentV3 =
+  InvalidVerificationFragment<InvalidDnsTxtVerificationStatusDataV3>;
 export type OpenAttestationDnsTxtIdentityProofVerificationFragment =
   | OpenAttestationDnsTxtIdentityProofValidFragmentV2
   | OpenAttestationDnsTxtIdentityProofInvalidFragmentV2
