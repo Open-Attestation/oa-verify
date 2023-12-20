@@ -44,8 +44,8 @@ const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as v3.WrappedDocument;
 const v3TokenRegistryInvalidIssued = v3TokenRegistryInvalidIssuedRaw as v3.WrappedDocument;
 
-const verifyGoerli = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
-  network: "goerli",
+const verifySepolia = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
+  network: "sepolia",
 });
 
 describe("verify v3(integration)", () => {
@@ -71,7 +71,7 @@ describe("verify v3(integration)", () => {
 
   describe("valid documents", () => {
     it("should return valid fragments for document issued correctly with DID & using DID identity proof", async () => {
-      const fragments = await verifyGoerli(v3DidSigned);
+      const fragments = await verifySepolia(v3DidSigned);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -153,7 +153,7 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for document issued correctly with DID & using DID identity proof, but not revoked on a document store", async () => {
-      const fragments = await verifyGoerli(v3DidSignedRevocationStoreNotRevoked);
+      const fragments = await verifySepolia(v3DidSignedRevocationStoreNotRevoked);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -236,7 +236,7 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof", async () => {
-      const fragments = await verifyGoerli(v3DnsDidSigned);
+      const fragments = await verifySepolia(v3DnsDidSigned);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -319,7 +319,7 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof, but not revoked  on a document store", async () => {
-      const fragments = await verifyGoerli(v3DnsDidSignedRevocationStoreNotRevoked);
+      const fragments = await verifySepolia(v3DnsDidSignedRevocationStoreNotRevoked);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -403,7 +403,7 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for document issued correctly with document store & using DNS-TXT identity proof", async () => {
-      const fragments = await verifyGoerli(v3DocumentStoreIssued);
+      const fragments = await verifySepolia(v3DocumentStoreIssued);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -427,11 +427,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "revoked": false,
                 },
               },
@@ -454,8 +454,8 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "identifier": "demo-tradetrust.openattestation.com",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "identifier": "example.openattestation.com",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "status": "VALID",
@@ -486,7 +486,7 @@ describe("verify v3(integration)", () => {
       expect(valid).toBe(true);
     });
     it("should return valid fragments for document issued correctly with token registry & using DNS-TXT identity proof", async () => {
-      const fragments = await verifyGoerli(v3TokenRegistryIssued);
+      const fragments = await verifySepolia(v3TokenRegistryIssued);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -499,7 +499,7 @@ describe("verify v3(integration)", () => {
           Object {
             "data": Object {
               "details": Object {
-                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
                 "minted": true,
               },
               "mintedOnAll": true,
@@ -530,8 +530,8 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "identifier": "demo-tradetrust.openattestation.com",
-              "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+              "identifier": "example.tradetrust.io",
+              "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "status": "VALID",
@@ -564,7 +564,7 @@ describe("verify v3(integration)", () => {
     it("should return valid fragments for documents correctly issued but with data obfuscated", async () => {
       const obfuscated = obfuscate(v3DidSigned, ["reference"]);
       expect(obfuscated.reference).toBe(undefined);
-      const fragments = await verifyGoerli(obfuscated);
+      const fragments = await verifySepolia(obfuscated);
       const valid = isValid(fragments);
       expect(fragments).toMatchInlineSnapshot(`
         Array [
@@ -648,7 +648,7 @@ describe("verify v3(integration)", () => {
 
     it("should return the correct fragments even when process.env is used for out of the box verify for document with document store", async () => {
       // simulate loading process.env from .env file
-      process.env.PROVIDER_NETWORK = "goerli";
+      process.env.PROVIDER_NETWORK = "sepolia";
       process.env.PROVIDER_ENDPOINT_TYPE = "infura";
       const defaultBuilderOption = {
         network: process.env.PROVIDER_NETWORK || "homestead",
@@ -677,11 +677,11 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
                 "revocation": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "revoked": false,
                 },
               },
@@ -704,8 +704,8 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "identifier": "demo-tradetrust.openattestation.com",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "identifier": "example.openattestation.com",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "status": "VALID",
@@ -752,7 +752,7 @@ describe("verify v3(integration)", () => {
             "data": Object {
               "details": Object {
                 "issuance": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": false,
                   "reason": Object {
                     "code": 1,
@@ -761,7 +761,7 @@ describe("verify v3(integration)", () => {
                   },
                 },
                 "revocation": Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
@@ -794,14 +794,14 @@ describe("verify v3(integration)", () => {
           },
           Object {
             "data": Object {
-              "identifier": "demo-tradetrust.openattestation.com",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "identifier": "example.openattestation.com",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
             "name": "OpenAttestationDnsTxtIdentityProof",
             "reason": Object {
               "code": 4,
               "codeString": "MATCHING_RECORD_NOT_FOUND",
-              "message": "Matching DNS record not found for 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "message": "Matching DNS record not found for 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
             "status": "INVALID",
             "type": "ISSUER_IDENTITY",
@@ -821,7 +821,7 @@ describe("verify v3(integration)", () => {
     });
     it("should return the correct fragments when using process.env variables for did resolver", async () => {
       // simulate loading process.env from .env file
-      process.env.PROVIDER_NETWORK = "goerli";
+      process.env.PROVIDER_NETWORK = "sepolia";
       process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
       const defaultBuilderOption = {
         network: process.env.PROVIDER_NETWORK || "homestead",
@@ -977,7 +977,7 @@ describe("verify v3(integration)", () => {
             name: "DEMO STORE (TAMPERED)",
           },
         };
-        const fragments = await verifyGoerli(tamperedDocument);
+        const fragments = await verifySepolia(tamperedDocument);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -998,7 +998,7 @@ describe("verify v3(integration)", () => {
           `);
       });
       it("should return invalid fragments for document that has not been issued", async () => {
-        const fragments = await verifyGoerli(v3DocumentStoreWrapped);
+        const fragments = await verifySepolia(v3DocumentStoreWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1008,16 +1008,16 @@ describe("verify v3(integration)", () => {
                       "data": Object {
                         "details": Object {
                           "issuance": Object {
-                            "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                            "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             "issued": false,
                             "reason": Object {
                               "code": 1,
                               "codeString": "DOCUMENT_NOT_ISSUED",
-                              "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                              "message": "Document 0x19988397c756599f8415200eaa2a413e5b60212d7d21dbc22bb365ae115c6b83 has not been issued under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             },
                           },
                           "revocation": Object {
-                            "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                            "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             "revoked": false,
                           },
                         },
@@ -1028,7 +1028,7 @@ describe("verify v3(integration)", () => {
                       "reason": Object {
                         "code": 1,
                         "codeString": "DOCUMENT_NOT_ISSUED",
-                        "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                        "message": "Document 0x19988397c756599f8415200eaa2a413e5b60212d7d21dbc22bb365ae115c6b83 has not been issued under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                       },
                       "status": "INVALID",
                       "type": "DOCUMENT_STATUS",
@@ -1037,7 +1037,7 @@ describe("verify v3(integration)", () => {
               `);
       });
       it("should return invalid fragments for document that has been revoked", async () => {
-        const fragments = await verifyGoerli(v3DocumentStoreRevoked);
+        const fragments = await verifySepolia(v3DocumentStoreRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1047,15 +1047,15 @@ describe("verify v3(integration)", () => {
                       "data": Object {
                         "details": Object {
                           "issuance": Object {
-                            "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                            "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             "issued": true,
                           },
                           "revocation": Object {
-                            "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                            "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             "reason": Object {
                               "code": 5,
                               "codeString": "DOCUMENT_REVOKED",
-                              "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                              "message": "Document 0x8e9f71e4526782631acd06d6d88cd1debf3be28375a5d122f03640ec71c1e981 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                             },
                             "revoked": true,
                           },
@@ -1067,7 +1067,7 @@ describe("verify v3(integration)", () => {
                       "reason": Object {
                         "code": 5,
                         "codeString": "DOCUMENT_REVOKED",
-                        "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                        "message": "Document 0x8e9f71e4526782631acd06d6d88cd1debf3be28375a5d122f03640ec71c1e981 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                       },
                       "status": "INVALID",
                       "type": "DOCUMENT_STATUS",
@@ -1076,7 +1076,7 @@ describe("verify v3(integration)", () => {
               `);
       });
       it("should return invalid fragments for documents that is using invalid DNS but correctly issued", async () => {
-        const fragments = await verifyGoerli(v3DocumentStoreInvalidIssued);
+        const fragments = await verifySepolia(v3DocumentStoreInvalidIssued);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1085,13 +1085,13 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "identifier": "notinuse.tradetrust.io",
-                "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
               },
               "name": "OpenAttestationDnsTxtIdentityProof",
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "message": "Matching DNS record not found for 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
               },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
@@ -1110,7 +1110,7 @@ describe("verify v3(integration)", () => {
             name: "DEMO STORE (TAMPERED)",
           },
         };
-        const fragments = await verifyGoerli(tamperedDocument);
+        const fragments = await verifySepolia(tamperedDocument);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1131,7 +1131,7 @@ describe("verify v3(integration)", () => {
           `);
       });
       it("should return invalid fragments for document that has not been issued", async () => {
-        const fragments = await verifyGoerli(v3TokenRegistryWrapped);
+        const fragments = await verifySepolia(v3TokenRegistryWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1140,7 +1140,7 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "details": Object {
-                  "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                  "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
                   "minted": false,
                   "reason": Object {
                     "code": 1,
@@ -1163,7 +1163,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that is using invalid DNS but correctly issued", async () => {
-        const fragments = await verifyGoerli(v3TokenRegistryInvalidIssued);
+        const fragments = await verifySepolia(v3TokenRegistryInvalidIssued);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1172,13 +1172,13 @@ describe("verify v3(integration)", () => {
             Object {
               "data": Object {
                 "identifier": "notinuse.tradetrust.io",
-                "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
               },
               "name": "OpenAttestationDnsTxtIdentityProof",
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
-                "message": "Matching DNS record not found for 0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "message": "Matching DNS record not found for 0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
               },
               "status": "INVALID",
               "type": "ISSUER_IDENTITY",
@@ -1197,7 +1197,7 @@ describe("verify v3(integration)", () => {
             name: "DEMO STORE (TAMPERED)",
           },
         };
-        const fragments = await verifyGoerli(tamperedDocument);
+        const fragments = await verifySepolia(tamperedDocument);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1218,7 +1218,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return skipped fragments for documents that has not been signed", async () => {
-        const fragments = await verifyGoerli(v3DnsDidWrapped);
+        const fragments = await verifySepolia(v3DnsDidWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1239,7 +1239,7 @@ describe("verify v3(integration)", () => {
       });
       it("should return invalid fragments for documents with revocation method obfuscated", async () => {
         const obfuscated = obfuscate(v3DnsDidSigned, ["openAttestationMetadata.proof.revocation"]);
-        const fragments = await verifyGoerli(obfuscated);
+        const fragments = await verifySepolia(obfuscated);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1260,7 +1260,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that is using invalid DNS but correctly signed", async () => {
-        const fragments = await verifyGoerli(v3DnsDidInvalidSigned);
+        const fragments = await verifySepolia(v3DnsDidInvalidSigned);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1285,7 +1285,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that have been revoked", async () => {
-        const fragments = await verifyGoerli(v3DnsDidSignedRevocationStoreButRevoked);
+        const fragments = await verifySepolia(v3DnsDidSignedRevocationStoreButRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1299,11 +1299,11 @@ describe("verify v3(integration)", () => {
                     "issued": true,
                   },
                   "revocation": Object {
-                    "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                     "reason": Object {
                       "code": 5,
                       "codeString": "DOCUMENT_REVOKED",
-                      "message": "Document 0xdc34b7bc4e707c77327db76536625c81c2a6777934df566b261bd8ec3f24f8c4 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                      "message": "Document 0xa05efdb7d3bca55c7d36946837f2b3b6ac6e5c9ed178645f98f296e4f06657ea has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                     },
                     "revoked": true,
                   },
@@ -1315,7 +1315,7 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 5,
                 "codeString": "DOCUMENT_REVOKED",
-                "message": "Document 0xdc34b7bc4e707c77327db76536625c81c2a6777934df566b261bd8ec3f24f8c4 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "message": "Document 0xa05efdb7d3bca55c7d36946837f2b3b6ac6e5c9ed178645f98f296e4f06657ea has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",
@@ -1334,7 +1334,7 @@ describe("verify v3(integration)", () => {
             name: "DEMO STORE (TAMPERED)",
           },
         };
-        const fragments = await verifyGoerli(tamperedDocument);
+        const fragments = await verifySepolia(tamperedDocument);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(false);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1355,7 +1355,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that has not been signed", async () => {
-        const fragments = await verifyGoerli(v3DidWrapped);
+        const fragments = await verifySepolia(v3DidWrapped);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1377,7 +1377,7 @@ describe("verify v3(integration)", () => {
       });
       it("should return invalid fragments for documents with revocation method obfuscated", async () => {
         const obfuscated = obfuscate(v3DidSigned, ["openAttestationMetadata.proof.revocation"]);
-        const fragments = await verifyGoerli(obfuscated);
+        const fragments = await verifySepolia(obfuscated);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1398,7 +1398,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that is using invalid DNS but correctly signed", async () => {
-        const fragments = await verifyGoerli(v3DidInvalidSigned);
+        const fragments = await verifySepolia(v3DidInvalidSigned);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(true);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(false);
@@ -1423,7 +1423,7 @@ describe("verify v3(integration)", () => {
         `);
       });
       it("should return invalid fragments for documents that have been revoked", async () => {
-        const fragments = await verifyGoerli(v3DidSignedRevocationStoreButRevoked);
+        const fragments = await verifySepolia(v3DidSignedRevocationStoreButRevoked);
         expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
         expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
         expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1437,11 +1437,11 @@ describe("verify v3(integration)", () => {
                     "issued": true,
                   },
                   "revocation": Object {
-                    "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                     "reason": Object {
                       "code": 5,
                       "codeString": "DOCUMENT_REVOKED",
-                      "message": "Document 0xf43045b0c57072a044e810b798e32b8c1de1d0d0c5774d55c8eed1f3fdec6438 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                      "message": "Document 0x3ad46614034b8d9d00b81d09612344f44c88f28901ca575c655c957cf038f7d4 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                     },
                     "revoked": true,
                   },
@@ -1453,7 +1453,7 @@ describe("verify v3(integration)", () => {
               "reason": Object {
                 "code": 5,
                 "codeString": "DOCUMENT_REVOKED",
-                "message": "Document 0xf43045b0c57072a044e810b798e32b8c1de1d0d0c5774d55c8eed1f3fdec6438 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "message": "Document 0x3ad46614034b8d9d00b81d09612344f44c88f28901ca575c655c957cf038f7d4 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
               },
               "status": "INVALID",
               "type": "DOCUMENT_STATUS",

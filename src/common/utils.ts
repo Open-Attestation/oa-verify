@@ -47,7 +47,7 @@ export const getProvider = (options: VerificationBuilderOptions): providers.Prov
  * Generate Provider generates a provider based on the defined options or your env var, if no options or env var was detected, it will generate a provider based on the default values.
  * Generate Provider using the following options: (if no option is specified it will use the default values)
  * @param {Object} ProviderDetails - Details to use for the function to successfully generate a provider.
- * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "goerli"
+ * @param {string} ProviderDetails.network - The network in which the provider is connected to, i.e. "homestead", "mainnet", "sepolia"
  * @param {string} ProviderDetails.providerType - Specify which provider to use: "infura", "alchemy" or "jsonrpc"
  * @param {string} ProviderDetails.url - Specify which url for JsonRPC to connect to, if not specified will connect to localhost:8545
  * @param {string} ProviderDetails.apiKey - If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
@@ -73,7 +73,14 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
       return apiKey ? new providers.InfuraProvider(network, apiKey) : new providers.InfuraProvider(network);
 
     case "alchemy":
-      return apiKey ? new providers.AlchemyProvider(network, apiKey) : new providers.AlchemyProvider(network);
+      if (apiKey) {
+        return network === "sepolia"
+          ? new providers.StaticJsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${apiKey}`, network)
+          : new providers.AlchemyProvider(network, apiKey);
+      }
+      return network === "sepolia"
+        ? new providers.StaticJsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/`, network)
+        : new providers.AlchemyProvider(network);
 
     case "jsonrpc":
       return new providers.JsonRpcProvider(url);
