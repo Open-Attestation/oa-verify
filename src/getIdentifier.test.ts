@@ -19,7 +19,7 @@ const v3DnsDidSigned = v3DnsDidSignedRaw as v3.SignedWrappedDocument;
 const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 
 const options = {
-  provider: getProvider({ network: "goerli" }),
+  provider: getProvider({ network: "sepolia" }),
 };
 
 const verificationFragment1: SkippedVerificationFragment = {
@@ -127,7 +127,7 @@ describe("getIdentifier", () => {
     it("should return a DNS identity proof if issuer fragment is of type OpenAttestationDnsTxtIdentityProof", async () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(v3DocumentStoreIssued, options);
       expect(getIdentifier([verificationFragment1, fragment])).toStrictEqual({
-        identifier: "demo-tradetrust.openattestation.com",
+        identifier: "example.openattestation.com",
         type: "DNS",
       });
     });

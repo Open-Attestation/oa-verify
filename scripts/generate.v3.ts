@@ -24,7 +24,7 @@ const key = {
 const signMerkleRoot = async (merkleRoot: string) => sign("Secp256k1VerificationKey2018", merkleRoot, key);
 
 const ethereumDocumentConfig = {
-  network: "goerli",
+  network: "sepolia",
   dns: "demo-tradetrust.openattestation.com",
   documentStore: "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
   tokenRegistry: "0x921dC7cEF00155ac3A33f04DA7395324d7809757",

@@ -3,7 +3,7 @@ import { documentDidMixedTokenRegistry } from "../../../../test/fixtures/v2/docu
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDidWrongSignature } from "../../../../test/fixtures/v2/documentDidWrongSignature";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
+import { documentSepoliaValidWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
 import v3DidSignedRaw from "../../../../test/fixtures/v3/did-signed.json";
 import v3DidWrappedRaw from "../../../../test/fixtures/v3/did-wrapped.json";
 import v3DnsDidSignedRaw from "../../../../test/fixtures/v3/dnsdid-signed.json";
@@ -20,7 +20,7 @@ const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
   provider: getProvider({
-    network: "goerli",
+    network: "sepolia",
   }),
 };
 
@@ -45,7 +45,7 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(openAttestationDidIdentityProof.test(documentGoerliValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDidIdentityProof.test(documentSepoliaValidWithDocumentStore, options)).toBe(false);
     });
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
       expect(openAttestationDidIdentityProof.test(documentDidSigned, options)).toBe(true);

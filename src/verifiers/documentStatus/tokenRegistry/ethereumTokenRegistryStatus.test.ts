@@ -1,6 +1,6 @@
 import { v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
-import { documentGoerliValidWithToken } from "../../../../test/fixtures/v2/documentGoerliValidWithToken";
+import { documentSepoliaValidWithToken } from "../../../../test/fixtures/v2/documentSepoliaValidWithToken";
 import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
 import { documentNotIssuedWithDocumentStore } from "../../../../test/fixtures/v2/documentNotIssuedWithDocumentStore";
 import { documentNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentNotIssuedWithTokenRegistry";
@@ -14,20 +14,20 @@ import { getProvider } from "../../../common/utils";
 const v3TokenRegistryWrapped = v3TokenRegistryWrappedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
-const options = { provider: getProvider({ network: "goerli" }) };
+const options = { provider: getProvider({ network: "sepolia" }) };
 
 describe("test", () => {
   describe("v2", () => {
     it("should return false when document does not have data", async () => {
-      const documentWithoutData: any = { ...documentGoerliValidWithToken, data: null };
+      const documentWithoutData: any = { ...documentSepoliaValidWithToken, data: null };
       const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutData, options);
       expect(shouldVerify).toBe(false);
     });
 
     it("should return false when document does not have issuers", async () => {
       const documentWithoutIssuer: any = {
-        ...documentGoerliValidWithToken,
-        data: { ...documentGoerliValidWithToken.data, issuers: null },
+        ...documentSepoliaValidWithToken,
+        data: { ...documentSepoliaValidWithToken.data, issuers: null },
       };
       const shouldVerify = openAttestationEthereumTokenRegistryStatus.test(documentWithoutIssuer, options);
       expect(shouldVerify).toBe(false);
@@ -263,14 +263,14 @@ describe("verify", () => {
     });
 
     it("should return a valid fragment when document with token registry has been minted", async () => {
-      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentGoerliValidWithToken, options);
+      const fragment = await openAttestationEthereumTokenRegistryStatus.verify(documentSepoliaValidWithToken, options);
 
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
                 "minted": true,
               },
             ],
@@ -285,10 +285,10 @@ describe("verify", () => {
 
     it("should return an error fragment when document has 2 issuers with token registry", async () => {
       const documentHasTwoIssuersWithTokenRegistry: any = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
-          issuers: [documentGoerliValidWithToken.data.issuers[0], documentGoerliValidWithToken.data.issuers[0]],
+          ...documentSepoliaValidWithToken.data,
+          issuers: [documentSepoliaValidWithToken.data.issuers[0], documentSepoliaValidWithToken.data.issuers[0]],
         },
       };
 
@@ -425,7 +425,7 @@ describe("verify", () => {
         Object {
           "data": Object {
             "details": Object {
-              "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+              "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
               "minted": false,
               "reason": Object {
                 "code": 1,
@@ -454,7 +454,7 @@ describe("verify", () => {
         Object {
           "data": Object {
             "details": Object {
-              "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+              "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
               "minted": true,
             },
             "mintedOnAll": true,

@@ -75,11 +75,11 @@ export const generateProvider = (options?: ProviderDetails): providers.Provider 
     case "alchemy":
       if (apiKey) {
         return network === "sepolia"
-          ? new providers.StaticJsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${apiKey}`, network)
+          ? new providers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${apiKey}`, network)
           : new providers.AlchemyProvider(network, apiKey);
       }
       return network === "sepolia"
-        ? new providers.StaticJsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/`, network)
+        ? new providers.JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/`, network)
         : new providers.AlchemyProvider(network);
 
     case "jsonrpc":
