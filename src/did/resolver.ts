@@ -1,4 +1,4 @@
-import { DIDDocument, Resolver, VerificationMethod } from "did-resolver";
+import { DIDDocument, Resolver, ResolverRegistry, VerificationMethod } from "did-resolver";
 import { getResolver as ethrGetResolver } from "ethr-did-resolver";
 import { getResolver as webGetResolver } from "web-did-resolver";
 import NodeCache from "node-cache";
@@ -29,11 +29,14 @@ export const getProviderConfig = () => {
 
 const didResolutionCache = new NodeCache({ stdTTL: 5 * 60 }); // 5 min
 
-const defaultResolver = new Resolver({ ...ethrGetResolver(getProviderConfig()), ...webGetResolver() });
+const defaultResolver = new Resolver({
+  ...ethrGetResolver(getProviderConfig()),
+  ...webGetResolver(),
+} as ResolverRegistry);
 
 export const createResolver = ({ ethrResolverConfig }: { ethrResolverConfig?: EthrResolverConfig }): Resolver => {
   return ethrResolverConfig
-    ? new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() })
+    ? new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() } as ResolverRegistry)
     : defaultResolver;
 };
 
