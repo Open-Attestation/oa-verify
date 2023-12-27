@@ -3,7 +3,7 @@ import { ethers, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import { openAttestationDidIdentityProof } from "../verifiers/issuerIdentity/did/didIdentityProof";
 import { verificationBuilder } from "../verifiers/verificationBuilder";
-import { EthrResolverConfig, getProviderConfig, resolve } from "./resolver";
+import { getProviderConfig, resolve } from "./resolver";
 import { Resolver } from "did-resolver";
 import { getResolver } from "ethr-did-resolver";
 
@@ -75,11 +75,7 @@ const v3DidSigned = {
   },
 } as v3.SignedWrappedDocument;
 
-const customConfig: EthrResolverConfig = {
-  networks: [{ name: "sepolia", rpcUrl: `https://sepolia.infura.io/v3/${INFURA_API_KEY}` }],
-};
-
-const sepoliaCustomConfig = {
+const sepoliaNetworkConfig = {
   name: "sepolia",
   chainId: 11155111,
   provider: new providers.InfuraProvider("sepolia"),
@@ -92,7 +88,7 @@ describe("custom resolver", () => {
       "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       new Resolver(
         getResolver({
-          networks: [sepoliaCustomConfig],
+          networks: [sepoliaNetworkConfig],
         })
       )
     );
@@ -101,10 +97,10 @@ describe("custom resolver", () => {
 
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
-      provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
+      provider: new ethers.providers.JsonRpcProvider({ url: `https://sepolia.infura.io/v3/${INFURA_API_KEY}` }),
       resolver: new Resolver(
         getResolver({
-          networks: [sepoliaCustomConfig],
+          networks: [sepoliaNetworkConfig],
         })
       ),
     });
