@@ -32,11 +32,11 @@ const didResolutionCache = new NodeCache({ stdTTL: 5 * 60 }); // 5 min
 const defaultResolver = new Resolver({
   ...ethrGetResolver(getProviderConfig()),
   ...webGetResolver(),
-} as ResolverRegistry);
+});
 
 export const createResolver = ({ ethrResolverConfig }: { ethrResolverConfig?: EthrResolverConfig }): Resolver => {
   return ethrResolverConfig
-    ? new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() } as ResolverRegistry)
+    ? new Resolver({ ...ethrGetResolver(ethrResolverConfig), ...webGetResolver() })
     : defaultResolver;
 };
 

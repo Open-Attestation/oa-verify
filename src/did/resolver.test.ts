@@ -8,10 +8,7 @@ import { Resolver } from "did-resolver";
 import { getResolver } from "ethr-did-resolver";
 
 const didDoc = {
-  "@context": [
-    "https://www.w3.org/ns/did/v1",
-    "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld",
-  ],
+  "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020/v2"],
   assertionMethod: ["did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
   id: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
   verificationMethod: [
@@ -19,7 +16,7 @@ const didDoc = {
       id: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
       type: "EcdsaSecp256k1RecoveryMethod2020",
       controller: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:11155111",
+      blockchainAccountId: "eip155:11155111:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     },
   ],
   authentication: ["did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
