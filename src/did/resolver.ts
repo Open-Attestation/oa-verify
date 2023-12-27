@@ -1,4 +1,4 @@
-import { DIDDocument, Resolver, ResolverRegistry, VerificationMethod } from "did-resolver";
+import { DIDDocument, Resolver, VerificationMethod } from "did-resolver";
 import { getResolver as ethrGetResolver } from "ethr-did-resolver";
 import { getResolver as webGetResolver } from "web-did-resolver";
 import NodeCache from "node-cache";
