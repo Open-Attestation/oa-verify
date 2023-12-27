@@ -29,7 +29,7 @@
     "@govtechsg/document-store": "^2.2.3",
     "@govtechsg/open-attestation": "^6.2.0",
     "@govtechsg/token-registry": "^4.1.7",
-    "axios": "^1.6.2",
+    "axios": "^1.6.3",
     "debug": "^4.3.1",
     "did-resolver": "^3.1.0",
     "ethers": "^5.1.4",
