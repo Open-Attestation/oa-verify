@@ -54,9 +54,10 @@ export const verifySecp256k1VerificationKey2018 = ({
     };
   }
   // blockchainAccountId looks like eip155:3:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457, let's only extract out the ethereum address
-  const ethereumAddress = blockchainAccountId.split(":").pop() || "";
+  const ethereumAddress = blockchainAccountId.split(":").pop();
 
-  const merkleRootSigned = utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress.toLowerCase();
+  const merkleRootSigned =
+    utils.verifyMessage(messageBytes, signature).toLowerCase() === ethereumAddress?.toLowerCase();
   if (!merkleRootSigned) {
     return {
       did,
