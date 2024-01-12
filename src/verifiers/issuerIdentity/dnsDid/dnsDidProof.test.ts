@@ -3,7 +3,7 @@ import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigne
 import { documentDnsDidMixedTokenRegistryValid } from "../../../../test/fixtures/v2/documentDnsDidMixedTokenRegistry";
 import { documentDnsDidNoDnsTxt } from "../../../../test/fixtures/v2/documentDnsDidNoDnsTxt";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
+import { documentSepoliaValidWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
 import { getProvider } from "../../../common/utils";
 import { openAttestationDnsDidIdentityProof } from "./dnsDidProof";
 
@@ -20,7 +20,7 @@ const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
-  provider: getProvider({ network: "goerli" }),
+  provider: getProvider({ network: "sepolia" }),
 };
 
 describe("skip", () => {
@@ -44,7 +44,7 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not using DID as top level identifier", () => {
-      expect(openAttestationDnsDidIdentityProof.test(documentGoerliValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDnsDidIdentityProof.test(documentSepoliaValidWithDocumentStore, options)).toBe(false);
     });
     it("should return false for documents where any issuer is using the `DID` identity proof", () => {
       expect(openAttestationDnsDidIdentityProof.test(documentDidSigned, options)).toBe(false);

@@ -96,7 +96,7 @@ const fragments: AllVerificationFragment[] = [
   },
   {
     data: {
-      did: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      did: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       verified: true,
     },
     name: "OpenAttestationDidIdentityProof",
@@ -158,7 +158,7 @@ describe("getFragmentByName", () => {
     expect(getOpenAttestationDidIdentityProofFragment(fragments)).toMatchInlineSnapshot(`
       Object {
         "data": Object {
-          "did": "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+          "did": "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
           "verified": true,
         },
         "name": "OpenAttestationDidIdentityProof",
@@ -279,13 +279,13 @@ describe("generateProvider", () => {
 
   it("should use the details provided as top priority", () => {
     const options = {
-      network: "goerli",
+      network: "sepolia",
       providerType: "infura",
       apiKey: "bb46da3f80e040e8ab73c0a9ff365d18",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
 
-    expect(provider?._network?.name).toEqual("goerli");
+    expect(provider?._network?.name).toEqual("sepolia");
     expect(provider?.apiKey).toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
@@ -297,19 +297,21 @@ describe("generateProvider", () => {
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
 
-  it("should use the default alchemy apiKey if no apiKey specified", () => {
+  it("should use the default alchemy jsonrpc url if no apiKey specified", () => {
     const options = {
-      network: "goerli",
+      network: "sepolia",
       providerType: "alchemy",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
-    expect(provider?.apiKey).toEqual("_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC");
+    // TODO: Add back next line and remove the following line after we upgrade ethers to v6
+    // expect(provider?.apiKey).toEqual("_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC");
+    expect(provider).not.toHaveProperty("apiKey");
   });
 
   it("should use the default jsonrpc url which is localhost:8545", () => {
     const options = {
-      network: "goerli",
+      network: "sepolia",
       providerType: "jsonrpc",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
@@ -317,9 +319,9 @@ describe("generateProvider", () => {
   });
 
   it("should still generate a provider even if only one option (network) is provided", () => {
-    const options = { network: "goerli" } as ProviderDetails;
+    const options = { network: "sepolia" } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("goerli");
+    expect(provider?._network?.name).toEqual("sepolia");
     expect(provider?.apiKey).toEqual("84842078b09946638c03157f83405213");
     expect(provider?.connection?.url).toMatch(/(infura)/i);
   });
@@ -355,11 +357,11 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for infura test case", () => {
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
     process.env.PROVIDER_API_KEY = "env123123";
 
     const provider = generateProvider() as any;
-    expect(provider?._network?.name).toEqual("goerli");
+    expect(provider?._network?.name).toEqual("sepolia");
     expect(provider?._network?.name).not.toEqual("mainnet");
     expect(provider?.apiKey).toEqual("env123123");
     expect(provider?.apiKey).not.toEqual("bb46da3f80e040e8ab73c0a9ff365d18");
@@ -367,17 +369,19 @@ describe("generateProvider", () => {
   });
 
   it("should use the process.env values if there is one, should not use the default values, for alchemy test case", () => {
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
     process.env.PROVIDER_API_KEY = "env789789";
 
     const options = {
       providerType: "alchemy",
     } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("goerli");
+    expect(provider?._network?.name).toEqual("sepolia");
     expect(provider?._network?.name).not.toEqual("mainnet");
-    expect(provider?.apiKey).toEqual("env789789");
-    expect(provider?.apiKey).not.toEqual("OlOgD-8qs5l3pQm-B_fcrMAmHTmAwkGj");
+    // TODO: Add back next 2 lines and remove the following line after we upgrade ethers to v6
+    // expect(provider?.apiKey).toEqual("env789789");
+    // expect(provider?.apiKey).not.toEqual("OlOgD-8qs5l3pQm-B_fcrMAmHTmAwkGj");
+    expect(provider).not.toHaveProperty("apiKey");
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
   });
 
@@ -392,15 +396,17 @@ describe("generateProvider", () => {
   });
 
   it("should override the process.env value with the function parameter value", () => {
-    process.env.PROVIDER_NETWORK = "sepolia";
+    process.env.PROVIDER_NETWORK = "goerli";
     process.env.PROVIDER_API_KEY = "env789789";
 
-    const options = { network: "goerli", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
+    const options = { network: "sepolia", providerType: "alchemy", apiKey: "abc123" } as ProviderDetails;
     const provider = generateProvider(options) as any;
-    expect(provider?._network?.name).toEqual("goerli");
-    expect(provider?._network?.name).not.toEqual("sepolia");
-    expect(provider?.apiKey).toEqual("abc123");
-    expect(provider?.apiKey).not.toEqual("env789789");
+    expect(provider?._network?.name).toEqual("sepolia");
+    expect(provider?._network?.name).not.toEqual("goerli");
+    // TODO: Add back next line and remove the following line after we upgrade ethers to v6
+    // expect(provider?.apiKey).toEqual("abc123");
+    // expect(provider?.apiKey).not.toEqual("env789789");
+    expect(provider).not.toHaveProperty("apiKey");
     expect(provider?.connection?.url).toMatch(/(alchemy)/i);
   });
 });

@@ -27,16 +27,16 @@
   "dependencies": {
     "@govtechsg/dnsprove": "^2.6.2",
     "@govtechsg/document-store": "^2.2.3",
-    "@govtechsg/open-attestation": "^6.2.0",
+    "@govtechsg/open-attestation": "^6.9.0",
     "@govtechsg/token-registry": "^4.1.7",
     "axios": "^1.6.2",
     "debug": "^4.3.1",
-    "did-resolver": "^3.1.0",
-    "ethers": "^5.1.4",
-    "ethr-did-resolver": "^4.3.3",
+    "did-resolver": "^4.1.0",
+    "ethers": "^5.7.2",
+    "ethr-did-resolver": "^8.1.2",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
-    "web-did-resolver": "^2.0.4"
+    "web-did-resolver": "^2.0.27"
   },
   "devDependencies": {
     "@commitlint/cli": "^18.4.3",
@@ -47,6 +47,7 @@
     "@types/jest": "^26.0.23",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
     "@typescript-eslint/parser": "^4.22.0",
+    "ajv-formats": "^2.1.1",
     "commitizen": "^4.3.0",
     "eslint": "^7.25.0",
     "eslint-config-prettier": "^8.3.0",

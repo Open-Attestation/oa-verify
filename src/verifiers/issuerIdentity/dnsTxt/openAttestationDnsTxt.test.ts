@@ -1,7 +1,7 @@
 import { v2, v3 } from "@govtechsg/open-attestation";
 
-import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
-import { documentGoerliValidWithToken } from "../../../../test/fixtures/v2/documentGoerliValidWithToken";
+import { documentSepoliaValidWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
+import { documentSepoliaValidWithToken } from "../../../../test/fixtures/v2/documentSepoliaValidWithToken";
 import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
 import { getProvider } from "../../../common/utils";
 import { openAttestationDnsTxtIdentityProof } from "./openAttestationDnsTxt";
@@ -17,12 +17,12 @@ const v3DocumentStoreIssued = v3DocumentStoreIssuedRaw as v3.WrappedDocument;
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as v3.WrappedDocument;
 
 const options = {
-  provider: getProvider({ network: "goerli" }),
+  provider: getProvider({ network: "sepolia" }),
 };
 
 describe("skip", () => {
   it("should return skip fragment", async () => {
-    const fragment = await openAttestationDnsTxtIdentityProof.skip(documentGoerliValidWithToken, options);
+    const fragment = await openAttestationDnsTxtIdentityProof.skip(documentSepoliaValidWithToken, options);
     expect(fragment).toMatchInlineSnapshot(`
       Object {
         "name": "OpenAttestationDnsTxtIdentityProof",
@@ -41,30 +41,30 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false when document does not have data", async () => {
-      const documentWithoutData: any = { ...documentGoerliValidWithToken, data: null };
+      const documentWithoutData: any = { ...documentSepoliaValidWithToken, data: null };
       const toVerify = await openAttestationDnsTxtIdentityProof.test(documentWithoutData, options);
       expect(toVerify).toBe(false);
     });
 
     it("should return false when document does not have issuers", async () => {
       const documentWithoutIssuers: any = {
-        ...documentGoerliValidWithToken,
-        data: { ...documentGoerliValidWithToken.data, issuers: null },
+        ...documentSepoliaValidWithToken,
+        data: { ...documentSepoliaValidWithToken.data, issuers: null },
       };
       const toVerify = await openAttestationDnsTxtIdentityProof.test(documentWithoutIssuers, options);
       expect(toVerify).toBe(false);
     });
 
     it("should return true when document is using DNS-TXT", async () => {
-      const toVerify = await openAttestationDnsTxtIdentityProof.test(documentGoerliValidWithToken, options);
+      const toVerify = await openAttestationDnsTxtIdentityProof.test(documentSepoliaValidWithToken, options);
       expect(toVerify).toBe(true);
     });
 
     it("should return false when document is missing identityProof", async () => {
       const documentWithoutIdentityProof = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
@@ -80,9 +80,9 @@ describe("test", () => {
 
     it("should return false when issuer is not using DNS-TXT as identity proof", async () => {
       const document = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
@@ -101,9 +101,9 @@ describe("test", () => {
 
     it("should return false when no issuers is not using DNS-TXT as identity proof", async () => {
       const documentWithMultipleIssuersWithoutDnsTxt = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
@@ -139,14 +139,14 @@ describe("test", () => {
 describe("verify", () => {
   describe("v2", () => {
     it("should return a valid fragment when document has valid identity and uses document store", async () => {
-      const fragment = await openAttestationDnsTxtIdentityProof.verify(documentGoerliValidWithDocumentStore, options);
+      const fragment = await openAttestationDnsTxtIdentityProof.verify(documentSepoliaValidWithDocumentStore, options);
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.openattestation.com",
               "status": "VALID",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -157,12 +157,12 @@ describe("verify", () => {
     });
     it("should return an invalid fragment when document identity does not match", async () => {
       const documentWithMismatchedTokenRegistry = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
-              ...documentGoerliValidWithToken.data.issuers[0],
+              ...documentSepoliaValidWithToken.data.issuers[0],
               tokenRegistry: "1d337929-6770-4a05-ace0-1f07c25c7615:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
           ],
@@ -173,7 +173,7 @@ describe("verify", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.tradetrust.io",
               "reason": Object {
                 "code": 4,
                 "codeString": "MATCHING_RECORD_NOT_FOUND",
@@ -196,14 +196,14 @@ describe("verify", () => {
     });
     it("should return an error fragment when there is no identity location", async () => {
       const documentWithoutIdentityLocation: any = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
-              ...documentGoerliValidWithToken.data.issuers[0],
+              ...documentSepoliaValidWithToken.data.issuers[0],
               identityProof: {
-                ...documentGoerliValidWithToken.data.issuers[0].identityProof,
+                ...documentSepoliaValidWithToken.data.issuers[0].identityProof,
                 location: null,
               },
             },
@@ -227,9 +227,9 @@ describe("verify", () => {
     });
     it("should return an invalid fragment when document has one issuer with document store/valid identity and a second issuer without identity", async () => {
       const document = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
@@ -262,9 +262,9 @@ describe("verify", () => {
     });
     it("should return an invalid fragment when document has one issuer with document store/valid identity and a second issuer with invalid identity", async () => {
       const document = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
@@ -276,10 +276,10 @@ describe("verify", () => {
             },
             {
               name: "2433e228-5bee-4863-9b98-2337f4f90306:string:DEMO STORE",
-              documentStore: "38229e0e-9ae6-401f-a80e-8a6c2166a42a:string:0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              documentStore: "38229e0e-9ae6-401f-a80e-8a6c2166a42a:string:0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
               identityProof: {
                 type: "1350e9f5-920b-496d-b95c-2a2793f5bff6:string:DNS-TXT",
-                location: "73b5c847-99f8-44f2-ba8d-1a0f36cc9c6f:string:demo-tradetrust.openattestation.com",
+                location: "73b5c847-99f8-44f2-ba8d-1a0f36cc9c6f:string:example.tradetrust.io",
               },
             },
           ],
@@ -300,9 +300,9 @@ describe("verify", () => {
               "value": "0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
             },
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.tradetrust.io",
               "status": "VALID",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -319,13 +319,13 @@ describe("verify", () => {
 
     it("should return an invalid fragment when document has one issuer with token registry/valid identity and a second issuer without identity", async () => {
       const document = {
-        ...documentGoerliValidWithToken,
+        ...documentSepoliaValidWithToken,
         data: {
-          ...documentGoerliValidWithToken.data,
+          ...documentSepoliaValidWithToken.data,
           issuers: [
-            documentGoerliValidWithToken.data.issuers[0],
+            documentSepoliaValidWithToken.data.issuers[0],
             {
-              ...documentGoerliValidWithToken.data.issuers[0],
+              ...documentSepoliaValidWithToken.data.issuers[0],
               identityProof: undefined,
             },
           ],
@@ -406,8 +406,8 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "identifier": "demo-tradetrust.openattestation.com",
-            "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "identifier": "example.openattestation.com",
+            "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "status": "VALID",
@@ -420,8 +420,8 @@ describe("verify", () => {
       expect(fragment).toMatchInlineSnapshot(`
         Object {
           "data": Object {
-            "identifier": "demo-tradetrust.openattestation.com",
-            "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+            "identifier": "example.tradetrust.io",
+            "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "status": "VALID",
@@ -445,13 +445,13 @@ describe("verify", () => {
         Object {
           "data": Object {
             "identifier": "nonexistent.example.com",
-            "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 4,
             "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Matching DNS record not found for 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
@@ -474,13 +474,13 @@ describe("verify", () => {
         Object {
           "data": Object {
             "identifier": "nonexistent.example.com",
-            "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+            "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
           },
           "name": "OpenAttestationDnsTxtIdentityProof",
           "reason": Object {
             "code": 4,
             "codeString": "MATCHING_RECORD_NOT_FOUND",
-            "message": "Matching DNS record not found for 0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+            "message": "Matching DNS record not found for 0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
           },
           "status": "INVALID",
           "type": "ISSUER_IDENTITY",
