@@ -25,7 +25,7 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@tradetrust-tt/dnsprove": "^2.7.0",
+    "@tradetrust-tt/dnsprove": "^2.9.0",
     "@tradetrust-tt/tradetrust": "^6.9.0",
     "@govtechsg/document-store": "^2.2.3",
     "@govtechsg/token-registry": "^4.1.7",
@@ -40,7 +40,7 @@
   },
   "devDependencies": {
     "@commitlint/cli": "^16.1.0",
-    "@commitlint/config-conventional": "^16.0.0",
+    "@commitlint/config-conventional": "^16.2.4",
     "@commitlint/prompt": "^16.1.0",
     "@ls-age/commitlint-circle": "1.0.0",
     "@types/debug": "^4.1.5",

@@ -34,7 +34,7 @@ const resolveIssuerIdentity = async (
       record.addr.toLowerCase() === smartContractAddress.toLowerCase() &&
       record.netId === network.chainId.toString(10) &&
       record.type === "openatts" &&
-      record.net === "ethereum"
+      (record.net === "ethereum" || record.net === "hedera")
   );
   return matchingRecord
     ? {
