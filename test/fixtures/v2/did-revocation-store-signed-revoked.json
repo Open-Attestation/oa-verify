@@ -1,68 +1,65 @@
 {
   "version": "https://schema.openattestation.com/2.0/schema.json",
   "data": {
-    "id": "f9a88a07-4576-42ec-bbf5-5bafc35fbf75:string:SGCNM21566325",
+    "id": "b28e5d5e-198c-4c96-bb70-17dbfec03cc2:string:SGCNM21566325",
     "$template": {
-      "name": "0e9219cf-870f-44b6-a4e4-67d10c0769c2:string:CERTIFICATE_OF_NON_MANIPULATION",
-      "type": "fad3a151-3c2a-4138-9ec4-5f8fe0fe9c3b:string:EMBEDDED_RENDERER",
-      "url": "bd5822c3-3842-4bb9-b99f-cc508245fc83:string:https://demo-cnm.openattestation.com"
+      "name": "ea7a78bd-868c-47e1-b7e4-fbf90c36fb38:string:CERTIFICATE_OF_NON_MANIPULATION",
+      "type": "652cad25-d44c-47d7-b3a6-99eb08240afa:string:EMBEDDED_RENDERER",
+      "url": "1a65e7c2-5ee9-45fc-9cfd-30f4bd7de434:string:https://demo-cnm.openattestation.com"
     },
     "issuers": [
       {
-        "id": "7f742627-9f59-4d10-bd51-3e2887641e0c:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
-        "name": "f39ed1fa-36f0-40b5-a42d-9719e5df19a1:string:DEMO STORE",
+        "id": "75f75c15-7b6b-4f6b-a381-c9df165c82b2:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733",
+        "name": "fcbb220d-eae1-4b01-96f0-58a35af1db95:string:DEMO STORE",
         "revocation": {
-          "type": "1e2f2f88-6406-44d6-9457-e4ac56313212:string:REVOCATION_STORE",
-          "location": "c4dcac52-da5e-42cc-8b05-349d459a7ad5:string:0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD"
+          "type": "415c7379-6128-4912-8487-5e1beb5c33b6:string:REVOCATION_STORE",
+          "location": "6cda7d92-0b76-4b43-bf49-21b168248007:string:0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8"
         },
         "identityProof": {
-          "type": "7a1519ab-eac7-4fa9-8059-e243d9e6674c:string:DID",
-          "key": "d8814e37-8976-4003-872f-2cca11726cf6:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller"
+          "type": "795d0544-5364-4a93-afc9-e030efca62e5:string:DID",
+          "key": "bcb47ae5-9529-4613-bf1a-d90899758462:string:did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller"
         }
       }
     ],
     "recipient": {
-      "name": "67a8b009-cb8a-4bbc-8852-ee6b2bf5e158:string:AUS FREIGHT",
+      "name": "c5ab4cf1-131b-4803-8799-4aae3ec70986:string:AUS FREIGHT",
       "address": {
-        "street": "ea27af39-9463-43c8-8801-10accdfeef43:string:101 APPLE ROAD",
-        "country": "676e60fb-1801-49de-b6b7-12431c7df4c9:string:AUSTRALIA"
+        "street": "6c7107b9-4765-483c-ac98-7c785b44118f:string:101 APPLE ROAD",
+        "country": "bc807fc4-3069-4208-ac98-6cec650ed571:string:AUSTRALIA"
       }
     },
     "consignment": {
-      "description": "0e342f00-dc82-4574-968f-30260156de3f:string:16667 CARTONS OF RED WINE",
+      "description": "b44d609b-5492-4d96-aba5-5585994b210b:string:16667 CARTONS OF RED WINE",
       "quantity": {
-        "value": "62287e86-038b-436b-9084-4fa6ad0fb784:string:5000",
-        "unit": "657bfd5f-7cfd-40e5-9e73-79525918c125:string:LITRES"
+        "value": "4f2aec3a-9255-413f-ba26-39c7c86d1693:string:5000",
+        "unit": "2d25962d-a0b9-4cb9-a591-ec491a6ef132:string:LITRES"
       },
-      "countryOfOrigin": "718ac80c-4ab3-4bb1-833e-6e7b9b1d3870:string:AUSTRALIA",
-      "outwardBillNo": "e1efd1dc-ec8e-4128-8f1b-339abeaec03c:string:AQSIQ170923150",
-      "dateOfDischarge": "e664ecb4-067a-416f-8b26-e7130f3a6205:string:2018-01-26",
-      "dateOfDeparture": "c4e6f710-6378-40f1-91ca-7f431fc5b9d6:string:2018-01-30",
-      "countryOfFinalDestination": "d88ffaca-0a4a-4907-8b49-e6d72799ed53:string:CHINA",
-      "outgoingVehicleNo": "23777fb5-ff20-4567-8cb3-a0c9ae548604:string:COSCO JAPAN 074E/30-JAN"
+      "countryOfOrigin": "d165de3d-590e-4977-8b0d-17ace03123d0:string:AUSTRALIA",
+      "outwardBillNo": "762be9e1-b4fa-4e33-889e-87a8c754e2f4:string:AQSIQ170923150",
+      "dateOfDischarge": "d761b3a9-f8b2-491e-b613-e19699807878:string:2018-01-26",
+      "dateOfDeparture": "18ea6892-82b0-4f23-a541-3b59b27eedbc:string:2018-01-30",
+      "countryOfFinalDestination": "3139c9aa-04c4-4ec5-a356-6fbb21eee989:string:CHINA",
+      "outgoingVehicleNo": "093ca384-c55a-475a-82d1-1544dba30aa7:string:COSCO JAPAN 074E/30-JAN"
     },
     "declaration": {
-      "name": "63c12150-6d12-463a-9a9b-f438ecfec511:string:PETER LEE",
-      "designation": "34d089c3-15f5-48e8-8d2b-72e5c0066421:string:SHIPPING MANAGER",
-      "date": "50bd4ccb-6bb4-483b-890d-609dd02d038f:string:2018-01-28"
+      "name": "27308e74-e439-4568-bb89-d366110ba08d:string:PETER LEE",
+      "designation": "83566441-84aa-4345-915a-9e6845d68cbd:string:SHIPPING MANAGER",
+      "date": "fdab0a34-75e5-433a-a9f5-cce218fd65ce:string:2018-01-28"
     }
   },
   "signature": {
     "type": "SHA3MerkleProof",
-    "targetHash": "abe59845be21c1607b0cbdab0f622e0d82019fe316072de312bab6b700d9ad13",
-    "proof": [
-      "ff892056d1397e1146b625ac40d77bb4c5c3b47e22858729a65197fd5e89e683",
-      "ee52e200f490b1331ae6877d7b0992572fdcaf6168bcfc1ff879d1fc5f1e06d9"
-    ],
-    "merkleRoot": "3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233"
+    "targetHash": "e62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab",
+    "proof": [],
+    "merkleRoot": "e62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab"
   },
   "proof": [
     {
       "type": "OpenAttestationSignature2018",
-      "created": "2022-10-27T07:52:38.199Z",
+      "created": "2023-12-20T10:02:18.277Z",
       "proofPurpose": "assertionMethod",
       "verificationMethod": "did:ethr:0x1245e5B64D785b25057f7438F715f4aA5D965733#controller",
-      "signature": "0x0cc602d746237f445af62a32aeb8e93701a96600b450d8b02005ec230d88351e40f89b31f8e0b13df35175cfd1321862098ce4aa34ed0686738f5322e9fea97e1c"
+      "signature": "0x2989412de47ff9998944432b129219af94337efd384419a7eccb1dcbf3c649c72d8a8684e9bbdd112cf6010e45ef4fbf884abaf243ccd80622ee0ef8c8228fb11b"
     }
   ]
 }

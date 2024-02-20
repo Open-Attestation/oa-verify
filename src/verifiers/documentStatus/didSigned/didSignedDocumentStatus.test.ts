@@ -5,7 +5,7 @@ import { documentDidCustomRevocation } from "../../../../test/fixtures/v2/docume
 import { documentDidObfuscatedRevocation } from "../../../../test/fixtures/v2/documentDidObfuscatedRevocation";
 import { documentDidSigned } from "../../../../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../../../../test/fixtures/v2/documentDnsDidSigned";
-import { documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
+import { documentSepoliaValidWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
 import { documentNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentNotIssuedWithTokenRegistry";
 import sampleDidSignedRevocationStoreButNoLocationV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-no-location.json";
 import sampleDidSignedRevocationStoreNotRevokedV3 from "../../../../test/fixtures/v3/did-revocation-store-signed-not-revoked.json";
@@ -28,22 +28,32 @@ import sampleDnsDidSignedRevocationStoreNotRevokedV2 from "../../../../test/fixt
 import sampleDnsDidSignedRevocationStoreButRevokedV2 from "../../../../test/fixtures/v2/dnsdid-revocation-store-signed-revoked.json";
 import sampleDidSignedOcspResponderV2 from "../../../../test/fixtures/v2/did-ocsp-revocation-signed.json";
 
-const didSignedRevocationStoreNotRevokedV2 = sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const didSignedRevocationStoreButRevokedV2 = sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const didSignedRevocationStoreButNoLocationV2 = sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const dnsDidSignedRevocationStoreNotRevokedV2 = sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
-const dnsDidSignedRevocationStoreButRevokedV2 = sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedRevocationStoreNotRevokedV2 =
+  sampleDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedRevocationStoreButRevokedV2 =
+  sampleDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const didSignedRevocationStoreButNoLocationV2 =
+  sampleDidSignedRevocationStoreButNoLocationV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreNotRevokedV2 =
+  sampleDnsDidSignedRevocationStoreNotRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreButRevokedV2 =
+  sampleDnsDidSignedRevocationStoreButRevokedV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 const didSignedOcspResponderV2 = sampleDidSignedOcspResponderV2 as SignedWrappedDocument<v2.OpenAttestationDocument>;
 
 const documentStoreWrapV3 = sampleDocumentStoreWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const tokenRegistryWrapV3 = sampleTokenRegistryWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 const didSignedV3 = sampleDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const didSignedRevocationStoreNotRevokedV3 = sampleDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const didSignedRevocationStoreButRevokedV3 = sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const didSignedRevocationStoreButNoLocationV3 = sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreNotRevokedV3 =
+  sampleDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreButRevokedV3 =
+  sampleDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const didSignedRevocationStoreButNoLocationV3 =
+  sampleDidSignedRevocationStoreButNoLocationV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 const dnsDidSignedV3 = sampleDNSDidSignedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const dnsDidSignedRevocationStoreNotRevokedV3 = sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
-const dnsDidSignedRevocationStoreButRevokedV3 = sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreNotRevokedV3 =
+  sampleDnsDidSignedRevocationStoreNotRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
+const dnsDidSignedRevocationStoreButRevokedV3 =
+  sampleDnsDidSignedRevocationStoreButRevokedV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 const didSignedOcspResponderV3 = sampleDidSignedOcspResponderV3 as SignedWrappedDocument<v3.OpenAttestationDocument>;
 
 jest.mock("../../../did/resolver");
@@ -64,7 +74,7 @@ const whenPublicKeyResolvesSuccessfully = (key = "0xB26B4941941C51a4885E5B7D3A1B
 
 const options = {
   provider: getProvider({
-    network: "goerli",
+    network: "sepolia",
   }),
 };
 
@@ -89,7 +99,7 @@ describe("skip", () => {
 describe("test", () => {
   describe("v2", () => {
     it("should return false for documents not signed by DID", () => {
-      expect(openAttestationDidSignedDocumentStatus.test(documentGoerliValidWithDocumentStore, options)).toBe(false);
+      expect(openAttestationDidSignedDocumentStatus.test(documentSepoliaValidWithDocumentStore, options)).toBe(false);
       expect(openAttestationDidSignedDocumentStatus.test(documentNotIssuedWithTokenRegistry, options)).toBe(false);
     });
     it("should return true for documents where any issuer is using the `DID` identity proof", () => {
@@ -391,11 +401,11 @@ describe("verify", () => {
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0xe62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -408,7 +418,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0xe62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -430,11 +440,11 @@ describe("verify", () => {
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0x03c52b529aef3c2a90f497050ea4b72b9e6d8f09a82d295745921a647fc66a1d has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -447,7 +457,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0x03c52b529aef3c2a90f497050ea4b72b9e6d8f09a82d295745921a647fc66a1d has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -782,11 +792,11 @@ describe("verify", () => {
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "reason": Object {
                   "code": 5,
                   "codeString": "DOCUMENT_REVOKED",
-                  "message": "Document 0xf43045b0c57072a044e810b798e32b8c1de1d0d0c5774d55c8eed1f3fdec6438 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "message": "Document 0x3ad46614034b8d9d00b81d09612344f44c88f28901ca575c655c957cf038f7d4 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 },
                 "revoked": true,
               },
@@ -798,7 +808,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0xf43045b0c57072a044e810b798e32b8c1de1d0d0c5774d55c8eed1f3fdec6438 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0x3ad46614034b8d9d00b81d09612344f44c88f28901ca575c655c957cf038f7d4 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -817,11 +827,11 @@ describe("verify", () => {
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "reason": Object {
                   "code": 5,
                   "codeString": "DOCUMENT_REVOKED",
-                  "message": "Document 0xdc34b7bc4e707c77327db76536625c81c2a6777934df566b261bd8ec3f24f8c4 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "message": "Document 0xa05efdb7d3bca55c7d36946837f2b3b6ac6e5c9ed178645f98f296e4f06657ea has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 },
                 "revoked": true,
               },
@@ -833,7 +843,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0xdc34b7bc4e707c77327db76536625c81c2a6777934df566b261bd8ec3f24f8c4 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0xa05efdb7d3bca55c7d36946837f2b3b6ac6e5c9ed178645f98f296e4f06657ea has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",

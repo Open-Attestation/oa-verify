@@ -1,5 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
-import { TradeTrustToken__factory } from "@govtechsg/token-registry/contracts";
+import { TradeTrustToken__factory } from "@tradetrust-tt/token-registry/contracts";
 import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
@@ -224,14 +224,15 @@ const verify: VerifierType["verify"] = async (document, options) => {
   }
 };
 
-export const openAttestationEthereumTokenRegistryStatus: Verifier<OpenAttestationEthereumTokenRegistryStatusFragment> = {
-  skip,
-  test,
-  verify: withCodedErrorHandler(verify, {
-    name,
-    type,
-    unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
-    unexpectedErrorString:
-      OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
-  }),
-};
+export const openAttestationEthereumTokenRegistryStatus: Verifier<OpenAttestationEthereumTokenRegistryStatusFragment> =
+  {
+    skip,
+    test,
+    verify: withCodedErrorHandler(verify, {
+      name,
+      type,
+      unexpectedErrorCode: OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR,
+      unexpectedErrorString:
+        OpenAttestationEthereumTokenRegistryStatusCode[OpenAttestationEthereumTokenRegistryStatusCode.UNEXPECTED_ERROR],
+    }),
+  };

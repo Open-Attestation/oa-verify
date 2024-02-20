@@ -1,6 +1,6 @@
 import { v3, WrappedDocument } from "@tradetrust-tt/tradetrust";
-import { documentGoerliRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliRevokedWithDocumentStore";
-import { documentGoerliValidWithDocumentStore as v2documentGoerliValidWithDocumentStore } from "../../../../test/fixtures/v2/documentGoerliValidWithDocumentStore";
+import { documentSepoliaRevokedWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaRevokedWithDocumentStore";
+import { documentSepoliaValidWithDocumentStore as v2documentSepoliaValidWithDocumentStore } from "../../../../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
 import { documentMixedIssuance } from "../../../../test/fixtures/v2/documentMixedIssuance";
 import { documentNotIssuedWithTokenRegistry } from "../../../../test/fixtures/v2/documentNotIssuedWithTokenRegistry";
 import { getProvider } from "../../../common/utils";
@@ -19,13 +19,13 @@ const v3DidSigned = v3DidSignedRaw as WrappedDocument<v3.OpenAttestationDocument
 const v3TokenRegistryIssued = v3TokenRegistryIssuedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 const v3DocumentStoreRevoked = v3DocumentStoreRevokedRaw as WrappedDocument<v3.OpenAttestationDocument>;
 
-const options = { provider: getProvider({ network: "goerli" }) };
+const options = { provider: getProvider({ network: "sepolia" }) };
 
 describe("test", () => {
   describe("v2", () => {
     it("should return false when document does not have data", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
-        { ...v2documentGoerliValidWithDocumentStore, data: null } as any,
+        { ...v2documentSepoliaValidWithDocumentStore, data: null } as any,
         options
       );
       expect(shouldVerify).toBe(false);
@@ -33,8 +33,8 @@ describe("test", () => {
     it("should return false when document does not have issuers", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
         {
-          ...v2documentGoerliValidWithDocumentStore,
-          data: { ...v2documentGoerliValidWithDocumentStore.data, issuers: null },
+          ...v2documentSepoliaValidWithDocumentStore,
+          data: { ...v2documentSepoliaValidWithDocumentStore.data, issuers: null },
         } as any,
         options
       );
@@ -49,7 +49,7 @@ describe("test", () => {
     });
     it("should return true when document uses document store", async () => {
       const shouldVerify = await openAttestationEthereumDocumentStoreStatus.test(
-        documentGoerliRevokedWithDocumentStore,
+        documentSepoliaRevokedWithDocumentStore,
         options
       );
       expect(shouldVerify).toBe(true);
@@ -80,12 +80,12 @@ describe("verify", () => {
     it("should return an invalid fragment when document store is invalid", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         {
-          ...documentGoerliRevokedWithDocumentStore,
+          ...documentSepoliaRevokedWithDocumentStore,
           data: {
-            ...documentGoerliRevokedWithDocumentStore.data,
+            ...documentSepoliaRevokedWithDocumentStore.data,
             issuers: [
               {
-                ...documentGoerliRevokedWithDocumentStore.data.issuers[0],
+                ...documentSepoliaRevokedWithDocumentStore.data.issuers[0],
                 documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0xaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
               },
             ],
@@ -125,12 +125,12 @@ describe("verify", () => {
     it("should return an invalid fragment when document store does not exists", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
         {
-          ...documentGoerliRevokedWithDocumentStore,
+          ...documentSepoliaRevokedWithDocumentStore,
           data: {
-            ...documentGoerliRevokedWithDocumentStore.data,
+            ...documentSepoliaRevokedWithDocumentStore.data,
             issuers: [
               {
-                ...documentGoerliRevokedWithDocumentStore.data.issuers[0],
+                ...documentSepoliaRevokedWithDocumentStore.data.issuers[0],
                 documentStore: "0c837c55-4948-4a5a-9ed3-801889db9ce3:string:0x0000000000000000000000000000000000000000",
               },
             ],
@@ -170,7 +170,7 @@ describe("verify", () => {
 
     it("should return an invalid fragment when document with document store that has been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        documentGoerliRevokedWithDocumentStore,
+        documentSepoliaRevokedWithDocumentStore,
         options
       );
       expect(fragment).toMatchInlineSnapshot(`
@@ -179,17 +179,17 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0xae0d37f3bbdda18b9c5ab98b4e18536901e14de9a0f92c36347a0abe6afdc4df has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -202,7 +202,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0xae0d37f3bbdda18b9c5ab98b4e18536901e14de9a0f92c36347a0abe6afdc4df has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -212,7 +212,7 @@ describe("verify", () => {
 
     it("should return a valid fragment when document with document store that has not been revoked", async () => {
       const fragment = await openAttestationEthereumDocumentStoreStatus.verify(
-        v2documentGoerliValidWithDocumentStore,
+        v2documentSepoliaValidWithDocumentStore,
         options
       );
 
@@ -222,13 +222,13 @@ describe("verify", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "revoked": false,
                 },
               ],
@@ -269,11 +269,11 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "revoked": false,
               },
             },
@@ -293,16 +293,16 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "issued": false,
                 "reason": Object {
                   "code": 1,
                   "codeString": "DOCUMENT_NOT_ISSUED",
-                  "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "message": "Document 0x19988397c756599f8415200eaa2a413e5b60212d7d21dbc22bb365ae115c6b83 has not been issued under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 },
               },
               "revocation": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "revoked": false,
               },
             },
@@ -313,7 +313,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 1,
             "codeString": "DOCUMENT_NOT_ISSUED",
-            "message": "Document 0x1547783535718aeb881131fe12df6983232a8091ab221b13115a16445120f52a has not been issued under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0x19988397c756599f8415200eaa2a413e5b60212d7d21dbc22bb365ae115c6b83 has not been issued under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -327,15 +327,15 @@ describe("verify", () => {
           "data": Object {
             "details": Object {
               "issuance": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "issued": true,
               },
               "revocation": Object {
-                "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 "reason": Object {
                   "code": 5,
                   "codeString": "DOCUMENT_REVOKED",
-                  "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "message": "Document 0x8e9f71e4526782631acd06d6d88cd1debf3be28375a5d122f03640ec71c1e981 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                 },
                 "revoked": true,
               },
@@ -347,7 +347,7 @@ describe("verify", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0xc04f10d1ce474c1495f018f6507b776b4876f37b292d50af859e8ac6f568fcb9 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0x8e9f71e4526782631acd06d6d88cd1debf3be28375a5d122f03640ec71c1e981 has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",

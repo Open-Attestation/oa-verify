@@ -11,11 +11,11 @@ import v2DnsDidSignedRevocationStoreButRevokedRaw from "../test/fixtures/v2/dnsd
 
 import { documentDidSigned } from "../test/fixtures/v2/documentDidSigned";
 import { documentDnsDidSigned } from "../test/fixtures/v2/documentDnsDidSigned";
-import { documentGoerliNotIssuedTokenRegistry } from "../test/fixtures/v2/documentGoerliNotIssuedTokenRegistry";
-import { documentGoerliObfuscated } from "../test/fixtures/v2/documentGoerliObfuscated";
-import { documentGoerliRevokedWithDocumentStore } from "../test/fixtures/v2/documentGoerliRevokedWithDocumentStore";
-import { documentGoerliValidWithDocumentStore } from "../test/fixtures/v2/documentGoerliValidWithDocumentStore";
-import { documentGoerliValidWithToken } from "../test/fixtures/v2/documentGoerliValidWithToken";
+import { documentSepoliaNotIssuedTokenRegistry } from "../test/fixtures/v2/documentSepoliaNotIssuedTokenRegistry";
+import { documentSepoliaObfuscated } from "../test/fixtures/v2/documentSepoliaObfuscated";
+import { documentSepoliaRevokedWithDocumentStore } from "../test/fixtures/v2/documentSepoliaRevokedWithDocumentStore";
+import { documentSepoliaValidWithDocumentStore } from "../test/fixtures/v2/documentSepoliaValidWithDocumentStore";
+import { documentSepoliaValidWithToken } from "../test/fixtures/v2/documentSepoliaValidWithToken";
 import { documentMainnetInvalidWithIncorrectMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithIncorrectMerkleRoot";
 import { documentMainnetInvalidWithOddLengthMerkleRoot } from "../test/fixtures/v2/documentMainnetInvalidWithOddLengthMerkleRoot";
 
@@ -36,7 +36,7 @@ const v2DnsDidSignedRevocationStoreNotRevoked = v2DnsDidSignedRevocationStoreNot
 const v2DnsDidSignedRevocationStoreButRevoked = v2DnsDidSignedRevocationStoreButRevokedRaw as v2.SignedWrappedDocument;
 
 const verifyHomestead = verify;
-const verifyGoerli = verificationBuilder(openAttestationVerifiers, { network: "goerli" });
+const verifySepolia = verificationBuilder(openAttestationVerifiers, { network: "sepolia" });
 
 describe("verify(integration)", () => {
   let defaultEnvironment: NodeJS.ProcessEnv;
@@ -59,7 +59,7 @@ describe("verify(integration)", () => {
   });
 
   it("should skip all verifiers when the document is an empty object", async () => {
-    const fragments = await verifyGoerli({} as any);
+    const fragments = await verifySepolia({} as any);
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -218,7 +218,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationHash and OpenAttestationEthereumDocumentStoreStatus when document's hash is invalid and was not issued", async () => {
-    const results = await verifyGoerli(tamperedDocumentInvalid);
+    const results = await verifySepolia(tamperedDocumentInvalid);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -305,7 +305,7 @@ describe("verify(integration)", () => {
   });
 
   it("should be valid for all checks for a document with obfuscated fields", async () => {
-    const fragments = await verifyGoerli(documentGoerliObfuscated as any);
+    const fragments = await verifySepolia(documentSepoliaObfuscated as any);
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -329,13 +329,13 @@ describe("verify(integration)", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "revoked": false,
                 },
               ],
@@ -360,9 +360,9 @@ describe("verify(integration)", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.openattestation.com",
               "status": "VALID",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -387,8 +387,8 @@ describe("verify(integration)", () => {
     expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
   });
 
-  it("should be valid for all checks when document with token registry is valid on goerli", async () => {
-    const results = await verifyGoerli(documentGoerliValidWithToken);
+  it("should be valid for all checks when document with token registry is valid on sepolia", async () => {
+    const results = await verifySepolia(documentSepoliaValidWithToken);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -401,7 +401,7 @@ describe("verify(integration)", () => {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
                 "minted": true,
               },
             ],
@@ -434,9 +434,9 @@ describe("verify(integration)", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.tradetrust.io",
               "status": "VALID",
-              "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+              "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -644,7 +644,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationEthereumTokenRegistryStatus when document with token registry was not issued", async () => {
-    const results = await verifyGoerli(documentGoerliNotIssuedTokenRegistry);
+    const results = await verifySepolia(documentSepoliaNotIssuedTokenRegistry);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -657,7 +657,7 @@ describe("verify(integration)", () => {
           "data": Object {
             "details": Array [
               Object {
-                "address": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+                "address": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
                 "minted": false,
                 "reason": Object {
                   "code": 1,
@@ -700,9 +700,9 @@ describe("verify(integration)", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.tradetrust.io",
               "status": "VALID",
-              "value": "0x921dC7cEF00155ac3A33f04DA7395324d7809757",
+              "value": "0x142Ca30e3b78A840a82192529cA047ED759a6F7e",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -726,7 +726,7 @@ describe("verify(integration)", () => {
   });
 
   it("should fail for OpenAttestationEthereumDocumentStoreStatus when document was issued then subsequently revoked", async () => {
-    const results = await verifyGoerli(documentGoerliRevokedWithDocumentStore);
+    const results = await verifySepolia(documentSepoliaRevokedWithDocumentStore);
     expect(results).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -750,17 +750,17 @@ describe("verify(integration)", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0xae0d37f3bbdda18b9c5ab98b4e18536901e14de9a0f92c36347a0abe6afdc4df has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -773,7 +773,7 @@ describe("verify(integration)", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x6a6c94352e6327437970a41126c041a83cec0fe684b13045991942ea67fca554 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0xae0d37f3bbdda18b9c5ab98b4e18536901e14de9a0f92c36347a0abe6afdc4df has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -791,9 +791,9 @@ describe("verify(integration)", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.openattestation.com",
               "status": "VALID",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -818,7 +818,7 @@ describe("verify(integration)", () => {
 
   it("should pass with document signed directly with DID with custom verifier", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
-      network: "goerli",
+      network: "sepolia",
     });
     const results = await customVerify(documentDidSigned);
     expect(results).toMatchInlineSnapshot(`
@@ -913,7 +913,7 @@ describe("verify(integration)", () => {
 
   it("should return valid fragments for document issued correctly with DID & using DID identity proof, but not revoked on a document store", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
-      network: "goerli",
+      network: "sepolia",
     });
     const fragments = await customVerify(v2DidSignedRevocationStoreNotRevoked);
     expect(fragments).toMatchInlineSnapshot(`
@@ -1007,7 +1007,7 @@ describe("verify(integration)", () => {
   });
 
   it("should return valid fragments for document issued correctly with DID & using DNS-DID identity proof, but not revoked on a document store", async () => {
-    const fragments = await verifyGoerli(v2DnsDidSignedRevocationStoreNotRevoked);
+    const fragments = await verifySepolia(v2DnsDidSignedRevocationStoreNotRevoked);
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1091,7 +1091,7 @@ describe("verify(integration)", () => {
 
   it("should return invalid fragments for DID documents that have been revoked", async () => {
     const customVerify = verificationBuilder([...openAttestationVerifiers, openAttestationDidIdentityProof], {
-      network: "goerli",
+      network: "sepolia",
     });
     const fragments = await customVerify(v2DidSignedRevocationStoreButRevoked);
     expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
@@ -1110,11 +1110,11 @@ describe("verify(integration)", () => {
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0xe62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -1127,7 +1127,7 @@ describe("verify(integration)", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0xe62bfe652b62efc1918662c284a4cc531e665c7e73ee32304469723ca11698ab has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -1137,7 +1137,7 @@ describe("verify(integration)", () => {
   });
 
   it("should return invalid fragments for DID documents, using DNS-DID identity proof that have been revoked", async () => {
-    const fragments = await verifyGoerli(v2DnsDidSignedRevocationStoreButRevoked);
+    const fragments = await verifySepolia(v2DnsDidSignedRevocationStoreButRevoked);
     expect(isValid(fragments, ["DOCUMENT_STATUS"])).toStrictEqual(false);
     expect(isValid(fragments, ["DOCUMENT_INTEGRITY"])).toStrictEqual(true);
     expect(isValid(fragments, ["ISSUER_IDENTITY"])).toStrictEqual(true);
@@ -1154,11 +1154,11 @@ describe("verify(integration)", () => {
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "reason": Object {
                     "code": 5,
                     "codeString": "DOCUMENT_REVOKED",
-                    "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                    "message": "Document 0x03c52b529aef3c2a90f497050ea4b72b9e6d8f09a82d295745921a647fc66a1d has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   },
                   "revoked": true,
                 },
@@ -1171,7 +1171,7 @@ describe("verify(integration)", () => {
           "reason": Object {
             "code": 5,
             "codeString": "DOCUMENT_REVOKED",
-            "message": "Document 0x3752f29527952e7ccc6bf4da614d80f2fec9e5bd8b71adf10beb4e6763e6c233 has been revoked under contract 0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+            "message": "Document 0x03c52b529aef3c2a90f497050ea4b72b9e6d8f09a82d295745921a647fc66a1d has been revoked under contract 0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
           },
           "status": "INVALID",
           "type": "DOCUMENT_STATUS",
@@ -1182,13 +1182,13 @@ describe("verify(integration)", () => {
 
   it("should return the correct fragments even when process.env is used for out of the box verify for document with document store", async () => {
     // simulate loading process.env from .env file
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
     process.env.PROVIDER_ENDPOINT_TYPE = "infura";
     const defaultBuilderOption = {
       network: process.env.PROVIDER_NETWORK || "homestead",
     };
     const verification = verificationBuilder(openAttestationVerifiers, defaultBuilderOption);
-    const fragments = await verification(documentGoerliValidWithDocumentStore);
+    const fragments = await verification(documentSepoliaValidWithDocumentStore);
     expect(fragments).toMatchInlineSnapshot(`
       Array [
         Object {
@@ -1212,13 +1212,13 @@ describe("verify(integration)", () => {
             "details": Object {
               "issuance": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "issued": true,
                 },
               ],
               "revocation": Array [
                 Object {
-                  "address": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+                  "address": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
                   "revoked": false,
                 },
               ],
@@ -1243,9 +1243,9 @@ describe("verify(integration)", () => {
         Object {
           "data": Array [
             Object {
-              "location": "demo-tradetrust.openattestation.com",
+              "location": "example.openattestation.com",
               "status": "VALID",
-              "value": "0x49b2969bF0E4aa822023a9eA2293b24E4518C1DD",
+              "value": "0xe943C95f456DA8e17c6d1a915eCF1a6ef0a182a8",
             },
           ],
           "name": "OpenAttestationDnsTxtIdentityProof",
@@ -1268,7 +1268,7 @@ describe("verify(integration)", () => {
 
   it("should return the correct fragments when using process.env variables for did resolver", async () => {
     // simulate loading process.env from .env file
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
     process.env.PROVIDER_ENDPOINT_TYPE = "infura";
     const defaultBuilderOption = {
       network: process.env.PROVIDER_NETWORK || "homestead",

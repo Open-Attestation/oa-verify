@@ -1,26 +1,25 @@
 import { v3 } from "@tradetrust-tt/tradetrust";
-import { ethers } from "ethers";
+import { ethers, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import { openAttestationDidIdentityProof } from "../verifiers/issuerIdentity/did/didIdentityProof";
 import { verificationBuilder } from "../verifiers/verificationBuilder";
-import { createResolver, EthrResolverConfig, getProviderConfig, resolve } from "./resolver";
+import { getProviderConfig, resolve } from "./resolver";
+import { Resolver } from "did-resolver";
+import { getResolver } from "ethr-did-resolver";
 
 const didDoc = {
-  "@context": [
-    "https://www.w3.org/ns/did/v1",
-    "https://identity.foundation/EcdsaSecp256k1RecoverySignature2020/lds-ecdsa-secp256k1-recovery2020-0.0.jsonld",
-  ],
-  assertionMethod: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
-  id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+  "@context": ["https://www.w3.org/ns/did/v1", "https://w3id.org/security/suites/secp256k1recovery-2020/v2"],
+  assertionMethod: ["did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
+  id: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
   verificationMethod: [
     {
-      id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
+      id: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
       type: "EcdsaSecp256k1RecoveryMethod2020",
-      controller: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      blockchainAccountId: "0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457@eip155:5",
+      controller: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      blockchainAccountId: "eip155:11155111:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     },
   ],
-  authentication: ["did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
+  authentication: ["did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller"],
 };
 
 // this document has been created using:
@@ -37,7 +36,7 @@ const v3DidSigned = {
   ],
   issuanceDate: "2010-01-01T19:23:24Z",
   issuer: {
-    id: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+    id: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     name: "anyway",
   },
   type: ["VerifiableCredential", "Name"],
@@ -49,14 +48,14 @@ const v3DidSigned = {
     proof: {
       type: "OpenAttestationProofMethod",
       method: "DID",
-      value: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      value: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
       revocation: {
         type: "NONE",
       },
     },
     identityProof: {
       type: "DID",
-      identifier: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      identifier: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
     },
   },
   proof: {
@@ -70,35 +69,46 @@ const v3DidSigned = {
     privacy: {
       obfuscated: [],
     },
-    key: "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
+    key: "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457#controller",
     signature:
       "0x7ffae45f4527cafa40866736ddeda7941ce46ce4b5395c0cb8c5064064f2aa624a1e062579cdc42e51b1e65f2f9eddd6634219047d3fc449a72e097181a920b31b",
   },
 } as v3.SignedWrappedDocument;
 
-const customConfig: EthrResolverConfig = {
-  networks: [{ name: "goerli", rpcUrl: `https://goerli.infura.io/v3/${INFURA_API_KEY}` }],
+const sepoliaNetworkConfig = {
+  name: "sepolia",
+  chainId: 11155111,
+  provider: new providers.InfuraProvider("sepolia"),
+  registry: "0x03d5003bf0e79C5F5223588F347ebA39AfbC3818",
 };
 
 describe("custom resolver", () => {
   it("should resolve did using resolver", async () => {
     const did = await resolve(
-      "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
-      createResolver({ ethrResolverConfig: customConfig })
+      "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+      new Resolver(
+        getResolver({
+          networks: [sepoliaNetworkConfig],
+        })
+      )
     );
     expect(did).toEqual(didDoc);
   });
 
   it("should resolve did using verifier", async () => {
     const verify = verificationBuilder([openAttestationDidIdentityProof], {
-      provider: new ethers.providers.JsonRpcProvider({ url: customConfig.networks[0].rpcUrl }),
-      resolver: createResolver({ ethrResolverConfig: customConfig }),
+      provider: new ethers.providers.JsonRpcProvider({ url: `https://sepolia.infura.io/v3/${INFURA_API_KEY}` }),
+      resolver: new Resolver(
+        getResolver({
+          networks: [sepoliaNetworkConfig],
+        })
+      ),
     });
     const fragment = await verify(v3DidSigned);
     expect(fragment[0]).toMatchInlineSnapshot(`
       Object {
         "data": Object {
-          "did": "did:ethr:goerli:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
+          "did": "did:ethr:sepolia:0x0cE1854a3836daF9130028Cf90D6d35B1Ae46457",
           "verified": true,
         },
         "name": "OpenAttestationDidIdentityProof",
@@ -128,16 +138,16 @@ describe("getProviderConfig", () => {
 
   it("should use env variables for provider config properties for didResolver", () => {
     process.env.PROVIDER_ENDPOINT_TYPE = "alchemy";
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
 
     expect(getProviderConfig()).toEqual({
-      networks: [{ name: "goerli", rpcUrl: "https://eth-goerli.alchemyapi.io/v2/_gg7wSSi0KMBsdKnGVfHDueq6xMB9EkC" }],
+      networks: [{ name: "sepolia", rpcUrl: "https://eth-sepolia.g.alchemy.com/v2/" }],
     });
   });
 
   it("should set default when provider type is jsonrpc", () => {
     process.env.PROVIDER_ENDPOINT_TYPE = "jsonrpc";
-    process.env.PROVIDER_NETWORK = "goerli";
+    process.env.PROVIDER_NETWORK = "sepolia";
 
     expect(getProviderConfig()).toEqual({
       networks: [{ name: "mainnet", rpcUrl: "https://mainnet.infura.io/v3/bb46da3f80e040e8ab73c0a9ff365d18" }],

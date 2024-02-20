@@ -7,7 +7,7 @@ import { openAttestationHash } from "./openAttestationHash";
 
 const validV3Document = sampleWrappedV3 as WrappedDocument<v3.OpenAttestationDocument>;
 
-const verify = verificationBuilder([openAttestationHash], { network: "goerli" });
+const verify = verificationBuilder([openAttestationHash], { network: "sepolia" });
 
 describe("OpenAttestationHash", () => {
   describe("v2", () => {
