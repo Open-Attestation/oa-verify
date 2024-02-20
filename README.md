@@ -1,40 +1,58 @@
-[![CircleCI](https://circleci.com/gh/Open-Attestation/oa-verify.svg?style=svg)](https://circleci.com/gh/Open-Attestation/oa-verify)
+# OpenAttestation (Verify)
 
-# Open Attestation (Verify)
-
-The [Open Attestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository is the codebase for the npm module that allows you to verify [wrapped document](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. Some common use cases where you will need this module:
+Using the [OpenAttestation (Verify)](https://github.com/Open-Attestation/oa-verify) repository as the codebase for the `npm` module, you can verify [wrapped documents](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents) programmatically. This is useful if you are building your own API or web components. The following are common use cases where you will need this module:
 
 - [Verifying a document](#verifying-a-document)
-- [Building custom verifier](#custom-verification)
-- [Building custom validation](#custom-validation)
+- [Building a custom verifier](#custom-verification)
+- [Adding custom validation](#custom-validation)
 
-This module does not provide the following functionality:
+This module does not provide the following functionalities:
 
-- Programmatic wrapping of OA documents (refer to [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents))
-- Encryption or decryption of OA documents (refer to [Open Attestation (Encryption)](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation-encryption))
-- Programmatic issuance/revocation of document on the Ethereum blockchain
+- Programmatic wrapping of OA documents (refer to [OpenAttestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#wrapping-documents))
+- Encryption or decryption of OA documents (refer to [OpenAttestation (Encryption)](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation-encryption))
+- Programmatic issuance or revocation of any document on the Ethereum blockchain
+
+## Verification flow
+
+In brief, the verification flow runs three checks on the document:
+
+1. The document integrity check
+1. The issuance status check
+1. The issuance identity check
+
+Only when it passes all three checks, will it count as a valid OA document.
+
+### Ethereum
+
+The diagram below shows the verification flow on OA documents issued using the Ethereum method:
+
+![Verify OA documents issued using Ethereum](./diagram/verifiable-docs-eth.light.svg)
+
+### DID
+
+The diagram below shows the verification flow on OA documents issued using the DID method:
+
+![Verify OA documents issued using DID](./diagram/verifiable-docs-did.light.svg)
 
 ## Installation
+
+To install OpenAttestation (Verify) on your machine, run the command below:
 
 ```bash
 npm i @govtechsg/oa-verify
 ```
 
----
-
 ## Usage
 
 ### Verifying a document
 
-A verification happens on a wrapped document, and it consists of answering to some questions:
+A verification happens on a wrapped document, which performs the following checks:
 
-- Has the document been tampered with ?
-- Is the issuance state of the document valid ?
-- Is the document issuer identity valid ? (see [identity proof](https://www.openattestation.com/docs/docs-section/how-does-it-work/issuance-identity))
+- Has the document been tampered with?
+- Is the issuance state of the document valid?
+- Is the document issuer identity valid? (See [identity proof](https://www.openattestation.com/docs/docs-section/how-does-it-work/issuance-identity))
 
-A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation) would be required.
-
-> **NOTE:** The document shown below is valid and has been issued on the sepolia network
+The verification requires a wrapped document created using [OpenAttestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation). The following shows an example of a wrapped document, which is valid and has been issued on the sepolia network.
 
 ```json
 {
@@ -79,7 +97,7 @@ A wrapped document (shown below) created using [Open Attestation](https://www.op
 }
 ```
 
-To perform verification check on the document:
+To perform the verification checks on the document, use the following code:
 
 ```ts
 // index.ts
@@ -93,60 +111,72 @@ console.log(isValid(fragments)); // output true
 
 ### Custom verification
 
-By default the provided `verify` method performs multiple checks on a document
+By default, the provided `verify` method performs multiple checks on a document.
 
-- for the type `DOCUMENT_STATUS`: it runs `OpenAttestationEthereumDocumentStoreStatus`, `OpenAttestationEthereumTokenRegistryStatus` and `DidSignedDocumentStatus` verifiers
-- for the type `DOCUMENT_INTEGRITY`: it runs `OpenAttestationHash` verifier
-- for the type `ISSUER_IDENTITY`: it runs `OpenAttestationDnsTxt` and `DnsDidProof` verifiers
+- The type `DOCUMENT_STATUS` runs these verifiers:
+
+  - `OpenAttestationEthereumDocumentStoreStatus`
+  - `OpenAttestationEthereumTokenRegistryStatus`
+  - `DidSignedDocumentStatus`
+
+- The type `DOCUMENT_INTEGRITY` runs this verifier:
+
+  - `OpenAttestationHash`
+
+- The type `ISSUER_IDENTITY` runs these verifiers:
+  - `OpenAttestationDnsTxt`
+  - `DnsDidProof`
 
 All those verifiers are exported as `openAttestationVerifiers`
 
-You can build your own verify method or your own verifiers:
+You can build your own verification method based on the default exported verifiers:
 
 ```ts
-// creating your own verify using default exported verifiers
+// creating your own verification method using default exported verifiers
 import { verificationBuilder, openAttestationVerifiers } from "@govtechsg/oa-verify";
 
-const verify1 = verificationBuilder(openAttestationVerifiers, { network: "sepolia" }); // this verify is equivalent to the one exported by the library
-// this verify is equivalent to the one exported by the library
+const verify1 = verificationBuilder(openAttestationVerifiers, { network: "sepolia" }); // this verification is equivalent to the one exported by the library
+
 const verify2 = verificationBuilder([openAttestationVerifiers[0], openAttestationVerifiers[1]], {
   network: "sepolia",
-}); // this verify only run 2 verifiers
+}); // this verification only runs 2 verifiers
 ```
 
+You can also build your own verification method based on the custom verifiers:
+
 ```ts
-// creating your own verify using custom verifier
+// creating your own verification using custom verifier
 import { verificationBuilder, openAttestationVerifiers, Verifier } from "@govtechsg/oa-verify";
 const customVerifier: Verifier<any> = {
   skip: () => {
-    // return a SkippedVerificationFragment if the verifier should be skipped or throw an error if it should always run
+    // returns a SkippedVerificationFragment if the verifier should be skipped or throws an error if it should always run
   },
   test: () => {
-    // return true or false
+    // returns true or false
   },
   verify: async (document) => {
-    // perform checks and returns a fragment
+    // performs checks and returns a fragment
   },
 };
 
-// create your own verify function with all verifiers and your custom one
+// creates your own verify function with all verifiers and your custom one
 const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "sepolia" });
 ```
 
-Refer to [Extending Custom Verification](#extending-custom-verification) to find out more on how to create your own custom verifier.
+Refer to the [Extending custom verification](#extending-custom-verification) section to find out more on how to create your own custom verifier.
 
 ### Custom validation
 
-Fragments would be produced after verifying a document. Each fragment will help to determine if the individual type mentioned [here](#custom-verification) is valid or not, and would collectively prove the validity of the document.
+Fragments will be produced after verifying a document. Each fragment will determine if the individual type mentioned [here](#custom-verification) is valid or not, and will collectively prove the validity of the document.
 
-The `isValid` function will execute over fragments and determine if the fragments produced a valid result. By default the function will return true if a document fulfill the following conditions:
+The `isValid` function will execute over fragments and determine if the fragments produced a valid result. By default, the function will return `true` if a document fulfils all the following conditions:
 
-- The document has NOT been tampered, AND
-- The document has been issued, AND
-- The document has NOT been revoked, AND
-- The issuer identity is valid.
+- The document has NOT been tampered.
+- AND The document has been issued.
+- AND The document has NOT been revoked.
+- AND The issuer identity is valid.
 
-The function also allows a list of types to check for as a second parameter.
+In the function, a list of types also checks for as a second parameter.
 
 ```ts
 // index.ts
@@ -161,18 +191,22 @@ const fragments = await verify(document as any);
 
 console.log(isValid(fragments, ["DOCUMENT_INTEGRITY"])); // output true
 console.log(isValid(fragments, ["DOCUMENT_STATUS"])); // output false
-console.log(isValid(fragments, ["ISSUER_IDENTITY"])); // outpute false
+console.log(isValid(fragments, ["ISSUER_IDENTITY"])); // output false
 console.log(isValid(fragments)); // output false
 ```
 
-- `isValid(fragments, ["DOCUMENT_INTEGRITY"])` returns true because the integrity of the document is not dependent on the network it has been published to.
-- `isValid(fragments, ["DOCUMENT_STATUS"])` returns false because the document has not been published on Ethereum main network.
-- `isValid(fragments, ["ISSUER_IDENTITY"])` returns false because there is no [DNS-TXT record](https://www.openattestation.com/docs/integrator-section/verifiable-document/ethereum/dns-proof) associated with the Ethereum main network's document store.
-- `isValid(fragments)` returns false because at least one of the above returns false.
+The following explains what the functions return with reasons:
 
-### Listening to individual verification method
+- `isValid(fragments, ["DOCUMENT_INTEGRITY"])` returns `true` because the integrity of the document is not dependent on the network where it has been published.
+- `isValid(fragments, ["DOCUMENT_STATUS"])` returns `false` because the document has not been published on the Ethereum main network.
+- `isValid(fragments, ["ISSUER_IDENTITY"])` returns `false` because there is no [DNS TXT record](https://www.openattestation.com/docs/integrator-section/verifiable-document/ethereum/dns-proof) associated with the Ethereum main network's document store.
+- `isValid(fragments)` returns `false` because at least one of the above returns false.
 
-The `verify` function provides an option to listen to individual verification methods. It might be useful if you want, for instance, to provide individual loaders on your UI.
+### Listening to an individual verification method
+
+The `verify` function provides an option that listens to individual verification methods. It can be useful if you want, for instance, to provide individual loaders on your UI.
+
+The following is a code example with that option:
 
 ```ts
 // index.ts
@@ -200,20 +234,21 @@ console.log(isValid(fragments)); // output true
 
 ## Advanced usage
 
-### Extending Custom Verification
+### Extending custom verification
 
-Extending from [Custom Verification](#custom-verification) section, we will learn how to write custom verification methods and how you can distribute your own verifier.
+Extending from the [Custom verification](#custom-verification) section, you will learn how to write custom verification methods and how to distribute your own verifier.
 
 #### Building a custom verification method
 
-We will write a verification method having the following rules:
+You will write a verification method with the following rules:
 
-1. it must run only on document having their version equal to `https://schema.openattestation.com/2.0/schema.json`.
-1. it must return a valid fragment, if and only if the document data hold a name property with the value `Certificate of Completion`
+1. It must run only on documents with their version equal to `https://schema.openattestation.com/2.0/schema.json`
 
-**Document version must be equal to `https://schema.openattestation.com/2.0/schema.json`**
+1. It must return a valid fragment, only if the document data hold a `name` property with the value `Certificate of Completion`
 
-This is where `skip` and `test` methods come into play. We will use the `test` method to return when the verification method run, and the `skip` method to explain why it didn't run:
+##### Document version
+
+This is where `skip` and `test` methods are needed. You will use the `test` method to return when the verification method was running and the `skip` method to explain why it wasn't:
 
 ```ts
 // index.ts
@@ -238,11 +273,11 @@ const customVerifier: Verifier<any> = {
 };
 ```
 
-> we use `DOCUMENT_INTEGRITY` type because we check for the content of the document.
+> **Note:** Use the `DOCUMENT_INTEGRITY` type to check the document content.
 
-**Document holds correct `name` property**
+##### The `name` property
 
-Once we have decided `when` the verification method run, it's time to write the logic of the verifier in the `verify` method. We will use [getData](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#retrieving-document-data) utility to access the data of the document and return the appropriate fragment depending on the content:
+Once you have decided `when` the verification method will run, you need to write the logic of the verifier in the `verify` method. You will use the [getData](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation#retrieving-document-data) utility to access the document data and return the appropriate fragment depending on the content:
 
 ```ts
 // index.ts
@@ -282,11 +317,11 @@ const customVerifier: Verifier<any> = {
 
 #### Building a custom verify method
 
-The `verify` function is built to run a list of verification method. Each verifier will produce a fragment that will help to determine if the document is valid. OpenAttestation comes with its own set of verification methods available in `openAttestationVerifiers`.
+The `verify` function is built to run a list of verification methods. Each verifier will produce a fragment that determines if the document is valid. OpenAttestation has its own set of verification methods in `openAttestationVerifiers`.
 
-The `verificationBuilder` function helps you to create custom verification method. You can reuse the default one exported by the library.
+Using the `verificationBuilder` function, you can create custom verification methods and reuse the default method exported from the library.
 
-Extending from what have been mentioned in [Custom Verification](#custom-verification), let's now build a new verifier using our custom verification method:
+Extending from the [Custom verification](#custom-verification) section, you will build a new verifier using the custom verification method below:
 
 ```ts
 // index.ts
@@ -294,7 +329,7 @@ import { verificationBuilder, openAttestationVerifiers, Verifier, isValid } from
 import { getData } from "@govtechsg/open-attestation";
 import document from "./document.json";
 
-// our custom verifier will be valid only if the document version is not https://schema.openattestation.com/2.0/schema.json
+// based on the test condition specified below, your custom verifier will only check documentData.name if document.version is equal to https://schema.openattestation.com/2.0/schema.json
 const customVerifier: Verifier<any> = {
   skip: async () => {
     return {
@@ -342,7 +377,7 @@ console.log(isValid(fragments)); // return false
 console.log(fragments.find((fragment: any) => fragment.name === "CustomVerifier")); // display the details on our specific verifier
 ```
 
-The document that we [created](#verifying-a-document) is not valid against our own verifier because the name property does not exist. Try again with the following document:
+The document you [created](#verifying-a-document) is not valid according to your own verifier, because the `name` property does not exist. Test again with the following document:
 
 ```json
 {
@@ -372,35 +407,46 @@ The document that we [created](#verifying-a-document) is not valid against our o
 
 ### Environment variables
 
-- `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
-- `PROVIDER_ENDPOINT_URL`: let you provide your preferred JSON-RPC HTTP API URL.
-- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "sepolia".
-- `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "jsonrpc".
+- `PROVIDER_API_KEY`: You can provide your own PROVIDER API key.
+- `PROVIDER_ENDPOINT_URL`: You can provide your preferred JSON-RPC HTTP API URL.
+- `PROVIDER_NETWORK`: You can specify the network to use, i.e. "homestead", "mainnet", or "sepolia".
+- `PROVIDER_ENDPOINT_TYPE`: You can specify the provider to use, i.e. "infura", "alchemy", or "jsonrpc".
 
-_Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
+  - Supported providers include:
+    - Infura
+    - EtherScan
+    - Alchemy
+    - JSON-RPC
 
 ### Switching network
 
-You may build the verifier to verify against a custom network by either:
+You may build the verifier to check against a custom network with either way:
 
-1. providing your own web3 provider
-2. specifying the network name (provider will be using the default ones)
+1. Providing your own Web3 provider
 
-To provide your own provider:
+2. Specifying the network name
+
+   In this way, the provider will be using the default one.
+
+#### Provider
+
+The following code example shows how you can specify a custom provider:
 
 ```ts
 const verify = verificationBuilder(openAttestationVerifiers, { provider: customProvider });
 ```
 
-To specify network:
+#### Network
+
+The following code example shows how you can specify the network:
 
 ```ts
 const verify = verificationBuilder(openAttestationVerifiers, { network: "sepolia" });
 ```
 
-### Specify resolver
+### Specifying the resolver
 
-`oa-verify` exposes a method, called `createResolver` that allows you to easily create custom resolvers, to resolve DIDs:
+Using the exposed `createResolver` method, you can easily create custom resolvers to resolve DIDs:
 
 ```ts
 import { createResolver, verificationBuilder, openAttestationVerifiers } from "@govtechsg/oa-verify";
@@ -412,27 +458,32 @@ const resolver = createResolver({
 const verify = verificationBuilder(openAttestationVerifiers, { resolver });
 ```
 
-At the moment, oa-verify supports two did resolvers:
+At the moment, `oa-verify` supports two DID resolvers:
 
 - [web-did-resolver](https://github.com/decentralized-identity/web-did-resolver#readme)
-- [ethd-did-resolver](https://github.com/decentralized-identity/ethr-did-resolver)
+- [ethr-did-resolver](https://github.com/decentralized-identity/ethr-did-resolver)
 
 ---
 
 ## Provider
 
-You may generate a provider using the provider generator, it supports `INFURA`, `ALCHEMY`, `ETHERSCAN` and `JsonRPC` provider.
+You can generate a provider using the provider generator, which supports these providers:
+
+- `INFURA`
+- `ALCHEMY`
+- `ETHERSCAN`
+- `JsonRPC`
 
 It requires a set of options:
 
-- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "sepolia".
-- `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy" or "jsonrpc".
-- `url`: The _url_ may be specified as a **string** in which is being used to connect to a JSON-RPC HTTP API
-- `apiKey`: The _apiKey_ may be specified as a **string** for use together with the provider. If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
+- `network`: Specified as a **string** for a common network name, i.e. "homestead", "mainnet", or "sepolia"
+- `provider`: Specified as a **string**, i.e. "infura", "alchemy", or "jsonrpc"
+- `url`: Specified as a **string**, which is being used to connect to a JSON-RPC HTTP API
+- `apiKey`: Specified as a **string** to be used together with the provider. If no value is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
 
 ### Example
 
-The most basic way to use:
+The following shows a basic use case of `provider`:
 
 ```ts
 import { utils } from "@govtechsg/oa-verify";
@@ -440,7 +491,9 @@ const provider = utils.generateProvider();
 // This will generate an infura provider using the default values.
 ```
 
-Alternate way 1 (with environment variables):
+#### Alternate method 1
+
+This method uses the environment variables:
 
 ```ts
 // environment file
@@ -455,7 +508,9 @@ const provider = utils.generateProvider();
 // This will use the environment variables declared in the files automatically.
 ```
 
-Alternate way 2 (passing values in as parameters):
+#### Alternate method 2
+
+This method passes in the values as parameters:
 
 ```ts
 import { utils } from "@govtechsg/oa-verify";
@@ -466,7 +521,7 @@ const providerOptions = {
 };
 const provider = utils.generateProvider(providerOptions);
 // This will generate a provider based on the options provided.
-// NOTE: by using this way, it will override all environment variables and default values.
+// Note: Using this declaration will override all environment variables and default values.
 ```
 
 ---
@@ -475,20 +530,20 @@ const provider = utils.generateProvider(providerOptions);
 
 ### Overview
 
-Various utilities and types are available to assert the correctness of fragments. Each verification method exports types for the fragment, and the data associated with the fragment.
+Various utilities and types are available to assert the correctness of fragments. Each verification method exports types for the fragment and the data associated with the fragment.
 
-- fragment types are available in 4 flavors: `VALID`, `INVALID`, `SKIPPED`, and `ERROR`.
-- `VALID` and `INVALID` fragment data are available in 2 flavors most of the time, one for each version of `OpenAttestation`.
+- Fragment types are available in four flavors: `VALID`, `INVALID`, `SKIPPED`, and `ERROR`.
+- `VALID` and `INVALID` fragment data are available in two flavors most of the time, one for each version of `OpenAttestation` (V2 or V3).
 
 This library provides types and utilities to:
 
-- get a specific fragment from all the fragments returned by the `verify` method
-- narrow down to a specific type of fragment
-- narrow down to a specific fragment data
-
-Let's see how to use it
+- Get a specific fragment from all fragments returned by the `verify` method.
+- Narrow down to a specific type of fragment.
+- Narrow down to specific data from the fragment.
 
 ### Example
+
+The following code example shows the usage:
 
 ```ts
 import { utils } from "@govtechsg/oa-verify";
@@ -505,7 +560,7 @@ if (utils.isValidFragment(fragment)) {
 }
 ```
 
-Note that in the example above, using `utils.isValidFragment` might be unnecessary. It's possible to use directly `ValidTokenRegistryDataV2.guard` over the data.
+> **Note:** In the example above, it may be unnecessary to use `utils.isValidFragment`, as it's possible to use `ValidTokenRegistryDataV2.guard` directly over the data.
 
 ### List of utilities
 
@@ -519,10 +574,10 @@ Note that in the example above, using `utils.isValidFragment` might be unnecessa
 - `getDocumentIntegrityFragments`
 - `getDocumentStatusFragments`
 - `getIssuerIdentityFragments`
-- `isValidFragment`: type guard to filter only `VALID` fragment type
-- `isInvalidFragment`: type guard to filter only `INVALID` fragment type
-- `isErrorFragment`: type guard to filter only `ERROR` fragment type
-- `isSkippedFragment`: type guard to filter only `SKIPPED` fragment type
+- `isValidFragment`: Type guard to filter only the `VALID` fragment type
+- `isInvalidFragment`: Type guard to filter only the `INVALID` fragment type
+- `isErrorFragment`: Type guard to filter only the `ERROR` fragment type
+- `isSkippedFragment`: Type guard to filter only the `SKIPPED` fragment type
 
 ---
 
@@ -542,13 +597,13 @@ Note that in the example above, using `utils.isValidFragment` might be unnecessa
 
 ## Development
 
-To run tests
+To run tests, use the following command:
 
 ```
 npm run test
 ```
 
-To generate test documents (for v3), you may use the script at `scripts/generate.v3.ts` and run the command
+To generate test documents (for V3), use the script at `scripts/generate.v3.ts` and run the following command:
 
 ```
 npm run generate:v3
@@ -556,9 +611,9 @@ npm run generate:v3
 
 ## License
 
-[GPL-3.0](https://www.gnu.org/licenses/gpl-3.0.html)
+OpenAttestation (Verify) is under the [Apache license, version 2.0](https://www.apache.org/licenses/LICENSE-2.0).
 
 ## Additional information
 
-- For Verification SDK implementation follow our [Verifier ADR](https://github.com/Open-Attestation/adr/blob/master/verifier.md).
-- Found a bug ? Having a question ? Want to share an idea ? Reach us out on the [Github repository](https://github.com/Open-Attestation/oa-verify).`
+- For more information on the verification SDK implementation, follow the [Verifier ADR](https://github.com/Open-Attestation/adr/blob/master/verifier.md).
+- If you find a bug, have a question, or want to share an idea, reach us at our [Github repository](https://github.com/Open-Attestation/oa-verify).
