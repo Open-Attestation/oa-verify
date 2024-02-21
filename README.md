@@ -26,13 +26,13 @@ Only when it passes all three checks, will it count as a valid OA document.
 
 The diagram below shows the verification flow on OA documents issued using the Ethereum method:
 
-![Verify OA documents issued using Ethereum](./diagram/verifiable-docs-eth.light.svg)
+![Verify OA documents issued using Ethereum](https://raw.githubusercontent.com/Open-Attestation/oa-verify/master/diagram/verifiable-docs-eth.light.svg)
 
 ### DID
 
 The diagram below shows the verification flow on OA documents issued using the DID method:
 
-![Verify OA documents issued using DID](./diagram/verifiable-docs-did.light.svg)
+![Verify OA documents issued using DID](https://raw.githubusercontent.com/Open-Attestation/oa-verify/master/diagram/verifiable-docs-did.light.svg)
 
 ## Installation
 
