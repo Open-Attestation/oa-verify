@@ -52,7 +52,7 @@ A verification happens on a wrapped document, which performs the following check
 - Is the issuance state of the document valid?
 - Is the document issuer identity valid? (See [identity proof](https://www.openattestation.com/docs/verify-section/issuance-identity))
 
-The verification requires a wrapped document created using [OpenAttestation](https://www.openattestation.com/docs/lib-section/remote-files/open-attestation). The following shows an example of a wrapped document, which is valid and has been issued on the sepolia network.
+The verification requires a wrapped document created using [OpenAttestation](https://www.openattestation.com/docs/lib-section/remote-files/open-attestation). The following shows an example of a wrapped document, which is valid and has been issued on the Sepolia network.
 
 ```json
 {
