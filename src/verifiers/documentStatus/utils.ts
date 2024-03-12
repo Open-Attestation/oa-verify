@@ -1,7 +1,5 @@
 import { utils } from "@govtechsg/open-attestation";
-import { DocumentStore } from "@govtechsg/document-store";
-import { errors, providers } from "ethers";
-import { DocumentStoreFactory } from "@govtechsg/document-store";
+import { Contract, errors, providers } from "ethers";
 import { Hash } from "../../types/core";
 import {
   OpenAttestationEthereumDocumentStoreStatusCode,
@@ -11,6 +9,8 @@ import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
 import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
+import { isBatchableDocumentStore } from "../../common/utils";
+import { getDocumentStore } from "../../common/contracts";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -79,14 +79,24 @@ export const isRevokedOnDocumentStore = async ({
   merkleRoot: string;
   provider: providers.Provider;
   targetHash: Hash;
-  proofs?: Hash[];
+  proofs: Hash[];
 }): Promise<RevocationStatus> => {
   try {
-    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
-    const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-    const revokedHash = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+    const documentStoreContract = getDocumentStore(documentStore, provider);
+    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+    let revoked: boolean;
+    if (isBatchable) {
+      revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
+        merkleRoot,
+        targetHash,
+        proofs
+      )) as boolean;
+    } else {
+      const intermediateHashes = getIntermediateHashes(targetHash, proofs);
+      revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+    }
 
-    return revokedHash
+    return revoked
       ? {
           revoked: true,
           address: documentStore,
