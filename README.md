@@ -34,7 +34,7 @@ A verification happens on a wrapped document, and it consists of answering to so
 
 A wrapped document (shown below) created using [Open Attestation](https://www.openattestation.com/docs/developer-section/libraries/remote-files/open-attestation) would be required.
 
-> **NOTE:** The document shown below is valid and has been issued on the sepolia network
+> **NOTE:** The document shown below is valid and has been issued on the goerli network
 
 ```json
 {
@@ -107,10 +107,10 @@ You can build your own verify method or your own verifiers:
 // creating your own verify using default exported verifiers
 import { verificationBuilder, openAttestationVerifiers } from "@tradetrust-tt/tt-verify";
 
-const verify1 = verificationBuilder(openAttestationVerifiers, { network: "sepolia" }); // this verify is equivalent to the one exported by the library
+const verify1 = verificationBuilder(openAttestationVerifiers, { network: "goerli" }); // this verify is equivalent to the one exported by the library
 // this verify is equivalent to the one exported by the library
 const verify2 = verificationBuilder([openAttestationVerifiers[0], openAttestationVerifiers[1]], {
-  network: "sepolia",
+  network: "goerli",
 }); // this verify only run 2 verifiers
 ```
 
@@ -130,7 +130,7 @@ const customVerifier: Verifier<any> = {
 };
 
 // create your own verify function with all verifiers and your custom one
-const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "sepolia" });
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "goerli" });
 ```
 
 Refer to [Extending Custom Verification](#extending-custom-verification) to find out more on how to create your own custom verifier.
@@ -180,7 +180,7 @@ import { isValid, openAttestationVerifiers, verificationBuilder } from "@tradetr
 import * as document from "./document.json";
 
 const verify = verificationBuilder(openAttestationVerifiers, {
-  network: "sepolia",
+  network: "goerli",
 });
 
 const promisesCallback = (verificationMethods: any) => {
@@ -334,7 +334,7 @@ const customVerifier: Verifier<any> = {
 };
 
 // create your own verify function with all verifiers and your custom one
-const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "sepolia" });
+const verify = verificationBuilder([...openAttestationVerifiers, customVerifier], { network: "goerli" });
 
 const fragments = await verify(document);
 
@@ -374,7 +374,7 @@ The document that we [created](#verifying-a-document) is not valid against our o
 
 - `PROVIDER_API_KEY`: let you provide your own PROVIDER API key.
 - `PROVIDER_ENDPOINT_URL`: let you provide your preferred JSON-RPC HTTP API URL.
-- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "sepolia".
+- `PROVIDER_NETWORK`: let you specify the network to use, i.e. "homestead", "mainnet", "goerli".
 - `PROVIDER_ENDPOINT_TYPE`: let you specify the provider to use, i.e. "infura", "alchemy", "jsonrpc".
 
 _Provider that is supported: Infura, EtherScan, Alchemy, JSON-RPC_
@@ -395,7 +395,7 @@ const verify = verificationBuilder(openAttestationVerifiers, { provider: customP
 To specify network:
 
 ```ts
-const verify = verificationBuilder(openAttestationVerifiers, { network: "sepolia" });
+const verify = verificationBuilder(openAttestationVerifiers, { network: "goerli" });
 ```
 
 ### Specify resolver
@@ -425,7 +425,7 @@ You may generate a provider using the provider generator, it supports `INFURA`, 
 
 It requires a set of options:
 
-- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "sepolia".
+- `network`: The _network_ may be specified as a **string** for a common network name, i.e. "homestead", "mainnet", "goerli".
 - `provider`: The _provider_ may be specified as a **string**, i.e. "infura", "alchemy" or "jsonrpc".
 - `url`: The _url_ may be specified as a **string** in which is being used to connect to a JSON-RPC HTTP API
 - `apiKey`: The _apiKey_ may be specified as a **string** for use together with the provider. If no apiKey is provided, a default shared API key will be used, which may result in reduced performance and throttled requests.
@@ -444,7 +444,7 @@ Alternate way 1 (with environment variables):
 
 ```ts
 // environment file
-PROVIDER_NETWORK = "sepolia";
+PROVIDER_NETWORK = "goerli";
 PROVIDER_ENDPOINT_TYPE = "infura";
 PROVIDER_ENDPOINT_URL = "http://jsonrpc.com";
 PROVIDER_API_KEY = "ajdh1j23";
@@ -460,7 +460,7 @@ Alternate way 2 (passing values in as parameters):
 ```ts
 import { utils } from "@tradetrust-tt/tt-verify";
 const providerOptions = {
-  network: "sepolia",
+  network: "goerli",
   providerType: "infura",
   apiKey: "abdfddsfe23232",
 };
@@ -492,7 +492,7 @@ Let's see how to use it
 
 ```ts
 import { utils } from "@tradetrust-tt/tt-verify";
-const fragments = verify(documentValidWithCertificateStore, { network: "sepolia" });
+const fragments = verify(documentValidWithCertificateStore, { network: "goerli" });
 // return the correct fragment, correctly typed
 const fragment = utils.getOpenAttestationEthereumTokenRegistryStatusFragment(fragments);
 

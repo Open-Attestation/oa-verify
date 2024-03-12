@@ -1,7 +1,6 @@
 import { utils } from "@tradetrust-tt/tradetrust";
-import { DocumentStore } from "@tradetrust-tt/document-store";
+import { DocumentStore, DocumentStoreFactory } from "@tradetrust-tt/document-store";
 import { errors, providers } from "ethers";
-import { DocumentStoreFactory } from "@tradetrust-tt/document-store";
 import { Hash } from "../../types/core";
 import {
   OpenAttestationEthereumDocumentStoreStatusCode,
