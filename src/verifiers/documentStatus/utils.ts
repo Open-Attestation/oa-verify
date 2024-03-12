@@ -60,12 +60,12 @@ export const decodeError = (error: any) => {
 /**
  * Given a list of hashes, check against one smart contract if any of the hash has been revoked
  * */
-export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediateHashes: Hash[]) => {
+export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
   const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    smartContract.isRevoked(hash).then((status) => (status ? hash : undefined))
+    smartContract["isRevoked(bytes32)"](hash).then((status: boolean) => status)
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  return revokedStatuses.find((hash) => hash);
+  return !revokedStatuses.every((status) => !status);
 };
 
 export const isRevokedOnDocumentStore = async ({
