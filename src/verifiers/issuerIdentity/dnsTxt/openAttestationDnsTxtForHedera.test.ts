@@ -42,19 +42,19 @@ describe("verify", () => {
     it("should return a valid fragment when document has valid identity and uses document store", async () => {
       const fragment = await openAttestationDnsTxtIdentityProof.verify(documentHederaValidWithDocumentStore, options);
       expect(fragment).toMatchInlineSnapshot(`
-          Object {
-            "data": Array [
-              Object {
-                "location": "trustlv.org",
-                "status": "VALID",
-                "value": "0x3DE43bfd3D771931E46CbBd4EDE0D3d95C85f81A",
-              },
-            ],
-            "name": "OpenAttestationDnsTxtIdentityProof",
-            "status": "VALID",
-            "type": "ISSUER_IDENTITY",
-          }
-        `);
+        Object {
+          "data": Array [
+            Object {
+              "location": "trustlv.org",
+              "status": "VALID",
+              "value": "0x222B69788e2e9B7FB93a3a0fE258D4604Dc7df21",
+            },
+          ],
+          "name": "OpenAttestationDnsTxtIdentityProof",
+          "status": "VALID",
+          "type": "ISSUER_IDENTITY",
+        }
+      `);
     });
   });
 });
