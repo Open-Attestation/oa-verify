@@ -1,4 +1,4 @@
-import { providers } from "ethers";
+import { Contract, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
   ProviderDetails,
@@ -232,4 +232,13 @@ export const unhandledError = (fragments: VerificationFragment[]): boolean => {
       OpenAttestationEthereumDocumentStoreStatusCode.ETHERS_UNHANDLED_ERROR ||
     tokenRegistryMintedFragment?.reason?.code === OpenAttestationEthereumDocumentStoreStatusCode.ETHERS_UNHANDLED_ERROR
   );
+};
+
+export const isBatchableDocumentStore = async (contract: Contract): Promise<boolean> => {
+  try {
+    // Interface for DocumentStoreBatchable
+    return (await contract.supportsInterface("0xdcfd0745")) as boolean;
+  } catch {
+    return false;
+  }
 };
