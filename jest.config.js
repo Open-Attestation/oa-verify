@@ -6,4 +6,5 @@ module.exports = {
   moduleNameMapper: {
     axios: "axios/dist/node/axios.cjs", // Temporary workaround: Force Jest to import the CommonJS Axios build
   },
+  transformIgnorePatterns: ["node_modules/(?!(@govtechsg/document-store-ethers-v5)/)"],
 };
