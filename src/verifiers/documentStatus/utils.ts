@@ -1,4 +1,5 @@
 import { utils } from "@govtechsg/open-attestation";
+import { DocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
 import { Contract, errors, providers } from "ethers";
 import { Hash } from "../../types/core";
 import {
@@ -10,7 +11,6 @@ import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.ty
 import axios from "axios";
 import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
 import { isBatchableDocumentStore } from "../../common/utils";
-import { getDocumentStore } from "../../common/contracts";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -82,7 +82,7 @@ export const isRevokedOnDocumentStore = async ({
   proofs: Hash[];
 }): Promise<RevocationStatus> => {
   try {
-    const documentStoreContract = getDocumentStore(documentStore, provider);
+    const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
     const isBatchable = await isBatchableDocumentStore(documentStoreContract);
     let revoked: boolean;
     if (isBatchable) {

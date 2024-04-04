@@ -1,4 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { TransferableDocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
 import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
@@ -9,7 +10,6 @@ import {
   OpenAttestationEthereumTokenRegistryStatusFragment,
   ValidTokenRegistryStatus,
 } from "./ethereumTokenRegistryStatus.type";
-import { getTransferableDocumentStore } from "../../../common/contracts";
 
 type VerifierType = Verifier<OpenAttestationEthereumTokenRegistryStatusFragment>;
 
@@ -119,7 +119,7 @@ export const isTokenMintedOnRegistry = async ({
   provider: providers.Provider;
 }): Promise<ValidTokenRegistryStatus | InvalidTokenRegistryStatus> => {
   try {
-    const tokenRegistryContract = getTransferableDocumentStore(tokenRegistry, provider);
+    const tokenRegistryContract = TransferableDocumentStore__factory.connect(tokenRegistry, provider);
     const minted = await tokenRegistryContract
       .ownerOf(merkleRoot)
       .then((owner: string) => !(owner === constants.AddressZero));

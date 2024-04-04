@@ -1,4 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import { DocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
 import { providers } from "ethers";
 import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
@@ -14,7 +15,6 @@ import {
   ValidDocumentStoreIssuanceStatusArray,
 } from "./ethereumDocumentStoreStatus.type";
 import { isBatchableDocumentStore } from "../../../common/utils";
-import { getDocumentStore } from "../../../common/contracts";
 
 const name = "OpenAttestationEthereumDocumentStoreStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -48,7 +48,7 @@ export const isIssuedOnDocumentStore = async ({
   proofs: string[];
   provider: providers.Provider;
 }): Promise<DocumentStoreIssuanceStatus> => {
-  const documentStoreContract = getDocumentStore(documentStore, provider);
+  const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
 
   try {
     const isBatchable = await isBatchableDocumentStore(documentStoreContract);
