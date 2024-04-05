@@ -1,7 +1,6 @@
 import { utils } from "@govtechsg/open-attestation";
-import { DocumentStore } from "@govtechsg/document-store";
-import { errors, providers } from "ethers";
-import { DocumentStoreFactory } from "@govtechsg/document-store";
+import { DocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
+import { Contract, errors, providers } from "ethers";
 import { Hash } from "../../types/core";
 import {
   OpenAttestationEthereumDocumentStoreStatusCode,
@@ -11,6 +10,7 @@ import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
 import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
+import { isBatchableDocumentStore } from "../../common/utils";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -60,12 +60,12 @@ export const decodeError = (error: any) => {
 /**
  * Given a list of hashes, check against one smart contract if any of the hash has been revoked
  * */
-export const isAnyHashRevoked = async (smartContract: DocumentStore, intermediateHashes: Hash[]) => {
+export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
   const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    smartContract.isRevoked(hash).then((status) => (status ? hash : undefined))
+    smartContract["isRevoked(bytes32)"](hash).then((status: boolean) => status)
   );
   const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  return revokedStatuses.find((hash) => hash);
+  return !revokedStatuses.every((status) => !status);
 };
 
 export const isRevokedOnDocumentStore = async ({
@@ -79,14 +79,24 @@ export const isRevokedOnDocumentStore = async ({
   merkleRoot: string;
   provider: providers.Provider;
   targetHash: Hash;
-  proofs?: Hash[];
+  proofs: Hash[];
 }): Promise<RevocationStatus> => {
   try {
-    const documentStoreContract = await DocumentStoreFactory.connect(documentStore, provider);
-    const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-    const revokedHash = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+    const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
+    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+    let revoked: boolean;
+    if (isBatchable) {
+      revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
+        merkleRoot,
+        targetHash,
+        proofs
+      )) as boolean;
+    } else {
+      const intermediateHashes = getIntermediateHashes(targetHash, proofs);
+      revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+    }
 
-    return revokedHash
+    return revoked
       ? {
           revoked: true,
           address: documentStore,

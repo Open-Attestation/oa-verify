@@ -1,5 +1,5 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
-import { TradeTrustToken__factory } from "@govtechsg/token-registry/contracts";
+import { TransferableDocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
 import { constants, errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationEthereumTokenRegistryStatusCode } from "../../../types/error";
@@ -71,7 +71,10 @@ const getMerkleRoot = (
 
 const isNonExistentToken = (error: any) => {
   const message: string | undefined = error.message;
-  if (!message) return false;
+  if (!message) {
+    // ERC721NonexistentToken error
+    return error.data && error.data.slice(0, 10) === "0x7e273289";
+  }
   return message.includes("owner query for nonexistent token");
 };
 const isMissingTokenRegistry = (error: any) => {
@@ -116,8 +119,10 @@ export const isTokenMintedOnRegistry = async ({
   provider: providers.Provider;
 }): Promise<ValidTokenRegistryStatus | InvalidTokenRegistryStatus> => {
   try {
-    const tokenRegistryContract = await TradeTrustToken__factory.connect(tokenRegistry, provider);
-    const minted = await tokenRegistryContract.ownerOf(merkleRoot).then((owner) => !(owner === constants.AddressZero));
+    const tokenRegistryContract = TransferableDocumentStore__factory.connect(tokenRegistry, provider);
+    const minted = await tokenRegistryContract
+      .ownerOf(merkleRoot)
+      .then((owner: string) => !(owner === constants.AddressZero));
     return minted
       ? { minted, address: tokenRegistry }
       : {

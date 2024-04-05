@@ -18,9 +18,11 @@ import {
   getOpenAttestationHashFragment,
   invalidArgument,
   isDocumentStoreAddressOrTokenRegistryAddressInvalid,
+  isBatchableDocumentStore,
   serverError,
   unhandledError,
 } from "./utils";
+import { Contract } from "ethers";
 
 const fragments: AllVerificationFragment[] = [
   {
@@ -765,5 +767,32 @@ describe("unhandledError", () => {
       },
     };
     expect(unhandledError([verificationFragment])).toStrictEqual(false);
+  });
+});
+
+describe("isBatchableDocumentStore", () => {
+  let mockDocumentStore: Contract;
+
+  beforeEach(() => {
+    mockDocumentStore = {
+      supportsInterface: jest.fn(),
+    } as unknown as Contract;
+  });
+
+  it("should call supportsInterface with the correct id", async () => {
+    mockDocumentStore.supportsInterface.mockResolvedValue(true);
+
+    const res = await isBatchableDocumentStore(mockDocumentStore);
+
+    expect(mockDocumentStore.supportsInterface).toHaveBeenCalledWith("0xdcfd0745");
+    expect(res).toBe(true);
+  });
+
+  it("should return false when supportsInterface has error", async () => {
+    mockDocumentStore.supportsInterface.mockRejectedValue(new Error("Call Exception"));
+
+    const res = await isBatchableDocumentStore(mockDocumentStore);
+
+    expect(res).toBe(false);
   });
 });
