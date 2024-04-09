@@ -2,14 +2,18 @@
   "name": "@govtechsg/oa-verify",
   "version": "0.0.0-development",
   "description": "",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/src/index.d.ts",
+  "type": "commonjs",
+  "source": "src/index.ts",
+  "main": "dist/index.js",
+  "unpkg": "dist/index.umd.js",
+  "module": "dist/index.module.js",
+  "exports": {
+    "require": "./dist/index.js",
+    "default": "./dist/index.modern.js"
+  },
+  "types": "dist/types/index.d.ts",
   "scripts": {
-    "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:type",
-    "build:cjs": "tsc --module commonjs --outDir dist/cjs --project ./tsconfig.prod.json",
-    "build:esm": "tsc --module es2015 --outDir dist/esm --project ./tsconfig.prod.json",
-    "build:type": "tsc -d --emitDeclarationOnly --outDir dist/types",
+    "build": "npm run clean && microbundle --tsconfig tsconfig.prod.json",
     "clean": "rm -rf dist/",
     "commit": "git-cz",
     "commit:retry": "npm run commit -- --retry",
@@ -26,7 +30,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@govtechsg/dnsprove": "^2.6.2",
-    "@govtechsg/document-store-ethers-v5": "^4.0.0",
     "@govtechsg/open-attestation": "^6.9.0",
     "axios": "^1.6.2",
     "debug": "^4.3.1",
@@ -41,6 +44,7 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@commitlint/prompt": "^18.4.3",
+    "@govtechsg/document-store-ethers-v5": "^4.0.0",
     "@snyk/protect": "^1.1257.0",
     "@types/debug": "^4.1.5",
     "@types/jest": "^26.0.23",
@@ -57,6 +61,7 @@
     "husky": "^8.0.3",
     "jest": "^26.6.3",
     "jest-watch-typeahead": "^0.6.3",
+    "microbundle": "^0.15.1",
     "msw": "^0.28.2",
     "prettier": "^2.2.1",
     "semantic-release": "^22.0.8",
@@ -66,6 +71,9 @@
   "publishConfig": {
     "access": "public"
   },
+  "files": [
+    "dist"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/Open-Attestation/oa-verify.git"
