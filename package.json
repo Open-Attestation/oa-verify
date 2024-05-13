@@ -9,7 +9,7 @@
   "module": "dist/index.module.js",
   "exports": {
     "require": "./dist/index.js",
-    "default": "./dist/index.modern.js"
+    "default": "./dist/index.modern.mjs"
   },
   "types": "dist/types/index.d.ts",
   "scripts": {
