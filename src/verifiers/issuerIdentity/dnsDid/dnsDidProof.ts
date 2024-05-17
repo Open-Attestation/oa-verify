@@ -35,7 +35,7 @@ const test: VerifierType["test"] = (document) => {
   } else if (utils.isSignedWrappedV3Document(document)) {
     return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
   } else if (utils.isWrappedV4Document(document)) {
-    return document.issuer.identityProof.identityProofType === v4.IdentityProofType.DNSDid;
+    return document.issuer.identityProof.identityProofType === "DNS-DID";
   }
   return false;
 };
@@ -185,7 +185,7 @@ const verify: VerifierType["verify"] = async (document) => {
   else if (utils.isSignedWrappedV3Document(document)) return verifyV3(document);
   else if (utils.isSignedWrappedV4Document(document)) return verifyV4(document);
   throw new CodedError(
-    "Document does not match either v2 or v3 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
+    "Document does not match either v2, v3 or v4 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
     OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
   );

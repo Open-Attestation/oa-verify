@@ -341,7 +341,7 @@ const verifyV3 = async (
 };
 
 const verifyV4 = async (
-  document: SignedWrappedDocument<v4.OpenAttestationDocument>,
+  document: v4.SignedWrappedDocument<v4.OpenAttestationDocument>,
   options: VerifierOptions
 ): Promise<
   OpenAttestationDidSignedDocumentStatusValidFragmentV4 | OpenAttestationDidSignedDocumentStatusInvalidFragmentV4
@@ -359,25 +359,21 @@ const verifyV4 = async (
     })
   );
 
-  if (!document.credentialStatus?.credentialStatusType) {
-    throw new CodedError(
-      "credentialStatus (revocation) block not found for an issuer",
-      OpenAttestationDidSignedDocumentStatusCode.MISSING_REVOCATION,
-      "MISSING_REVOCATION"
-    );
-  }
-
   const issuedOnAll = verificationResult.issued;
 
   const getRevocationStatus = async (
-    docType: v4.CredentialStatusType,
-    location: string | undefined
+    credentialStatus: v4.OpenAttestationDocument["credentialStatus"]
   ): Promise<RevocationStatus> => {
-    switch (docType) {
-      case v4.CredentialStatusType.RevocationStore:
-        if (typeof location === "string") {
+    // No revocation type specified (i.e. an unrevocable document)
+    if (!credentialStatus) {
+      return { revoked: false };
+    }
+
+    switch (credentialStatus.type) {
+      case "OpenAttestationRevocationStore":
+        if (typeof credentialStatus.id === "string") {
           return isRevokedOnDocumentStore({
-            documentStore: location,
+            documentStore: credentialStatus.id,
             merkleRoot,
             targetHash,
             proofs,
@@ -389,13 +385,13 @@ const verifyV4 = async (
           OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
           "REVOCATION_LOCATION_MISSING"
         );
-      case v4.CredentialStatusType.OcspResponder:
-        if (typeof location === "string") {
+      case "OpenAttestationOcspResponder":
+        if (typeof credentialStatus.id === "string") {
           return isRevokedByOcspResponder({
             merkleRoot,
             targetHash,
             proofs,
-            location,
+            location: credentialStatus.id,
           });
         }
         throw new CodedError(
@@ -403,21 +399,16 @@ const verifyV4 = async (
           OpenAttestationDidSignedDocumentStatusCode.REVOCATION_LOCATION_MISSING,
           "REVOCATION_LOCATION_MISSING"
         );
-      case v4.CredentialStatusType.None:
-        return { revoked: false };
       default:
         throw new CodedError(
-          "revocation type not found for an issuer",
+          "unknown revocation type",
           OpenAttestationDidSignedDocumentStatusCode.UNRECOGNIZED_REVOCATION_TYPE,
           "UNRECOGNIZED_REVOCATION_TYPE"
         );
     }
   };
 
-  const revocationStatus = await getRevocationStatus(
-    document.credentialStatus.credentialStatusType,
-    document.credentialStatus.location
-  );
+  const revocationStatus = await getRevocationStatus(document.credentialStatus);
 
   const revokedOnAny = revocationStatus.revoked;
 
