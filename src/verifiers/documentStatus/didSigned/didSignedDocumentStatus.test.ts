@@ -252,12 +252,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidObfuscatedRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
+          "data": [Error: Document does not match either v2, v3 or v4 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 8,
             "codeString": "UNRECOGNIZED_DOCUMENT",
-            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
+            "message": "Document does not match either v2, v3 or v4 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",
@@ -269,12 +269,12 @@ describe("verify", () => {
       const res = await openAttestationDidSignedDocumentStatus.verify(documentDidCustomRevocation, options);
       expect(res).toMatchInlineSnapshot(`
         Object {
-          "data": [Error: Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
+          "data": [Error: Document does not match either v2, v3 or v4 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.],
           "name": "OpenAttestationDidSignedDocumentStatus",
           "reason": Object {
             "code": 8,
             "codeString": "UNRECOGNIZED_DOCUMENT",
-            "message": "Document does not match either v2 or v3 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
+            "message": "Document does not match either v2, v3 or v4 formats. Consider using \`utils.diagnose\` from open-attestation to find out more.",
           },
           "status": "ERROR",
           "type": "DOCUMENT_STATUS",

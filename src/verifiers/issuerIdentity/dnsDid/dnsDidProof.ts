@@ -1,4 +1,4 @@
-import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
+import { getData, utils, v2, v3, v4 } from "@govtechsg/open-attestation";
 import { getDnsDidRecords } from "@govtechsg/dnsprove";
 import { VerificationFragmentType, Verifier } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
@@ -34,6 +34,8 @@ const test: VerifierType["test"] = (document) => {
     return data.issuers.some((issuer) => issuer.identityProof?.type === "DNS-DID");
   } else if (utils.isSignedWrappedV3Document(document)) {
     return document.openAttestationMetadata.identityProof.type === v3.IdentityProofType.DNSDid;
+  } else if (utils.isWrappedV4Document(document)) {
+    return document.issuer.identityProof.identityProofType === "DNS-DID";
   }
   return false;
 };
@@ -144,11 +146,46 @@ const verifyV3 = async (
   };
 };
 
+const verifyV4 = async (
+  document: v4.SignedWrappedDocument
+): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
+  if (!utils.isSignedWrappedV4Document(document))
+    throw new CodedError(
+      "document is not signed",
+      OpenAttestationDnsDidCode.UNSIGNED,
+      OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNSIGNED]
+    );
+  const location = document.issuer.identityProof.identifier;
+  const { key } = document.proof;
+  const verificationStatus = await verifyIssuerDnsDid({ key, location });
+
+  if (ValidDnsDidVerificationStatus.guard(verificationStatus)) {
+    return {
+      name,
+      type,
+      data: verificationStatus,
+      status: "VALID",
+    };
+  }
+  return {
+    name,
+    type,
+    data: verificationStatus,
+    status: "INVALID",
+    reason: {
+      message: "Could not find identity at location",
+      code: OpenAttestationDnsDidCode.INVALID_IDENTITY,
+      codeString: "INVALID_IDENTITY",
+    },
+  };
+};
+
 const verify: VerifierType["verify"] = async (document) => {
   if (utils.isSignedWrappedV2Document(document)) return verifyV2(document);
   else if (utils.isSignedWrappedV3Document(document)) return verifyV3(document);
+  else if (utils.isSignedWrappedV4Document(document)) return verifyV4(document);
   throw new CodedError(
-    "Document does not match either v2 or v3 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
+    "Document does not match either v2, v3 or v4 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
     OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
     OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT]
   );

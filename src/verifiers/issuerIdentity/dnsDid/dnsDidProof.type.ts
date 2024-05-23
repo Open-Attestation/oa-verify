@@ -35,6 +35,10 @@ export type DnsDidVerificationStatusArray = Static<typeof DnsDidVerificationStat
 /**
  * Fragments
  */
+export type OpenAttestationDnsDidIdentityProofValidFragmentV4 =
+  ValidVerificationFragment<ValidDnsDidVerificationStatus>;
+export type OpenAttestationDnsDidIdentityProofInvalidFragmentV4 =
+  InvalidVerificationFragment<InvalidDnsDidVerificationStatus>;
 export type OpenAttestationDnsDidIdentityProofValidFragmentV3 =
   ValidVerificationFragment<ValidDnsDidVerificationStatus>;
 export type OpenAttestationDnsDidIdentityProofInvalidFragmentV3 =
@@ -49,5 +53,7 @@ export type OpenAttestationDnsDidIdentityProofVerificationFragment =
   | OpenAttestationDnsDidIdentityProofInvalidFragmentV2
   | OpenAttestationDnsDidIdentityProofValidFragmentV3
   | OpenAttestationDnsDidIdentityProofInvalidFragmentV3
+  | OpenAttestationDnsDidIdentityProofValidFragmentV4
+  | OpenAttestationDnsDidIdentityProofInvalidFragmentV4
   | OpenAttestationDnsDidIdentityProofErrorFragment
   | SkippedVerificationFragment;
