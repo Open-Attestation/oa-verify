@@ -25,7 +25,6 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@govtechsg/oa-did-sign": "^2.2.0",
     "@tradetrust-tt/dnsprove": "^2.12.4",
     "@tradetrust-tt/document-store": "^2.7.0",
     "@tradetrust-tt/token-registry": "^4.9.0",
@@ -40,6 +39,7 @@
     "web-did-resolver": "^2.0.4"
   },
   "devDependencies": {
+    "@govtechsg/oa-did-sign": "^2.2.0",
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.2.4",
     "@commitlint/prompt": "^16.1.0",
