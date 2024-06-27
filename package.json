@@ -2,14 +2,14 @@
   "name": "@govtechsg/oa-verify",
   "version": "0.0.0-development",
   "description": "",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/types/index.d.ts",
+  "main": "dist/cjs/src/index.js",
+  "module": "dist/esm/src/index.js",
+  "types": "dist/types/src/index.d.ts",
   "exports": {
-    "require": "./dist/cjs/index.js",
-    "import": "./dist/esm/index.js",
-    "default": "./dist/esm/index.js",
-    "types": "./dist/types/index.d.ts"
+    "require": "./dist/cjs/src/index.js",
+    "import": "./dist/esm/src/index.js",
+    "default": "./dist/esm/src/index.js",
+    "types": "./dist/types/src/index.d.ts"
   },
   "scripts": {
     "build": "npm run clean && npm run build:cjs && npm run build:esm && npm run build:type",

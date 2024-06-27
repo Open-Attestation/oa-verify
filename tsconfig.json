@@ -11,5 +11,5 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true
   },
-  "include": ["./src/**/*"]
+  "include": ["./src/**/*", "node_modules/@govtechsg/document-store-ethers-v5/**/*"]
 }
