@@ -1,4 +1,4 @@
-import { Contract, providers } from "ethers";
+import { Contract, errors, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
   ProviderDetails,
@@ -238,11 +238,47 @@ export const unhandledError = (fragments: VerificationFragment[]): boolean => {
   );
 };
 
-export const isBatchableDocumentStore = async (contract: Contract): Promise<boolean> => {
-  try {
-    // Interface for DocumentStoreBatchable
-    return (await contract.supportsInterface("0xdcfd0745")) as boolean;
-  } catch {
-    return false;
-  }
+export const isBatchableDocumentStore = async (contract: Contract | Contract[]): Promise<boolean> => {
+  const contracts = Array.isArray(contract) ? contract : [contract];
+  // Interface for DocumentStoreBatchable
+  return queryContract(contracts, async (c) => {
+    try {
+      return (await c.supportsInterface("0xdcfd0745")) as boolean;
+    } catch {
+      return false;
+    }
+  });
 };
+
+export async function queryContract<T extends Contract, R>(
+  contracts: T[],
+  method: (contract: T) => Promise<R>
+): Promise<R> {
+  let tries = 0;
+  const queryProviderIndex = Math.floor(Math.random() * contracts.length);
+  for (;;) {
+    const contract = contracts[(queryProviderIndex + tries) % contracts.length];
+    console.log(
+      "Attempt number ",
+      tries,
+      "Trying with query index ",
+      (queryProviderIndex + tries) % contracts.length,
+      "out of ",
+      contracts.length
+    );
+
+    try {
+      return await method(contract);
+    } catch (error: any) {
+      if (
+        (error.code === errors.SERVER_ERROR || error.code === errors.TIMEOUT || error.code === errors.CALL_EXCEPTION) &&
+        tries < 3
+      ) {
+        tries++;
+        continue;
+      }
+
+      throw error;
+    }
+  }
+}

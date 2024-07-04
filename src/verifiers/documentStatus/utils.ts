@@ -10,7 +10,7 @@ import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
 import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
-import { isBatchableDocumentStore } from "../../common/utils";
+import { isBatchableDocumentStore, queryContract } from "../../common/utils";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -60,12 +60,22 @@ export const decodeError = (error: any) => {
 /**
  * Given a list of hashes, check against one smart contract if any of the hash has been revoked
  * */
-export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
-  const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    smartContract["isRevoked(bytes32)"](hash).then((status: boolean) => status)
-  );
-  const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  return !revokedStatuses.every((status) => !status);
+export const isAnyHashRevoked = async (contracts: Contract[], intermediateHashes: Hash[], batchSize = 5) => {
+  for (let i = 0; i < intermediateHashes.length; i += batchSize) {
+    const batch = intermediateHashes.slice(i, i + batchSize);
+    const revokedStatusDeferred = batch.map((hash) =>
+      queryContract(contracts, async (c) => {
+        return c["isRevoked(bytes32)"](hash) as boolean;
+      })
+    );
+
+    const revokedStatuses = await Promise.all(revokedStatusDeferred);
+    if (!revokedStatuses.every((status) => !status)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 export const isRevokedOnDocumentStore = async ({
@@ -82,74 +92,52 @@ export const isRevokedOnDocumentStore = async ({
   proofs: Hash[];
 }): Promise<RevocationStatus> => {
   const providers = Array.isArray(provider) ? provider : [provider];
-  const queryProviderIndex = Math.floor(Math.random() * providers.length);
-  const documentStoreContractQueryProviders = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
+  const contracts = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
 
-  let tries = 0;
-  for (;;) {
-    const documentStoreContract =
-      documentStoreContractQueryProviders[(queryProviderIndex + tries) % documentStoreContractQueryProviders.length];
-    console.log(
-      "Trying with query index ",
-      queryProviderIndex + tries,
-      "out of ",
-      documentStoreContractQueryProviders.length
-    );
-
-    try {
-      const isBatchable = await isBatchableDocumentStore(documentStoreContract);
-      let revoked: boolean;
-      if (isBatchable) {
-        revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
-          merkleRoot,
-          targetHash,
-          proofs
-        )) as boolean;
-      } else {
-        const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-        revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
-      }
-
-      return revoked
-        ? {
-            revoked: true,
-            address: documentStore,
-            reason: {
-              message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
-              code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-              codeString:
-                OpenAttestationEthereumDocumentStoreStatusCode[
-                  OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-                ],
-            },
-          }
-        : {
-            revoked: false,
-            address: documentStore,
-          };
-    } catch (error: any) {
-      if (
-        (error.code === errors.SERVER_ERROR || error.code === errors.TIMEOUT || error.code === errors.CALL_EXCEPTION) &&
-        tries < 3
-      ) {
-        tries++;
-        continue;
-      }
-      // If error can be decoded and it's because of document is not revoked, we return false
-      // Else allow error to continue to bubble up
-      return {
-        revoked: true,
-        address: documentStore,
-        reason: {
-          message: decodeError(error),
-          code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-          codeString:
-            OpenAttestationEthereumDocumentStoreStatusCode[
-              OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-            ],
-        },
-      };
+  try {
+    const isBatchable = await isBatchableDocumentStore(contracts[0]);
+    let revoked: boolean;
+    if (isBatchable) {
+      revoked = await queryContract(contracts, async (c) => {
+        return c["isRevoked(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs) as Promise<boolean>;
+      });
+    } else {
+      const intermediateHashes = getIntermediateHashes(targetHash, proofs);
+      revoked = await isAnyHashRevoked(contracts, intermediateHashes);
     }
+
+    return revoked
+      ? {
+          revoked: true,
+          address: documentStore,
+          reason: {
+            message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
+            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+            codeString:
+              OpenAttestationEthereumDocumentStoreStatusCode[
+                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+              ],
+          },
+        }
+      : {
+          revoked: false,
+          address: documentStore,
+        };
+  } catch (error) {
+    // If error can be decoded and it's because of document is not revoked, we return false
+    // Else allow error to continue to bubble up
+    return {
+      revoked: true,
+      address: documentStore,
+      reason: {
+        message: decodeError(error),
+        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+        codeString:
+          OpenAttestationEthereumDocumentStoreStatusCode[
+            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+          ],
+      },
+    };
   }
 };
 
