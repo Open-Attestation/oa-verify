@@ -89,6 +89,13 @@ export const isRevokedOnDocumentStore = async ({
   for (;;) {
     const documentStoreContract =
       documentStoreContractQueryProviders[(queryProviderIndex + tries) % documentStoreContractQueryProviders.length];
+    console.log(
+      "Trying with query index ",
+      queryProviderIndex + tries,
+      "out of ",
+      documentStoreContractQueryProviders.length
+    );
+
     try {
       const isBatchable = await isBatchableDocumentStore(documentStoreContract);
       let revoked: boolean;
@@ -121,7 +128,10 @@ export const isRevokedOnDocumentStore = async ({
             address: documentStore,
           };
     } catch (error: any) {
-      if (error.code === errors.NETWORK_ERROR && tries < 3) {
+      if (
+        (error.code === errors.SERVER_ERROR || error.code === errors.TIMEOUT || error.code === errors.CALL_EXCEPTION) &&
+        tries < 3
+      ) {
         tries++;
         continue;
       }
