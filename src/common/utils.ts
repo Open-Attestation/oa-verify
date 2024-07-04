@@ -39,8 +39,12 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
 };
 
 // getProvider is a function to get an existing provider or to get a Default provider, when given the options
-export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
-  return options.provider ?? getDefaultProvider(options);
+export const getProvider = (options: VerificationBuilderOptions): providers.Provider[] => {
+  const providers = Array.isArray(options.provider) ? options.provider : options.provider ? [options.provider] : [];
+  if (!providers.length && !options.provider) {
+    providers.push(getDefaultProvider(options));
+  }
+  return providers;
 };
 
 /**

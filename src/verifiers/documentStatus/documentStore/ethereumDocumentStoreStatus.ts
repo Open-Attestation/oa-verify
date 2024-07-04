@@ -1,6 +1,6 @@
 import { getData, utils, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
 import { DocumentStore__factory } from "@govtechsg/document-store-ethers-v5";
-import { providers } from "ethers";
+import { errors, providers } from "ethers";
 import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationEthereumDocumentStoreStatusCode, Reason } from "../../../types/error";
 import { CodedError } from "../../../common/error";
@@ -46,51 +46,62 @@ export const isIssuedOnDocumentStore = async ({
   merkleRoot: string;
   targetHash: string;
   proofs: string[];
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
 }): Promise<DocumentStoreIssuanceStatus> => {
-  const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
+  const providers = Array.isArray(provider) ? provider : [provider];
+  const queryProviderIndex = Math.floor(Math.random() * providers.length);
+  const documentStoreContractQueryProviders = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
 
-  try {
-    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+  let tries = 0;
+  for (;;) {
+    const documentStoreContract =
+      documentStoreContractQueryProviders[(queryProviderIndex + tries) % documentStoreContractQueryProviders.length];
+    try {
+      const isBatchable = await isBatchableDocumentStore(documentStoreContract);
 
-    let issued: boolean;
-    if (isBatchable) {
-      issued = await documentStoreContract["isIssued(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs);
-    } else {
-      issued = await documentStoreContract["isIssued(bytes32)"](merkleRoot);
+      let issued: boolean;
+      if (isBatchable) {
+        issued = await documentStoreContract["isIssued(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs);
+      } else {
+        issued = await documentStoreContract["isIssued(bytes32)"](merkleRoot);
+      }
+      return issued
+        ? {
+            issued: true,
+            address: documentStore,
+          }
+        : {
+            issued: false,
+            address: documentStore,
+            reason: {
+              message: `Document ${merkleRoot} has not been issued under contract ${documentStore}`,
+              code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
+              codeString:
+                OpenAttestationEthereumDocumentStoreStatusCode[
+                  OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
+                ],
+            },
+          };
+    } catch (error: any) {
+      if (error.code === errors.NETWORK_ERROR && tries < 3) {
+        tries++;
+        continue;
+      }
+      // If error can be decoded and it's because of document is not issued, we return false
+      // Else allow error to continue to bubble up
+      return {
+        issued: false,
+        address: documentStore,
+        reason: {
+          message: decodeError(error),
+          code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
+          codeString:
+            OpenAttestationEthereumDocumentStoreStatusCode[
+              OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
+            ],
+        },
+      };
     }
-    return issued
-      ? {
-          issued: true,
-          address: documentStore,
-        }
-      : {
-          issued: false,
-          address: documentStore,
-          reason: {
-            message: `Document ${merkleRoot} has not been issued under contract ${documentStore}`,
-            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
-            codeString:
-              OpenAttestationEthereumDocumentStoreStatusCode[
-                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
-              ],
-          },
-        };
-  } catch (error) {
-    // If error can be decoded and it's because of document is not issued, we return false
-    // Else allow error to continue to bubble up
-    return {
-      issued: false,
-      address: documentStore,
-      reason: {
-        message: decodeError(error),
-        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED,
-        codeString:
-          OpenAttestationEthereumDocumentStoreStatusCode[
-            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_NOT_ISSUED
-          ],
-      },
-    };
   }
 };
 

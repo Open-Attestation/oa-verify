@@ -27,7 +27,8 @@ const resolveIssuerIdentity = async (
   smartContractAddress: string,
   options: VerifierOptions
 ): Promise<DnsTxtVerificationStatus> => {
-  const network = await options.provider.getNetwork();
+  const provider = Array.isArray(options.provider) ? options.provider[0] : options.provider;
+  const network = await provider.getNetwork();
   const records = await getDocumentStoreRecords(location);
   const matchingRecord = records.find(
     (record) =>

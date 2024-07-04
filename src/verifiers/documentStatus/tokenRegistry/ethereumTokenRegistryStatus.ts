@@ -189,7 +189,11 @@ const verify: VerifierType["verify"] = async (document, options) => {
     );
   const tokenRegistry = getTokenRegistry(document);
   const merkleRoot = getMerkleRoot(document);
-  const mintStatus = await isTokenMintedOnRegistry({ tokenRegistry, merkleRoot, provider: options.provider });
+  const mintStatus = await isTokenMintedOnRegistry({
+    tokenRegistry,
+    merkleRoot,
+    provider: Array.isArray(options.provider) ? options.provider[0] : options.provider,
+  });
 
   if (ValidTokenRegistryStatus.guard(mintStatus)) {
     const fragment = {

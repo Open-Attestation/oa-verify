@@ -9,7 +9,7 @@ import { Reason } from "./error";
 export type PromiseCallback = (promises: Promise<VerificationFragment>[]) => void;
 
 export interface VerificationBuilderOptionsWithProvider {
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
   resolver?: Resolver;
 }
 
@@ -22,7 +22,7 @@ export interface VerificationBuilderOptionsWithNetwork {
 export type VerificationBuilderOptions = VerificationBuilderOptionsWithProvider | VerificationBuilderOptionsWithNetwork;
 
 export interface VerifierOptions {
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
   resolver?: Resolver;
 }
 

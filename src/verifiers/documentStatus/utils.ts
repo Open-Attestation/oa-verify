@@ -77,57 +77,69 @@ export const isRevokedOnDocumentStore = async ({
 }: {
   documentStore: string;
   merkleRoot: string;
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
   targetHash: Hash;
   proofs: Hash[];
 }): Promise<RevocationStatus> => {
-  try {
-    const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
-    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
-    let revoked: boolean;
-    if (isBatchable) {
-      revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
-        merkleRoot,
-        targetHash,
-        proofs
-      )) as boolean;
-    } else {
-      const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-      revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
-    }
+  const providers = Array.isArray(provider) ? provider : [provider];
+  const queryProviderIndex = Math.floor(Math.random() * providers.length);
+  const documentStoreContractQueryProviders = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
 
-    return revoked
-      ? {
-          revoked: true,
-          address: documentStore,
-          reason: {
-            message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
-            code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-            codeString:
-              OpenAttestationEthereumDocumentStoreStatusCode[
-                OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-              ],
-          },
-        }
-      : {
-          revoked: false,
-          address: documentStore,
-        };
-  } catch (error) {
-    // If error can be decoded and it's because of document is not revoked, we return false
-    // Else allow error to continue to bubble up
-    return {
-      revoked: true,
-      address: documentStore,
-      reason: {
-        message: decodeError(error),
-        code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
-        codeString:
-          OpenAttestationEthereumDocumentStoreStatusCode[
-            OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
-          ],
-      },
-    };
+  let tries = 0;
+  for (;;) {
+    const documentStoreContract =
+      documentStoreContractQueryProviders[(queryProviderIndex + tries) % documentStoreContractQueryProviders.length];
+    try {
+      const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+      let revoked: boolean;
+      if (isBatchable) {
+        revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
+          merkleRoot,
+          targetHash,
+          proofs
+        )) as boolean;
+      } else {
+        const intermediateHashes = getIntermediateHashes(targetHash, proofs);
+        revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+      }
+
+      return revoked
+        ? {
+            revoked: true,
+            address: documentStore,
+            reason: {
+              message: `Document ${merkleRoot} has been revoked under contract ${documentStore}`,
+              code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+              codeString:
+                OpenAttestationEthereumDocumentStoreStatusCode[
+                  OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+                ],
+            },
+          }
+        : {
+            revoked: false,
+            address: documentStore,
+          };
+    } catch (error: any) {
+      if (error.code === errors.NETWORK_ERROR && tries < 3) {
+        tries++;
+        continue;
+      }
+      // If error can be decoded and it's because of document is not revoked, we return false
+      // Else allow error to continue to bubble up
+      return {
+        revoked: true,
+        address: documentStore,
+        reason: {
+          message: decodeError(error),
+          code: OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED,
+          codeString:
+            OpenAttestationEthereumDocumentStoreStatusCode[
+              OpenAttestationEthereumDocumentStoreStatusCode.DOCUMENT_REVOKED
+            ],
+        },
+      };
+    }
   }
 };
 
