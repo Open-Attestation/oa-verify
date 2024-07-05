@@ -272,7 +272,7 @@ export async function queryContract<T extends Contract, R>(
     } catch (error: any) {
       if (
         (error.code === errors.SERVER_ERROR || error.code === errors.TIMEOUT || error.code === errors.CALL_EXCEPTION) &&
-        tries < 3
+        tries < contracts.length
       ) {
         tries++;
         continue;
