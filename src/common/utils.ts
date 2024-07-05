@@ -250,32 +250,38 @@ export const isBatchableDocumentStore = async (contract: Contract | Contract[]):
   });
 };
 
+/**
+ * Executes a given method on a contract and retries with a different provider if the execution fails due to a server error, timeout, or call exception.
+ *
+ * @param {T[]} contracts - An array of contracts to query, the underlying contract is the same, but the provider is different.
+ * @param {(contract: T) => Promise<R>} method - The method to execute on each contract.
+ * @return {Promise<R>} A promise that resolves to the result of the method execution.
+ */
 export async function queryContract<T extends Contract, R>(
   contracts: T[],
   method: (contract: T) => Promise<R>
 ): Promise<R> {
   let tries = 0;
-  const queryProviderIndex = Math.floor(Math.random() * contracts.length);
+  const initialContractIndex = Math.floor(Math.random() * contracts.length);
   for (;;) {
-    const contract = contracts[(queryProviderIndex + tries) % contracts.length];
-    console.log(
-      "Attempt number ",
-      tries,
-      "Trying with query index ",
-      (queryProviderIndex + tries) % contracts.length,
-      "out of ",
-      contracts.length
-    );
+    // each attempt would be made with a different provider
+    const contractIndex = (initialContractIndex + tries) % contracts.length;
+    const contract = contracts[contractIndex];
+    console.debug("Attempt number ", tries, "Trying with provider index ", contractIndex, "out of ", contracts.length);
 
     try {
       return await method(contract);
-    } catch (error: any) {
-      if (
-        (error.code === errors.SERVER_ERROR || error.code === errors.TIMEOUT || error.code === errors.CALL_EXCEPTION) &&
-        tries < contracts.length
-      ) {
-        tries++;
-        continue;
+    } catch (error: unknown) {
+      if (error instanceof Error && "code" in error && typeof error.code === "string") {
+        if (
+          (error.code === errors.SERVER_ERROR ||
+            error.code === errors.TIMEOUT ||
+            error.code === errors.CALL_EXCEPTION) &&
+          tries < contracts.length
+        ) {
+          tries++;
+          continue;
+        }
       }
 
       throw error;
