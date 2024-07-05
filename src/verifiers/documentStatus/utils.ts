@@ -10,7 +10,7 @@ import { CodedError } from "../../common/error";
 import { OcspResponderRevocationReason, RevocationStatus } from "./revocation.types";
 import axios from "axios";
 import { ValidOcspResponse, ValidOcspResponseRevoked } from "./didSigned/didSignedDocumentStatus.type";
-import { isBatchableDocumentStore } from "../../common/utils";
+import { isBatchableDocumentStore, queryContract } from "../../common/utils";
 
 export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => {
   const hashes = [`0x${targetHash}`];
@@ -60,12 +60,22 @@ export const decodeError = (error: any) => {
 /**
  * Given a list of hashes, check against one smart contract if any of the hash has been revoked
  * */
-export const isAnyHashRevoked = async (smartContract: Contract, intermediateHashes: Hash[]) => {
-  const revokedStatusDeferred = intermediateHashes.map((hash) =>
-    smartContract["isRevoked(bytes32)"](hash).then((status: boolean) => status)
-  );
-  const revokedStatuses = await Promise.all(revokedStatusDeferred);
-  return !revokedStatuses.every((status) => !status);
+export const isAnyHashRevoked = async (contracts: Contract[], intermediateHashes: Hash[], batchSize = 5) => {
+  for (let i = 0; i < intermediateHashes.length; i += batchSize) {
+    const batch = intermediateHashes.slice(i, i + batchSize);
+    const revokedStatusDeferred = batch.map((hash) =>
+      queryContract(contracts, async (c) => {
+        return c["isRevoked(bytes32)"](hash) as boolean;
+      })
+    );
+
+    const revokedStatuses = await Promise.all(revokedStatusDeferred);
+    if (!revokedStatuses.every((status) => !status)) {
+      return true;
+    }
+  }
+
+  return false;
 };
 
 export const isRevokedOnDocumentStore = async ({
@@ -77,23 +87,23 @@ export const isRevokedOnDocumentStore = async ({
 }: {
   documentStore: string;
   merkleRoot: string;
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
   targetHash: Hash;
   proofs: Hash[];
 }): Promise<RevocationStatus> => {
+  const providers = Array.isArray(provider) ? provider : [provider];
+  const contracts = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
+
   try {
-    const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
-    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+    const isBatchable = await isBatchableDocumentStore(contracts[0]);
     let revoked: boolean;
     if (isBatchable) {
-      revoked = (await documentStoreContract["isRevoked(bytes32,bytes32,bytes32[])"](
-        merkleRoot,
-        targetHash,
-        proofs
-      )) as boolean;
+      revoked = await queryContract(contracts, async (c) => {
+        return c["isRevoked(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs) as Promise<boolean>;
+      });
     } else {
       const intermediateHashes = getIntermediateHashes(targetHash, proofs);
-      revoked = await isAnyHashRevoked(documentStoreContract, intermediateHashes);
+      revoked = await isAnyHashRevoked(contracts, intermediateHashes);
     }
 
     return revoked

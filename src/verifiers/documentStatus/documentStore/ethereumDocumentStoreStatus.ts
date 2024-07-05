@@ -14,7 +14,7 @@ import {
   ValidDocumentStoreDataV3,
   ValidDocumentStoreIssuanceStatusArray,
 } from "./ethereumDocumentStoreStatus.type";
-import { isBatchableDocumentStore } from "../../../common/utils";
+import { isBatchableDocumentStore, queryContract } from "../../../common/utils";
 
 const name = "OpenAttestationEthereumDocumentStoreStatus";
 const type: VerificationFragmentType = "DOCUMENT_STATUS";
@@ -46,18 +46,21 @@ export const isIssuedOnDocumentStore = async ({
   merkleRoot: string;
   targetHash: string;
   proofs: string[];
-  provider: providers.Provider;
+  provider: providers.Provider | providers.Provider[];
 }): Promise<DocumentStoreIssuanceStatus> => {
-  const documentStoreContract = DocumentStore__factory.connect(documentStore, provider);
+  const providers = Array.isArray(provider) ? provider : [provider];
+  const contracts = providers.map((p) => DocumentStore__factory.connect(documentStore, p));
 
   try {
-    const isBatchable = await isBatchableDocumentStore(documentStoreContract);
+    const isBatchable = await isBatchableDocumentStore(contracts);
 
     let issued: boolean;
     if (isBatchable) {
-      issued = await documentStoreContract["isIssued(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs);
+      issued = await queryContract(contracts, (c) =>
+        c["isIssued(bytes32,bytes32,bytes32[])"](merkleRoot, targetHash, proofs)
+      );
     } else {
-      issued = await documentStoreContract["isIssued(bytes32)"](merkleRoot);
+      issued = await queryContract(contracts, (c) => c["isIssued(bytes32)"](merkleRoot));
     }
     return issued
       ? {

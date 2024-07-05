@@ -1,4 +1,4 @@
-import { Contract, providers } from "ethers";
+import { Contract, errors, providers } from "ethers";
 import { INFURA_API_KEY } from "../config";
 import {
   ProviderDetails,
@@ -39,8 +39,12 @@ export const getDefaultProvider = (options: VerificationBuilderOptionsWithNetwor
 };
 
 // getProvider is a function to get an existing provider or to get a Default provider, when given the options
-export const getProvider = (options: VerificationBuilderOptions): providers.Provider => {
-  return options.provider ?? getDefaultProvider(options);
+export const getProvider = (options: VerificationBuilderOptions): providers.Provider[] => {
+  const providers = Array.isArray(options.provider) ? options.provider : options.provider ? [options.provider] : [];
+  if (!providers.length && !options.provider) {
+    providers.push(getDefaultProvider(options));
+  }
+  return providers;
 };
 
 /**
@@ -234,11 +238,53 @@ export const unhandledError = (fragments: VerificationFragment[]): boolean => {
   );
 };
 
-export const isBatchableDocumentStore = async (contract: Contract): Promise<boolean> => {
-  try {
-    // Interface for DocumentStoreBatchable
-    return (await contract.supportsInterface("0xdcfd0745")) as boolean;
-  } catch {
-    return false;
-  }
+export const isBatchableDocumentStore = async (contract: Contract | Contract[]): Promise<boolean> => {
+  const contracts = Array.isArray(contract) ? contract : [contract];
+  // Interface for DocumentStoreBatchable
+  return queryContract(contracts, async (c) => {
+    try {
+      return (await c.supportsInterface("0xdcfd0745")) as boolean;
+    } catch {
+      return false;
+    }
+  });
 };
+
+/**
+ * Executes a given method on a contract and retries with a different provider if the execution fails due to a server error, timeout, or call exception.
+ *
+ * @param {T[]} contracts - An array of contracts to query, the underlying contract is the same, but the provider is different.
+ * @param {(contract: T) => Promise<R>} method - The method to execute on each contract.
+ * @return {Promise<R>} A promise that resolves to the result of the method execution.
+ */
+export async function queryContract<T extends Contract, R>(
+  contracts: T[],
+  method: (contract: T) => Promise<R>
+): Promise<R> {
+  let tries = 0;
+  const initialContractIndex = Math.floor(Math.random() * contracts.length);
+  for (;;) {
+    // each attempt would be made with a different provider
+    const contractIndex = (initialContractIndex + tries) % contracts.length;
+    const contract = contracts[contractIndex];
+    console.debug("Attempt number ", tries, "Trying with provider index ", contractIndex, "out of ", contracts.length);
+
+    try {
+      return await method(contract);
+    } catch (error: unknown) {
+      if (error instanceof Error && "code" in error && typeof error.code === "string") {
+        if (
+          (error.code === errors.SERVER_ERROR ||
+            error.code === errors.TIMEOUT ||
+            error.code === errors.CALL_EXCEPTION) &&
+          tries < contracts.length
+        ) {
+          tries++;
+          continue;
+        }
+      }
+
+      throw error;
+    }
+  }
+}
