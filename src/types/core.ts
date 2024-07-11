@@ -1,4 +1,5 @@
 import { SignedWrappedDocument, v2, v3, WrappedDocument } from "@govtechsg/open-attestation";
+import type { CustomDnsResolver } from "@govtechsg/dnsprove";
 import { Resolver } from "did-resolver";
 import { providers } from "ethers";
 import { Reason } from "./error";
@@ -8,23 +9,36 @@ import { Reason } from "./error";
  */
 export type PromiseCallback = (promises: Promise<VerificationFragment>[]) => void;
 
-export interface VerificationBuilderOptionsWithProvider {
+export type CustomDnsResolverOption = {
+  dnsResolvers?: CustomDnsResolver[];
+};
+
+export type VerificationBuilderOptionsWithProvider = {
   provider: providers.Provider;
   resolver?: Resolver;
-}
+} & CustomDnsResolverOption;
 
-export interface VerificationBuilderOptionsWithNetwork {
+export type VerificationBuilderOptionsWithNetwork = {
   network: string;
   resolver?: Resolver;
   provider?: never;
-}
+} & CustomDnsResolverOption;
 
-export type VerificationBuilderOptions = VerificationBuilderOptionsWithProvider | VerificationBuilderOptionsWithNetwork;
+export type VerificationBuilderOptionsDnsDid = {
+  resolver?: Resolver;
+  network?: never;
+  provider?: never;
+} & CustomDnsResolverOption;
 
-export interface VerifierOptions {
+export type VerificationBuilderOptions =
+  | VerificationBuilderOptionsWithProvider
+  | VerificationBuilderOptionsWithNetwork
+  | VerificationBuilderOptionsDnsDid;
+
+export type VerifierOptions = {
   provider: providers.Provider;
   resolver?: Resolver;
-}
+} & CustomDnsResolverOption;
 
 /**
  * A verification fragment is the result of a verification
