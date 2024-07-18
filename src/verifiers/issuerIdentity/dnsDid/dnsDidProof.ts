@@ -1,6 +1,6 @@
 import { getData, utils, v2, v3 } from "@govtechsg/open-attestation";
-import { getDnsDidRecords } from "@govtechsg/dnsprove";
-import { VerificationFragmentType, Verifier } from "../../../types/core";
+import { CustomDnsResolver, getDnsDidRecords } from "@govtechsg/dnsprove";
+import { VerificationFragmentType, Verifier, VerifierOptions } from "../../../types/core";
 import { OpenAttestationDnsDidCode } from "../../../types/error";
 import { withCodedErrorHandler } from "../../../common/errorHandler";
 import { CodedError } from "../../../common/error";
@@ -41,11 +41,13 @@ const test: VerifierType["test"] = (document) => {
 const verifyIssuerDnsDid = async ({
   key,
   location,
+  dnsResolvers,
 }: {
   key: string;
   location: string;
+  dnsResolvers?: CustomDnsResolver[];
 }): Promise<DnsDidVerificationStatus> => {
-  const records = await getDnsDidRecords(location);
+  const records = await getDnsDidRecords(location, dnsResolvers);
   return {
     location,
     key,
@@ -54,7 +56,8 @@ const verifyIssuerDnsDid = async ({
 };
 
 const verifyV2 = async (
-  document: v2.SignedWrappedDocument
+  document: v2.SignedWrappedDocument,
+  options?: VerifierOptions
 ): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
   const documentData = getData(document);
   const deferredVerificationStatus: Promise<DnsDidVerificationStatus>[] = documentData.issuers.map((issuer) => {
@@ -84,7 +87,7 @@ const verifyV2 = async (
         OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF,
         OpenAttestationDnsDidCode[OpenAttestationDnsDidCode.MALFORMED_IDENTITY_PROOF]
       );
-    return verifyIssuerDnsDid({ key, location });
+    return verifyIssuerDnsDid({ key, location, dnsResolvers: options?.dnsResolvers });
   });
   const verificationStatus = await Promise.all(deferredVerificationStatus);
 
@@ -111,7 +114,8 @@ const verifyV2 = async (
 };
 
 const verifyV3 = async (
-  document: v3.SignedWrappedDocument
+  document: v3.SignedWrappedDocument,
+  options?: VerifierOptions
 ): Promise<OpenAttestationDnsDidIdentityProofVerificationFragment> => {
   if (!utils.isSignedWrappedV3Document(document))
     throw new CodedError(
@@ -121,7 +125,7 @@ const verifyV3 = async (
     );
   const location = document.openAttestationMetadata.identityProof.identifier;
   const { key } = document.proof;
-  const verificationStatus = await verifyIssuerDnsDid({ key, location });
+  const verificationStatus = await verifyIssuerDnsDid({ key, location, dnsResolvers: options?.dnsResolvers });
 
   if (ValidDnsDidVerificationStatus.guard(verificationStatus)) {
     return {
@@ -144,9 +148,9 @@ const verifyV3 = async (
   };
 };
 
-const verify: VerifierType["verify"] = async (document) => {
-  if (utils.isSignedWrappedV2Document(document)) return verifyV2(document);
-  else if (utils.isSignedWrappedV3Document(document)) return verifyV3(document);
+const verify: VerifierType["verify"] = async (document, options) => {
+  if (utils.isSignedWrappedV2Document(document)) return verifyV2(document, options);
+  else if (utils.isSignedWrappedV3Document(document)) return verifyV3(document, options);
   throw new CodedError(
     "Document does not match either v2 or v3 formats. Consider using `utils.diagnose` from open-attestation to find out more.",
     OpenAttestationDnsDidCode.UNRECOGNIZED_DOCUMENT,
