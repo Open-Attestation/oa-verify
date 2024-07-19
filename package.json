@@ -25,11 +25,11 @@
   "author": "",
   "license": "Apache-2.0",
   "dependencies": {
-    "@tradetrust-tt/dnsprove": "^2.12.4",
+    "@tradetrust-tt/dnsprove": "^2.13.2",
     "@tradetrust-tt/document-store": "^2.7.0",
     "@tradetrust-tt/token-registry": "^4.9.0",
     "@tradetrust-tt/tradetrust": "^6.9.0",
-    "axios": "^1.6.2",
+    "axios": "^1.7.2",
     "debug": "^4.3.1",
     "did-resolver": "^3.1.0",
     "ethers": "^5.4.0",
@@ -39,7 +39,6 @@
     "web-did-resolver": "^2.0.4"
   },
   "devDependencies": {
-    "@govtechsg/oa-did-sign": "^2.2.0",
     "@commitlint/cli": "^16.1.0",
     "@commitlint/config-conventional": "^16.2.4",
     "@commitlint/prompt": "^16.1.0",

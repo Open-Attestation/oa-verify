@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function,camelcase */
-import { sign } from "@govtechsg/oa-did-sign";
-import { v3, __unsafe__use__it__at__your__own__risks__wrapDocument } from "@tradetrust-tt/tradetrust";
+import { sign, SUPPORTED_SIGNING_ALGORITHM } from "@tradetrust-tt/tradetrust";
+import { v3, __unsafe__use__it__at__your__own__risks__wrapDocument as wrapDocument } from "@tradetrust-tt/tradetrust";
 import { execSync } from "child_process";
 import { writeFileSync } from "fs";
 import { getLogger } from "../src/common/logger";
@@ -21,7 +21,8 @@ const key = {
   public: "did:ethr:0xE712878f6E8d5d4F9e87E10DA604F9cB564C9a89#controller",
   private: "0x497c85ed89f1874ba37532d1e33519aba15bd533cdcb90774cc497bfe3cde655",
 };
-const signMerkleRoot = async (merkleRoot: string) => sign("Secp256k1VerificationKey2018", merkleRoot, key);
+const signMerkleRoot = async (merkleRoot: string) =>
+  sign(SUPPORTED_SIGNING_ALGORITHM.Secp256k1VerificationKey2018, merkleRoot, key);
 
 const ethereumDocumentConfig = {
   network: "sepolia",
@@ -57,7 +58,7 @@ const baseDnsDidDocumentRevocationStore = {
       },
     },
   },
-};
+} as v3.OpenAttestationDocument;
 const baseDidDocumentRevocationStore = {
   ...baseDidDocument,
   openAttestationMetadata: {
@@ -70,17 +71,17 @@ const baseDidDocumentRevocationStore = {
       },
     },
   },
-};
+} as v3.OpenAttestationDocument;
 
 const generateRevocationStore = async ({ logMessage, document, outLocations }: GenerateRevocationStoreArgs) => {
   info(`${logMessage}`);
   const mainPath = "./test/fixtures/v3";
   const rawAnother = {
     ...document,
-    type: ["VerifiableCredential", "DrivingLicenceCredential", "DivingLicenceCredential"],
+    type: ["VerifiableCredential", "DrivingLicenceCredential", "OpenAttestationCredential"],
   };
-  const wrapped = await __unsafe__use__it__at__your__own__risks__wrapDocument(document);
-  const wrappedAnother = await __unsafe__use__it__at__your__own__risks__wrapDocument(rawAnother);
+  const wrapped = await wrapDocument(document);
+  const wrappedAnother = await wrapDocument(rawAnother);
   const { merkleRoot } = wrapped.proof;
   const { merkleRoot: merkleRootAnother } = wrappedAnother.proof;
   const signature = await signMerkleRoot(`0x${merkleRoot}`);
@@ -105,14 +106,14 @@ const generateRevocationStore = async ({ logMessage, document, outLocations }: G
   writeFileSync(`${mainPath}/${outLocations.notRevoked}`, JSON.stringify(signedAnother, null, 2));
 
   info("Revoking document...");
-  const cmdRevoke = `oa document-store revoke -h 0x${signed.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdRevoke = `tradetrust document-store revoke -h 0x${signed.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
 };
 
 const generateDnsDid = async () => {
   info("Generating DNS-DID files");
   writeFileSync("./test/fixtures/v3/dnsdid.json", JSON.stringify(baseDnsDidDocument, null, 2));
-  const wrappedBaseDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDnsDidDocument);
+  const wrappedBaseDnsDidDocument = await wrapDocument(baseDnsDidDocument);
   writeFileSync("./test/fixtures/v3/dnsdid-wrapped.json", JSON.stringify(wrappedBaseDnsDidDocument, null, 2));
   const { merkleRoot } = wrappedBaseDnsDidDocument.proof;
   const signature = await signMerkleRoot(`0x${merkleRoot}`);
@@ -135,9 +136,7 @@ const generateDnsDid = async () => {
       },
     },
   };
-  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    validSignatureWithoutDnsTxt
-  );
+  const wrappedInvalidDnsDidDocument = await wrapDocument(validSignatureWithoutDnsTxt);
   const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
@@ -153,7 +152,7 @@ const generateDnsDid = async () => {
 const generateDid = async () => {
   info("Generating DID files");
   writeFileSync("./test/fixtures/v3/did.json", JSON.stringify(baseDidDocument, null, 2));
-  const wrappedBaseDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDidDocument);
+  const wrappedBaseDidDocument = await wrapDocument(baseDidDocument);
   writeFileSync("./test/fixtures/v3/did-wrapped.json", JSON.stringify(wrappedBaseDidDocument, null, 2));
   const { merkleRoot } = wrappedBaseDidDocument.proof;
   const signature = await signMerkleRoot(`0x${merkleRoot}`);
@@ -176,9 +175,7 @@ const generateDid = async () => {
       },
     },
   };
-  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    validSignatureWithoutDnsTxt
-  );
+  const wrappedInvalidDnsDidDocument = await wrapDocument(validSignatureWithoutDnsTxt);
   const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
@@ -194,28 +191,22 @@ const generateDid = async () => {
 const generateDocumentStore = async () => {
   info("Generating Document Store files");
   writeFileSync("./test/fixtures/v3/documentStore.json", JSON.stringify(baseDocumentStoreDocument, null, 2));
-  const wrappedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const wrappedBaseDocumentStoreDocument = await wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-wrapped.json",
     JSON.stringify(wrappedBaseDocumentStoreDocument, null, 2)
   );
-  const issuedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const issuedBaseDocumentStoreDocument = await wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-issued.json",
     JSON.stringify(issuedBaseDocumentStoreDocument, null, 2)
   );
-  const revokedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const revokedBaseDocumentStoreDocument = await wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-revoked.json",
     JSON.stringify(revokedBaseDocumentStoreDocument, null, 2)
   );
-  const invalidDnsDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument({
+  const invalidDnsDocumentStoreDocument = await wrapDocument({
     ...baseDocumentStoreDocument,
     openAttestationMetadata: {
       ...baseDocumentStoreDocument.openAttestationMetadata,
@@ -230,37 +221,33 @@ const generateDocumentStore = async () => {
     JSON.stringify(invalidDnsDocumentStoreDocument, null, 2)
   );
   info("Issuing document(1/3)...");
-  const cmdIssue1 = `oa document-store issue -h 0x${issuedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdIssue1 = `tradetrust document-store issue -h 0x${issuedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue1, { timeout: ethereumDocumentConfig.timeout });
   info("Issuing document(2/3)...");
-  const cmdIssue2 = `oa document-store issue -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdIssue2 = `tradetrust document-store issue -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue2, { timeout: ethereumDocumentConfig.timeout });
   info("Issuing document(3/3)...");
-  const cmdIssue3 = `oa document-store issue -h 0x${invalidDnsDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdIssue3 = `tradetrust document-store issue -h 0x${invalidDnsDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue3, { timeout: ethereumDocumentConfig.timeout });
   info("Revoking document...");
-  const cmdRevoke = `oa document-store revoke -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdRevoke = `tradetrust document-store revoke -h 0x${revokedBaseDocumentStoreDocument.proof.merkleRoot} -a ${ethereumDocumentConfig.documentStore} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdRevoke, { timeout: ethereumDocumentConfig.timeout });
 };
 
 const generateTokenRegistry = async () => {
   info("Generating Token Registry files");
   writeFileSync("./test/fixtures/v3/tokenRegistry.json", JSON.stringify(baseTokenRegistryDocument, null, 2));
-  const wrappedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseTokenRegistryDocument
-  );
+  const wrappedBaseTokenRegistryDocument = await wrapDocument(baseTokenRegistryDocument);
   writeFileSync(
     "./test/fixtures/v3/tokenRegistry-wrapped.json",
     JSON.stringify(wrappedBaseTokenRegistryDocument, null, 2)
   );
-  const issuedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseTokenRegistryDocument
-  );
+  const issuedBaseTokenRegistryDocument = await wrapDocument(baseTokenRegistryDocument);
   writeFileSync(
     "./test/fixtures/v3/tokenRegistry-issued.json",
     JSON.stringify(issuedBaseTokenRegistryDocument, null, 2)
   );
-  const invalidDnsTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument({
+  const invalidDnsTokenRegistryDocument = await wrapDocument({
     ...baseTokenRegistryDocument,
     openAttestationMetadata: {
       ...baseTokenRegistryDocument.openAttestationMetadata,
@@ -274,11 +261,11 @@ const generateTokenRegistry = async () => {
     "./test/fixtures/v3/tokenRegistry-invalid-issued.json",
     JSON.stringify(invalidDnsTokenRegistryDocument, null, 2)
   );
-  const cmdIssue1 = `oa token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${issuedBaseTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdIssue1 = `tradetrust token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${issuedBaseTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   info("Issuing document(1/2)...");
   execSync(cmdIssue1, { timeout: ethereumDocumentConfig.timeout });
   info("Issuing document(2/2)...");
-  const cmdIssue2 = `oa token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${invalidDnsTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
+  const cmdIssue2 = `tradetrust token-registry mint -a ${ethereumDocumentConfig.tokenRegistry} --tokenId 0x${invalidDnsTokenRegistryDocument.proof.merkleRoot} --to ${ethereumDocumentConfig.wallet.address} -k ${ethereumDocumentConfig.wallet.key} -n ${ethereumDocumentConfig.network}`;
   execSync(cmdIssue2, { timeout: ethereumDocumentConfig.timeout });
 };
 

@@ -1,6 +1,6 @@
 import { v3 } from "@tradetrust-tt/tradetrust";
 
-export const baseDnsDidDocument: v3.OpenAttestationDocument = {
+export const baseDnsDidDocument = {
   "@context": [
     "https://www.w3.org/2018/credentials/v1",
     "https://schemata.openattestation.com/com/openattestation/1.0/DrivingLicenceCredential.json",
@@ -15,7 +15,7 @@ export const baseDnsDidDocument: v3.OpenAttestationDocument = {
     id: "https://example.com",
     name: "DEMO STORE",
   },
-  type: ["VerifiableCredential", "DrivingLicenceCredential"],
+  type: ["VerifiableCredential", "DrivingLicenceCredential", "OpenAttestationCredential"],
   credentialSubject: {
     id: "did:example:SERIAL_NUMBER_123",
     class: [
@@ -55,7 +55,7 @@ export const baseDnsDidDocument: v3.OpenAttestationDocument = {
       data: "BASE64_ENCODED_FILE",
     },
   ],
-};
+} as v3.OpenAttestationDocument;
 
 export const baseDidDocument: v3.OpenAttestationDocument = {
   ...baseDnsDidDocument,
