@@ -45,7 +45,7 @@
     "@commitlint/cli": "^18.4.3",
     "@commitlint/config-conventional": "^18.4.3",
     "@commitlint/prompt": "^18.4.3",
-    "@govtechsg/document-store-ethers-v5": "^4.0.0",
+    "@govtechsg/document-store-ethers-v5": "^4.1.0",
     "@snyk/protect": "^1.1257.0",
     "@types/debug": "^4.1.5",
     "@types/jest": "^27.5.2",
