@@ -31,8 +31,8 @@
   "dependencies": {
     "@govtechsg/dnsprove": "^2.8.0",
     "@govtechsg/open-attestation": "^6.9.0",
-    "axios": "^1.6.2",
-    "debug": "^4.3.1",
+    "axios": "^1.7.7",
+    "debug": "^4.3.7",
     "did-resolver": "^4.1.0",
     "ethers": "^5.7.2",
     "ethr-did-resolver": "^8.1.2",
@@ -41,31 +41,31 @@
     "web-did-resolver": "^2.0.27"
   },
   "devDependencies": {
-    "@commitlint/cli": "^18.4.3",
-    "@commitlint/config-conventional": "^18.4.3",
-    "@commitlint/prompt": "^18.4.3",
+    "@commitlint/cli": "^19.4.1",
+    "@commitlint/config-conventional": "^19.4.1",
+    "@commitlint/prompt": "^19.4.1",
     "@govtechsg/document-store-ethers-v5": "^4.1.0",
-    "@snyk/protect": "^1.1257.0",
+    "@snyk/protect": "^1.1293.0",
     "@types/debug": "^4.1.5",
-    "@types/jest": "^26.0.23",
-    "@typescript-eslint/eslint-plugin": "^4.22.0",
-    "@typescript-eslint/parser": "^4.22.0",
+    "@types/jest": "^27.4.1",
+    "@typescript-eslint/eslint-plugin": "^8.5.0",
+    "@typescript-eslint/parser": "^8.5.0",
     "ajv-formats": "^2.1.1",
     "commitizen": "^4.3.0",
-    "eslint": "^7.25.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-jest": "^24.3.6",
-    "eslint-plugin-prettier": "^3.4.0",
+    "eslint": "^8.56.0",
+    "eslint-config-prettier": "^9.1.0",
+    "eslint-plugin-import": "^2.30.0",
+    "eslint-plugin-jest": "^28.8.3",
+    "eslint-plugin-prettier": "^5.2.1",
     "git-cz": "^4.9.0",
-    "husky": "^8.0.3",
-    "jest": "^26.6.3",
-    "jest-watch-typeahead": "^0.6.3",
+    "husky": "^9.1.5",
+    "jest": "^27.5.1",
+    "jest-watch-typeahead": "^2.2.2",
     "microbundle": "^0.15.1",
     "msw": "^0.28.2",
-    "prettier": "^2.2.1",
-    "semantic-release": "^22.0.8",
-    "ts-jest": "^26.5.5",
+    "prettier": "^3.3.3",
+    "semantic-release": "^24.1.0",
+    "ts-jest": "^27.1.5",
     "typescript": "^4.9.5"
   },
   "publishConfig": {
@@ -84,7 +84,8 @@
     }
   },
   "prettier": {
-    "printWidth": 120
+    "printWidth": 120,
+    "trailingComma": "es5"
   },
   "snyk": true
 }
