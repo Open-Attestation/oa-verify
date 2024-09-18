@@ -28,7 +28,7 @@ export const getIntermediateHashes = (targetHash: Hash, proofs: Hash[] = []) => 
  * In case where we cannot tell, we throw an error
  * */
 export const decodeError = (error: any) => {
-  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : (error.reason ?? "");
   switch (true) {
     case !error.reason &&
       (error.method?.toLowerCase() === "isRevoked(bytes32)".toLowerCase() ||

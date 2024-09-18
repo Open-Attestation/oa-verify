@@ -85,7 +85,7 @@ const isMissingTokenRegistry = (error: any) => {
   );
 };
 const decodeError = (error: any) => {
-  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : error.reason ?? "";
+  const reason = error.reason && Array.isArray(error.reason) ? error.reason[0] : (error.reason ?? "");
   switch (true) {
     case isNonExistentToken(error):
       return `Document has not been issued under token registry`;

@@ -346,14 +346,14 @@ describe("generateProvider", () => {
     const options = { apiKey: "abc123" } as ProviderDetails;
     expect(() => {
       generateProvider(options);
-    }).toThrowError(
+    }).toThrow(
       "We could not link the apiKey provided to a provider, please state the provider to use in the parameter."
     );
   });
 
   it("should throw an error when if process.env is using the wrong value for PROVIDER", () => {
     process.env.PROVIDER_ENDPOINT_TYPE = "ABC";
-    expect(() => generateProvider()).toThrowError(
+    expect(() => generateProvider()).toThrow(
       "The provider provided is not on the list of providers. Please use one of the following: infura, alchemy or jsonrpc."
     );
   });
