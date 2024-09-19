@@ -311,8 +311,8 @@ const verifyV3 = async (
   const reason = InvalidDidSignedIssuanceStatus.guard(verificationResult)
     ? verificationResult.reason
     : InvalidRevocationStatus.guard(revocationStatus)
-    ? revocationStatus.reason
-    : undefined;
+      ? revocationStatus.reason
+      : undefined;
   if (!reason) {
     throw new CodedError(
       "Unable to retrieve the reason of the failure",

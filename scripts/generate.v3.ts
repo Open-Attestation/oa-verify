@@ -135,9 +135,8 @@ const generateDnsDid = async () => {
       },
     },
   };
-  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    validSignatureWithoutDnsTxt
-  );
+  const wrappedInvalidDnsDidDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(validSignatureWithoutDnsTxt);
   const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
@@ -176,9 +175,8 @@ const generateDid = async () => {
       },
     },
   };
-  const wrappedInvalidDnsDidDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    validSignatureWithoutDnsTxt
-  );
+  const wrappedInvalidDnsDidDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(validSignatureWithoutDnsTxt);
   const signatureForInvalidDocument = await signMerkleRoot(`0x${wrappedInvalidDnsDidDocument.proof.merkleRoot}`);
   const signedInvalidDnsDidDocument: v3.SignedWrappedDocument = {
     ...wrappedInvalidDnsDidDocument,
@@ -194,23 +192,20 @@ const generateDid = async () => {
 const generateDocumentStore = async () => {
   info("Generating Document Store files");
   writeFileSync("./test/fixtures/v3/documentStore.json", JSON.stringify(baseDocumentStoreDocument, null, 2));
-  const wrappedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const wrappedBaseDocumentStoreDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-wrapped.json",
     JSON.stringify(wrappedBaseDocumentStoreDocument, null, 2)
   );
-  const issuedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const issuedBaseDocumentStoreDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-issued.json",
     JSON.stringify(issuedBaseDocumentStoreDocument, null, 2)
   );
-  const revokedBaseDocumentStoreDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseDocumentStoreDocument
-  );
+  const revokedBaseDocumentStoreDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(baseDocumentStoreDocument);
   writeFileSync(
     "./test/fixtures/v3/documentStore-revoked.json",
     JSON.stringify(revokedBaseDocumentStoreDocument, null, 2)
@@ -246,16 +241,14 @@ const generateDocumentStore = async () => {
 const generateTokenRegistry = async () => {
   info("Generating Token Registry files");
   writeFileSync("./test/fixtures/v3/tokenRegistry.json", JSON.stringify(baseTokenRegistryDocument, null, 2));
-  const wrappedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseTokenRegistryDocument
-  );
+  const wrappedBaseTokenRegistryDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(baseTokenRegistryDocument);
   writeFileSync(
     "./test/fixtures/v3/tokenRegistry-wrapped.json",
     JSON.stringify(wrappedBaseTokenRegistryDocument, null, 2)
   );
-  const issuedBaseTokenRegistryDocument = await __unsafe__use__it__at__your__own__risks__wrapDocument(
-    baseTokenRegistryDocument
-  );
+  const issuedBaseTokenRegistryDocument =
+    await __unsafe__use__it__at__your__own__risks__wrapDocument(baseTokenRegistryDocument);
   writeFileSync(
     "./test/fixtures/v3/tokenRegistry-issued.json",
     JSON.stringify(issuedBaseTokenRegistryDocument, null, 2)

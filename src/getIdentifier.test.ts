@@ -88,7 +88,7 @@ const malformedVerificationFragment2: ValidVerificationFragment<undefined> = {
 
 describe("getIdentifier", () => {
   it("should throw an error when no fragments are provided", () => {
-    expect(() => getIdentifier([])).toThrowError("Please provide at least one verification fragment");
+    expect(() => getIdentifier([])).toThrow("Please provide at least one verification fragment");
   });
   it("should return an unknown identity proof, when fragment.name is out of specification", () => {
     expect(getIdentifier([verificationFragment1, malformedVerificationFragment1])).toStrictEqual({
@@ -97,7 +97,7 @@ describe("getIdentifier", () => {
     });
   });
   it("should throw an error when fragment.data cannot be handled", () => {
-    expect(() => getIdentifier([verificationFragment1, malformedVerificationFragment2])).toThrowError(
+    expect(() => getIdentifier([verificationFragment1, malformedVerificationFragment2])).toThrow(
       "No data property found in fragment, malformed fragment"
     );
   });

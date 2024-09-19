@@ -3,7 +3,7 @@ import { VerificationFragment } from "./types/core";
 
 describe("isValid", () => {
   it("should throw an error when no fragments are provided", () => {
-    expect(() => isValid([])).toThrowError("Please provide at least one verification fragment to check");
+    expect(() => isValid([])).toThrow("Please provide at least one verification fragment to check");
   });
   it("should throw an error when empty types are provided", () => {
     const verificationFragment: VerificationFragment = {
@@ -11,7 +11,7 @@ describe("isValid", () => {
       name: "any",
       type: "DOCUMENT_STATUS",
     };
-    expect(() => isValid([verificationFragment], [])).toThrowError("Please provide at least one type to check");
+    expect(() => isValid([verificationFragment], [])).toThrow("Please provide at least one type to check");
   });
 
   describe("with one provided type", () => {
