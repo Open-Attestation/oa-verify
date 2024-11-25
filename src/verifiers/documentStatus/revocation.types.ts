@@ -32,4 +32,5 @@ export enum OcspResponderRevocationReason {
   REMOVE_FROM_CRL = 8,
   PRIVILEGE_WITHDRAWN = 9,
   A_A_COMPROMISE = 10,
+  SUSPENDED = 1001,
 }
