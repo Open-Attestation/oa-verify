@@ -1113,5 +1113,43 @@ describe("verify", () => {
 
       server.close();
     });
+    it("should throw an invalid ocsp response error when DID document is signed but is found by an OCSP with an invalid reasoncode", async () => {
+      whenPublicKeyResolvesSuccessfully("0x1245e5B64D785b25057f7438F715f4aA5D965733");
+
+      const handlers = [
+        rest.get(
+          "https://ocsp.example.com/0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: true,
+                documentHash: "0x69e1a174ea67e1c3119639f713f8a7348bbda54fdce60903621398cc2fea4d40",
+                reasonCode: 7,
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV3, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: Invalid or unexpected response from OCSP Responder],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 11,
+            "codeString": "OCSP_RESPONSE_INVALID",
+            "message": "Invalid or unexpected response from OCSP Responder",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
   });
 });
