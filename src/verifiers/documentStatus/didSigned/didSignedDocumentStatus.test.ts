@@ -595,6 +595,127 @@ describe("verify", () => {
 
       server.close();
     });
+
+    it("should fail when DID document is signed but is found by an OCSP with reasoncode for suspended", async () => {
+      whenPublicKeyResolvesSuccessfully();
+
+      const handlers = [
+        rest.get(
+          "https://ocsp.example.com/0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: true,
+                documentHash: "0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+                reasonCode: 1001,
+              })
+            );
+          }
+        ),
+        rest.get(
+          "https://ocsp.example.com/0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": Object {
+            "details": Object {
+              "issuance": Array [
+                Object {
+                  "did": "did:ethr:0xB26B4941941C51a4885E5B7D3A1B861E54405f90",
+                  "issued": true,
+                },
+              ],
+              "revocation": Array [
+                Object {
+                  "address": "https://ocsp.example.com",
+                  "reason": Object {
+                    "code": 1001,
+                    "codeString": "SUSPENDED",
+                    "message": "Document 0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c has been revoked under OCSP Responder: https://ocsp.example.com",
+                  },
+                  "revoked": true,
+                },
+              ],
+            },
+            "issuedOnAll": true,
+            "revokedOnAny": true,
+          },
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 1001,
+            "codeString": "SUSPENDED",
+            "message": "Document 0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c has been revoked under OCSP Responder: https://ocsp.example.com",
+          },
+          "status": "INVALID",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
+    it("should thwow an invalid ocsp response error when DID document is signed but is found by an OCSP with an invalid reasoncode", async () => {
+      whenPublicKeyResolvesSuccessfully();
+
+      const handlers = [
+        rest.get(
+          "https://ocsp.example.com/0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: true,
+                documentHash: "0x28b221f6287d8e4f8da09a835bcb750537cc8385e2535ff63591fdf0162be824",
+                reasonCode: 7,
+              })
+            );
+          }
+        ),
+        rest.get(
+          "https://ocsp.example.com/0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
+          (_, res, ctx) => {
+            return res(
+              ctx.json({
+                revoked: false,
+                documentHash: "0x56961854a82feafe9a56eb57acfe3b97f17eda5d497b622c9acc9f03c412618c",
+              })
+            );
+          }
+        ),
+      ];
+
+      const server: SetupServerApi = setupServer(...handlers);
+      server.listen();
+
+      const res = await openAttestationDidSignedDocumentStatus.verify(didSignedOcspResponderV2, options);
+      expect(res).toMatchInlineSnapshot(`
+        Object {
+          "data": [Error: Invalid or unexpected response from OCSP Responder],
+          "name": "OpenAttestationDidSignedDocumentStatus",
+          "reason": Object {
+            "code": 11,
+            "codeString": "OCSP_RESPONSE_INVALID",
+            "message": "Invalid or unexpected response from OCSP Responder",
+          },
+          "status": "ERROR",
+          "type": "DOCUMENT_STATUS",
+        }
+      `);
+
+      server.close();
+    });
   });
 
   describe("v3", () => {
