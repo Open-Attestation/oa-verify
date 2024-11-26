@@ -41,7 +41,9 @@ export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatus
  * OCSP response
  */
 
-export const ValidOcspReasonCode = Number.withConstraint((n) => Object.values(OcspResponderRevocationReason).includes(n));
+export const ValidOcspReasonCode = Number.withConstraint((n) =>
+  Object.values(OcspResponderRevocationReason).includes(n)
+);
 
 export const ValidOcspResponse = Record({
   revoked: Literal(false),
