@@ -7,6 +7,7 @@ import {
 } from "../../../types/core";
 import { Reason } from "../../../types/error";
 import {
+  OcspResponderRevocationReason,
   RevocationStatus,
   RevocationStatusArray,
   ValidRevocationStatus,
@@ -40,7 +41,9 @@ export type DidSignedIssuanceStatusArray = Static<typeof DidSignedIssuanceStatus
  * OCSP response
  */
 
-export const ValidOcspReasonCode = Number.withConstraint((n) => n >= 0 && n <= 10 && n != 7);
+export const ValidOcspReasonCode = Number.withConstraint((n) =>
+  Object.values(OcspResponderRevocationReason).includes(n)
+);
 
 export const ValidOcspResponse = Record({
   revoked: Literal(false),
