@@ -31,7 +31,7 @@
   "dependencies": {
     "@govtechsg/dnsprove": "^2.8.0",
     "@govtechsg/open-attestation": "^6.9.0",
-    "axios": "^1.7.7",
+    "axios": "^1.7.8",
     "debug": "^4.3.7",
     "did-resolver": "^4.1.0",
     "ethers": "^5.7.2",
