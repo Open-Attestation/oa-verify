@@ -34,7 +34,7 @@
     "axios": "^1.7.7",
     "debug": "^4.3.7",
     "did-resolver": "^4.1.0",
-    "ethers": "^5.7.2",
+    "ethers": "^6.0.0",
     "node-cache": "^5.1.2",
     "runtypes": "^6.3.0",
     "web-did-resolver": "^2.0.27"
